@@ -1,2 +1,2 @@
 # recorder-6
-Marine Recorder is used to store marine benthic sample data such as species, physical attributes and biotopes
+Recorder 6 is the ultimate tool for those entering, collating and exchanging records of species and habitats.
