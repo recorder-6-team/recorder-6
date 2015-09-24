@@ -1,6 +1,8 @@
 # recorder-6
 Recorder 6 is the ultimate tool for those entering, collating and exchanging records of species and habitats.
 
+For more information, see http://jncc.defra.gov.uk/page-4592. 
+
 To use this repository:
 
 * Clone the repository to a folder c:\localsource\recorder-6.
