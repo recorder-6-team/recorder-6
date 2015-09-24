@@ -1,2 +1,8 @@
 # recorder-6
 Recorder 6 is the ultimate tool for those entering, collating and exchanging records of species and habitats.
+
+To use this repository:
+
+* Clone the repository to a folder c:\localsource\recorder-6.
+* Create a directory c:\localsource\DCU for compilation purposes.
+* Obtain the files required for building Recorder 6 which are not open source and place into c:\localsource\recorder-6-no-vcs
