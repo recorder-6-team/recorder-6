@@ -12,10 +12,10 @@ unit Indicia2Recorder_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 24/09/2015 09:41:25 from Type Library described below.
+// File generated on 24/09/2015 14:01:35 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\Localsource\Recorder\RecorderApp\trunk\Add-ins\Indicia2Recorder\Indicia2Recorder.tlb (1)
+// Type Lib: C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\Indicia2Recorder.tlb (1)
 // LIBID: {50F9696E-9529-44B4-97D4-6EC8F4F8A9D2}
 // LCID: 0
 // Helpfile: 
