@@ -1,0 +1,46 @@
+<?xml version="1.0" ?> 
+
+<!-- Deletes a designation set from the database 
+     XML Report by Steve Wilkinson (JNCC)
+     Version 1.01 - 27/7/2009
+         
+-->
+
+
+<batchupdate title="Des4 Delete Taxon Designation Set "   menupath="System Supplied\Designations" description=" Removes a designation set from the database. Enter the name of designation set to be removed. Note that system supplied sets will not be removed.">
+
+
+<SQL>
+
+
+<Where keytype="Default">
+ DECLARE @SETNAME Varchar(40)
+ DECLARE @SSKey varchar(16)
+ DECLARE @SETKey VARCHAR(16)
+ 
+
+ SET  @Setname  <Condition field="" operator="equal"  type="Text" 
+ name = "Setname"  />
+
+ SET @SETKEY = (SELECT Taxon_Designation_Set_Key  FROM Taxon_Designation_Set WHERE Title = @Setname) 
+ SET @SSKey = (SELECT Taxon_Designation_Set_Key  FROM Taxon_Designation_Set WHERE Title = @Setname AND System_supplied_data = 1) 
+ 
+
+IF @SETKEY is null or @SSKey IS not NULL
+	RAISERROR	('The set either does not exist in the database or is a system supplied one (and therefore cannot be deleted).', 10, 1)
+ELSE
+BEGIN
+	DELETE FROM Taxon_Designation_set_Item WHERE Taxon_Designation_Set_Key = @SetKey
+	DELETE FROM Taxon_DESIGNATION_SET where Taxon_Designation_Set_Key = @SetKey
+		
+End
+
+    
+
+
+ </Where>
+ 
+
+</SQL>
+
+</batchupdate>

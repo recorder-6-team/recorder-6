@@ -1,0 +1,71 @@
+<?xml version="1.0" ?> 
+<batchupdate menupath="System Supplied\Location Updates" title="Loc1 - Move Locations where not Custodian" 
+description="Moves the top level of all imported Locations 
+where the system owner is not the Custodian of the Location, to a selected Location.
+Does not affect system supplied data.
+This allows imported Locations to be moved to one top level Location (this should be set up first).
+">
+<SQL>
+
+<Where keytype="Default">
+DECLARE @Count INT,@LocationKey CHAR(16),@Custodian CHAR(8)
+
+SELECT  @Custodian = Data 
+FROM
+Setting 
+WHERE
+Name = 'SiteID'
+
+
+SELECT @LocationKey = Location_Key
+FROM 
+Location L
+WHERE
+<Condition field= "L.Location_Key" operator="Equal" type="Location"  name="Select Location"  />
+
+
+SELECT 'Location' AS [TABLE], 
+L.Location_Key   AS [KEY],
+'Changed Locations ' AS DESCRIPTION
+FROM
+Location L WHERE
+L.Parent_Key  is null
+AND
+L.Custodian &#60;&#62; @Custodian
+AND
+L.System_supplied_Data = 0
+
+UPDATE Location SET Parent_Key = @LocationKey
+FROM
+Location L WHERE
+L.Parent_Key  is null
+AND
+L.Custodian &#60;&#62; @Custodian
+AND
+L.System_supplied_Data = 0
+
+
+
+
+Set @Count = @@ROWCOUNT
+
+
+SELECT @Count AS COUNT
+
+
+
+
+
+</Where>
+
+
+
+
+
+
+
+
+
+
+</SQL>
+</batchupdate>

@@ -1,0 +1,28 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC position validation 
+     XML Report by Steve Wilkinson
+      Version 5 - 28 November 2014  
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="Geographic Validation" menupath="System Supplied\Record validation"  
+description="Lists all records where the geographic co-ordinates are outside what would normally be expected (latitude 48 to 62 degrees longitude -11 to 4 degrees). The query is designed for use when sharing records (e.g. export to the NBN Gateway) to identify potentially incorrect records." >
+
+
+<SQL>
+
+<Where keytype="Default">
+
+select distinct sample_key, lat, long, spatial_ref, spatial_ref_system from sample WHERE long &#62; 4 or long &#60; -11 or lat &#60; 48 or lat &#62; 62
+
+</Where>
+
+
+</SQL>
+
+</CustomReport>

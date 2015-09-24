@@ -1,0 +1,52 @@
+<?xml version='1.0' ?>
+
+
+<!-- Dictionary Report
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014   
+      
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="Recommended Taxa for List" menupath="System Supplied\Dictionary"  
+description="Extract the recommended taxa for a specified list. Works from the Taxon Dictionary by selecting any species in the list" >
+
+
+
+<SQL>
+
+<Where keytype="Taxon">
+    SELECT DISTINCT T.Item_name,TV.Attribute,TL.Item_Name as List  FROM Taxon T
+    INNER JOIN Taxon_Version TV ON  TV.Taxon_Key = T.Taxon_Key
+    INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_version_Key = TV.Taxon_Version_Key 
+	INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key  
+    INNER JOIN INDEX_Taxon_Name ITN ON ITN.Recommended_taxon_List_Item_Key = TLI.Taxon_List_Item_Key
+    INNER JOIN Taxon_List_Item TLI2 ON TLI2.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key 
+    INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = TLI2.Taxon_List_Version_Key
+	INNER JOIN Taxon_List TL ON TL.Taxon_List_Key = TLV.Taxon_List_Key
+	WHERE TL.Taxon_List_Key  = (SELECT Taxon_List.Taxon_List_Key /**/FROM/**/ Taxon_List INNER JOIN Taxon_List_Version on Taxon_List_Version.Taxon_List_Key  =
+	Taxon_List.Taxon_List_Key INNER JOIN Taxon_List_Item ON Taxon_LIst_Item.Taxon_List_Version_Key = Taxon_List_Version.Taxon_List_Version_Key 
+    WHERE Taxon_List_Item.Taxon_List_Item_Key =  '%s') AND TR.Sequence > 240
+    
+  
+
+</Where>
+
+<Where keytype="Default">
+   
+ Select Distinct 'This report only works from the taxon dictionary' as Item_Name, 'Quick Report' as Attribute FROM Survey
+  
+	
+
+
+</Where>
+
+<OutputTableOrderby name="by Default" SQL="Order By Item_Name, Attribute "/>
+
+</SQL>
+
+</CustomReport>

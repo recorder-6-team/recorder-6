@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Lists the Taxon  Designation Types available for including in Taxon Designation Sets 
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 November 2014 
+
+    
+            
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Information"  title="Sy04 - Taxon Designations in sets but excluded from reports" 
+description="List of Taxon Designation Types listed in sets which will not appear in reports as they are not in Index_Taxon_Designation.
+Use this report to  identify anomalies in reporting on Status .
+
+" >
+
+<SQL>
+
+<Where keytype="Default">
+
+CREATE TABLE #TEMP (Short_name varchar(100)   COLLATE SQL_Latin1_General_CP1_CI_AS, Taxon_Designation_Type_Key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS,
+Title varchar(100)  COLLATE SQL_Latin1_General_CP1_CI_AS)
+
+INSERT INTO #TEMP (Short_Name,Taxon_designation_type_key,Title)
+SELECT DISTINCT 
+TDT.Short_name,TDT.Taxon_Designation_type_key,TDs.Title
+FROM  Taxon_designation_Type TDT
+INNER JOIN TAXON_DESIGNATION_SET_ITEM TDSI
+ON TDSI.Taxon_Designation_Type_key = TDT.TAXON_DESIGNATION_TYPE_KEY
+INNER JOIN Taxon_Designation_Set TDS
+ON TDS.Taxon_designation_set_Key = TDSI.Taxon_Designation_Set_Key
+WHERE NOT EXISTS(SELECT * FROM INDEX_TAXON_DESIGNATION ITD WHERE ITD.TAXON_DESIGNATION_TYPE_KEY = TDT.TAXON_DESIGNATION_TYPE_KEY) 
+
+ORDER BY TDT.Short_Name
+ 
+SELECT Short_Name,Taxon_designation_type_key,Title FROM #TEMP
+
+DROP TABLE #TEMP
+</Where>
+
+
+</SQL>
+<Columns>
+  <Column name="Short_name" width="300" position="1" caption="ShortName" /> 
+  <Column name="Taxon_designation_Type_key" width="100" position="3"  /> 
+  <Column name="Title" width="300" position="3" caption="Set Title" /> 
+  
+ 
+</Columns>
+</CustomReport>

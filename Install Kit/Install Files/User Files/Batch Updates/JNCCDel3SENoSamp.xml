@@ -1,0 +1,99 @@
+<?xml version="1.0" ?> 
+<batchupdate menupath="System Supplied\Delete" description="Deletes Survey Events  which do not have any Sample." 
+title="Del3 Delete Events with No Samples">
+<SQL>
+
+<Where keytype="Default">
+DECLARE @Count INT
+
+CREATE TABLE #LCDelete (Survey_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, 
+        Survey_Event_key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS, 
+        Sample_Key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS,
+        Taxon_Occurrence_key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS,
+        Biotope_Occurrence_key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS
+           
+         
+       	)
+
+
+INSERT INTO #LCDelete (Survey_Event_Key)  
+SELECT DISTINCT SE.Survey_Event_Key 
+FROM Survey_Event SE
+WHERE
+NOT EXISTS (SELECT * FROM SAMPLE S
+WHERE SE.Survey_Event_Key = S.Survey_Event_Key) 
+
+
+SET @COUNT = @@rowcount + @COUNT
+
+  
+   set rowcount  3000
+   WHILE 1 =1 
+   BEGIN
+   DELETE FROM SSC
+   FROM 
+   SURVEY_EVENT_SOURCES SSC INNER JOIN #LCDELETE #LCD ON #LCD.SURVEY_EVENT_KEY = SSC.SURVEY_EVENT_KEY
+   IF @@rowcount &#60; 3000 BREAK
+   END
+
+   set rowcount  3000
+   WHILE 1 =1 
+   BEGIN
+   DELETE FROM SEREC
+   FROM 
+   SURVEY_EVENT_RECORDER  SEREC INNER JOIN #LCDELETE #LCD ON #LCD.SURVEY_EVENT_KEY = SEREC.SURVEY_EVENT_KEY
+   IF @@rowcount &#60; 3000 BREAK
+   END
+   
+   set rowcount  3000
+   WHILE 1 =1 
+   BEGIN
+   DELETE FROM SEO
+   FROM 
+   SURVEY_EVENT_OWNER  SEO INNER JOIN #LCDELETE #LCD ON #LCD.SURVEY_EVENT_KEY = SEO.SURVEY_EVENT_KEY
+   IF @@rowcount &#60; 3000 BREAK
+   END
+
+
+   set rowcount  3000
+   WHILE 1 =1 
+   BEGIN
+   DELETE FROM SE
+   FROM 
+   SURVEY_EVENT  SE INNER JOIN #LCDELETE #LCD ON #LCD.SURVEY_EVENT_KEY = SE.SURVEY_EVENT_KEY
+   
+   IF @@rowcount &#60; 3000 BREAK
+   END
+   
+   set rowcount 0
+
+   
+   
+   SELECT @Count AS COUNT
+
+   DROP TABLE #LCDELETE
+
+
+
+
+
+   
+
+
+
+</Where>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</SQL>
+</batchupdate>

@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+
+
+<!-- LC Count of Recommended Taxa for specified squares 
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 November 2014
+
+   
+     QUICK REPORT - Not implemented
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Unchedked - By parameter
+     Site centroid - By parameter 			
+     Invalid = By parameter	
+   
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Grid Square Reports"  title="Sq3_Summary by Square(s) " description="Displays Count of Taxa (Recommended Name) for each specified Grid Squares as selected. 
+Ignores references which are of a less accurate precision than that chosen."  >
+
+<SQL>
+DECLARE @GridSize varchar(30)
+
+<Where keytype="Default">
+
+    
+SET @GRIDSize 
+ <Condition field= "" operator="equal" type="OptionSet"  name="Square Size" >
+       <Option name="1km" value = "1" />
+       <Option name="2km (Tetrad)" value = "2" />
+       <Option name="5km " value = "5" />
+       <Option name="10km" value = "0" />
+    
+
+</Condition>  
+
+
+SELECT 
+
+ITN2.Actual_Name,
+dbo.LCRectifyGR(s.Spatial_Ref,s.spatial_ref_system,cast(right(RTRIm(@GridSize),1) as Integer)) As GrSquare,
+Count(TOCC.Taxon_Occurrence_key) as TOCCCount
+
+From Sample S 
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDET on TDET.Taxon_Occurrence_key = TOCC.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_taxon_Name ITN2 ON ITN2.Taxon_List_Item_Key = ITN.Recommended_Taxon_List_Item_Key 
+
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+WHERE
+
+USR.Name_key IS NULL
+
+AND 
+
+
+
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+
+	
+        <Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition> 
+AND
+
+<Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" >
+	
+        <Option name="Include" value = "'Anything'" />
+        <Option name="Exclude" value = "'Site Centroid'" />
+</Condition>  
+AND
+
+<Condition field= "dbo.LCRectifyGR(s.Spatial_Ref,s.spatial_ref_system, cast(right(RTRIm(@GRidSize),1) as Integer))" operator="equal" type="Text"  name="Grid Squares" entrycount ="-1" />
+AND
+
+
+
+ITN2.System_Supplied_Data = 1
+
+
+AND
+
+TDET.Preferred = 1
+
+GROUP BY ITN2.Actual_Name, dbo.LCRectifyGR(s.Spatial_Ref,s.spatial_ref_system,cast(right(RTRIm(@GRidSize),1) as Integer))
+
+</Where>
+
+
+</SQL>
+
+<Columns>
+  <Column name="Actual_Name" position="1" caption="Preferred Name" width="200"/>
+   <Column name="GrSquare" width="60" position="2" caption="Grid Square" /> 
+   <Column name="ToccCount" width="60" position="3" caption="Count " />   
+  
+   
+
+ 
+</Columns>
+</CustomReport>

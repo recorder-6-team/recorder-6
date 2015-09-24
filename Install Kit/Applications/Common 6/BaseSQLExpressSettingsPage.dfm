@@ -1,0 +1,2 @@
+inherited fraBaseSQLExpressSettings: TfraBaseSQLExpressSettings
+end

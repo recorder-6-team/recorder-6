@@ -1,0 +1,151 @@
+<?xml version="1.0" ?> 
+
+<!-- ADDS A NEW SET OF TAXON DESIGNATION TYPES TO THE TAXON DESIGNATION SETS 
+     XML Report by Mike Weideli of Littlefield Consultancy 
+	Minor edits (V2) by SBW: better error message, removed carriage returns from description, added error trapping to check that the file definitely has rows in it.
+     Version 2.0 - 27/4/2009
+         
+-->
+
+
+<batchupdate title="Des1 Taxon Designation Set "   menupath="System Supplied\Designations" description="Sets up or maintains a  Taxon Designation Set based on a CSV file containing a list of ShortName  and Taxon_Designation_Type_Key. To use this:
+
+ - Generate a list of available designations using report SY05 ftom the System/Information menu and save this as an Excel file. 
+ - Open it in Excel and delete the lines NOT required in the Taxon_Designation_set. Heading must remain as 'ShortName' and 'Taxon_designation_Type_Key'. 
+ - Save as a CSV file and use in this process. It is suggested that you first open the file in Notepad to check that the headings and lines are correct. 
+
+Note that the process will replace an existing set of the same name and can be used as an update process. However, it will not change system supplied sets. ">
+
+
+<CSVTables>
+          <CSVTable name="#CSV1">
+          <CSVFile description="Designation Sets" />
+          <CSVColumn name = "Taxon_designation_Type_Key" datatype="Char" size="16"   />
+          <CSVColumn name = "ShortName" datatype="VarChar" size="100"   />
+
+
+           </CSVTable>
+</CSVTables>
+<SQL>
+
+
+<Where keytype="Default">
+ DECLARE @SETNAME Varchar(40)
+ DECLARE @SSKey varchar(16)
+ DECLARE @SETKey VARCHAR(16)
+ DECLARE @Date	DATETIME		
+ DECLARE @Taxon_Designation_Type_Key CHAR(16)	
+ DECLARE @UserID CHAR(16)		
+ DECLARE @Custodian	CHAR(8)
+ DECLARE @count integer
+ DECLARE @fileRows integer
+ DECLARE @SetItemKey char(16) 
+ SET	@Date	=	GETDATE()
+ SET @UserID = (SELECT NAME_KEY FROM NAME WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" /> )
+ 
+  
+
+ SET  @Setname  <Condition field="" operator="equal"  type="Text" 
+ name = "Setname"  />
+
+ SET @SETKEY = (SELECT Taxon_Designation_Set_Key  FROM Taxon_Designation_Set WHERE Title = @Setname) 
+ SET @SSKey = (SELECT Taxon_Designation_Set_Key  FROM Taxon_Designation_Set WHERE Title = @Setname AND System_supplied_data = 1) 
+ 
+ 
+   
+
+
+ IF len(@SetName) > 100 or @SSKey IS NOT NULL
+     	
+       RAISERROR	('Error: Cant run update. Either the name of the set is more than 100 characters long or the name has already been used for a system supplied set', 10, 0)
+ELSE
+BEGIN
+    SET @fileRows =  (Select count(*) from #CSV1)
+	IF (@fileRows = 0)
+		RAISERROR ('Error: Cant run update. There are either no rows in the CSV file or there is a problem reading the file; check format and content', 10, 0)
+	ELSE
+	BEGIN
+		IF @SetKey IS NULL
+		BEGIN
+		  EXECUTE spNextKey 'Taxon_Designation_Set', @SetKey OUTPUT
+		  SET @Custodian = LEFT(@SetKey,8)            
+		  INSERT Into Taxon_designation_Set (
+			  Taxon_designation_set_key,
+			  Title,  
+			  Entered_By,
+			  Entry_date,
+			  System_Supplied_data,
+			  Custodian  )
+			  VALUES (@SetKey,
+			  @SetName,
+			  @UserId,
+			  @date,
+			  0,
+			  @Custodian ) 
+
+
+		END
+		DELETE FROM Taxon_Designation_set_Item WHERE Taxon_Designation_Set_Key = @SetKey
+		SET @Custodian = LEFT(@SetKey,8)
+              
+        DECLARE	CSV1_Cursor CURSOR FOR 
+		(	
+			SELECT	Taxon_designation_Type_Key
+			FROM	#CSV1
+		)
+		OPEN	CSV1_Cursor
+		
+		FETCH NEXT FROM CSV1_Cursor
+		INTO	@Taxon_Designation_Type_Key
+		
+		-- Loops through the list of taxon designation type and adds entries to Taxon_designation_Set item
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			IF EXISTS(SELECT 1 
+						FROM	Index_Taxon_Designation
+						WHERE	Taxon_Designation_Type_Key	=	@Taxon_Designation_Type_Key
+							)
+			BEGIN
+				EXECUTE spNextKey 'Taxon_Designation_Set_Item', @SetItemKey  OUTPUT
+						
+				SET @count = @count  +  1				
+				INSERT INTO Taxon_Designation_Set_Item	(
+						Taxon_Designation_Set_Item_Key,
+						Taxon_Designation_Set_Key,
+                                                Taxon_Designation_Type_Key,
+						Entered_By,
+						Entry_Date,
+						System_Supplied_Data,
+						Custodian	)
+				VALUES (@SetItemKey,
+                                            @setKey,
+					    @Taxon_Designation_Type_Key,
+					    @UserID,
+					    @Date,
+				            0,
+					    @Custodian	)
+			END
+			
+			FETCH NEXT FROM CSV1_Cursor
+			INTO	@Taxon_Designation_Type_Key
+		END
+		
+		CLOSE		CSV1_Cursor
+		DEALLOCATE	CsV1_Cursor
+	
+             
+    END
+        
+End
+
+        SELECT @Count AS COUNT
+
+
+
+ </Where>
+ 
+
+</SQL>
+
+</batchupdate>

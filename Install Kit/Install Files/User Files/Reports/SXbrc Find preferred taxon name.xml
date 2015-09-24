@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<!-- FIND PREFERRED TAXON NAME & KEY
+     XML Report by Charles Roper of the Sussex Biodiversity Record Centre
+     http://www.sxbrc.org.uk/
+     Version 1.1 - 20/09/2006 -->
+<CustomReport menupath="System Supplied\Information" title="Find preferred &lt;taxon&gt; name and key V06-12" description="Finds the preferred name and TAXON_LIST_ITEM_KEY for the specified taxon.">
+<SQL>
+SELECT      ITN2.TAXON_LIST_ITEM_KEY,
+            ITN2.PREFERRED_NAME + ISNULL(' ' + ITN2.Authority, '') AS Latin,
+            ITN2.COMMON_NAME
+FROM        INDEX_TAXON_NAME ITN
+INNER JOIN  INDEX_TAXON_NAME ITN2 ON
+            ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = ITN2.TAXON_LIST_ITEM_KEY
+
+<Where keytype="Default">
+WHERE <Condition field="ITN.TAXON_LIST_ITEM_KEY" operator="equal" type="Taxon" name="Taxon" />
+</Where>
+
+<Where keytype="Taxon">
+WHERE       ITN.TAXON_LIST_ITEM_KEY = '%s'
+</Where>
+
+<Where keytype="Taxon_Occurrence">
+INNER JOIN  TAXON_DETERMINATION TXD ON
+            ITN.TAXON_LIST_ITEM_KEY = TXD.TAXON_LIST_ITEM_KEY
+WHERE       TXD.TAXON_OCCURRENCE_KEY = '%s'
+</Where>
+
+</SQL>
+
+<Columns>
+  <Column name="Taxon_List_Item_Key" position="1" caption="Preferred TLI Key" tablename="Taxon" />
+  <Column name="Latin" position="2" caption="Preferred Formal Name" keycolumn="Taxon_List_Item_Key" width="300"/>
+  <Column name="Common_Name" position="3" caption="Common Name" width="200"/>
+</Columns>
+
+</CustomReport>

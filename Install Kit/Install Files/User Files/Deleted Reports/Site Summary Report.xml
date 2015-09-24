@@ -1,0 +1,22 @@
+<?xml version="1.0" ?> 
+<CustomReport menupath="Redundant Reports" title="Location Summary Report V06-12" 
+description="
+Please delete file 'Site Summary Report.xml' from your Recorder user\reports folder
+It has been replaced by a report L5 in Geographic Area/Location Reports\Location Reports.   
+"> 
+<SQL>
+
+<Where keytype="Default">
+ Select Distinct 'Please delete this report' as Message From setting
+
+
+</Where>
+
+
+
+</SQL>
+<Columns>
+
+</Columns>
+</CustomReport>
+

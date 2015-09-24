@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<!-- VIEW DESIGNATION DETAILS - XML Report by Charles Roper of the Sussex Biodiversity Record Centre
+     http://www.sxbrc.org.uk/
+     Version 1.2 - 23/05/2007 - edited by Sarah Shaw, JNCC, to ensure works with HtmlToPlainText function
+
+     NOTE: Requires the HtmlToPlainText function included in Recorder 6 from version 6.10.4 onwards.
+-->
+<CustomReport title="View designation details"   menupath="Redundant Reports"
+description="Please delete file 'SxBRC View designation details V07-05.xml' from your Recorder user\reports folder
+It has been replaced by a report of the same name in System reports/Information.   
+"> 
+<SQL>
+
+<Where keytype="Default">
+ Select distinct 'Please delete this report' as Message from setting
+
+</Where>
+
+
+
+</SQL>
+<Columns>
+
+</Columns>
+</CustomReport>
+

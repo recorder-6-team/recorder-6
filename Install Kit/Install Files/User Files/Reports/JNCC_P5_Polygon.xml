@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+
+
+<!-- Locations in Polygon  
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+    Version 5 - 28 November 2014
+
+   
+     QUICK REPORT - From Polygon on Map
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Validated - By parameter
+     Site centroid - By parameter 			
+     Invalid = By parameter	
+   
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Polygon Reports"  title="P5 Locations in Polygon. Includes partial overlap" description="Displays list of Locations in a polygon. 
+" > 
+
+<SQL>
+SELECT LN.Item_Name, L.Spatial_Ref
+FROM Location L
+INNER JOIN Location_name LN ON
+LN.Location_Key = L.Location_key
+
+<Where keytype="Default">
+
+WHERE
+
+<Condition field= "L.Location_key" operator="equal"  type="LocationsinPolygon"  name="Select Polygon" includepartialoverlap='yes'/>
+AND 
+LN.Preferred = 1
+ 
+</Where>
+
+<Where keytype="LocationsinPolygon" includepartialoverlap = 'yes' >
+WHERE
+
+L.Location_key IN (%s)
+
+
+
+ 	
+AND
+
+LN.Preferred = 1
+
+
+
+
+</Where>
+ 
+<OutputTableOrderby name="by Location Name" SQL="Order By Item_name " />
+
+<OutputTableOrderby name="by Spatial Ref" SQL="Order By Spatial_Ref"  />
+
+</SQL>
+
+<Columns>
+  
+ 
+   <Column name="Item_name" width="200" position="1" caption="Location Name" /> 
+   
+   <Column name="Spatial_Ref" width="150" position="2" caption="Spatial Ref" />    
+  
+
+ 
+</Columns>
+</CustomReport>

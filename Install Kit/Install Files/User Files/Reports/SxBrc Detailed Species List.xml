@@ -1,0 +1,248 @@
+<?xml version="1.0" ?>
+<CustomReport title="Detailed species list for a single &lt;location&gt;V06-12" description="Displays a list of species, with the total count of occurrences, earliest and latest occurrence as well as any designations.
+Please enter the following parameters to filter the report:" menupath="System Supplied\Geographic Area/Location Reports\Location Hierarchy Reports">
+<SQL>
+CREATE TABLE #Main_Results (
+  Taxon_List_Item_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Sort_Order VARCHAR(30),
+  Latin VARCHAR(125)  COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Common_Name VARCHAR(60) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Taxon_Group_Name VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Total_Occurrences INTEGER,
+  Early_Vague_Date_Start INTEGER,
+  Early_Vague_Date_End INTEGER,
+  Early_Vague_Date_Type VARCHAR(2) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Late_Vague_Date_Start INTEGER,
+  Late_Vague_Date_End INTEGER,
+  Late_Vague_Date_Type VARCHAR(2) COLLATE SQL_Latin1_General_CP1_CI_AS,
+)
+
+INSERT INTO #Main_Results
+SELECT      ITN2.Taxon_List_Item_Key,
+            ITN2.Sort_Order,
+            ITN2.Actual_Name + ISNULL(' ' + ITN2.Authority, '') AS Latin,
+            ITN2.Common_Name,
+            TG.Taxon_Group_Name,
+            Count(XO.Taxon_Occurrence_Key) AS [Total_Occurrences],
+            MIN(S.Vague_Date_Start) [Early_Vague_Date_Start],
+            MIN(S.Vague_Date_End) [Early_Vague_Date_End],
+            NULL AS [Early_Vague_Date_Type],
+            MAX(S.Vague_Date_End) [Late_Vague_Date_End],
+            MAX(S.Vague_Date_Start) [Late_Vague_Date_Start],
+            NULL AS [Late_Vague_Date_Type]
+FROM        Index_Taxon_Name ITN
+INNER JOIN  Index_Taxon_Name ITN2	ON
+            ITN2.Taxon_List_Item_Key = ITN.Recommended_Taxon_List_Item_Key AND
+            ITN2.system_supplied_data = 1
+INNER JOIN  Taxon_Determination TD ON
+            TD.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key AND
+            TD.Preferred=1
+INNER JOIN  Taxon_Occurrence XO ON
+            XO.Taxon_Occurrence_Key=TD.Taxon_Occurrence_Key
+INNER JOIN  [Sample] S ON
+            S.Sample_Key = XO.Sample_Key
+INNER JOIN  Taxon_List_Item TLI	ON
+            TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_KEy
+INNER JOIN  Taxon_Version TV ON
+            TV.Taxon_Version_Key=TLI.Taxon_Version_Key
+LEFT JOIN   Taxon_Group TG ON
+            TG.Taxon_Group_Key=TV.Output_Group_Key
+<Where keytype="Default">
+INNER JOIN  Location_Name LN ON
+            LN.Location_Key=S.Location_Key
+WHERE
+<Condition field="S.Location_Key" operator="equal" type="Location" name="Location:"/>
+GROUP BY ITN2.Taxon_List_Item_Key, ITN2.Sort_Order, ITN2.Actual_Name, ITN2.Authority, ITN2.Common_Name, TG.Taxon_Group_Name
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Early_Vague_Date_Start AND S.Vague_Date_End = Early_Vague_Date_End
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Late_Vague_Date_Start AND S.Vague_Date_End = Late_Vague_Date_End
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = 'DD'
+WHERE Early_Vague_Date_Type IS NULL
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = 'DD'
+WHERE Late_Vague_Date_Type IS NULL
+
+SELECT * FROM #Main_Results
+ORDER BY Sort_Order
+
+DROP TABLE #Main_Results
+</Where>
+
+<Where keytype="Sample">
+WHERE XO.Sample_Key='%s'
+
+GROUP BY ITN2.Taxon_List_Item_Key, ITN2.Sort_Order, ITN2.Actual_Name, ITN2.Authority, ITN2.Common_Name, TG.Taxon_Group_Name
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Early_Vague_Date_Start AND S.Vague_Date_End = Early_Vague_Date_End
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Late_Vague_Date_Start AND S.Vague_Date_End = Late_Vague_Date_End
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = 'DD'
+WHERE Early_Vague_Date_Type IS NULL
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = 'DD'
+WHERE Late_Vague_Date_Type IS NULL
+
+SELECT * FROM #Main_Results
+ORDER BY Sort_Order
+DROP TABLE #Main_Results
+</Where>
+
+<Where keytype="Event">
+WHERE S.Survey_Event_Key='%s'
+
+GROUP BY ITN2.Taxon_List_Item_Key, ITN2.Sort_Order, ITN2.Actual_Name, ITN2.Authority, ITN2.Common_Name, TG.Taxon_Group_Name
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Early_Vague_Date_Start AND S.Vague_Date_End = Early_Vague_Date_End
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Late_Vague_Date_Start AND S.Vague_Date_End = Late_Vague_Date_End
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = 'DD'
+WHERE Early_Vague_Date_Type IS NULL
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = 'DD'
+WHERE Late_Vague_Date_Type IS NULL
+
+SELECT * FROM #Main_Results
+ORDER BY Sort_Order
+DROP TABLE #Main_Results
+</Where>
+
+<Where keytype="Survey">
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key=S.Survey_Event_Key
+WHERE SE.Survey_Key='%s'
+
+GROUP BY ITN2.Taxon_List_Item_Key, ITN2.Sort_Order, ITN2.Actual_Name, ITN2.Authority, ITN2.Common_Name, TG.Taxon_Group_Name
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Early_Vague_Date_Start AND S.Vague_Date_End = Early_Vague_Date_End
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Late_Vague_Date_Start AND S.Vague_Date_End = Late_Vague_Date_End
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = 'DD'
+WHERE Early_Vague_Date_Type IS NULL
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = 'DD'
+WHERE Late_Vague_Date_Type IS NULL
+
+SELECT * FROM #Main_Results
+ORDER BY Sort_Order
+DROP TABLE #Main_Results
+</Where>
+
+<Where keytype="Location">
+WHERE S.Location_Key='%s'
+
+GROUP BY ITN2.Taxon_List_Item_Key, ITN2.Sort_Order, ITN2.Actual_Name, ITN2.Authority, ITN2.Common_Name, TG.Taxon_Group_Name
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Early_Vague_Date_Start AND S.Vague_Date_End = Early_Vague_Date_End
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Late_Vague_Date_Start AND S.Vague_Date_End = Late_Vague_Date_End
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = 'DD'
+WHERE Early_Vague_Date_Type IS NULL
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = 'DD'
+WHERE Late_Vague_Date_Type IS NULL
+
+SELECT * FROM #Main_Results
+ORDER BY Sort_Order
+
+DROP TABLE #Main_Results
+</Where>
+
+<Where keytype="Name">
+INNER JOIN Sample_Recorder SR ON SR.Sample_Key=S.Sample_Key
+INNER JOIN Survey_Event_Recorder SER ON SER.SE_Recorder_Key=SR.SE_Recorder_Key
+WHERE SER.Name_Key='%s'
+
+GROUP BY ITN2.Taxon_List_Item_Key, ITN2.Sort_Order, ITN2.Actual_Name, ITN2.Authority, ITN2.Common_Name, TG.Taxon_Group_Name
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Early_Vague_Date_Start AND S.Vague_Date_End = Early_Vague_Date_End
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = Vague_Date_Type
+FROM--
+  [Sample] S
+WHERE S.Vague_Date_Start = Late_Vague_Date_Start AND S.Vague_Date_End = Late_Vague_Date_End
+
+UPDATE #Main_Results
+SET Early_Vague_Date_Type = 'DD'
+WHERE Early_Vague_Date_Type IS NULL
+
+UPDATE #Main_Results
+SET Late_Vague_Date_Type = 'DD'
+WHERE Late_Vague_Date_Type IS NULL
+
+SELECT * FROM #Main_Results
+ORDER BY Sort_Order
+
+DROP TABLE #Main_Results
+</Where>
+</SQL>
+<Columns>
+<Column name="Taxon_List_Item_Key" tablename="Taxon" visible="False" />
+<Column name="Sort_Order" visible="False" />
+<Column name="Latin" position="1" caption="Formal Name" keycolumn="Taxon_List_Item_Key" width="300"/>
+<Column name="Common_Name" position="2" caption="Common Name" width="160" keycolumn="Taxon_List_Item_Key"/>
+<Column name="Early_Vague_Date_Start" position="3" caption="Earliest Record" width="100"/>
+<Column name="Late_Vague_Date_Start" position="4" caption="Latest Record" width="100"/>
+<Column name="Total_Occurrences" position="5" caption="Total" width="40"/>
+<Column name="Taxon_Group_Name" position="6" caption="Group" keycolumn="Taxon_List_Item_Key" />
+</Columns>
+</CustomReport>

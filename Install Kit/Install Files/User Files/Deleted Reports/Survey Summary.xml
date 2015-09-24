@@ -1,0 +1,20 @@
+<?xml version="1.0" ?> 
+<CustomReport menupath="Redundant Reports" title="Survey Summary Report" description="
+Please delete file 'Survey Summary.xml' from your Recorder user\reports folder
+It has been replaced by a report 5Y1 in System reports/Statistical Report.   
+"> 
+<SQL>
+
+<Where keytype="Default">
+  Select Distinct 'Please delete this report' as Message From setting
+
+</Where>
+
+
+
+</SQL>
+<Columns>
+
+</Columns>
+</CustomReport>
+

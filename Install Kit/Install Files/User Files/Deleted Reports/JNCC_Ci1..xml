@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<!-- Records within a circle of defined radius and centre
+  
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 4 - April 17 2009
+     MenuPath and user_survey_restriction
+
+ -->
+     		
+<CustomReport menupath="Redundant Reports" 
+title="Ci1 Records within circle " 
+description="Please delete file 'Record count.xml' from your Recorder user\reports folder
+It has been replaced by a report of the same name in Geographic Area/Location Reports\Circle Reports" 
+ >
+
+
+<SQL>
+	
+
+<Where keytype="default">
+ Select Distinct 'Please delete this report' as Message From setting
+  
+ 
+
+
+ </Where>
+
+
+
+</SQL>
+<Columns>
+
+</Columns>
+</CustomReport>

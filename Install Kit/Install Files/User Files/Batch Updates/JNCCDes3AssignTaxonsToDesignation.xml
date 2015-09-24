@@ -1,0 +1,105 @@
+<?xml version="1.0" ?> 
+<!-- 	JNCC Uses a csv file containing a list of taxon_list_item_keys and assigns them all a designation.
+
+	 Outstanding issues 10/06/09:
+	 - SW couldn't make the RAISERROR work?
+
+	Version 1 - Mike Weidelli (Littlefield)
+	Version 2 - 27 April 2009  Steve Wilkinson - edited menu path
+
+ --> 
+<batchupdate menupath="System Supplied\Designations" title="Des3 Assigns Taxons to a designation (using csv file)"
+	description="Uses a CSV file containing a list of taxon list item keys to assign them all to a designation. The first column in the file should contain a list of taxon_list_item_keys with a header row labelling the column with 'Taxon_List_Item_Key'" >
+<CSVTables>
+	<CSVTable name = "#Taxon_List_Item">
+		<CSVFile description = "Taxon List Items" />
+		<CSVColumn name = "Taxon_List_Item_Key" datatype = "char" size = "16" />
+	</CSVTable>
+</CSVTables>
+<SQL>
+<Where keytype="Default">
+	DECLARE @Taxon_Designation_Key			CHAR(16),		
+			@Date							DATETIME,		
+			@Taxon_Designation_Type_Key		CHAR(16),		
+			@Taxon_List_Item_Key			CHAR(16),
+			@UserID							CHAR(16),		
+			@Custodian						CHAR(8)			
+	
+	SET		@Date	=	GETDATE()
+	
+	/*	Obtain user id. Assumes most recent active session with System Manager rights is the one making the request 
+			(doesn't seem to be a better way). */
+	SELECT	@UserID 	=	S.User_Name_Key
+	FROM	Session	S
+	INNER JOIN	"User"	U	ON	S.User_Name_Key	=	U.Name_Key
+	WHERE	GetDate()	>=	Date_Time_Start
+	AND		S.Date_Time_End IS NULL
+	AND		U.Security_Level	=	5	-- System manager
+	ORDER BY S.Date_Time_Start DESC
+	
+	SET		@Taxon_Designation_Type_Key = NULL
+	
+	SELECT	@Taxon_Designation_Type_Key = Taxon_Designation_Type_Key
+	FROM	Taxon_Designation_Type
+	WHERE	<Condition name="Designation Type Key" field="Taxon_Designation_Type_Key" operator="equal" type="text" /> 
+	
+	IF	@Taxon_Designation_Type_Key IS NULL
+		RAISERROR	('Taxon Designation Type not found.', 10, 0)
+	ELSE
+	BEGIN
+	
+		DECLARE	TLI_Cursor CURSOR FOR 
+		(	
+			SELECT	Taxon_List_Item_Key
+			FROM	#Taxon_List_Item
+		)
+
+		OPEN	TLI_Cursor
+		
+		FETCH NEXT FROM TLI_Cursor
+		INTO	@Taxon_List_Item_Key
+
+		-- Loops through the list of taxon list items and adds designations for them.
+		WHILE @@FETCH_STATUS = 0
+		BEGIN
+			IF NOT EXISTS(	SELECT	1 
+							FROM	Taxon_Designation 
+							WHERE	Taxon_Designation_Type_Key	=	@Taxon_Designation_Type_Key
+								AND	Taxon_List_Item_Key			=	@Taxon_List_Item_Key		)
+			BEGIN
+				EXECUTE spNextKey 'Taxon_Designation', @Taxon_Designation_Key OUTPUT
+						
+				SET		@Custodian = LEFT(@Taxon_Designation_Key, 8 )
+				
+				INSERT INTO Taxon_Designation	(
+						Taxon_Designation_Key,
+						Date_From,
+						Taxon_Designation_Type_Key,
+						Taxon_List_Item_Key,
+						Status_Exclusion,
+						Entered_By,
+						Entry_Date,
+						System_Supplied_Data,
+						Custodian	)
+				VALUES (@Taxon_Designation_Key,
+						@Date,
+						@Taxon_Designation_Type_Key,
+						@Taxon_List_Item_Key,
+						0,
+						@UserID,
+						@Date,
+						0,
+						@Custodian	)
+			END
+			
+			FETCH NEXT FROM TLI_Cursor
+			INTO	@Taxon_List_Item_Key
+		END
+		
+		CLOSE		TLI_Cursor
+		DEALLOCATE	TLI_Cursor
+	END
+	
+</Where>
+</SQL>
+</batchupdate>

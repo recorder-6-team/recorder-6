@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Lists the Measurement Qualifier used on records
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014  
+
+   
+            
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Information"  title="H8 - Measurement Qualifier used on records" 
+description="List of Measurement Qualifier used on records.
+" >
+
+<SQL>
+
+<Where keytype="Default">
+SELECT DISTINCT
+MT.Measurement_Type_key, 
+MT.Short_Name as Measurement_Type,
+MQ.Measurement_Qualifier_key,
+MQ.Short_Name as Measurement_Qualifier
+
+
+FROM
+Taxon_Occurrence_Data TOCCD
+INNER JOIN 
+Measurement_Qualifier MQ
+ON TOCCD.Measurement_Qualifier_Key = MQ.Measurement_Qualifier_Key
+INNER JOIN
+Measurement_Type MT
+ON MQ.Measurement_Type_key = MT.Measurement_Type_key
+INNER JOIN
+Measurement_Unit MU
+ON
+MU.Measurement_Type_key = MT.Measurement_Type_key
+
+
+
+</Where>
+
+<OutputTableOrderby name="Default" SQL="Measurement_Type, Measurement_Qualifier"/>
+
+</SQL>
+<Columns>
+ 
+ 
+</Columns>
+</CustomReport>

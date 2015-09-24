@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+
+<!-- Count of the number of taxon occurrence measurements per Data Accuracy combination
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert
+     Version 1, 22 February 2011
+     Version 2, 5 May 2011. Modified to display NULL as NULL
+--> 
+
+<CustomReport menupath="System Supplied\Problem Identification" title="TOcc. Meas. Data Accuracy Count" description="Counts the number of taxon occurrence measurements per Data Accuracy combination">
+
+<SQL>
+
+<Where Keytype="Default">
+
+SELECT  Data, isnull(Accuracy,'NULL') as Accuracy, Count(Taxon_Occurrence_Data_Key) as CountOfTOccD_Key
+FROM Taxon_Occurrence_Data TOccD
+GROUP BY Data, isnull(TOccD.Accuracy,'NULL') 
+ORDER BY  Data 
+
+</Where>
+
+</SQL>
+
+</CustomReport>
+

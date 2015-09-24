@@ -1,0 +1,75 @@
+<?xml version="1.0" ?>
+
+<!-- JNCC Statistics 8: Number of species observations per taxon group per survey in polygon
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert, for JNCC
+      Version 5 - 28 November 2014
+   
+     QUICK REPORT - From Polygon on Map
+--> 
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Polygon Reports"  title="P8 No of sp obsv per taxon group per survey in polygon. Includes partial overlaps." description="Lists all taxon groups and surveys for which there are species observations in the selected polygon with the number of species observations for each combination. Includes grid references which only partially overlap the polygon." >
+
+<SQL>
+
+SELECT
+TV.Output_group_key, TG.Taxon_group_Name, TG.Sort_Order, 
+SV.Survey_key, SV.Item_name,
+Count(TOcc.Taxon_Occurrence_key) AS CountOfTOcc
+
+FROM Survey SV
+INNER JOIN Survey_Event SE on SE.Survey_key = SV.Survey_key
+INNER JOIN Sample S on S.Survey_event_key = SE.Survey_event_key
+INNER JOIN Taxon_Occurrence TOcc ON TOcc.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDet on TDet.Taxon_Occurrence_key = TOcc.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDet.Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
+LEFT JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
+
+<Where keytype="Default"> 
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+WHERE 
+USR.Name_Key IS NULL AND
+  
+<Condition field= "S.Sample_key" operator="equal"  type="SamplesinPolygon"  name="Select Polygon" includepartialoverlap="yes"/>
+AND 
+TDET.Preferred = 1
+GROUP BY TV.Output_group_key, TG.Taxon_group_Name, TG.Sort_Order, SV.Survey_key, SV.Item_name
+
+</Where>
+
+<Where keytype="SamplesinPolygon" includepartialoverlap="yes">
+
+
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+WHERE 
+USR.Name_Key IS NULL AND
+S.Sample_key  IN(%s)
+AND 
+TDET.Preferred = 1
+GROUP BY TV.Output_group_key, TG.Taxon_group_Name, TG.Sort_Order, SV.Survey_key, SV.Item_name
+
+</Where>
+
+<OutputTableOrderby name="by Taxon Group by Survey" SQL="Order By Sort_Order, Item_name"/>
+
+</SQL>
+
+<Columns>
+<Column name="Output_group_key" caption="Group key" width="120" position="1"/>
+<Column name="Sort_Order" caption="Sort order" width="80" position="2"/>
+<Column name="Taxon_group_Name" caption="Taxon group" width="200" position="3"/>
+<Column name="Survey_key" caption="Survey key" width="120" position="4"/>
+<Column name="Item_name" caption="Survey name" width="200" position="5"/>
+<Column name="CountOfTOCC" caption="No sp obsv" width="80" position="6"/>  
+</Columns>
+
+</CustomReport>

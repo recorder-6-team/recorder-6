@@ -1,0 +1,285 @@
+<?xml version="1.0" ?> 
+<!-- JNCC  Location Summary Repor
+     XML Report modified by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+    Version 5 - 28 Nov 2014 
+   
+     QUICK REPORT - Location
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Unchedked - By parameter
+     Invalid = By parameter	
+   
+ --> 
+
+<CustomReport  title="L5- Location Summary Report"  
+menupath="System Supplied\Geographic Area/Location Reports\Location hierarchy reports"
+description="Count of Taxon anf Biotope records for a Location includes sub-sites" >
+<SQL>
+<Where keytype="Default">
+CREATE TABLE #Location_Hierarchy (
+  Location_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Current_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,  
+  Hierarchy VARCHAR(4000) COLLATE SQL_Latin1_General_CP1_CI_AS
+)
+
+INSERT INTO #Location_Hierarchy (Location_Key, Current_Key, Hierarchy)
+SELECT L.Location_Key, L.Parent_Key, '' 
+FROM--
+	Location L
+INNER JOIN Location_Name LN ON
+	L.Location_Key = LN.Location_Key AND
+	LN.Preferred = 1
+WHERE 
+<Condition field="LN.Item_Name" operator="like" type="text" name="Location name"/> 
+
+WHILE @@ROWCOUNT > 0
+BEGIN
+  UPDATE #Location_Hierarchy
+  SET Current_Key = L.Parent_Key,  
+			Hierarchy = case when Hierarchy = '' then LN.Item_Name 
+									else SUBSTRING(LN.Item_Name + ' -> ' + Hierarchy, 1, 4000) end
+  FROM--
+		Location L  
+	INNER JOIN Location_Name LN ON 
+		LN.Location_Key = L.Location_Key AND
+		LN.Preferred = 1 
+	WHERE L.Location_Key = Current_Key
+END
+
+CREATE TABLE #Location_Children (  
+	Location_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,  
+	Parent_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,  
+	Child_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS
+)
+
+INSERT INTO #Location_Children (Location_Key, Parent_Key, Child_Key)
+SELECT LH.Location_Key, LH.Location_Key, L.Location_Key 
+FROM--
+	Location L 
+INNER JOIN #Location_Hierarchy LH ON 
+	LH.Location_Key = L.Parent_Key
+
+WHILE @@ROWCOUNT > 0
+BEGIN
+  INSERT INTO #Location_Children (Location_Key, Parent_Key, Child_Key) 
+  SELECT LC.Location_Key, LC.Child_Key, L.Location_Key
+  FROM--
+		Location L 
+	INNER JOIN #Location_Children LC ON 
+		L.Parent_Key = LC.Child_Key
+  LEFT JOIN #Location_Children LC2 ON 
+		LC.Child_Key = LC2.Parent_Key AND 
+		LC.Location_Key = LC2.Location_Key
+  WHERE LC2.Location_Key IS NULL
+END
+
+SELECT L.[Description], D.* 
+FROM
+(
+SELECT L.Location_Key AS Location_Key, 
+				LN.Item_Name AS Location_Name, 
+				LT.Short_Name AS Location_Type,
+				LH.Hierarchy AS Hierarchy, 
+				COUNT(DISTINCT TLIP.Taxon_Version_Key) AS Species_Records, 
+				COUNT(DISTINCT BD.Biotope_List_Item_Key) AS Habitat_Records
+/**/FROM/**/
+	Location_Name LN
+INNER JOIN Location L ON L.Location_Key = LN.Location_Key AND LN.Preferred = 1
+INNER JOIN Location_Type LT ON L.Location_Type_Key = LT.Location_Type_Key
+INNER JOIN #Location_Hierarchy LH ON LH.Location_Key = L.Location_Key 
+LEFT JOIN #Location_Children LC ON LC.Location_Key = L.Location_Key
+LEFT JOIN [Sample] S ON S.Location_Key = LC.Child_Key OR S.Location_Key = L.Location_Key 
+LEFT JOIN Taxon_Occurrence XO ON XO.Sample_Key = S.Sample_Key
+LEFT JOIN Taxon_Determination XD ON XD.Taxon_Occurrence_Key=XO.Taxon_Occurrence_Key
+	AND XD.Preferred=1
+LEFT JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=XD.Taxon_List_Item_Key
+LEFT JOIN Taxon_List_Item TLIP ON TLIP.Taxon_List_Item_Key=TLI.Preferred_Name
+LEFT JOIN Biotope_Occurrence BO ON BO.Sample_Key = S.Sample_Key 
+LEFT JOIN Biotope_Determination BD ON BD.Biotope_Occurrence_Key=BO.Biotope_Occurrence_Key
+GROUP BY L.Location_Key, LN.Item_Name, LT.Short_Name, LH.Hierarchy
+) AS D INNER JOIN Location L ON L.Location_Key = D.Location_Key
+DROP TABLE #Location_Hierarchy
+DROP TABLE #Location_Children
+
+
+</Where>
+
+<Where keytype="Location">
+CREATE TABLE #Location_Hierarchy (
+  Location_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Current_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,  
+  Hierarchy VARCHAR(4000) COLLATE SQL_Latin1_General_CP1_CI_AS
+)
+
+INSERT INTO #Location_Hierarchy (Location_Key, Current_Key, Hierarchy)
+SELECT L.Location_Key, L.Parent_Key, '' 
+FROM--
+	Location L 
+WHERE L.Location_Key = '%s'
+
+WHILE @@ROWCOUNT > 0
+BEGIN
+  UPDATE #Location_Hierarchy
+  SET Current_Key = L.Parent_Key,  
+			Hierarchy = case when Hierarchy = '' then LN.Item_Name 
+									else SUBSTRING(LN.Item_Name + ' -> ' + Hierarchy, 1, 4000) end
+  FROM--
+		Location L  
+	INNER JOIN Location_Name LN ON 
+		LN.Location_Key = L.Location_Key AND
+		LN.Preferred = 1 
+	WHERE L.Location_Key = Current_Key
+END
+
+CREATE TABLE #Location_Children (  
+	Location_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,  
+	Parent_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,  
+	Child_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS
+)
+
+INSERT INTO #Location_Children (Location_Key, Parent_Key, Child_Key)
+SELECT LH.Location_Key, LH.Location_Key, L.Location_Key 
+FROM--
+	Location L 
+INNER JOIN #Location_Hierarchy LH ON 
+	LH.Location_Key = L.Parent_Key
+
+WHILE @@ROWCOUNT > 0
+BEGIN
+  INSERT INTO #Location_Children (Location_Key, Parent_Key, Child_Key) 
+  SELECT LC.Location_Key, LC.Child_Key, L.Location_Key
+  FROM--
+		Location L 
+	INNER JOIN #Location_Children LC ON 
+		L.Parent_Key = LC.Child_Key
+  LEFT JOIN #Location_Children LC2 ON 
+		LC.Child_Key = LC2.Parent_Key AND 
+		LC.Location_Key = LC2.Location_Key
+  WHERE LC2.Location_Key IS NULL
+END
+
+SELECT L.[Description], D.* 
+FROM 
+(
+SELECT L.Location_Key AS Location_Key, 
+				LN.Item_Name AS Location_Name, 
+				LT.Short_Name AS Location_Type,
+				LH.Hierarchy AS Hierarchy, 
+				COUNT(DISTINCT TLIP.Taxon_Version_Key) AS Species_Records, 
+				COUNT(DISTINCT BD.Biotope_List_Item_Key) AS Habitat_Records
+/**/FROM/**/
+	Location_Name LN
+INNER JOIN Location L ON L.Location_Key = LN.Location_Key AND LN.Preferred = 1
+INNER JOIN Location_Type LT ON L.Location_Type_Key = LT.Location_Type_Key
+INNER JOIN #Location_Hierarchy LH ON LH.Location_Key = L.Location_Key 
+LEFT JOIN #Location_Children LC ON LC.Location_Key = L.Location_Key
+LEFT JOIN [Sample] S ON S.Location_Key = LC.Child_Key OR S.Location_Key = L.Location_Key 
+LEFT JOIN Taxon_Occurrence XO ON XO.Sample_Key = S.Sample_Key
+LEFT JOIN Taxon_Determination XD ON XD.Taxon_Occurrence_Key=XO.Taxon_Occurrence_Key
+	AND XD.Preferred=1
+LEFT JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=XD.Taxon_List_Item_Key
+LEFT JOIN Taxon_List_Item TLIP ON TLIP.Taxon_List_Item_Key=TLI.Preferred_Name
+LEFT JOIN Biotope_Occurrence BO ON BO.Sample_Key = S.Sample_Key 
+LEFT JOIN Biotope_Determination BD ON BD.Biotope_Occurrence_Key=BO.Biotope_Occurrence_Key
+GROUP BY L.Location_Key, LN.Item_Name, LT.Short_Name, LH.Hierarchy
+) AS D INNER JOIN Location L ON L.Location_Key = D.Location_Key
+DROP TABLE #Location_Hierarchy
+DROP TABLE #Location_Children
+</Where>
+
+<Where keytype="Survey">
+CREATE TABLE #Location_Hierarchy (
+  Location_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Current_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,  
+  Hierarchy VARCHAR(4000) COLLATE SQL_Latin1_General_CP1_CI_AS
+)
+
+INSERT INTO #Location_Hierarchy (Location_Key, Current_Key, Hierarchy)
+SELECT L.Location_Key, L.Parent_Key, '' 
+FROM--
+	Location L
+INNER JOIN Survey_Event SE ON SE.Location_Key = L.Location_Key
+WHERE SE.Survey_Key = '%s'
+
+WHILE @@ROWCOUNT > 0
+BEGIN
+  UPDATE #Location_Hierarchy
+  SET Current_Key = L.Parent_Key,  
+			Hierarchy = case when Hierarchy = '' then LN.Item_Name 
+									else SUBSTRING(LN.Item_Name + ' -> ' + Hierarchy, 1, 4000) end
+  FROM--
+		Location L  
+	INNER JOIN Location_Name LN ON 
+		LN.Location_Key = L.Location_Key AND
+		LN.Preferred = 1 
+	WHERE L.Location_Key = Current_Key
+END
+
+CREATE TABLE #Location_Children (  
+	Location_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,  
+	Parent_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,  
+	Child_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS
+)
+
+INSERT INTO #Location_Children (Location_Key, Parent_Key, Child_Key)
+SELECT LH.Location_Key, LH.Location_Key, L.Location_Key 
+FROM--
+	Location L 
+INNER JOIN #Location_Hierarchy LH ON 
+	LH.Location_Key = L.Parent_Key
+
+WHILE @@ROWCOUNT > 0
+BEGIN
+  INSERT INTO #Location_Children (Location_Key, Parent_Key, Child_Key) 
+  SELECT LC.Location_Key, LC.Child_Key, L.Location_Key
+  FROM--
+		Location L 
+	INNER JOIN #Location_Children LC ON 
+		L.Parent_Key = LC.Child_Key
+  LEFT JOIN #Location_Children LC2 ON 
+		LC.Child_Key = LC2.Parent_Key AND 
+		LC.Location_Key = LC2.Location_Key
+  WHERE LC2.Location_Key IS NULL
+END
+
+SELECT L.[Description], D.* 
+FROM 
+(
+SELECT L.Location_Key AS Location_Key, 
+				LN.Item_Name AS Location_Name, 
+				LT.Short_Name AS Location_Type,
+				LH.Hierarchy AS Hierarchy, 
+				COUNT(DISTINCT TLIP.Taxon_Version_Key) AS Species_Records, 
+				COUNT(DISTINCT BD.Biotope_List_Item_Key) AS Habitat_Records 
+/**/FROM/**/
+	Location_Name LN
+INNER JOIN Location L ON L.Location_Key = LN.Location_Key AND LN.Preferred = 1
+INNER JOIN Location_Type LT ON L.Location_Type_Key = LT.Location_Type_Key
+INNER JOIN #Location_Hierarchy LH ON LH.Location_Key = L.Location_Key 
+LEFT JOIN #Location_Children LC ON LC.Location_Key = L.Location_Key
+LEFT JOIN [Sample] S ON S.Location_Key = LC.Child_Key OR S.Location_Key = L.Location_Key 
+LEFT JOIN Taxon_Occurrence XO ON XO.Sample_Key = S.Sample_Key
+LEFT JOIN Taxon_Determination XD ON XD.Taxon_Occurrence_Key=XO.Taxon_Occurrence_Key
+	AND XD.Preferred=1
+LEFT JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=XD.Taxon_List_Item_Key
+LEFT JOIN Taxon_List_Item TLIP ON TLIP.Taxon_List_Item_Key=TLI.Preferred_Name
+LEFT JOIN Biotope_Occurrence BO ON BO.Sample_Key = S.Sample_Key 
+LEFT JOIN Biotope_Determination BD ON BD.Biotope_Occurrence_Key=BO.Biotope_Occurrence_Key
+GROUP BY L.Location_Key, LN.Item_Name, LT.Short_Name, LH.Hierarchy
+) AS D INNER JOIN Location L ON L.Location_Key = D.Location_Key
+DROP TABLE #Location_Hierarchy
+DROP TABLE #Location_Children
+</Where>
+
+</SQL>
+<Columns>
+<Column name="Location_Key" tablename="Location" visible="False" />
+<Column name="Location_Name" position="1" caption="Location" keycolumn="Location_Key" width="150"/>
+<Column name="Location_Type" position="2" caption="Type" width="80"/>
+<Column name="Hierarchy" position="3" caption="Site Hierarchy" width="200"/>
+<Column name="Description" position="4" caption="Description" width="200"/>
+<Column name="Species_Records" position="5" caption="No. Species" width="80"/>
+<Column name="Habitat_Records" position="6" caption="No. Biotopes" width="80"/>
+</Columns>
+</CustomReport>

@@ -1,0 +1,46 @@
+<?xml version='1.0' ?>
+
+
+<!-- Dictionary Report
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 23 Nov 2014 
+      
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="IW3-Location Matching" menupath="System Supplied\Import Wizard"  
+description="List the entries in the Import Wizard matching table for locations." >
+
+
+
+<SQL>
+
+
+<Where keytype="Default">
+   
+Select IWN.Matched_Value as Location_Input, L.Location_Key, LN.Item_Name as Location_Output  
+FROM IW_Matched_Locations IWN INNER JOIN   
+Location L ON L.Location_Key = IWN.Matched_Key 
+INNER Join Location_Name LN ON LN.Location_Key = L.Location_Key and LN.Preferred = 1
+
+
+
+</Where>
+
+
+<OutputTableOrderby name="by default" SQL="ORDER BY Location_Input"/>
+
+</SQL>
+
+<Columns>
+  <Column name="Location_Input" width="250" position="1"  /> 
+  <Column name="Location_Key" width="100" position="2"  /> 
+  <Column name="Location_Output" width="250" position="3"  /> 
+ 
+</Columns>
+
+</CustomReport>

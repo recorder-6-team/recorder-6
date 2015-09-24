@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+
+<!-- Inserts a location name for locations where it is missing
+            
+     XML Batch Update by Sally Rankin, JNCC Recorder Approved Expert
+     Version 1, October 5 2010
+     Designed for use when locations have no location name, probably due to system crashes, power cuts or bugs in earlier versions of the system. The front end should not allow this situation to arise.
+--> 
+ 
+<batchupdate menupath="System Supplied\Problem Correction" title="Insert location names" description="Inserts location names for locations in the custody of the database on which the batch update is run when none are present. The name inserted will be the location key which should be changed in Recorder 6 later.">
+
+<SQL>
+
+<Where keytype="Default">
+
+DECLARE
+@Location_Key char(16),
+@Location_Name_Key char(16),
+@Entered_By char(16),
+@Entry_Date datetime,
+@Changed_By char(16),
+@Changed_Date datetime,
+@Custodian char(8)
+
+SET @Changed_By = (SELECT Name_key FROM Name WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID" operator="equal"/>)
+SET @Changed_Date = GETDATE()
+SET @Custodian = (SELECT Data FROM Setting WHERE Name = 'SITEID')
+
+CREATE TABLE #LocTemp (Location_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+Entered_By char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, 
+Entry_Date datetime)
+INSERT INTO #LocTemp (Location_Key, Entered_By, Entry_Date)
+SELECT L.Location_Key, L.Entered_By, L.Entry_Date 
+FROM Location L 
+WHERE NOT EXISTS (SELECT * FROM Location_name LN 
+WHERE LN.Location_key = L.Location_key) and L.Custodian = @Custodian
+
+DECLARE LocTemp_Cursor CURSOR FOR 
+(SELECT Location_Key, Entered_By, Entry_Date FROM #LocTemp)
+OPEN LocTemp_Cursor
+FETCH NEXT FROM LocTemp_Cursor
+INTO @Location_Key,@Entered_By, @Entry_Date 
+WHILE @@FETCH_STATUS = 0
+BEGIN
+EXECUTE spNextKey 'Location_Name', @Location_Name_Key OUTPUT
+
+INSERT INTO Location_Name (Location_Name_Key, Item_Name, Preferred, Location_Key,
+Entered_By, Entry_Date, Changed_By, Changed_Date, Custodian)
+VALUES (@Location_Name_Key, @Location_Key, 1, @Location_Key,
+@Entered_By, @Entry_Date, @Changed_By, @Changed_Date, @Custodian) 
+
+FETCH NEXT FROM LocTemp_Cursor
+INTO @Location_Key,@Entered_By, @Entry_Date 
+END
+
+CLOSE LocTemp_Cursor
+DEALLOCATE LocTemp_Cursor
+DROP TABLE #LocTemp
+
+</Where>
+</SQL>
+</batchupdate>

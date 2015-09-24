@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<!-- FIND PREFERRED TAXON NAME & KEY
+     XML Report by Charles Roper of the Sussex Biodiversity Record Centre
+     http://www.sxbrc.org.uk/
+     Version 1.1 - 20/09/2006 -->
+<CustomReport  title="Find preferred &lt;taxon&gt; name and key V06-12" 
+description="Please delete file name 'Find preferred taxon name.xml' from your Recorder user\reports folder. A report of the same name which replaces
+this can be found in System Reports/Information" menupath="Redundant Reports">
+<SQL>
+<Where keytype="Default">
+
+Select distinct 'Please delete this report' as Message FROM Setting
+
+</Where>
+
+
+</SQL>
+
+
+<Columns>
+
+</Columns>
+</CustomReport>

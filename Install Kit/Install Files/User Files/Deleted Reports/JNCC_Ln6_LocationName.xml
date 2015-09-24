@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC  Records for selected Sample Location Name with Designations 
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 3 - 14 May 2008  
+
+   
+     QUICK REPORT - Not implemented
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Validated - By parameter
+     Invalid = By parameter	
+   
+ --> 
+
+
+ 
+ 
+<CustomReport menupath="Redundant Reports"  title="Ln6 Location Name Report (Inc. Designated Y/N)" 
+description="Please delete file JNCC_Ln6_LocationName.xml' from  recorder user/reports folder. Similar functionaity is now performed by LN2 and LN3" >
+
+<SQL>
+
+SELECT DISTINCT 'Please delete this report' as Message  From setting
+
+<Where keytype="Default">
+
+
+
+
+
+
+</Where>
+
+   </SQL>
+
+ 
+</CustomReport>

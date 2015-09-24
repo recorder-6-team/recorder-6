@@ -1,0 +1,220 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC  Biotopes associated with specified taxa
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 November 2014
+     Menupath and user_Survey_Restriction  
+
+   
+     QUICK REPORT Dictionary
+    
+   
+ --> 
+
+
+<CustomReport  title="T07-Habitats Associated with Specified Taxa " menupath="System Supplied\Taxon restricted reports\Taxon"  
+description="Lists habitats associated with the selected Taxa. 
+
+" >
+
+
+<SQL>
+<Where keytype="Default">
+
+
+
+
+
+SELECT DISTINCT ITN3.Actual_Name,
+BC.Short_Name,B.Original_Code,B.Short_Term,dbo.ufn_HtmlToPlainText(B.Full_Term) as FullTerm,
+
+'Common_Name' = 
+CASE
+          WHEN ITN3.Actual_Name =  ITN3.Common_Name THEN NULL
+          ELSE ITN3.Common_Name
+
+END 
+
+FROM 
+Index_Taxon_Name ITN
+INNER JOIN
+Index_taxon_Name ITN2 
+ON ITN.Recommended_taxon_List_Item_Key = ITN2.Recommended_taxon_List_Item_Key  
+INNER JOIN
+Taxon_Determination TDET
+ON TDET.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key
+INNER JOIN
+Index_Taxon_Name ITN3
+ON ITN3.Taxon_LIST_Item_Key = ITN.Recommended_taxon_List_Item_Key
+INNER JOIN 
+Taxon_Occurrence TOCC
+ON TOCC.Taxon_Occurrence_Key = TDET.Taxon_Occurrence_Key
+INNER JOIN
+SAMPLE S 
+ON S.Sample_Key = TOCC.Sample_Key
+INNER JOIN
+SAMPLE S2
+ON S2.Sample_Key = S.Sample_Key
+INNER JOIN 
+Biotope_Occurrence BOCC
+ON BOCC.sample_Key = S2.Sample_Key
+INNER JOIN BIOTOPE_DETERMINATION BDET
+ON BDET.Biotope_Occurrence_Key = BOCC.Biotope_Occurrence_Key
+INNER JOIN 
+Biotope_List_Item BLI 
+ON BLI.Biotope_List_Item_Key = BDET.Biotope_List_Item_Key
+INNER JOIN
+BIOTOPE B 
+ON B.Biotope_Key = BLI.BIOTOPE_KEY
+INNER JOIN
+Biotope_Classification_Version BCV
+ON BCV.BT_CL_Version_Key = BLI.BT_CL_Version_Key
+INNER JOIN
+Biotope_Classification BC
+ON BC.Biotope_Classification_key = BCV.Biotope_Classification_key
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+WHERE
+
+USR.Name_Key IS NULL
+AND 
+
+<Condition field= "ITN2.Taxon_List_Item_Key" operator="equal" type="Taxon"  name="Select Taxon"  />
+
+AND
+
+ITN.System_Supplied_data = 1
+AND
+
+
+ITN2.System_Supplied_data = 1
+
+AND 
+
+TDET.Preferred = 1
+
+AND
+
+BDET.Preferred = 1
+
+order by ITN3.Actual_Name,BC.Short_Name,B.Original_Code,B.Short_Term
+
+</Where>
+
+<Where keytype="Taxon">
+
+
+
+
+
+SELECT DISTINCT ITN3.Actual_Name,
+BC.Short_Name,B.Original_Code,B.Short_Term,dbo.ufn_HtmlToPlainText(B.Full_Term) as FullTerm, 
+
+'Common_Name' = 
+CASE
+          WHEN ITN3.Actual_Name =  ITN3.Common_Name THEN NULL
+          ELSE ITN3.Common_Name
+
+END 
+
+FROM 
+Index_Taxon_Name ITN
+INNER JOIN
+Index_taxon_Name ITN2 
+ON ITN.Recommended_taxon_List_Item_Key = ITN2.Recommended_taxon_List_Item_Key  
+
+INNER JOIN
+Index_Taxon_Name ITN3
+ON ITN3.Taxon_LIST_Item_Key = ITN.Recommended_taxon_List_Item_Key
+INNER JOIN
+
+Taxon_Determination TDET
+ON TDET.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key
+INNER JOIN 
+Taxon_Occurrence TOCC
+ON TOCC.Taxon_Occurrence_Key = TDET.Taxon_Occurrence_Key
+INNER JOIN
+SAMPLE S 
+ON S.Sample_Key = TOCC.Sample_Key
+INNER JOIN
+SAMPLE S2
+ON S2.Sample_Key = S.Sample_Key
+INNER JOIN 
+Biotope_Occurrence BOCC
+ON BOCC.sample_Key = S2.Sample_Key
+INNER JOIN BIOTOPE_DETERMINATION BDET
+ON BDET.Biotope_Occurrence_Key = BOCC.Biotope_Occurrence_Key
+INNER JOIN 
+Biotope_List_Item BLI 
+ON BLI.Biotope_List_Item_Key = BDET.Biotope_List_Item_Key
+INNER JOIN
+BIOTOPE B 
+ON B.Biotope_Key = BLI.BIOTOPE_KEY
+INNER JOIN
+Biotope_Classification_Version BCV
+ON BCV.BT_CL_Version_Key = BLI.BT_CL_Version_Key
+INNER JOIN
+Biotope_Classification BC
+ON BC.Biotope_Classification_key = BCV.Biotope_Classification_key
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+
+WHERE
+
+USR.Name_Key IS NULL
+
+AND
+
+ITN2.Taxon_List_Item_Key ='%s'
+
+
+AND
+
+ITN.System_Supplied_data = 1
+AND
+
+
+ITN2.System_Supplied_data = 1
+
+AND 
+
+TDET.Preferred = 1
+
+AND
+
+BDET.Preferred = 1
+
+
+</Where>
+
+<OutputTableOrderby name="by Taxanomic Order" SQL="Order By Actula_Name,short_Name,Original_Code,Short_Term "/>
+
+
+
+</SQL>
+<Columns>
+   <Column name="Actual_Name" width="200" position="1" caption="Scientific Name" /> 
+  <Column name="Common_Name" width="200" position="2" caption="Common Name" /> 
+  <Column name="Short_Name" width="200" position="3" caption="Classification" /> 
+  <Column name="Original_Code" width="100" position="4" caption="Code" /> 
+  <Column name="Short_Term" width="200" position="5" caption="Habitat (short term)" /> 
+  <Column name="Fullterm" width="300" position="6" caption="Habitat (full term)" /> 
+  
+ 
+
+  
+
+</Columns>
+</CustomReport>

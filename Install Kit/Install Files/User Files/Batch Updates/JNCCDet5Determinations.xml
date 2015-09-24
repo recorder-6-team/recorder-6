@@ -1,0 +1,389 @@
+<?xml version="1.0" ?> 
+<batchupdate menupath="System Supplied\Determination Updates" title="Det5 - Creates new Determination using original taxa " 
+description="Creates a new determination to the original taxa for a selected survey where the system custodian is not 
+the custodian of the current determination. Use on imported Surveys to create new determinations for validation or to change the taxa at a later stage. 
+Select the Survey by entering the Survey name or by running the report from the observation hierarchy as a quick update.">
+<SQL>
+
+<Where keytype="Default">
+DECLARE @Count INT,
+ @Key CHAR(16),
+ @Original_Key CHAR(16),
+ @Indicator integer,
+ @Determiner CHAR(16),
+ @Determination_Type CHAR(16),
+ @Determiner_Role CHAR(16),
+ @Entered_By CHAR (16),
+ @Custodian CHAR(8)  
+
+CREATE TABLE #JNCC_NEWDATA (Original_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,New_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,Indicator INT)
+
+
+SELECT @Determiner = Name_Key
+FROM 
+Individual I
+WHERE
+
+<Condition field= "I.Name_Key" operator="Equal" type="Individual"  name="Determiner"  />
+
+SELECT @Entered_By = Name_Key
+FROM
+Individual I
+WHERE
+<Condition field= "I.Name_Key" operator="Equal" type="Individual"  name="Entered By"  />
+
+SELECT  @Custodian = Data 
+FROM
+Setting 
+WHERE
+Name = 'SiteID'
+
+
+SELECT @Determination_type = Determination_Type_Key
+FROM
+Determination_Type DT
+WHERE
+<Condition field= "DT.Determination_Type_Key"  operator="Equal" type="OptionSet"  name="Determination Type"  >
+
+<Option name="Correct" value="'NBNSYS0000000012'" /> 
+<Option name="Considered Correct" value="'NBNSYS0000000007'" /> 
+<Option name="Considered Incorrect" value="'NBNSYS0000000008'" /> 
+<Option name="Incorrect" value="'NBNSYS0000000009'" /> 
+<Option name="Requires Confirmation" value="'NBNSYS0000000010'" /> 
+<Option name="Unconfirmed" value="'NBNSYS0000000011'" /> 
+
+</Condition>
+
+SELECT @Determiner_role = Determiner_role_Key
+FROM
+Determiner_role  DR
+WHERE
+<Condition field= "DR.Determiner_Role_Key"  operator="Equal" type="OptionSet"  name="Determiner Role"  >
+
+<Option name="Specialist" value="'NBNSYS0000000001'" /> 
+<Option name="Original Recorder" value="'NBNSYS0000000003'" /> 
+<Option name="County Recorder" value="'NBNSYS0000000004'" /> 
+
+</Condition>
+
+
+Insert Into #JNCC_NEWDATA (Original_Key,Indicator)
+SELECT DISTINCT
+
+TDET.Taxon_Determination_Key, 1 
+FROM
+Survey SV
+INNER JOIN
+Survey_Event SE
+ON
+SE.Survey_Key = SV.Survey_Key
+INNER JOIN
+Sample S
+ON 
+S.Survey_Event_Key = SE.Survey_Event_Key
+INNER JOIN
+Taxon_Occurrence TOCC
+ON 
+TOCC.Sample_Key = S.Sample_Key
+INNER JOIN
+Taxon_Determination TDET
+ON 
+TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key 
+
+WHERE
+TDET.Preferred = 1
+
+AND
+
+TDET.Custodian &#60;&#62; @Custodian
+
+AND
+
+Condition field= "SV.Survey_Key"  operator="Like" type="Text"  name="Survey Name (like)"  />
+
+
+
+SET @Count=@@ROWCOUNT
+
+   
+DECLARE csrEventOwner CURSOR
+           FOR
+           SELECT Original_Key, Indicator FROM
+           #JNCC_NewData 
+           OPEN csrEventOwner
+                      
+           FETCH NEXT FROM csrEventOwner INTO @Original_Key, @Indicator
+                     
+           WHILE @@FETCH_STATUS = 0
+           BEGIN     
+        	    EXEC spNextKey 'Taxon_Determination' , @Key OUTPUT
+			    UPDATE #JNCC_NewData
+				SET New_Key = @KEY
+				WHERE 
+				
+                Original_Key = @Original_Key 
+				AND 
+				Indicator = @Indicator
+                FETCH NEXT FROM csrEventOwner INTO @Original_Key, @Indicator
+		
+           END
+             
+       
+CLOSE csrEventOwner
+DEALLOCATE csrEventOwner
+
+
+
+InSERT INTO Taxon_Determination (Taxon_Determination_Key,Taxon_List_Item_Key,
+Taxon_Occurrence_Key,Vague_date_start,Vague_date_end,Vague_date_type,Preferred,
+Determiner,Determination_type_Key,Determiner_Role_Key,Entered_By)
+SELECT DISTINCT 
+J.New_Key,
+TDET.Taxon_List_Item_Key,
+TDET.Taxon_Occurrence_Key,
+CAST(GETDATE() AS INT) + 1,
+CAST(GETDATE() AS INT) + 1,
+'D',
+1,
+@Determiner,
+@Determination_Type,
+@Determiner_role,
+@Entered_By
+FROM
+#JNCC_NEWDATA J
+
+INNER JOIN
+Taxon_Determination TDET 
+ON TDET.Taxon_Determination_Key = J.Original_Key 
+
+
+UPDATE TOCC SET TOCC.Verified =  DT.Verified 
+FROM Taxon_Occurrence TOCC 
+INNER JOIN Taxon_Determination TDET 
+ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN Determination_Type DT 
+ON DT.Determination_type_key = TDET.Determination_type_key 
+INNER JOIN #JNCC_NEWDATA J 
+ON J.New_key = TDET.Taxon_Determination_Key
+
+UPDATE Taxon_Determination
+SET Preferred = 0 
+FROM
+Taxon_Determination TDET 
+INNER JOIN #JNCC_NEWDATA J
+ON
+J.Original_key = TDET.Taxon_Determination_Key
+
+ 
+SELECT 'Taxon_Occurrence' AS [TABLE], 
+	TDET.Taxon_Occurrence_Key   AS [KEY],
+	'Changed Taxon Occurrences with  added determinations' AS DESCRIPTION
+FROM #JNCC_NEWDATA J
+INNER JOIN Taxon_Determination TDET
+ON J.Original_Key = TDET.Taxon_Determination_Key
+
+SELECT @Count AS COUNT
+
+
+
+
+
+</Where>
+
+
+
+<Where keytype="Survey">
+DECLARE @Count INT,
+ @Key CHAR(16),
+ @Original_Key CHAR(16),
+ @Indicator integer,
+ @Determiner CHAR(16),
+ @Determination_Type CHAR(16),
+ @Determiner_Role CHAR(16),
+ @Entered_By CHAR (16),
+ @Custodian CHAR(8)  
+
+CREATE TABLE #JNCC_NEWDATA (Original_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,New_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,Indicator INT)
+
+
+SELECT @Determiner = Name_Key
+FROM 
+Individual I
+WHERE
+
+<Condition field= "I.Name_Key" operator="Equal" type="Individual"  name="Determiner"  />
+
+SELECT @Entered_By = Name_Key
+FROM
+Individual I
+WHERE
+<Condition field= "I.Name_Key" operator="Equal" type="Individual"  name="Entered By"  />
+
+SELECT  @Custodian = Data 
+FROM
+Setting 
+WHERE
+Name = 'SiteID'
+
+
+SELECT @Determination_type = Determination_Type_Key
+FROM
+Determination_Type DT
+WHERE
+<Condition field= "DT.Determination_Type_Key"  operator="Equal" type="OptionSet"  name="Determination Type"  >
+
+<Option name="Correct" value="'NBNSYS0000000012'" /> 
+<Option name="Considered Correct" value="'NBNSYS0000000007'" /> 
+<Option name="Considered Incorrect" value="'NBNSYS0000000008'" /> 
+<Option name="Incorrect" value="'NBNSYS0000000009'" /> 
+<Option name="Requires Confirmation" value="'NBNSYS0000000010'" /> 
+<Option name="Unconfirmed" value="'NBNSYS0000000011'" /> 
+
+</Condition>
+
+SELECT @Determiner_role = Determiner_role_Key
+FROM
+Determiner_role  DR
+WHERE
+<Condition field= "DR.Determiner_Role_Key"  operator="Equal" type="OptionSet"  name="Determiner Role"  >
+
+<Option name="Specialist" value="'NBNSYS0000000001'" /> 
+<Option name="Original Recorder" value="'NBNSYS0000000003'" /> 
+<Option name="County Recorder" value="'NBNSYS0000000004'" /> 
+
+</Condition>
+
+
+Insert Into #JNCC_NEWDATA (Original_Key,Indicator)
+SELECT DISTINCT
+
+TDET.Taxon_Determination_Key, 1 
+FROM
+Survey SV
+INNER JOIN
+Survey_Event SE
+ON
+SE.Survey_Key = SV.Survey_Key
+INNER JOIN
+Sample S
+ON 
+S.Survey_Event_Key = SE.Survey_Event_Key
+INNER JOIN
+Taxon_Occurrence TOCC
+ON 
+TOCC.Sample_Key = S.Sample_Key
+INNER JOIN
+Taxon_Determination TDET
+ON 
+TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key 
+
+WHERE
+TDET.Preferred = 1
+
+AND
+
+TDET.Custodian &#60;&#62; @Custodian
+
+AND
+
+SV.Survey_Key = '%s'
+
+
+
+SET @Count=@@ROWCOUNT
+
+   
+DECLARE csrEventOwner CURSOR
+           FOR
+           SELECT Original_Key, Indicator FROM
+           #JNCC_NewData 
+           OPEN csrEventOwner
+                      
+           FETCH NEXT FROM csrEventOwner INTO @Original_Key, @Indicator
+                     
+           WHILE @@FETCH_STATUS = 0
+           BEGIN     
+        	    EXEC spNextKey 'Taxon_Determination' , @Key OUTPUT
+			    UPDATE #JNCC_NewData
+				SET New_Key = @KEY
+				WHERE 
+				
+                Original_Key = @Original_Key 
+				AND 
+				Indicator = @Indicator
+                FETCH NEXT FROM csrEventOwner INTO @Original_Key, @Indicator
+		
+           END
+             
+       
+CLOSE csrEventOwner
+DEALLOCATE csrEventOwner
+
+
+
+InSERT INTO Taxon_Determination (Taxon_Determination_Key,Taxon_List_Item_Key,
+Taxon_Occurrence_Key,Vague_date_start,Vague_date_end,Vague_date_type,Preferred,
+Determiner,Determination_type_Key,Determiner_Role_Key,Entered_By)
+SELECT DISTINCT 
+J.New_Key,
+TDET.Taxon_List_Item_Key,
+TDET.Taxon_Occurrence_Key,
+CAST(GETDATE() AS INT) + 1,
+CAST(GETDATE() AS INT) + 1,
+'D',
+1,
+@Determiner,
+@Determination_Type,
+@Determiner_role,
+@Entered_By
+FROM
+#JNCC_NEWDATA J
+
+INNER JOIN
+Taxon_Determination TDET 
+ON TDET.Taxon_Determination_Key = J.Original_Key 
+
+
+UPDATE TOCC SET TOCC.Verified =  DT.Verified 
+FROM Taxon_Occurrence TOCC 
+INNER JOIN Taxon_Determination TDET 
+ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN Determination_Type DT 
+ON DT.Determination_type_key = TDET.Determination_type_key 
+INNER JOIN #JNCC_NEWDATA J 
+ON J.New_key = TDET.Taxon_Determination_Key
+
+UPDATE Taxon_Determination
+SET Preferred = 0 
+FROM
+Taxon_Determination TDET 
+INNER JOIN #JNCC_NEWDATA J
+ON
+J.Original_key = TDET.Taxon_Determination_Key
+
+ 
+SELECT 'Taxon_Occurrence' AS [TABLE], 
+	TDET.Taxon_Occurrence_Key   AS [KEY],
+	'Changed Taxon Occurrences with  added determinations' AS DESCRIPTION
+FROM #JNCC_NEWDATA J
+INNER JOIN Taxon_Determination TDET
+ON J.Original_Key = TDET.Taxon_Determination_Key
+
+SELECT @Count AS COUNT
+
+DROP TABLE #JNCC_NEWDATA
+
+
+
+
+</Where>
+
+
+
+
+
+
+
+
+</SQL>
+</batchupdate>

@@ -1,0 +1,94 @@
+<?xml version="1.0" ?> 
+<batchupdate menupath="System Supplied\Determination Updates" title="Det3 - creates new Determination for specified taxa." 
+description="Changes the determination for a specified taxa. Choose the Taxa to be changed and the taxa for the new determination from the Dictionary.
+This update specifically works on the Taxon_List_Item_Key selected. It will be most useful if taxa are normally selected from just one list for example when moving User Added Taxa. 
+If the determination is in the ownership of the site then the determination is changed with only the date changed/changed by being updated.
+If the site does not own the record then a new determination is created using data from the original determination. ">
+<SQL>
+
+<Where keytype="Default">
+DECLARE @Count INT,
+ @Key CHAR(16),
+ @Original_Key CHAR(16),
+ @Indicator integer,
+ @OldTLI_Key CHAR(16),
+ @NewTLI_Key CHAR(16),
+ @Custodian CHAR(16),
+ @EnteredBy Char(16)
+ 
+SELECT  @Custodian = Data 
+FROM
+Setting 
+WHERE
+Name = 'SiteID'
+
+Set   <Condition field="@Enteredby" type="CurrentUserID" name="Current User ID"     operator="equal" /> 
+
+
+SELECT @OldTLI_key = TLI.Taxon_List_Item_Key
+From Taxon_List_Item TLI
+WHERE
+
+<Condition field= "TLI.Taxon_List_Item_Key"  operator="Equal" type="Taxon"  name="Taxon to Change" />
+
+SELECT @NewTLI_key = TLI.Taxon_List_Item_Key
+From Taxon_List_Item TLI
+WHERE
+<Condition field= "TLI.Taxon_List_Item_Key"  operator="Equal" type="Taxon"  name="Taxon for New Determination" />
+
+
+
+UPDATE Taxon_Determination  set Taxon_List_Item_Key = @NewTLI_Key, Changed_date =GetDate(), Changed_By =  @Enteredby From Taxon_Determination TDET 
+Where TDET.Taxon_List_Item_Key = @OldTLI_Key AND TDET.Custodian = @Custodian AND TDET.Preferred = 1
+
+   
+DECLARE csrEventOwner CURSOR
+           FOR
+           SELECT Taxon_Determination_Key FROM Taxon_Determination TDET WHERE TDET.Taxon_List_Item_Key = @OldTLI_Key and TDET.Custodian &#60;&#62; @Custodian AND TDET.Preferred = 1
+ 
+           OPEN csrEventOwner
+                      
+           FETCH NEXT FROM csrEventOwner INTO @Original_Key
+                     
+           WHILE @@FETCH_STATUS = 0
+           BEGIN     
+         	  EXEC spNextKey 'Taxon_Determination' , @Key OUTPUT
+ 
+                  INSERT INTO Taxon_Determination (Taxon_Determination_Key,Taxon_List_Item_Key,Taxon_Occurrence_Key,Vague_date_Start,Vague_Date_End,Vague_date_Type,Comment,
+                  Preferred,Determiner,Determination_Type_Key,Determiner_Role_Key,Entered_By,Entry_Date,Source_Key,Custodian)
+                  Select @key,@NewTLI_Key,TDET1.Taxon_Occurrence_Key,TDET1.Vague_date_Start,TDET1.Vague_date_End,
+                  TDET1.Vague_date_Type,TDET1.Comment,1,TDET1.Determiner,TDET1.Determination_Type_Key,TDET1.Determiner_Role_Key,
+                  @EnteredBy,GetDate(),TDET1.Source_Key,@Custodian From Taxon_Determination TDET1 WHERE TDET1.TAXON_Determination_kEY = @Original_Key 
+                 
+                 
+                  UPDATE Taxon_Determination Set Preferred = 0 where Taxon_Determination_Key = @Original_Key 
+
+
+                  FETCH NEXT FROM csrEventOwner INTO @Original_Key
+          END
+             
+       
+CLOSE csrEventOwner
+DEALLOCATE csrEventOwner
+
+
+
+
+
+
+</Where>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</SQL>
+</batchupdate>

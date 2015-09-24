@@ -1,0 +1,144 @@
+<?xml version="1.0" ?> 
+<!-- COUNT OF RECORDS ENTERED WITHIN A DATE RANGE
+     XML Original report by Dorset Software, display of months amended by Mathew McLoughlin, BRC.
+     User_Survey_Restriction by Lc 
+     Version 5 - 28 November 2014
+-->
+<CustomReport menupath="System Supplied\Taxon restricted reports\Taxon" title="T6-Maximum Species Abundance by Month V07-07" description="Displays the maximum recorded abundance for a given species by month.
+Please enter the following parameters to filter the report:"> 
+<SQL>
+DECLARE @t TABLE (MonthNumber INTEGER)
+
+INSERT INTO @t VALUES (1)
+INSERT INTO @t VALUES (2)
+INSERT INTO @t VALUES (3)
+INSERT INTO @t VALUES (4)
+INSERT INTO @t VALUES (5)
+INSERT INTO @t VALUES (6)
+INSERT INTO @t VALUES (7)
+INSERT INTO @t VALUES (8)
+INSERT INTO @t VALUES (9)
+INSERT INTO @t VALUES (10)
+INSERT INTO @t VALUES (11)
+INSERT INTO @t VALUES (12)
+
+DECLARE @Results TABLE (MonthNumber INTEGER, MaxCount INTEGER)
+
+INSERT INTO @Results
+  SELECT DISTINCT 
+    dbo.FormatDatePart(S.Vague_Date_Start,0,'',1) AS MonthNumber, 
+    MAX(CONVERT(INTEGER, XOD.Data)) AS MaxCount 
+  FROM--
+		Index_Taxon_Name ITN 
+  INNER JOIN Index_Taxon_Synonym ITS ON 
+	  ITS.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key 
+  INNER JOIN Taxon_Determination TD ON 
+    TD.Taxon_List_Item_Key = ITS.Synonym_List_Item_Key AND 
+  	TD.Preferred=1
+  INNER JOIN Taxon_Occurrence XO ON 
+    XO.Taxon_Occurrence_Key=TD.Taxon_Occurrence_Key 
+  INNER JOIN Taxon_Occurrence_Data XOD ON 
+    XOD.Taxon_Occurrence_Key = XO.Taxon_Occurrence_Key AND 
+  	PATINDEX('%[^0-9]%', XOD.Data) = 0 
+  INNER JOIN Measurement_Unit MU ON 
+    MU.Measurement_Unit_Key = XOD.Measurement_Unit_Key AND MU.Short_Name = 'Count' 
+  INNER JOIN Measurement_Type MT ON 
+    MT.Measurement_Type_Key = MU.Measurement_Type_Key AND MT.Short_Name = 'Abundance' 
+
+
+<Where keytype="Default">
+  INNER JOIN [Sample] S ON 
+	  S.Sample_Key = XO.Sample_Key AND 
+    <Condition field="S." operator="equal" type="VagueDate" name="Year"/> 
+  INNER JOIN Measurement_Qualifier MQ ON
+		MQ.Measurement_Qualifier_Key = XOD.Measurement_Qualifier_Key AND
+		<Condition field="MQ.Short_Name" operator="like" type="text" name="Sex\Stage"/>
+  INNER JOIN Survey_Event SE 
+  ON SE.Survey_Event_key = S.Survey_Event_Key 
+  LEFT JOIN User_Survey_Restriction USR
+  ON  USR.Survey_Key = SE.Survey_Key AND 
+  <Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+  WHERE
+  USR.Name_Key IS NULL
+  AND
+
+
+
+    <Condition field="ITN.Actual_Name" operator="like" type="text" name="Species Name"/>
+  GROUP BY S.Vague_Date_Start
+
+  SELECT
+  DATENAME(month, CONVERT(VARCHAR(2), m.MonthNumber) + '-01' + '-2000') AS MonthName,
+  m.MonthNumber,
+  MAX(ISNULL(r.MaxCount,0)) AS MaxCount
+  FROM @t m
+  LEFT JOIN @Results r ON m.MonthNumber = r.MonthNumber
+  GROUP BY m.MonthNumber
+  ORDER BY m.MonthNumber ASC
+</Where>
+
+<Where keytype="Taxon">
+  INNER JOIN [Sample] S ON 
+	  S.Sample_Key = XO.Sample_Key AND 
+    <Condition field="S." operator="equal" type="VagueDate" name="Year"/> 
+  INNER JOIN Measurement_Qualifier MQ ON
+		MQ.Measurement_Qualifier_Key = XOD.Measurement_Qualifier_Key AND
+		<Condition field="MQ.Short_Name" operator="like" type="text" name="Qualifier"/>
+  INNER JOIN Survey_Event SE 
+  
+   ON SE.Survey_Event_key = S.Survey_Event_Key 
+   LEFT JOIN User_Survey_Restriction USR
+   ON  USR.Survey_Key = SE.Survey_Key AND 
+   <Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+   WHERE
+   USR.Name_Key IS NULL
+   AND 
+
+
+  ITN.Taxon_List_Item_Key ='%s'
+
+  GROUP BY S.Vague_Date_Start
+
+  SELECT
+  DATENAME(month, CONVERT(VARCHAR(2), m.MonthNumber) + '-01' + '-2000') AS MonthName,
+  m.MonthNumber,
+  MAX(ISNULL(r.MaxCount,0)) AS MaxCount
+  FROM @t m
+  LEFT JOIN @Results r ON m.MonthNumber = r.MonthNumber
+  GROUP BY m.MonthNumber
+  ORDER BY m.MonthNumber ASC
+</Where>
+
+<Where keytype="Location">
+  INNER JOIN [Sample] S ON 
+	  S.Sample_Key = XO.Sample_Key AND 
+    <Condition field="S." operator="equal" type="VagueDate" name="Year"/> 
+  INNER JOIN Measurement_Qualifier MQ ON
+		MQ.Measurement_Qualifier_Key = XOD.Measurement_Qualifier_Key AND
+		<Condition field="MQ.Short_Name" operator="like" type="text" name="Qualifier"/>
+	INNER JOIN Location_Name LN ON
+		S.Location_Key = '%s'
+  WHERE 
+    <Condition field="ITN.Actual_Name" operator="like" type="text" name="Species Name"/>
+
+  GROUP BY S.Vague_Date_Start
+
+  SELECT
+  DATENAME(month, CONVERT(VARCHAR(2), m.MonthNumber) + '-01' + '-2000') AS MonthName,
+  m.MonthNumber,
+  MAX(ISNULL(r.MaxCount,0)) AS MaxCount
+  FROM @t m
+  LEFT JOIN @Results r ON m.MonthNumber = r.MonthNumber
+  GROUP BY m.MonthNumber
+  ORDER BY m.MonthNumber ASC
+</Where>
+
+
+
+</SQL>
+<Columns>
+<Column name="MonthNumber" visible="False" /> 
+<Column name="MonthName" position="1" caption="Month" width="100"/>
+<Column name="MaxCount" position="2" caption="Maximum Abundance" width="150"/>
+</Columns>
+</CustomReport>

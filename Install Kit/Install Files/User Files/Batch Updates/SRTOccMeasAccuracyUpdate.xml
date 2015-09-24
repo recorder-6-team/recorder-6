@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+
+<!-- Changes Measurement Accuracy from NULL to a specified value for a specified value of Measurement Data
+            
+     XML Batch Update by Sally Rankin, JNCC Recorder Approved Expert
+     Version 1, March 13 2011
+--> 
+ 
+<batchupdate menupath="System Supplied\Problem Correction" title="Changes TOcc. Meas. Accuracy from NULL to a specified value" description="Changes Measurement Accuracy from NULL to a specified value for a specified value of Measurement Data. It only changes items in taxon occurrences in the custody of the database on which the batch update is run. Enter the Measurement Data for which the Accuracy is to be changed and the value it is to be changed to.">
+
+<SQL>
+
+<Where Keytype="Default">
+
+DECLARE @MeasData varchar(20)
+DECLARE @MeasAccuracy varchar(20)
+DECLARE @ChangedBy char(16)
+DECLARE @ChangedDate datetime
+DECLARE @Custodian char(8)
+
+SET @MeasData  <Condition field="" operator="equal"  type="Text" name = " Measurement Data "/>
+SET @MeasAccuracy  <Condition field="" operator="equal"  type="Text" name = " Measurement Accuracy "/>
+SET @ChangedBy = (SELECT Name_key FROM Name WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID" operator="equal"/>)
+SET @ChangedDate = GETDATE()
+SET @Custodian = (SELECT Data FROM Setting WHERE Name = 'SITEID')
+ 
+UPDATE TOccD SET TOccD.Accuracy = @MeasAccuracy, Changed_By = @ChangedBy, Changed_date = @ChangedDate
+FROM Taxon_Occurrence_Data TOccD
+WHERE TOccD.Data = @MeasData and TOccD.Accuracy is NULL and TOccD.Custodian = @Custodian
+
+</Where>
+
+</SQL>
+</batchupdate>

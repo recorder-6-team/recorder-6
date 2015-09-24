@@ -1,0 +1,66 @@
+<?xml version="1.0" ?> 
+
+<!-- CORRECTIONS OF VARIOUS DATA ERRORS IDENTIFIED BY reports sy6 and sy7
+     XML Btach Update by Mike Weideli of Littlefield Consultancy 
+     Version 1.0 - 17/8/2010
+     
+     Works on all records even if they are not in the custodianship of the system. 
+
+     Data records with no accuarcy - sets to 'Estimate'
+     Spaces in Grid Refrences (OSGB and OSNI)
+     Verified Flag  
+     Inserts word 'Grid' into spatial_ref_system where the spatial_ref is null. This brings this field into line with the approach used in Recorder 6. 
+   
+-->
+
+
+<batchupdate title="DATA_Correction 1" menupath="System Supplied\Problem Correction" description= "Corrects data problems. Null in data Accuracy,Spaces in Grid Refs and Verified Indicator out of step">
+
+<SQL>
+
+
+
+
+<Where keytype="Default">
+
+Update Survey_Event set spatial_ref = replace(spatial_ref, ' ', '') WHERE Spatial_ref_System in ('OSGB', 'OSNI')
+
+Update sample set spatial_ref = replace(spatial_ref, ' ', '') WHERE Spatial_ref_System in ('OSGB', 'OSNI')
+
+Update Location set spatial_ref = replace(spatial_ref, ' ', '') WHERE Spatial_ref_System in ('OSGB', 'OSNI')
+
+
+Update grid_square set spatial_ref = replace(spatial_ref, ' ', '') WHERE Spatial_ref_System in ('OSGB', 'OSNI')
+
+update sample set spatial_ref_system = 'Grid' where spatial_ref is null
+
+update survey_event set spatial_ref_system = 'Grid' where spatial_ref is null
+
+
+Update Taxon_Occurrence_data set accuracy = 'Estimate' where Accuracy is null
+
+Update sample_data set accuracy = 'Estimate' where Accuracy is null
+
+Update Location_data set accuracy = 'Estimate' where Accuracy is null
+
+Update Taxon_Occurrence set verified = DT.Verified
+FROM Taxon_Determination TDET
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Taxon_Occurrence_key = TDET.taxon_Occurrence_key and TDET.Preferred = 1
+INNER JOIN Determination_Type DT 
+ON DT.Determination_Type_Key = TDET.Determination_Type_key
+WHERE DT.Verified &#60;&#62; TOCC.Verified
+
+Update Biotope_Occurrence set verified = DT.Verified
+FROM Biotope_Determination BDET
+INNER JOIN Biotope_Occurrence BOCC ON BOCC.Biotope_Occurrence_key = BDET.Biotope_Occurrence_key AND BDET.Preferred = 1
+INNER JOIN Determination_Type DT 
+ON DT.Determination_Type_Key = BDET.Determination_Type_key
+WHERE DT.Verified &#60;&#62; BOCC.Verified
+
+
+
+ </Where>
+
+</SQL>
+
+</batchupdate>

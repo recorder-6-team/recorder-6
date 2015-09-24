@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+
+<!-- Changes one recorder for another
+            
+     XML Batch Update by Sally Rankin, JNCC Recorder Approved Expert
+     Version 1, September 7 2010
+     Designed for use when an organisation has been used as a recorder and needs to be changed to an individual.
+--> 
+ 
+<batchupdate menupath="System Supplied\Problem Correction" title="Change specific recorder" description="Changes one recorder for another for observations in the custody of the database on which the batch update is run. Enter the key (Site ID and running number) for the recorder to be changed and for the recorder it is to be changed to.">
+
+<SQL>
+
+<Where keytype="Default">
+
+DECLARE @OldRecorder varchar(16)
+DECLARE @NewRecorder varchar(16)
+DECLARE @ChangedBy char(16)
+DECLARE @ChangedDate datetime
+DECLARE @Custodian char(8)
+
+SET @OldRecorder  <Condition field="" operator="equal"  type="Text" name = "Key for old recorder: Site ID and running number"/>
+SET @NewRecorder  <Condition field="" operator="equal"  type="Text" name = "Key for new recorder: Site ID and running number"/>
+SET @ChangedBy = (SELECT Name_key FROM Name WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID" operator="equal"/>)
+SET @ChangedDate = GETDATE()
+SET @Custodian = (SELECT Data FROM Setting WHERE Name = 'SITEID')
+ 
+UPDATE SER SET SER.Name_key = @NewRecorder, Changed_By = @ChangedBy, Changed_date = @ChangedDate
+FROM Survey_Event_Recorder SER
+WHERE SER.Name_key = @OldRecorder and SER.Custodian = @Custodian
+
+UPDATE TDet SET TDet.Determiner = @NewRecorder, Changed_By = @ChangedBy, Changed_date = @ChangedDate
+FROM Taxon_Determination TDet
+WHERE TDet.Determiner = @OldRecorder and TDet.Custodian = @Custodian
+</Where>
+
+</SQL>
+</batchupdate>

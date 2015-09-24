@@ -1,0 +1,2 @@
+inherited fraBaseMSDESettings: TfraBaseMSDESettings
+end

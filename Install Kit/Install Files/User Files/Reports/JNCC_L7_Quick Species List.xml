@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<!-- JNCC  Records for Location
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014   
+ -->
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Location hierarchy reports" title="L7-Quick species list for a single &lt;location&gt; V06-12"
+description="Generates a list of species.  Enter values for the following parameters to filter the report.">
+<SQL>
+SELECT DISTINCT
+            ITN2.Taxon_List_Item_Key,
+            ITN2.Actual_Name + ISNULL(' ' + ITN2.Authority, '') AS Latin,
+            ITN2.Common_Name,
+            TG.Taxon_Group_Name,
+            ITN2.Sort_Order
+FROM        Index_Taxon_Name ITN
+INNER JOIN  Index_Taxon_Name ITN2 ON
+            ITN2.Taxon_List_Item_Key = ITN.Recommended_Taxon_List_Item_Key AND
+            ITN2.system_supplied_data = 1
+INNER JOIN  Taxon_Determination TD ON
+            TD.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key AND
+            TD.Preferred=1
+INNER JOIN  Taxon_Occurrence XO ON
+            XO.Taxon_Occurrence_Key=TD.Taxon_Occurrence_Key
+INNER JOIN  Taxon_List_Item TLI ON
+            TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_KEy
+INNER JOIN  Taxon_Version TV ON
+            TV.Taxon_Version_Key=TLI.Taxon_Version_Key
+LEFT JOIN   Taxon_Group TG ON
+            TG.Taxon_Group_Key=TV.Output_Group_Key
+<Where keytype="Default">
+
+INNER JOIN  [Sample] S ON
+            S.Sample_Key=XO.Sample_Key
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+WHERE 
+USR.Name_Key IS NULL AND
+<Condition field="S.Location_Key" operator="equal" type="Location" name="Location name"/>
+
+</Where>
+
+
+<Where keytype="Sample">
+INNER JOIN  [Sample] S ON
+            S.Sample_Key=XO.Sample_Key
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+WHERE USR.Name_Key IS NULL AND      XO.Sample_Key='%s'
+ORDER BY    ITN2.Sort_Order
+
+</Where>
+
+
+
+<Where keytype="Event">
+
+INNER JOIN  [Sample] S ON
+            S.Sample_Key=XO.Sample_Key
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+WHERE     USR.Name_Key IS NULL AND  S.Survey_Event_Key='%s'
+ORDER BY    ITN2.Sort_Order
+
+
+
+</Where>
+
+<Where keytype="Survey">
+INNER JOIN  [Sample] S ON
+            S.Sample_Key=XO.Sample_Key
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+
+WHERE       USR.Name_Key IS NULL AND SE.Survey_Key='%s'
+ORDER BY    ITN2.Sort_Order
+</Where>
+
+<Where keytype="Location">
+INNER JOIN  [Sample] S ON
+            S.Sample_Key=XO.Sample_Key
+
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+
+WHERE    USR.Name_Key IS NULL AND    S.Location_Key='%s'
+
+</Where>
+
+
+<OutputTableOrderby name="Default" SQL="Order By Sort_Order"/>
+
+
+</SQL>
+<Columns>
+<Column name="Taxon_List_Item_Key" tablename="Taxon" visible="False" />
+<Column name="Latin" position="1" caption="Formal Name" keycolumn="Taxon_List_Item_Key" width="300"/>
+<Column name="Common_Name" position="2" caption="Common Name" width="200"/>
+<Column name="Taxon_Group_Name" position="3" caption="Group" />
+<Column name="Sort_Order" visible="False" />
+</Columns>
+</CustomReport>

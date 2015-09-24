@@ -1,0 +1,47 @@
+<?xml version="1.0" ?> 
+
+<!-- Deletes a user added designation from the database 
+     XML Report by Lynn Heeley (JNCC)
+     Version 1.01 - 28/7/2009
+         
+-->
+
+
+<batchupdate title="Des5 Delete Taxon Designation"   menupath="System Supplied\Designations" description=" Removes a designation from the database. Enter the key of the designation to be removed. Note that system supplied designations will not be removed.">
+
+
+<SQL>
+
+
+<Where keytype="Default">
+DECLARE @parameter varchar(16)
+DECLARE @TDTKey varchar(16)
+DECLARE @DesignationKey VARCHAR(16)
+ 
+
+ SET  @parameter  <Condition field="" operator="equal"  type="Text" 
+ name = "Designation Key"  />
+
+  SET @TDTKey = (SELECT Taxon_Designation_Type_Key  FROM Taxon_Designation_type WHERE Taxon_Designation_Type_Key = @parameter AND System_supplied_data = 1)
+
+  SET @DesignationKey = (SELECT Taxon_Designation_Type_Key  FROM Taxon_Designation_type WHERE Taxon_Designation_Type_Key = @parameter)
+
+  IF @DesignationKey is null or @TDTKey IS not NULL
+  RAISERROR	('The designation either does not exist in the database or is a system supplied one (and therefore cannot be deleted).', 10, 1)
+  ELSE
+
+  BEGIN
+  DELETE FROM Taxon_Designation WHERE Taxon_Designation_Type_Key = @DesignationKey
+  DELETE FROM INDEX_TAXON_DESIGNATION WHERE taxon_Designation_Type_Key = @DesignationKey
+  DELETE FROM Taxon_Designation_Type WHERE Taxon_Designation_Type_Key = @DesignationKey
+  End
+
+
+
+
+</Where>
+ 
+
+</SQL>
+
+</batchupdate>

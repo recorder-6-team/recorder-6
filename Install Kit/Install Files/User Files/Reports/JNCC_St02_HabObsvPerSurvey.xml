@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+
+<!-- JNCC Statistics 2: Number of habitat observations per survey
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert, for JNCC
+     Version 5 - 28 November 2014
+--> 
+
+<CustomReport menupath="System Supplied\Statistics" title="St02 Number of habitat observations per survey" description="Lists all surveys that contain habitat observations and the number they contain">
+
+<SQL>
+<Where Keytype="Default">
+SELECT 
+Sv.Survey_Key, Sv.Item_Name,   
+Count(BOcc.Biotope_Occurrence_Key) AS CountOfBOccKey,
+Sv.Custodian
+
+FROM Survey Sv
+INNER JOIN Survey_Event SE ON Sv.Survey_Key = SE.Survey_Key
+INNER JOIN Sample S ON SE.Survey_Event_Key = S.Survey_Event_Key
+INNER JOIN Biotope_Occurrence BOcc ON S.Sample_Key = BOcc.Sample_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SV.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+WHERE 
+USR.Name_Key IS NULL 
+
+GROUP BY Sv.Survey_Key, Sv.Item_Name, Sv.Custodian
+
+
+
+
+ORDER BY Sv.Item_Name
+
+</Where>
+
+</SQL>
+
+<Columns>
+<Column name="Survey_Key" caption="Survey key" width="120" position="1"/>
+<Column name="Item_Name" caption="Survey name" width="280" position="2"/>
+<Column name="CountOfBOccKey" caption="No hab obsv" width="80" position="3"/>
+<Column name="Custodian" caption="Custodian" width="80" position="4"/>
+</Columns>
+
+</CustomReport>

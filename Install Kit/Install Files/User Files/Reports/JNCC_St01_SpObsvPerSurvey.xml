@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+
+<!-- JNCC Statistics 1: Number of species observations per survey
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert, for JNCC
+     Version 5 - 28 November 2014
+--> 
+
+<CustomReport menupath="System Supplied\Statistics" title="St01 Number of species observations per survey" description="Lists all surveys that contain species observations and the number they contain">
+
+<SQL>
+<Where Keytype="Default">
+SELECT
+Sv.Survey_Key, Sv.Item_Name,   
+Count(TOcc.Taxon_Occurrence_Key) AS CountOfTOccKey,
+Sv.Custodian
+
+FROM Survey Sv
+INNER JOIN Survey_Event SE ON Sv.Survey_Key = SE.Survey_Key
+INNER JOIN Sample S ON SE.Survey_Event_Key = S.Survey_Event_Key
+INNER JOIN Taxon_Occurrence TOcc ON S.Sample_Key = TOcc.Sample_Key
+LEFT JOIN User_survey_restriction USR ON USR.Survey_Key = Sv.Survey_Key AND  
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID" operator="equal" />
+WHERE USR.Name_key IS NULL
+
+GROUP BY Sv.Survey_Key, Sv.Item_Name, Sv.Custodian
+
+ORDER BY Sv.Item_Name
+
+</Where>
+
+</SQL>
+
+<Columns>
+<Column name="Survey_Key" caption="Survey key" width="120" position="1"/>
+<Column name="Item_Name" caption="Survey name" width="280" position="2"/>
+<Column name="CountOfTOccKey" caption="No sp obsv" width="80" position="3"/>
+<Column name="Custodian" caption="Custodian" width="80" position="4"/>
+</Columns>
+
+</CustomReport>

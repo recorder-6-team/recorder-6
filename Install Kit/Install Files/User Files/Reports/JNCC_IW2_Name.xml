@@ -1,0 +1,49 @@
+<?xml version='1.0' ?>
+
+
+<!-- Dictionary Report
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 23 Nov 2014 
+      
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="IW2-Name Matching" menupath="System Supplied\Import Wizard"  
+description="List the entries in the Import Wizard matching table for names." >
+
+
+
+<SQL>
+
+
+<Where keytype="Default">
+   
+Select IWN.Matched_Value as Name_Input, I.Name_Key,I.Title,I.Initials,I.ForeName,I.Surname
+FROM IW_Matched_Names IWN INNER JOIN  Individual I 
+ON I.Name_Key = IWN.Matched_Key 
+
+
+
+</Where>
+
+
+<OutputTableOrderby name="by default" SQL="ORDER BY Name_Input"/>
+
+</SQL>
+<Columns>
+  <Column name="Name_input" width="250" position="1"  /> 
+  <Column name="Name_Key" width="100" position="2"  /> 
+  <Column name="Title" width="50" position="3"  /> 
+  <Column name="Initials" width="50" position="4"  /> 
+  <Column name="Forename" width="200" position="5"  /> 
+  <Column name="Surname" width="200" position="6"  /> 
+  
+
+ 
+</Columns>
+
+</CustomReport>

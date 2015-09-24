@@ -1,0 +1,54 @@
+<?xml version='1.0' ?>
+
+
+<!-- Dictionary Report
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 23 Nov 2014 
+      
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="IW1-Species Matching" menupath="System Supplied\Import Wizard"  
+description="List the entries in the Import Wizard matching table for species." >
+
+
+
+<SQL>
+
+
+<Where keytype="Default">
+   
+Select CASE isNull(TL.ITEM_NAME,'') 
+When  ''  then '[Preferred List]' ELse TL.ITEM_NAME  End as Matched_List,  IWS.Matched_Value as Taxa_Input,T.ITEM_NAME as Taxa_Output,
+TLI.Taxon_List_Item_Key as TLI_Key_Output,TV.Attribute,TL2.ITEM_NAME as Check_List_Output
+FROM IW_Matched_Species IWS LEFT JOIN Taxon_List TL ON TL.Taxon_List_Key = IWS.Match_Checklist_Key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_LIst_Item_Key = IWS.Matched_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key = TLi.Taxon_Version_Key
+INNER JOIN Taxon T ON T.Taxon_Key = TV.TAXON_VERSION_KEY
+INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_version_Key = TLI.Taxon_List_Version_Key
+INNER JOIN Taxon_List TL2 on TL2.Taxon_List_Key = TLV.Taxon_List_Key 
+
+</Where>
+
+
+<OutputTableOrderby name="by default" SQL="ORDER BY Matched_List,Taxa_Input"/>
+
+</SQL>
+
+<Columns>
+  <Column name="Matched_List" width="250" position="1"  /> 
+  <Column name="Taxa_Input" width="250" position="2"  /> 
+  <Column name="Taxa_Output" width="250" position="3"  /> 
+  <Column name="TLI_Key_Output" width="250" position="4"  /> 
+  <Column name="Attribute" width="200" position="5"  /> 
+  <Column name="Check_List_Output" width="200" position="6"  /> 
+ 
+
+ 
+</Columns>
+
+</CustomReport>

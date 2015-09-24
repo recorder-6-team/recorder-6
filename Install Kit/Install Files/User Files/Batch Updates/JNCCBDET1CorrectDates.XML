@@ -1,0 +1,239 @@
+<?xml version="1.0" ?> 
+
+<!-- CORRECTIONS OF SITUATION WHERE BIOTOPE DETERMINATION DATES ARE NOT COMPATIBLE WITH THE SAMPLE DATES
+     XML Report by Mike Weideli of Littlefield Consultancy 
+     Version 1.0 - 26/7/2010
+
+     This Batch Update initially makes sure that all biotope Determinations have a valid date by updating any which have 
+     null vague date type to date Unknown. This is then adjusted where applicable to make the date the same as the sample date.
+      
+     If the BDET vague date type is 'unknown' and the sample vague date type is not unkown the BDET vague date start, vague date end and vague date type are
+     made  the same as the Sample.
+     Works only on records which are in the custodianship of the system.
+   
+   			
+     
+     Works on thy whole database or as a Quick Report on a Survey
+
+     Action taken is as follows 
+     
+	
+	The following combinations of dates are possible.
+
+	1.	BDVDS = SVDS AND BDVDE = SVDE	(Allowed) - No action required
+	2.	BDVDS = SVDS AND BDVDE > SVDE	(Fails validation) - make BDVDS =  SVDS + 1 and change type to DD
+	3.	BDVDS = SVDS AND BDVDE < SVDE	(Allowed) - No action required
+
+
+	4.	BDVDS > SVDS AND BDVDE = SVDE	(Allowed) - No action required
+	5.	BDVDS > SVDS AND BDVDE > SVDE	(Allowed) - No action required
+	6.	BDVDS > SVDS AND BDVDE < SVDE	(Allowed) - No action required 
+	7.	BDVDS < SVDS AND BDVDE = SVDE	(Fails validation) - Make Taxon Determination dates same as sample dates  
+	8.	BDVDS < SVDS AND BDVDE > SVDE	(Fails validation) -  make BDVDS =  SVDS + 1 and change type to DD
+	9.	BDVDS < SVDS AND BDVDE < SVDE	(Fails validation) - Make Taxon Determination dates same as sample dates 
+
+	10. 	Taxon Determination vague date type = 'U' and Sample vague date Type <> 'U' (Fails validation)
+							   - Make Taxon Determination dates same as sample dates  
+   
+       (BDVDS = Taxon Determination vague Date start 
+	BDVDE = Taxon Determination vague Date End
+	SVDS  = sample vague Date start 
+	SVDE  = sample vague Date End) 
+   
+       
+-->
+
+
+<batchupdate title="BDET_Dates_1 - Corrects Biotope Determination dates" menupath="System Supplied\Problem Correction" description= "Corrects Biotope Determination dates which are not compatible with the Sample dates">
+
+<SQL>
+
+
+
+
+<Where keytype="Default">
+DECLARE @Custodian char(8)
+DECLARE @UserId char(16)
+DECLARE @DateChanged datetime
+
+SET	@DateChanged	=	GETDATE()
+
+SET  @UserID = (SELECT NAME_KEY FROM NAME WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" /> )
+ 
+SELECT  @Custodian = Data 
+FROM
+Setting 
+WHERE
+Name = 'SiteID'
+
+UPDATE BIOTOPE_DETERMINATION SET Vague_date_start = 0, Vague_date_end = 0, vague_date_type = 'U'
+FROM BIOTOPE_DETERMINATION 
+WHERE (vague_date_type) is null
+
+
+
+CREATE TABLE #Corrections  (Biotope_Determination_key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS PRIMARY KEY,
+  			 Action Integer )
+
+
+
+
+INSERT INTO #Corrections (Biotope_Determination_KEY, Action)
+SELECT BDET.Biotope_Determination_key, 1
+FROM Biotope_Determination BDET INNER JOIN
+BIOTOPE_OCCURRENCE BOCC 
+ON BOCC.Biotope_Occurrence_Key = BDET.Biotope_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = BOCC.sample_key
+WHERE 
+BDET.Custodian = @Custodian 
+AND ((BDET.vague_date_start &#60; S.Vague_date_start
+and BDET.vague_date_end &#60; S.Vague_date_end) OR
+( BDET.vague_date_start &#60; S.Vague_date_start
+and BDET.vague_date_end =  S.Vague_date_end)
+OR (BDET.vague_date_type = 'U' and S.Vague_date_type &#60;&#62; 'U') 
+)
+
+
+
+INSERT INTO #Corrections (Biotope_Determination_KEY, Action)
+SELECT BDET.Biotope_Determination_KEY, 2
+FROM Biotope_Determination BDET 
+INNER JOIN
+BIOTOPE_OCCURRENCE BOCC 
+ON BOCC.Biotope_Occurrence_Key = BDET.Biotope_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = BOCC.sample_key
+WHERE BDET.vague_date_type  &#60;&#62; 'U' AND BDET.Custodian = @Custodian 
+AND 
+((BDET.vague_date_start &#60; S.Vague_date_start
+and BDET.vague_date_end &#62; S.Vague_date_end) OR
+(BDET.vague_date_start = S.Vague_date_start
+and BDET.vague_date_end &#62; S.Vague_date_end)) 
+
+
+UPDATE Biotope_Determination SET Vague_date_start = S.vague_date_start, Vague_date_end = s.vague_date_end,Vague_date_type = s.vague_date_type,
+changed_by =  @UserID, changed_date = @DateChanged 
+FROM Biotope_Determination BDET
+INNER JOIN #Corrections on #Corrections.Biotope_Determination_key = BDET.Biotope_Determination_Key
+INNER JOIN BIOTOPE_OCCURRENCE BOCC 
+ON BOCC.Biotope_Occurrence_Key = BDET.Biotope_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = BOCC.sample_key
+WHERE #Corrections.Action = 1
+
+
+UPDATE Biotope_Determination SET Vague_date_start = S.vague_date_start+1 , Vague_date_type = 'DD',
+changed_by =  @UserID, changed_date = @DateChanged 
+FROM Biotope_Determination BDET
+INNER JOIN #Corrections on #Corrections.Biotope_Determination_key = BDET.Biotope_Determination_Key
+INNER JOIN Biotope_OCCURRENCE BOCC 
+ON BOCC.Biotope_Occurrence_Key = BDET.Biotope_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = BOCC.sample_key
+WHERE #Corrections.Action = 2
+
+
+
+
+DROP TABLE #Corrections
+
+</Where>
+
+
+<Where keytype="Survey">
+DECLARE @Custodian char(8)
+DECLARE @UserId char(16)
+DECLARE @DateChanged datetime
+DECLARE @Survey CHAR(16)
+SET @Survey = '%s'
+SET	@DateChanged	=	GETDATE()
+
+SET  @UserID = (SELECT NAME_KEY FROM NAME WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" /> )
+ 
+SELECT  @Custodian = Data 
+FROM
+Setting 
+WHERE
+Name = 'SiteID'
+
+UPDATE BIOTOPE_DETERMINATION SET Vague_date_start = 0, Vague_date_end = 0, vague_date_type = 'U'
+FROM BIOTOPE_DETERMINATION 
+WHERE (vague_date_type) is null
+
+
+CREATE TABLE #Corrections  (Biotope_Determination_key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS PRIMARY KEY,
+  			 Action Integer )
+
+INSERT INTO #Corrections (Biotope_Determination_KEY, Action)
+SELECT BDET.Biotope_Determination_key, 1
+FROM Biotope_Determination BDET INNER JOIN
+Biotope_OCCURRENCE BOCC 
+ON BOCC.Biotope_Occurrence_Key = BDET.Biotope_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = BOCC.sample_key
+INNER JOIN SURVEY_EVENT SE
+ON SE.SURVEY_EVENT_KEY = S.SURVEY_EVENT_KEY 
+WHERE 
+BDET.Custodian = @Custodian 
+AND ((BDET.vague_date_start &#60; S.Vague_date_start
+and BDET.vague_date_end &#60; S.Vague_date_end) OR
+( BDET.vague_date_start &#60; S.Vague_date_start
+and BDET.vague_date_end =  S.Vague_date_end)
+OR (BDET.vague_date_type = 'U' and S.Vague_date_type &#60;&#62; 'U') 
+)
+
+
+
+INSERT INTO #Corrections (Biotope_Determination_KEY, Action)
+SELECT BDET.Biotope_Determination_KEY, 2
+FROM Biotope_Determination BDET 
+INNER JOIN
+Biotope_OCCURRENCE BOCC 
+ON BOCC.Biotope_Occurrence_Key = BDET.Biotope_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = BOCC.sample_key
+INNER JOIN SURVEY_EVENT SE
+ON SE.SURVEY_EVENT_KEY = S.SURVEY_EVENT_KEY 
+WHERE BDET.vague_date_type  &#60;&#62; 'U' AND BDET.Custodian = @Custodian 
+AND SE.Survey_Key = @Survey AND 
+((BDET.vague_date_start &#60; S.Vague_date_start
+and BDET.vague_date_end &#62; S.Vague_date_end) OR
+(BDET.vague_date_start = S.Vague_date_start
+and BDET.vague_date_end &#62; S.Vague_date_end)) 
+
+
+
+
+UPDATE Biotope_Determination SET Vague_date_start = S.vague_date_start, Vague_date_end = s.vague_date_end,Vague_date_type = s.vague_date_type,
+changed_by =  @UserID, changed_date = @DateChanged 
+FROM Biotope_Determination BDET
+INNER JOIN #Corrections on #Corrections.Biotope_Determination_key = BDET.Biotope_Determination_Key
+INNER JOIN Biotope_OCCURRENCE BOCC 
+ON BOCC.Biotope_Occurrence_Key = BDET.Biotope_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = BOCC.sample_key
+WHERE #Corrections.Action = 1
+
+
+UPDATE Biotope_Determination SET Vague_date_start = S.vague_date_start+1 , Vague_date_type = 'DD',
+changed_by =  @UserID, changed_date = @DateChanged 
+FROM Biotope_Determination BDET
+INNER JOIN #Corrections on #Corrections.Biotope_Determination_key = BDET.Biotope_Determination_Key
+INNER JOIN Biotope_OCCURRENCE BOCC 
+ON BOCC.Biotope_Occurrence_Key = BDET.Biotope_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = BOCC.sample_key
+WHERE #Corrections.Action = 2
+
+
+
+DROP TABLE #Corrections
+
+ </Where>
+
+</SQL>
+
+</batchupdate>

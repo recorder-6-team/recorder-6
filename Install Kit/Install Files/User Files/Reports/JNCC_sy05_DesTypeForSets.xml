@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+
+
+<!-- 	JNCC Lists the Taxon  Designation Types available for including in Taxon Designation Sets 
+	XML Report by Mike Weideli of Littlefield Consultancy for JNCC.
+	Modified Steve Wilkinson to use the list of keys etc to allow this query to be used to display
+	designations which have just been defined by the user and hence there are no entries in the
+	index_designation table. Query now also lists the number of species against each designation.
+	http://www.lfield.co.uk
+	
+	Version 5 - 28 November 2014
+
+	COLLATE SQL_Latin1_General_CP1_CI_AS
+            
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Information"  title="Sy05 - Taxon Designations Available for sets" 
+description="List of Taxon Designation Types available for use in the preparation of Taxon_designations sets.
+Save this report to Excel and use as the basis for the CSV file needed for creating a new Taxon_designation_set via the Batch Update.
+
+" >
+
+<SQL>
+
+<Where keytype="Default">
+
+DECLARE	@KeyList	VARCHAR(250)
+	
+SET		@KeyList	=	''
+	
+SELECT	@KeyList	=	Data
+	FROM	Setting
+	WHERE	Name		=	'TaxDesList'
+
+SELECT DISTINCT TDT.Taxon_Designation_type_key, TDT.Short_name, Count(TD.taxon_designation_key) as Number_species
+	FRom  Taxon_designation_Type TDT
+		LEFT JOIN Taxon_designation TD
+			ON TDT.Taxon_Designation_type_key = TD.Taxon_Designation_type_key
+		LEFT JOIN Taxon_list_item TLI
+			ON TD.Taxon_List_Item_Key = TLI.taxon_List_Item_Key
+		LEFT JOIN TAXON_LIST_VERSION TLV
+			ON TLI.taxon_list_version_key = TLV.taxon_list_version_key
+
+	WHERE (@Keylist	LIKE '%' + TLV.Taxon_List_Key + '%'
+					OR	@Keylist	=	''
+					OR	TDT.System_Supplied_Data	=	0)
+			AND	TD.Date_To IS NULL
+	Group by TDT.Short_name, TDT.Taxon_Designation_type_key
+	ORDER BY TDT.Short_Name
+ 
+ 
+</Where>
+
+
+</SQL>
+<Columns>
+  
+ <Column name="Taxon_designation_Type_key" width="100" position="1"  /> 
+ <Column name="Short_name" width="300" position="2" caption="ShortName" /> 
+  
+ 
+</Columns>
+</CustomReport>

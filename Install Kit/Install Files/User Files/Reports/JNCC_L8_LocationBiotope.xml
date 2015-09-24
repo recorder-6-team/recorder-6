@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<!-- JNCC  Records for Location
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014   
+ -->
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Location hierarchy reports"  title="L8 - Biotope list for a locations" 
+description="Generates a list of biotopes.  Enter values for the following parameters to filter the report.">
+<SQL>
+CREATE TABLE #Locations (
+  Location_Key CHAR(16) COLLATE Database_Default PRIMARY KEY
+)
+
+<Where keytype="Default">
+INSERT INTO #Locations VALUES ({0})
+--<Condition field="" operator="equal" type="Location" name="Location" SubstituteFor="{0}" />
+WHILE 1=1 BEGIN
+  INSERT INTO #Locations
+    SELECT L.Location_Key
+    FROM Location L
+    INNER JOIN #Locations Tinc on L.Parent_Key=TInc.Location_Key
+    LEFT JOIN #Locations Texc ON Texc.Location_Key=L.Location_Key
+    WHERE Texc.Location_Key IS NULL
+  IF @@ROWCOUNT=0
+    BREAK
+END
+
+SELECT DISTINCT
+  BLI.Biotope_List_Item_Key,
+  B.Full_Term AS Biotope,
+  B.Original_Code,
+  BC.Short_name
+
+FROM [Sample] S
+INNER JOIN #Locations T
+  ON T.Location_Key=S.Location_Key
+INNER JOIN Biotope_Occurrence BOCC
+  ON BOCC.Sample_Key=S.Sample_Key
+INNER JOIN Biotope_Determination BD
+  ON BD.Biotope_Occurrence_Key=BOCC.Biotope_Occurrence_Key
+  AND BD.Preferred=1
+INNER JOIN Biotope_List_Item BLI
+  ON BLI.Biotope_List_Item_Key=BD.Biotope_List_Item_Key
+INNER JOIN Biotope_Classification_Version BCV
+  ON BCV.BT_CL_Version_Key=BLI.BT_CL_Version_Key
+INNER JOIN Biotope_classification BC
+  ON BC.Biotope_Classification_Key = BCV.Biotope_Classification_Key
+INNER JOIN Biotope B
+  ON B.Biotope_KEY = BLI.Biotope_Key
+
+
+
+DROP TABLE #Locations
+</Where>
+
+<Where keytype="Location">
+INSERT INTO #Locations VALUES ('%s')
+
+WHILE 1=1 BEGIN
+  INSERT INTO #Locations
+    SELECT L.Location_Key
+    FROM Location L
+    INNER JOIN #Locations Tinc on L.Parent_Key=TInc.Location_Key
+    LEFT JOIN #Locations Texc ON Texc.Location_Key=L.Location_Key
+    WHERE Texc.Location_Key IS NULL
+  IF @@ROWCOUNT=0
+    BREAK
+END
+
+SELECT DISTINCT
+  BLI.Biotope_List_Item_Key,
+  B.Full_Term AS Biotope,
+  B.Original_Code,
+  BC.Short_name
+
+FROM [Sample] S
+INNER JOIN #Locations T
+  ON T.Location_Key=S.Location_Key
+INNER JOIN Biotope_Occurrence BOCC
+  ON BOCC.Sample_Key=S.Sample_Key
+INNER JOIN Biotope_Determination BD
+  ON BD.Biotope_Occurrence_Key=BOCC.Biotope_Occurrence_Key
+  AND BD.Preferred=1
+INNER JOIN Biotope_List_Item BLI
+  ON BLI.Biotope_List_Item_Key=BD.Biotope_List_Item_Key
+INNER JOIN Biotope_Classification_Version BCV
+  ON BCV.BT_CL_Version_Key=BLI.BT_CL_Version_Key
+INNER JOIN Biotope_classification BC
+  ON BC.Biotope_Classification_Key = BCV.Biotope_Classification_Key
+INNER JOIN Biotope B
+  ON  B.Biotope_KEY = BLI.Biotope_Key 
+ 
+DROP TABLE #Locations
+
+</Where>
+ORDER BY BC.short_Name, B.Full_Term
+
+<OutputTableOrderby name="Default" SQL="Order By short_name, biotope "/>
+
+
+
+</SQL>
+<Columns>
+<Column name="Biotope_List_Item_Key" visible="False" tablename="biotope" />
+<Column name="Short_name" visible="True" caption="Classification" width = "300" position="1" />
+<Column name="Original_Code" position="2" caption="Code" keycolumn="Taxon_List_Item_Key" width="50"/>
+<Column name="Biotope" position="3" caption="Habitat" width = "300"/>
+
+</Columns>
+</CustomReport>

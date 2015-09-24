@@ -1,0 +1,46 @@
+<?xml version="1.0" ?>
+
+<!-- JNCC Statistics 3: Number of observations per species
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert, for JNCC
+     Version 5 - 28 November 2014
+--> 
+
+<CustomReport menupath="System Supplied\Statistics" title="St03 Number of observations per species" description="Lists all species for which there are observations in the database, and the number of observations for them, in preferred name sequence. If observations for a species have been input using different lists in the taxon dictionary there will be one count for each list.">
+
+<SQL>
+
+SELECT
+TDet.Taxon_List_Item_Key, ITN.Actual_Name, ITN.Common_Name, ITN.Preferred_Name,
+Count(TOcc.Taxon_Occurrence_Key) As CountOfTOccKey,
+TL.Item_Name
+
+FROM Taxon_Occurrence TOcc 
+INNER JOIN Taxon_Determination TDet ON TOcc.Taxon_Occurrence_Key = TDet.Taxon_Occurrence_Key
+INNER JOIN Index_Taxon_Name ITN ON TDet.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key
+INNER JOIN Taxon_List_Version TLV ON ITN.Taxon_List_Version_Key = TLV.Taxon_List_Version_Key
+INNER JOIN Taxon_List TL ON TLV.Taxon_List_Key = TL.Taxon_List_Key
+
+GROUP BY TDet.Taxon_List_Item_Key, ITN.Actual_Name, ITN.Common_Name, ITN.Preferred_Name, TL.Item_Name, TDet.Preferred
+
+Having TDet.Preferred=1
+
+<Where Keytype="Default">
+
+Order By ITN.Preferred_Name
+
+</Where>
+
+</SQL>
+
+<Columns>
+<Column name="Taxon_List_Item_Key" caption="Taxon list item key" width="120" position="1"/>
+<Column name="Actual_Name" caption="Actual name" width="160" position="2"/>
+<Column name="Common_Name" caption="Common name" width="160" position="3"/>
+<Column name="Preferred_Name" caption="Preferred name" width="160" position="4"/>
+<Column name="CountOfTOccKey" caption="No sp obsv" width="80" position="5"/>
+<Column name="Item_Name" caption="Taxon list" width="280" position="6"/>
+</Columns>
+
+</CustomReport>
+

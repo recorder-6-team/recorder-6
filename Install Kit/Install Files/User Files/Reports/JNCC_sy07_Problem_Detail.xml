@@ -1,0 +1,289 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Identifies common issues with the data in R6, which can cause problems.   
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 2 - 29 November 2014  
+
+    
+            
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Problem Identification"  title="Sy07 - Problems(Detail))" >
+
+<SQL>
+
+<Where keytype="Default">
+
+
+Create table #Problem (Problem varchar(40), R6Table varchar(60), R6Key char(16))
+
+INSERT INTO  #Problem (Problem,R6table,r6key)
+Select 'Taxon_Occurrence with no Determinations','Taxon_occurrence',TOCC.taxon_Occurrence_Key
+FROM Taxon_Occurrence TOCC where NOT EXISTS (Select * from Taxon_Determination TDET 
+WHERE TDET.Taxon_Occurrence_key = TOCC.Taxon_Occurrence_Key)                                     
+
+INSERT INTO  #Problem (Problem,R6table,r6key)
+Select 'Determinations with Invalid Key','Taxon_occurrence',TDET.taxon_Occurrence_Key
+FROM Taxon_Determination TDET where NOT EXISTS (Select * from Index_Taxon_Name ITN 
+WHERE ITN.Taxon_List_Item_Key = TDET.Taxon_LIst_Item_Key)  
+
+INSERT INTO #Problem (problem,R6Table,R6Key)
+Select 'Spaces in Grid Refs','Sample', S.Sample_key 
+FROM sample S where charindex(' ',spatial_ref,1) &#62; 0 
+AND S.Spatial_ref_System in ('OSGB','OSNI') 
+
+INSERT INTO #Problem (problem,R6Table,R6Key)
+Select 'Spaces in Grid Refs','Survey_Event', SE.Survey_Event_key 
+FROM Survey_Event SE where charindex(' ',spatial_ref,1) &#62; 0 
+AND SE.Spatial_ref_System in ('OSGB','OSNI') 
+
+INSERT INTO #Problem (problem,R6Table,R6Key)
+Select 'Spaces in Grid Refs','Location', Location_Key
+FROM Location L where charindex(' ',spatial_ref,1) &#62; 0 
+AND L.Spatial_ref_System in ('OSGB','OSNI') 
+
+INSERT INTO #Problem (problem,R6Table,R6Key)
+Select 'Spaces in Grid Refs','Location(Grid_Square)', Location_Key
+FROM Grid_Square GR where charindex(' ',spatial_ref,1) &#62; 0 
+AND GR.Spatial_ref_System in ('OSGB','OSNI') 
+
+INSERT INTO #Problem (problem,R6Table,R6Key)
+Select 'More than 1 Preferred','Location', Location_Key
+FROM Location_name LN WHERE 
+(SELECT COUNT(location_name_key) FROM Location_name LN2  
+where Preferred = 1 and LN.Location_key = LN2.Location_key Group by preferred ) &#62; 1
+
+
+INSERT INTO #Problem (problem,R6Table,R6Key)
+Select 'More than 1 Preferred','Taxon_Occurrence',Taxon_Occurrence_Key
+FROM Taxon_Determination TDET WHERE 
+(SELECT COUNT(Taxon_Determination_key) FROM Taxon_Determination TDET2    
+where Preferred = 1 and TDET.Taxon_Occurrence_key = TDET2.Taxon_Occurrence_key Group by preferred ) &#62; 1
+
+INSERT INTO #Problem (problem,R6Table,R6Key)
+Select 'More than 1 Preferred','Biotope_Occurrence',Biotope_Occurrence_Key
+FROM Biotope_Determination TDET WHERE 
+(SELECT COUNT(Biotope_Determination_key) FROM Biotope_Determination TDET2    
+where Preferred = 1 and TDET.Biotope_Occurrence_key = TDET2.Biotope_Occurrence_key Group by preferred ) &#62; 1
+
+
+INSERT INTO #PROBLEM
+SELECT 'Verified Indicator Wrong', 'Taxon_Occurrence', TOCC.Taxon_Occurrence_Key
+FROM Taxon_Determination TDET 
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Taxon_Occurrence_key = TDET.Taxon_Occurrence_Key AND TDET.Preferred= 1
+INNER JOin Determination_Type DT
+ON DT.Determination_Type_Key = TDET.Determination_Type_key   
+WHERE TOCC.Verified &#60;&#62;  DT.Verified
+
+INSERT INTO #PROBLEM
+SELECT 'Verified Indicator Wrong', 'Biotope_Occurrence', TOCC.Biotope_Occurrence_Key
+FROM Biotope_Determination TDET 
+INNER JOIN Biotope_Occurrence TOCC ON TOCC.Biotope_Occurrence_key = TDET.Biotope_Occurrence_Key AND TDET.Preferred= 1
+INNER JOin Determination_Type DT
+ON DT.Determination_Type_Key = TDET.Determination_Type_key   
+WHERE TOCC.Verified &#60;&#62;  DT.Verified
+
+
+INSERT INTO #PROBLEM
+SELECT 'No Recorder', 'Survey_Event', SE.Survey_Event_key
+FROM Survey_Event SE 
+WHERE NOT EXISTS 
+(SELECT * FROM Survey_Event_Recorder SER 
+WHERE SE.Survey_Event_key =  SER.Survey_event_key)
+
+
+INSERT INTO #PROBLEM
+SELECT 'No Recorder', 'Sample', S.Sample_key
+FROM Sample S
+WHERE NOT EXISTS 
+(SELECT * FROM Sample_Recorder SR 
+WHERE S.sample_Key  =  SR.Sample_Key)
+
+INSERT INTO #PROBLEM
+SELECT 'No Indiv or Org ', 'Name', N.name_key
+FROM NAME N
+WHERE NOT EXISTS 
+(SELECT * FROM INDIVIDUAL I WHERE 
+I.Name_key = N.Name_key)
+AND 
+NOT EXISTS 
+(SELECT * FROM ORGANISATION O WHERE 
+O.Name_key = N.Name_key)
+ 
+INSERT INTO #PROBLEM
+SELECT 'Orgs as Recorder', 'Survey_Event', SER.Survey_Event_key
+FROM Survey_event_recorder SER  
+Inner JOIN Organisation O ON O.Name_Key =
+SER.Name_Key 
+
+INSERT INTO #PROBLEM
+SELECT 'Orgs as Determiner', 'Taxon_Determination', TDET.Taxon_Determination_Key
+FROM Taxon_Determination TDET 
+Inner JOIN Organisation O ON O.Name_Key =
+TDET.Determiner 
+
+INSERT INTO #PROBLEM
+SELECT 'Missing Name', 'Location', L.Location_Key
+FROM Location L
+WHERE NOT EXISTS (SELECT * FROM Location_name  
+LN WHERE LN.Location_key = L.Location_key AND LN.Preferred = 1) 
+
+
+INSERT INTO #PROBLEM
+SELECT 'Data Blank', 'Taxon_Occurrence' , Taxon_Occurrence_Key 
+FROM Taxon_Occurrence_data  
+WHERE ltrim(rtrim(data)) = ''
+
+INSERT INTO #PROBLEM
+SELECT 'Data Blank', 'Sample' , Sample_key 
+FROM Sample_data  
+WHERE ltrim(rtrim(data)) = ''
+
+
+INSERT INTO #PROBLEM
+SELECT 'Data Blank', 'Location' , Location_key 
+FROM Location_data  
+WHERE ltrim(rtrim(data)) = ''
+
+INSERT INTO #PROBLEM
+SELECT 'Data Blank', 'Location' , Location_key 
+FROM Location_Name  
+WHERE ltrim(rtrim(item_name)) = ''
+
+ 
+INSERT INTO #PROBLEM
+SELECT 'No Accuracy', 'Taxon_Occurrence' , Taxon_Occurrence_Key 
+FROM Taxon_Occurrence_data  
+WHERE Accuracy is null 
+
+INSERT INTO #PROBLEM
+SELECT 'No Spatial Ref Qualifier', 'Sample' , S.Sample_Key 
+FROM Sample  S
+WHERE Spatial_ref_qualifier is null and S.Spatial_ref_System &#60;&#62; 'Grid'  
+
+INSERT INTO #PROBLEM
+SELECT 'No Spatial Ref Qualifier', 'Survey_Event' , SE.Survey_event_key 
+FROM Survey_Event SE 
+WHERE Spatial_ref_qualifier is null and SE.Spatial_ref_System &#60;&#62; 'Grid'
+
+INSERT INTO #PROBLEM
+SELECT 'No Spatial Ref Qualifier', 'Location' , L.Location_Key  
+FROM Location L  
+WHERE Spatial_ref_qualifier is null and L.Spatial_ref_System &#60;&#62; 'Grid'
+
+
+
+INSERT INTO #PROBLEM
+SELECT 'Inconsistent Spatial Ref System', 'Sample' , S.Sample_Key 
+FROM Sample  S
+WHERE s.Spatial_ref_System = 'Grid' and spatial_ref is not null
+
+
+INSERT INTO #PROBLEM
+SELECT 'Inconsistent Spatial Ref System', 'Survey_Event' , SE.Survey_Event_key 
+FROM Survey_Event SE 
+WHERE sE.Spatial_ref_System = 'Grid' and spatial_ref is not null
+
+INSERT INTO #PROBLEM
+SELECT 'Inconsistent Spatial Ref System', 'Location' , L.Location_key 
+FROM Location L
+WHERE L.spatial_ref_System  = 'Grid' and spatial_ref is not null
+
+
+INSERT INTO #PROBLEM
+SELECT 'Missing Spatial_ref_System', 'Sample' , S.Sample_Key 
+FROM Sample  S
+WHERE s.Spatial_ref_System is null and Spatial_ref is not null
+
+INSERT INTO #PROBLEM
+SELECT 'Missing Spatial Ref System', 'Survey_Event' , SE.Survey_Event_key 
+FROM Survey_Event SE 
+WHERE sE.spatial_ref_System is null and spatial_ref is not null 
+
+
+INSERT INTO #PROBLEM
+SELECT 'Missing Spatial Ref System', 'Location(Grid_Square)' , GS.Location_Key 
+FROM Grid_Square GS
+WHERE GS.spatial_ref_System is null and spatial_ref is not null 
+
+INSERT INTO #PROBLEM
+SELECT 'Missing Spatial Ref System', 'Location' , L.Location_Key 
+FROM Location L
+WHERE L.spatial_ref_System is null and spatial_ref is not null 
+
+
+INSERT INTO #PROBLEM
+Select 'Measurement Type Inconsistent', 'Taxon_Occurrence', TOCD.Taxon_Occurrence_Key 
+FROM Taxon_Occurrence_data TOCD
+INNER JOIN Measurement_Unit MU ON MU.Measurement_Unit_Key = TOCD.Measurement_Unit_Key
+INNER JOIN Measurement_Qualifier MQ ON MQ.Measurement_Qualifier_Key = TOCD.Measurement_Qualifier_Key
+Where MU.Measurement_Type_Key &#60;&#62; MQ.Measurement_Type_key
+
+INSERT INTO #PROBLEM
+Select 'Measurement Type Inconsistent', 'Biotope_Occurrence', BOCD.Biotope_Occurrence_Key 
+FROM Biotope_Occurrence_data BOCD
+INNER JOIN Measurement_Unit MU ON MU.Measurement_Unit_Key = BOCD.Measurement_Unit_Key
+INNER JOIN Measurement_Qualifier MQ ON MQ.Measurement_Qualifier_Key = BOCD.Measurement_Qualifier_Key
+Where MU.Measurement_Type_Key &#60;&#62; MQ.Measurement_Type_key
+
+
+INSERT INTO #PROBLEM
+Select 'Measurement Type Inconsistent', 'Location', LD.Location_Key 
+FROM Location_Data  LD
+INNER JOIN Measurement_Unit MU ON MU.Measurement_Unit_Key = LD.Measurement_Unit_Key
+INNER JOIN Measurement_Qualifier MQ ON MQ.Measurement_Qualifier_Key = LD.Measurement_Qualifier_Key
+Where MU.Measurement_Type_Key &#60;&#62; MQ.Measurement_Type_key
+
+
+INSERT INTO #PROBLEM
+Select 'Measurement Type Inconsistent', 'Sample', SD.Sample_Key
+FROM Sample_Data  SD
+INNER JOIN Measurement_Unit MU ON MU.Measurement_Unit_Key = SD.Measurement_Unit_Key
+INNER JOIN Measurement_Qualifier MQ ON MQ.Measurement_Qualifier_Key = SD.Measurement_Qualifier_Key
+Where MU.Measurement_Type_Key &#60;&#62; MQ.Measurement_Type_key
+
+
+
+
+
+
+
+select DISTINCT Problem, r6table, r6Key from #Problem
+order by Problem,r6table,r6Key 
+
+
+DROP Table #Problem
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</Where>
+
+
+</SQL>
+<Columns>
+  <Column name="Problem" width="150" position="1" caption="Problem" /> 
+  <Column name="R6Table" width="150" position="2" caption = "Table"  /> 
+  <Column name="R6Key" width="150" position="3" caption="R6 Key" /> 
+  
+ 
+</Columns>
+</CustomReport>

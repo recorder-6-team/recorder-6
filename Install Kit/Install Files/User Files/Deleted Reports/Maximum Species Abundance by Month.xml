@@ -1,0 +1,24 @@
+<?xml version="1.0" ?> 
+<!-- COUNT OF RECORDS ENTERED WITHIN A DATE RANGE
+     XML Original report by Dorset Software, display of months amended by Mathew McLoughlin, BRC.
+     Version 1.1 - 13/07/2007
+-->
+<CustomReport menupath="Redundant Reports" title="Maximum Species Abundance by Month V07-07"
+description="
+Please delete file 'Maximum Species Abundance by Month.xml' from your Recorder user\reports folder
+It has been replaced by a report T6 in Taxon restricted reports.   
+"> 
+<SQL>
+
+<Where keytype="Default">
+ Select Distinct 'Please delete this report' as Message From setting
+
+</Where>
+
+
+
+</SQL>
+<Columns>
+
+</Columns>
+</CustomReport>

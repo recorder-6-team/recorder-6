@@ -1,0 +1,402 @@
+<?xml version="1.0" ?>
+
+
+<!-- Records for specified polygon  with Designations partial overlap yes
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 November 2014
+   
+     QUICK REPORT - From Polygon on Map
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Validated - By parameter
+     Site centroid - By parameter 			
+     Invalid = By parameter	
+   
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Polygon Reports"  title="P6 Summary by Polygon include partial" description="Displays records for a selected polygon. 
+Includes references which are NOT totally inside the polygon. Includes designations based on a selected system supplied taxon designatio set " >
+
+<SQL>
+
+
+
+DECLARE @Set CHAR(16)
+DECLARE @Level int
+DECLARE @Restrict int
+
+<Where keytype="Default">
+
+
+
+SET @SET  
+<Condition field="" operator="equal" type="OptionSet"  name="DesignationSet" >
+   <Option name="All Designated Species excluding Northern Ireland (All European, W and C, Cons Regs, Red Lists)" value = "'SYSTEM0100000000'" />
+        <Option name="All European Designated (Birds Dir, H and S, Berne, Bonn)" value = "'SYSTEM0100000001'" />
+        <Option name="All UK Legally Protected (W and C Act, Badgers and Cons Regs)" value = "'SYSTEM0100000002'" />
+        <Option name="Biodiversity Action Plan species (2007)" value = "'SYSTEM0100000005'" />
+        <Option name="Country/UK Biodiversity Lists" value = "'SYSTEM0100000006'" />
+        <Option name="Farmland Environment Planning" value = "'SYSTEM0100000008'" />
+
+        <Option name="IUCN Red Lists (excl BoCC)" value = "'SYSTEM0100000004'" />
+
+        <Option name="NI Wildlife Order" value = "'SYSTEM0100000007'" />
+
+         <Option name="Planning Legislation" value = "'SYSTEM0100000009'" />  
+         <Option name="Statuses of Nationally: Rare, Notable, Scarce" value = "'SYSTEM0100000010'"/>
+
+        <Option name="Wildlife and Countryside Act (All Schedules)" value = "'SYSTEM0100000003'" />
+
+ 
+       
+</Condition>
+
+
+
+
+
+Set @Level 
+<Condition field="" operator="equal" type="OptionSet"  name="Status output" >
+        <Option name="Short name" value = "1" />
+        <Option name="Long Name" value = "2" />
+        <Option name="Abbreviation" value = "4" />
+        <Option name="Kind" value = "3" />
+        <Option name="Yes/No" value = "5" />
+
+</Condition>
+
+
+
+Set @Restrict
+<Condition field="" operator="equal" type="OptionSet"  name="Restrict to Designated Taxa" >
+        <Option name="No" value = "2" />
+        <Option name="Yes" value = "1" />
+       
+
+</Condition>
+
+    
+
+
+CREATE TABLE #Main_Results (
+ TOCC_KEY CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Spatial_ref varchar(30) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Preferred_Name VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Authority   VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Actual_Common VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Recommended_Name VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Recommended_Common VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Sort_Order VARCHAR(30) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Taxon_Group VARCHAR(60) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Location_Name VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Vague_Date_Start INTEGER,
+  Vague_Date_End INTEGER,
+  Vague_Date_Type VARCHAR(2) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Recorders VARCHAR(4000) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Determiner VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Kind1 VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS
+  
+)
+
+INSERT INTO #Main_Results (TOCC_KEY,Spatial_ref,Preferred_name,Authority,Actual_common,Recommended_name,Recommended_common,Sort_Order,Taxon_Group,
+Location_Name,Vague_date_start,vague_date_end,vague_date_type,Recorders, determiner,kind1 )
+
+SELECT 
+TOCC.Taxon_Occurrence_key,
+S.Spatial_ref,
+ITN.PREFERRED_NAME,
+ITN.Authority,
+ITN.COMMON_NAME,
+ITN2.Actual_name,
+ITN2.Common_name,
+ITN2.Sort_Order,
+TG.taxon_Group_Name,
+s.Location_name,
+s.vague_date_start,s.vague_date_end,
+s.vague_date_type,
+dbo.formateventRecorders(s.sample_key) as Recorders, 
+dbo.FormatIndividual (I.Title, I.Initials, I.Forename, I.Surname) as Determiner,
+dbo.ufn_getdesignations(ITN.taxon_List_Item_Key,@level,@set,null) as kind1
+FROM
+Sample S 
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDET on TDET.Taxon_Occurrence_key = TOCC.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDET.Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
+INNER JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_taxon_Name ITN2 ON ITN2.Taxon_List_Item_key = ITN.Recommended_Taxon_List_item_key
+INNER JOIN Individual I on I.name_key = TDET.Determiner  
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+where  
+USR.Name_key IS NULL
+
+AND 
+ITN2.System_Supplied_Data = 1 
+AND
+
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pemding verification" >
+	<Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition> 
+AND        
+
+<Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" >
+	
+        <Option name="Include" value = "'Anything'" />
+        <Option name="Exclude" value = "'Site Centroid'" />
+</Condition>    
+  
+
+and 
+
+<Condition field= "S.Sample_key" operator="equal"  type="SamplesinPolygon"  name="Select Polygon"  includepartialoverlap="yes"/>
+
+AND
+ 
+ ((dbo.ufn_getdesignations(ITN.taxon_List_Item_Key,@level,@set,null)  is not null and @Level &#60; 5) OR 
+    (dbo.ufn_getdesignations(ITN.taxon_List_Item_Key,@level,@set,null)  ='Yes' AND @Level = 5) 
+    OR @RESTRICT = 2)
+
+
+ 
+	
+SELECT * FROM #Main_Results 
+
+
+DROP TABLE #Main_Results
+
+
+
+</Where>
+
+<Where keytype="SamplesinPolygon" includepartialoverlap="yes">
+
+    
+
+SET @SET  
+<Condition field="" operator="equal" type="OptionSet"  name="DesignationSet" >
+        <Option name="All Designated Species excluding Northern Ireland (All European, W and C, Cons Regs, Red Lists)" value = "'SYSTEM0100000000'" />
+        <Option name="All European Designated (Birds Dir, H and S, Berne, Bonn)" value = "'SYSTEM0100000001'" />
+        <Option name="All UK Legally Protected (W and C Act, Badgers and Cons Regs)" value = "'SYSTEM0100000002'" />
+        <Option name="Wildlife and Countryside Act (All Schedules)" value = "'SYSTEM0100000003'" />
+
+        <Option name="IUCN Red Lists (excl BoCC)" value = "'SYSTEM0100000004" />
+        <Option name="Biodiversity Action Plan species (2007)" value = "'SYSTEM0100000005'" />
+        <Option name="NI Wildlife Order" value = "'SYSTEM0100000006'" />
+
+       
+</Condition>
+
+
+Set @Level 
+<Condition field="" operator="equal" type="OptionSet"  name="Status output" >
+        <Option name="Short name" value = "1" />
+        <Option name="Long Name" value = "2" />
+        <Option name="Abbreviation" value = "4" />
+        <Option name="Kind" value = "3" />
+        <Option name="Yes/No" value = "5" />
+
+</Condition>
+
+
+
+Set @Restrict
+<Condition field="" operator="equal" type="OptionSet"  name="Restrict to Designated Taxa" >
+        <Option name="No" value = "2" />
+        <Option name="Yes" value = "1" />
+       
+
+</Condition>
+
+
+
+CREATE TABLE #Main_Results (
+  TOCC_KEY CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+   Spatial_ref varchar(30) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Preferred_Name VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Authority   VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Actual_Common VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Recommended_Name VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Recommended_Common VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Sort_Order VARCHAR(30) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Taxon_Group VARCHAR(60) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Location_Name VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Vague_Date_Start INTEGER,
+  Vague_Date_End INTEGER,
+  Vague_Date_Type VARCHAR(2) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Recorders VARCHAR(4000) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Determiner VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Kind1 VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS
+  
+)
+
+INSERT INTO #Main_Results (TOCC_KEY,Spatial_ref,Preferred_name,Authority,Actual_common,Recommended_name,Recommended_common,Sort_Order,Taxon_Group,
+Location_Name,Vague_date_start,vague_date_end,vague_date_type,Recorders, determiner,Kind1 )
+
+SELECT 
+TOCC.Taxon_Occurrence_key,
+S.Spatial_ref,
+ITN.PREFERRED_NAME,
+ITN.Authority,
+ITN.COMMON_NAME,
+ITN2.Actual_name,
+ITN2.Common_name,
+ITN2.Sort_Order,
+TG.taxon_Group_Name,
+s.Location_name,
+s.vague_date_start,s.vague_date_end,
+s.vague_date_type,
+dbo.formateventRecorders(s.sample_key) as Recorders, 
+dbo.FormatIndividual (I.Title, I.Initials, I.Forename, I.Surname) as Determiner,
+dbo.ufn_getdesignations(ITN.taxon_List_Item_Key,@level,@set,null) as kind1
+FROM
+Sample S 
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDET on TDET.Taxon_Occurrence_key = TOCC.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDET.Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
+INNER JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_taxon_Name ITN2 ON ITN2.Taxon_List_Item_key = ITN.Recommended_Taxon_List_item_key
+INNER JOIN Individual I on I.name_key = TDET.Determiner  
+
+
+
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+where  
+USR.Name_key IS NULL
+
+AND 
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name= "Failed/Pemding verification" >
+	<Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition> 
+AND        
+
+<Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" >
+	
+        <Option name="Include" value = "'Anything'" />
+        <Option name="Exclude" value = "'Site Centroid'" />
+</Condition>    
+ 
+AND
+ 
+ITN2.System_Supplied_Data = 1 
+
+AND 
+
+
+s.sample_key  IN(%s)
+
+AND
+ 
+ ((dbo.ufn_getdesignations(ITN.taxon_List_Item_Key,@level,@set,null)  is not null and @Level &#60; 5) OR 
+    (dbo.ufn_getdesignations(ITN.taxon_List_Item_Key,@level,@set,null)  ='Yes' AND @Level = 5) 
+    OR @RESTRICT = 2)
+
+
+ 	
+SELECT * FROM #Main_Results 
+
+DROP TABLE #Main_Results
+
+
+
+
+</Where>
+ 
+<OutputTableOrderby name="by Taxon Group/Scientific Name" SQL="Order By taxon_group, preferred_name 
+ "/>
+ 
+<OutputTableOrderby name="by Scientific Name" SQL="Order By preferred_name
+"/>
+
+<OutputTableOrderby name="by Taxon Group/Recommended Name " SQL="Order By taxon_group, Recommended_name
+"/>
+
+<OutputTableOrderby name="by Recommended Name" SQL="Order By Recommended_name
+"/>
+
+<OutputTableOrderby name="Taxanomic Order" SQL="Order By Sort_Order
+"/>
+
+
+</SQL>
+<Columns>
+  
+   <Column name="Tocc_key" visible="false"  />
+   <Column name="sort_order" visible="false"  />
+   <Column name="Spatial_ref" width="60" position="2" caption="Spatial Ref" />   
+   <Column name="Location_name" width="200" position="3" caption="Sample Location Name" /> 
+   <Column name="Vague_date_start" width="100" position="4" caption="Date" /> 
+   <Column name="Recorders" width="200" position="5" caption="Recorders" /> 
+   <Column name="Determiner" width="120" position="6" caption="Determiner" /> 
+   <Column name="Taxon_Group" width="200" position="7" caption="Taxon Group" />
+   <Column name="Preferred_Name" width="200" position="7" caption="Scientific Name" /> 
+   <Column name="Authority" width="200" position="8" caption="Authority" /> 
+   <Column name="Actual_Common" width="200" position="9" caption="Common Name" /> 
+   <Column name="Recommended_name" width="200" position="10" caption="Recommended Name" /> 
+   <Column name="Recommended_Common" width="200" position="11" caption="Recommended Common Name" /> 
+   
+   <Column name="kind1" width="500" position="13" caption="Designations" /> 
+
+ 
+
+ 
+</Columns>
+</CustomReport>

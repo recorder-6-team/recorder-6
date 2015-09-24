@@ -1,0 +1,69 @@
+[Reports]
+JNCCAssignTaxonsToDesignation.xml:986346429
+JNCCAssignTaxonsToDesignationRuck.xml:986346432
+JNCCDel1TDET.xml:982752564
+JNCCDel2TCOM.XML:982753747
+JNCCDel3SENoSamp.xml:982754356
+JNCCDel4SNoOcc.xml:982749492
+JNCCDel5Records.xml:982751797
+JNCCDesig1CreateSets.xml:989087362
+JNCCDet1Determinations.xml:982750247
+JNCCDet2Determinations.xml:982750325
+JNCCDet4Determinations.xml:952007149
+JNCCDet5Determination.xml:982750385
+JNCCLoc1Locations.xml:982750410
+JNCCPref1DuplicatePref.xml:982750490
+[Where Types]
+JNCCAssignTaxonsToDesignation.xml:0
+JNCCAssignTaxonsToDesignationRuck.xml:0
+JNCCDel1TDET.xml:0
+JNCCDel2TCOM.XML:0
+JNCCDel3SENoSamp.xml:0
+JNCCDel4SNoOcc.xml:0
+JNCCDel5Records.xml:7
+JNCCDel5Records.xml:8
+JNCCDel5Records.xml:9
+JNCCDel5Records.xml:10
+JNCCDel5Records.xml:11
+JNCCDel5Records.xml:0
+JNCCDesig1CreateSets.xml:0
+JNCCDet1Determinations.xml:0
+JNCCDet2Determinations.xml:0
+JNCCDet4Determinations.xml:0
+JNCCDet5Determination.xml:0
+JNCCDet5Determination.xml:7
+JNCCLoc1Locations.xml:0
+JNCCPref1DuplicatePref.xml:0
+[Paths]
+JNCCAssignTaxonsToDesignation.xml:Designations
+JNCCAssignTaxonsToDesignationRuck.xml:Designations
+JNCCDel1TDET.xml:Delete
+JNCCDel2TCOM.XML:Delete
+JNCCDel3SENoSamp.xml:Delete
+JNCCDel4SNoOcc.xml:Delete
+JNCCDel5Records.xml:Delete
+JNCCDesig1CreateSets.xml:Designations
+JNCCDet1Determinations.xml:Determination Updates
+JNCCDet2Determinations.xml:Determination Updates
+JNCCDet4Determinations.xml:JNCC\Determination Updates
+JNCCDet5Determination.xml:Determination Updates
+JNCCLoc1Locations.xml:Location Updates
+JNCCPref1DuplicatePref.xml:Updates
+[Titles]
+JNCCAssignTaxonsToDesignation.xml:Assigns Taxons to a designation
+JNCCAssignTaxonsToDesignationRuck.xml:Assigns Taxons to a designation (using rucksack)
+JNCCDel1TDET.xml:Del1 Deletes specified records based on Determination Type
+
+JNCCDel2TCOM.XML:Del2 Deletes specified records based on text in Comments
+
+JNCCDel3SENoSamp.xml:Del3 Delete Events with No Samples
+JNCCDel4SNoOcc.xml:Del4 Delete Samples with no Occurrences
+JNCCDel5Records.xml:Del5 Deletes down from a level
+JNCCDesig1CreateSets.xml:Des1 Taxon Designation Set 
+JNCCDet1Determinations.xml:Det1 - creates new Determination for specified taxa.
+JNCCDet2Determinations.xml:Det2-creates new Determination for specified taxa.
+JNCCDet4Determinations.xml:Det4 - creates new Determination to Preferred Dict.
+JNCCDet5Determination.xml:Det6 - Creates new Determination using original taxa 
+JNCCLoc1Locations.xml:Loc1 - Move Locations where not Custodian
+JNCCPref1DuplicatePref.xml:Pref1 - Corrects Duplicate Preferred Determinations
+[Templates]
