@@ -7,4 +7,4 @@ To use this repository:
 
 * Clone the repository to a folder c:\localsource\recorder-6.
 * Create a directory c:\localsource\DCU for compilation purposes.
-* Obtain the files required for building Recorder 6 which are not open source and place into c:\localsource\recorder-6-no-vcs
+* Obtain the files required for building Recorder 6 which are not open source and place into c:\localsource\recorder-6\Third Party
