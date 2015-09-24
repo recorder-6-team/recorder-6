@@ -1,0 +1,9 @@
+# Exclude compiled files
+**/*.ocx
+**/*.dll
+**/*.exe
+# See http://delphi.wikia.com/wiki/Delphi_File_Extensions for more information on Delphi file types to include in VCS
+**/*.cfg
+**/*.dcu
+**/*.ddp
+**/*.~*
