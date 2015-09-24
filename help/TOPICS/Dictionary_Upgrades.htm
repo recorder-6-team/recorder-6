@@ -1,0 +1,312 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Dictionary Upgrades</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Dictionary Upgrades</H1>
+  <P>
+   Upgrades for the dictionaries will periodically become available and 
+   will need to be included in your <SPAN STYLE="font-style : italic;font-weight : normal;">Recorder</SPAN> 
+   database so that you can enter observations using up-to-date 
+   taxonomic checklists and biotope classifications. Taxon dictionary 
+   upgrades may be required, for example, as a result of new species 
+   being recorded for Britain, or in response to changes resulting from 
+   research into taxonomy.</P>
+  <P>
+   When a dictionary upgrade for <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   becomes available it will be announced on the <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>Forum, part of the <A HREF="http://forums.nbn.org.uk/index.php">NBN
+    Forum</A>, which can also be accessed from the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   web site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A>.
+    You are advised to check this from time to time for news of upgrades 
+   and other information about <SPAN STYLE="font-style : italic;">Recorder</SPAN>.</P>
+  <P>
+   To upgrade the<SPAN STYLE="font-weight : bold;"> </SPAN><SPAN STYLE="font-weight : normal;">dictionaries
+    </SPAN>you need to use the <SPAN STYLE="font-weight : bold;">Dictionary
+    Upgrade Kit</SPAN> which first became available in version 6.9 of <SPAN STYLE="font-style : italic;">Recorder</SPAN>.
+    It&nbsp;was introduced so that changes to the dictionaries could be 
+   done independent of changes to the software. Prior to version 6.9<SPAN STYLE="font-style : italic;">,</SPAN> 
+   upgrades to the software and all the dictionaries were combined.</P>
+  <P>
+   Dictionary upgrades come in the form of upgrade files or scripts that 
+   need to be placed in the Dictionary Upgrade Kit's Scripts folder 
+   prior to running the DictionaryUpgrade.exe file. The dictionary 
+   upgrade does the database changes specified in the files in the <SPAN STYLE="font-weight : bold;">\Dictionary
+    Upgrade Kit\Scripts</SPAN> folder. When an upgrade completes, it 
+   stores the most recently applied file name (excluding the extension) 
+   in the <A HREF="Accessing_the_Database_from_Other_Software.htm"><SPAN STYLE="font-style : italic;">Recorder</SPAN> database</A>.
+    This is the dictionary version that can be displayed using <SPAN STYLE="font-weight : bold;">Help
+    - About Recorder 6</SPAN>. It is used to prevent you from skipping 
+   upgrades or running them out of sequence.</P>
+  <P>
+   Users are advised to backup their database prior to upgrading via <SPAN STYLE="font-weight : bold;"><A HREF="Backups.htm">Tools
+    - Database Tools - Backup Database</A></SPAN> or the SQL Server 
+   tools they use for backups.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: Whenever an upgrade is 
+   to be installed, it should be done through an <SPAN STYLE="font-weight : bold;">administrator
+    user account</SPAN> to avoid any potential problems due to limited 
+   user account access rights. The &quot;sa&quot; login or a trusted 
+   connection with database owner privileges over the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   database is required during the upgrade.<BR>
+   </P>
+  <P CLASS="warning">
+   If you are upgrading a standalone copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   on your personal computer running Windows XP, the way you normally 
+   login will probably provide sufficient rights to run an upgrade, but 
+   if you are operating on a network this may not be the case and you 
+   may need to ask a system administrator to run the upgrade for you. If 
+   you are running Vista or Windows 7, you will need to request 
+   elevation by taking the actions specified below.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: If an upgrade adds 
+   large lists to the dictionary or makes extensive changes to existing 
+   lists, it may take a long time to run, however this doesn't apply for 
+   upgrades 0000000F to 0000000Y. In this case, you may be advised to 
+   run the upgrade overnight, although the runtime will depend on the 
+   power of your computer(s) and the speed of your network, where applicable.</P>
+  <P CLASS="warning">
+   A large dictionary upgrade will require a lot of processing power to 
+   run and therefore you may receive a message in the title bar of the 
+   &quot;Recorder Dictionary Upgrade&quot; window saying that the 
+   application is not responding, or it may appear blank. PLEASE DO NOT 
+   CANCEL THE UPGRADE AT THIS STAGE. Press &lt;Ctrl-Alt-Del&gt; and open 
+   Task Manager. Under the Applications tab the status of the 
+   &quot;Recorder Dictionary Upgrade&quot; will also be displayed as not 
+   responding, however, if you click on the Performance tab, the CPU 
+   Usage will probably be nearing 100% and the CPU Usage history line 
+   will be at the top of the grid box. Unless the CPU Usage is low and 
+   static, the upgrade is still running. If you run <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>on a network, then you will need to monitor CPU usage both on 
+   the server and local machine to check that the upgrade is still 
+   running. The upgrade splits it's time between the two and therefore 
+   the local machine may become inactive whilst the server continues to 
+   process the upgrade.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: If you are using a 
+   free run-time version of SQL Server you need to keep an eye on the 
+   size of your <A HREF="Accessing_the_Database_from_Other_Software.htm"><SPAN STYLE="font-style : italic;">Recorder</SPAN> database</A> 
+   as large dictionary upgrades can add significant amounts of data to 
+   it. With MSDE the maximum database size is 2 GB, with SQL Server 2005 
+   Express it is 4 GB, with SQL Server 2008 Express it is 10 GB. If data 
+   entry or a dictionary upgrade would take you over this, SQL Server 
+   simply doesn't do it.</P>
+  <H3>
+   To upgrade <SPAN STYLE="font-style : normal;">the dictionaries:</SPAN></H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Download the dictionary upgrade kit <SPAN STYLE="font-style : normal;">from
+     </SPAN>the <A HREF="http://www.jncc.gov.uk/page-4615">Dictionary Downloads</A> 
+    section of the <SPAN STYLE="font-style : italic;">Recorder</SPAN> web 
+    site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A>,
+     <SPAN STYLE="font-weight : bold;">if this hasn't been done for a 
+    previous upgrade, or if a new version is now available</SPAN>. It is 
+    recommended that you store this in a folder outside your <SPAN STYLE="font-style : italic;">Recorder
+     6</SPAN> folder(s).</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Unzip the dictionary upgrade kit. Clicking on the &quot;.zip&quot; 
+    file will usually open the extraction software on your computer. You 
+    need to select the options that will unzip the selected file to a new 
+    folder in the same location and retain the folder structure when the 
+    file is unzipped (often the defaults). If extraction software is not 
+    available, you will need a suitable software tool, such as <A HREF="http://www.winzip.com">WinZip</A>,
+     to extract the files from the &quot;.zip&quot; file. The unzipped 
+    file should look like:</P>
+   </UL>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <P>
+     <IMG SRC="..\ScreenShots\Dictionary Upgrade Kit.gif" WIDTH="778" HEIGHT="256" VSPACE="0" HSPACE="0" BORDER="0"></P>
+    </BLOCKQUOTE>
+   </BLOCKQUOTE>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Download the required upgrade file(s) from the <A HREF="http://www.jncc.gov.uk/page-4615">Dictionary
+     Downloads</A> section of the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+    web site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A>.
+     It is recommended that you store them in a folder outside your <SPAN STYLE="font-style : italic;">Recorder
+     6</SPAN> folder(s). Do not save them in the Scripts folder in the 
+    dictionary upgrade kit.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Unzip each upgrade file in turn and place the unzipped file(s) in the 
+    Scripts folder in the dictionary upgrade kit. The files you download 
+    are called, for example, Rec6Dict_0000000R_UnzipMe.zip, which 
+    contains the files 0000000R.ini and 0000000R.zip. It is 0000000R.ini 
+    and 0000000R.zip that need to be in the Scripts folder not 
+    Rec6Dict_0000000R_UnzipMe.zip. Depending on the nature of the 
+    upgrade, the scripts will be .zip files (usually accompanied by .ini 
+    files) or .sql files. If the Scripts folder contains any 
+    Rec6Dict_000000... files when dictionary upgrade is run, it won't run 
+    correctly and it can prevent subsequent upgrades from running.</P>
+   </UL>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <P STYLE="text-align : left;" CLASS="note" ALIGN=LEFT>
+     <SPAN STYLE="font-style : normal;font-weight : bold;">Note</SPAN><SPAN STYLE="font-style : normal;font-weight : normal;">:
+      The downloaded files must be unzipped just once, so for example, </SPAN>0000000R.zip<SPAN STYLE="font-style : normal;font-weight : normal;"> 
+     must not be unzipped again as the upgrade kit is designed to cope 
+     with it in this format. </SPAN>Do not rename any of these files.</P>
+    <P STYLE="text-align : left;" CLASS="note" ALIGN=LEFT>
+     <SPAN STYLE="font-style : normal;font-weight : bold;">Note</SPAN><SPAN STYLE="font-style : normal;font-weight : normal;">:
+      For the upgrade to run correctly there must be a Scripts folder 
+     containing the scripts to be run in the D</SPAN>ictionary Upgrade Kit<SPAN STYLE="font-style : normal;font-weight : normal;"> folder.</SPAN></P>
+    <P STYLE="text-align : left;" CLASS="note" ALIGN=LEFT>
+     <SPAN STYLE="font-style : normal;font-weight : bold;">Note</SPAN><SPAN STYLE="font-style : normal;font-weight : normal;">:
+      <FONT COLOR="BLUE">Y</FONT></SPAN><FONT COLOR="BLUE">ou can run 
+     multiple upgrades at the same time but the Scripts folder must 
+     contain all the scripts from the one after the last one applied (see </FONT><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLUE">Help
+      - About Recorder 6</FONT></SPAN><FONT COLOR="BLUE">) to the latest 
+     one you wish to apply. The upgrade kit expects to apply the scripts 
+     in file name sequence. It will not run a script if the previous one 
+     hasn't been run and an appropriate error message will be displayed if 
+     an upgrade file has not been run, e.g. if the dictionary version is 
+     0000000Q but the Scripts folder contains 0000000S.ini, 0000000S.zip 
+     and 0000000T.sql, then an error message will be displayed when the 
+     upgrade is run</FONT><SPAN STYLE="font-style : normal;font-weight : normal;"><FONT COLOR="BLUE">.
+      </FONT></SPAN>0000000R needs to be run before 0000000S and 0000000T.</P>
+    </BLOCKQUOTE>
+   </BLOCKQUOTE>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Make sure that <SPAN STYLE="font-style : italic;">Recorder </SPAN><SPAN STYLE="font-style : normal;">is
+     </SPAN><SPAN STYLE="font-style : normal;font-weight : bold;">not</SPAN><SPAN STYLE="font-style : normal;"> running.</SPAN></P>
+   <LI CLASS="mvd-P">
+   <P>
+    <FONT COLOR="BLACK">Run the upgrade by:</FONT></P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK">Locating the </FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">DictionaryUpgrade.exe</FONT></SPAN><SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK"> </FONT>file
+      amongst the files you unzipped using &quot;My Computer&quot; or 
+     &quot;Windows Explorer&quot;, and double-clicking it, if you are 
+     running </SPAN>Windows XP<SPAN STYLE="font-style : normal;">, or by 
+     right clicking it and selecting </SPAN><SPAN STYLE="font-style : normal;font-weight : bold;">Run
+      as administrator</SPAN><SPAN STYLE="font-style : normal;">, if you 
+     are running </SPAN>Vista, or by <SPAN STYLE="font-style : normal;">double-clicking
+      it</SPAN> and answering Yes to the User Account Control question 'Do 
+     you want to allow the following program (<FONT COLOR="BLACK"><SPAN STYLE="font-weight : normal;">Dictionary</SPAN></FONT>Upgrade.exe)
+      from an unknown publisher to make changes to this computer?<SPAN STYLE="font-style : normal;"> 
+     if you are running </SPAN>Windows 7.</P>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK">Alternatively,</FONT></SPAN><FONT COLOR="BLACK"> select</FONT><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK"> 
+     Start - Run</FONT></SPAN><FONT COLOR="BLACK"> from the </FONT><SPAN STYLE="font-style : italic;"><FONT COLOR="BLACK">Windows</FONT></SPAN><SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK"> 
+     menu, type &quot;\</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">DictionaryUpgrade.exe&quot;</FONT></SPAN><SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK"> 
+     preceded by the full file path for the folder that contains it and 
+     click [OK]. Note that for Vista and Windows 7 this option works a 
+     little differently.</FONT></SPAN></P>
+    </UL>
+   </UL>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <P STYLE="text-align : left;" CLASS="note" ALIGN=LEFT>
+     <SPAN STYLE="font-style : normal;font-weight : bold;">Note</SPAN><SPAN STYLE="font-style : normal;font-weight : normal;">:
+      If you are upgrading a network installation the upgrade needs to be 
+     run from a computer that operates as a </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder</SPAN><SPAN STYLE="font-style : normal;font-weight : normal;"> 
+     workstation as the upgrade uses the registry settings on the 
+     workstation to locate the things to be upgraded.</SPAN></P>
+    </BLOCKQUOTE>
+   </BLOCKQUOTE>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK">You will be 
+    prompted to select the SQL Server system </FONT></SPAN><SPAN STYLE="font-style : normal;font-weight : normal;"><FONT COLOR="BLACK">administrator</FONT></SPAN><SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK"> 
+    login you would like to use to log on to the SQL Server. The options 
+    you chose will depend on how SQL Server was installed. They are:</FONT></SPAN></P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P STYLE="text-align : left;" ALIGN=LEFT>
+     <FONT COLOR="BLACK">&quot;</FONT><SPAN STYLE="font-style : normal;font-weight : normal;"><FONT COLOR="BLACK">Use
+      the following SQL Server system administrator login</FONT></SPAN><SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK">&quot;</FONT></SPAN><SPAN STYLE="font-style : normal;font-weight : normal;"><FONT COLOR="BLACK">,
+      for which you need to input a Username and Password. If you are 
+     running the system under MSDE accept the default, i.e. Username 
+     &quot;sa&quot; and Password left blank. For other versions of </FONT></SPAN><SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK">SQL
+      Server, you will need to know the password that was specified when 
+     SQL Server was installed.</FONT></SPAN></P>
+    <LI CLASS="mvd-P">
+    <P STYLE="text-align : left;" ALIGN=LEFT>
+     &quot;Use my Windows Account to login (Windows Authentication)&quot;<SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK">,
+      </FONT></SPAN>the trusted connection option. Use this option if 
+     Windows Authentication or Mixed Mode Authentication was specified <SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK">when
+      SQL Server was installed</FONT></SPAN>. If you are running a 
+     standalone installation with Windows XP, Vista or Windows 7, it will 
+     be easiest to use this option.</P>
+    </UL>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    <SPAN STYLE="font-style : normal;font-weight : normal;"><FONT COLOR="BLACK">When
+     the upgrade is complete the message &quot;Recorder upgrade 
+    complete&quot; will appear.</FONT></SPAN></P>
+   </UL>
+  <P STYLE="text-align : left;" CLASS="note" ALIGN=LEFT>
+   <SPAN STYLE="font-style : normal;font-weight : bold;">Note</SPAN><SPAN STYLE="font-style : normal;font-weight : normal;">:
+    If, for any reason, a dictionary upgrade does not appear to have 
+   completed correctly, please seek help via the </SPAN><A HREF="http://forums.nbn.org.uk/index.php">NBN
+    Forum</A><SPAN STYLE="font-style : normal;font-weight : normal;">, 
+   or contact the supplier of your copy of </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder</SPAN><SPAN STYLE="font-style : normal;font-weight : normal;">,
+    or any of the </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder</SPAN><SPAN STYLE="font-style : normal;font-weight : normal;"> 
+   suppliers who are listed on </SPAN>the <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>web site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A><SPAN STYLE="font-style : normal;font-weight : normal;">.</SPAN></P>
+  <P>
+   <FONT COLOR="BLACK">You are now in a position to use </FONT><SPAN STYLE="font-style : italic;"><FONT COLOR="BLACK">Recorder
+    </FONT></SPAN><FONT COLOR="BLACK">again although, if the upgrade 
+   contains changes to the taxon dictionary, you must rebuild the taxon 
+   indexes before you can use the new or changed entries in the taxon dictionary:</FONT></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Select <SPAN STYLE="font-weight : bold;">Tools - Database Tools - 
+    Rebuild Taxon Group Index</SPAN> from the Main menu, then</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select <SPAN STYLE="font-weight : bold;">Tools - Database Tools - 
+    Rebuild Taxon Name Index</SPAN> from the Main menu, then</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select <SPAN STYLE="font-weight : bold;">Tools - Database Tools - 
+    Rebuild Taxon Synonym Index</SPAN> from the Main menu, then</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select <SPAN STYLE="font-weight : bold;">Tools - Database Tools - 
+    Rebuild Taxon Designation Index</SPAN> from the Main menu.</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: Rebuilding the <SPAN STYLE="font-weight : bold;">Taxon
+    Designation Index </SPAN><SPAN STYLE="font-weight : normal;">must be 
+   done last as it uses the other indexes.</SPAN></P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: Depending on the power 
+   of your computer(s) and the speed of your network, where applicable, 
+   each rebuild may take 5-10 minutes to run. On slower systems they may 
+   take somewhat longer.</P>
+  <P>
+   Use <SPAN STYLE="font-weight : bold;">Help - About Recorder 6</SPAN> 
+   to check that the system has been upgraded.</P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;
+ </BODY>
+</HTML>

@@ -1,0 +1,135 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Drawing polygons</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Drawing polygons</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <H3>
+   To draw a polygon or line:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the drawing tool using the <IMG SRC="..\buttonimages\DrawPolygon.gif" WIDTH="17" HEIGHT="17" VSPACE="0" HSPACE="0" BORDER="0"> 
+    icon or through the map menu.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    When the drawing tool is selected, the map cursor changes to a cross 
+    hair <IMG SRC="..\CursorImages\DrawPolygonCursor.gif" WIDTH="27" HEIGHT="27" VSPACE="0" HSPACE="0" BORDER="0"></P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click with the mouse on the point at which you want to start drawing. 
+    The point selected is at the dot in the centre of the cross hairs.<IMG SRC="..\CursorImages\DrawPolygonCursor.gif" WIDTH="27" HEIGHT="27" VSPACE="0" HSPACE="0" BORDER="0"></P>
+   <LI CLASS="mvd-P">
+   <P>
+    Left click on additional points (which will be joined by a red line) 
+    until the transect line is completed or the polygon is nearly complete.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Right click and a menu of options appears at the position of the 
+    mouse. Select the most appropriate:</P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     Finish polygon &amp; add to <SPAN STYLE="font-style : italic;">&lt;name
+      of current polygon layer&gt;</SPAN>.<BR>
+     <LI CLASS="mvd-P">Finish polygon &amp; add to layer <IMG SRC="..\ScreenShots\MenuSelectArrow.gif" WIDTH="5" HEIGHT="9" VSPACE="0" HSPACE="0" BORDER="0"><BR>
+     <LI CLASS="mvd-P">Finish line &amp; add to <SPAN STYLE="font-style : italic;">&lt;name
+      of current polygon layer&gt;</SPAN>.<BR>
+     <LI CLASS="mvd-P">Finish line &amp; add to layer <IMG SRC="..\ScreenShots\MenuSelectArrow.gif" WIDTH="5" HEIGHT="9" VSPACE="0" HSPACE="0" BORDER="0"><BR>
+     <LI CLASS="mvd-P">Cancel.</P>
+    </UL>
+   </UL>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">NOTE: </SPAN>No means of editing 
+   lines or polygons is available.</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    If you make a mistake while drawing:</P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     Right click.<BR>
+     <LI CLASS="mvd-P">Select Cancel from the menu and start again.</P>
+    </UL>
+   <LI CLASS="mvd-P">
+   <P>
+    If you find the completed line or polygon is incorrect, then you must <A HREF="Deleting_Polygons.htm">delete</A> 
+    it and redraw from scratch.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The new polygon will have the properties (shading, selected and 
+    unselected colours) of the layer to which you chose to add it. You 
+    can <A HREF="Polygon_settings.htm">change</A> these settings, but any 
+    change affects all polygons on that layer.</P>
+   </UL>
+  <H3>
+   Holes in Polygons</H3>
+  <P>
+   It is possible to add a hole to a polygon. Any reports based on that 
+   polygon will not include records that appear in the &quot;hole&quot;. 
+   To add a hole to a polygon;</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Draw both the polygon and the &quot;hole&quot; that you want to take 
+    out of the polygon using the above method</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Choose the pointer <IMG SRC="..\buttonimages\Pointer.gif" WIDTH="16" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> tool</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the polygon from which you want to remove the hole</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Choose the tool</P>
+   <LI CLASS="mvd-P">
+   <P>
+    As instructed, select the &quot;hole&quot; polygon and press the F8 
+    function key</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The polygon should now appear hatched and the hole unhatched.</P>
+   </UL>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Background vs Polygons;Background_vs_Polygons.htm"><PARAM
+    NAME="Item2" VALUE="Deleting Polygons;Deleting_Polygons.htm"><PARAM
+    NAME="Item3" VALUE="Importing Polygons;Importing_Polygons.htm"><PARAM
+    NAME="Item4" VALUE="Linking Polygons to Locations;Linking_Polygons_to_Locations.htm"></OBJECT>
+ </BODY>
+</HTML>

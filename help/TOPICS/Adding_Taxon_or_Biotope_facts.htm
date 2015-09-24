@@ -1,0 +1,142 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Adding Taxon or Biotope facts</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Adding Taxon or Biotope facts</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></H1>
+  <P>
+   These are added via <A HREF="Edit_Taxa_Facts_Tab.htm">Edit Taxon 
+   details- Facts</A> or <A HREF="New_Biotopes_Facts_Tab.htm">Edit 
+   Biotope details - Facts</A>.</P>
+  <P>
+   The text of the fact should be typed as an <A HREF="javascript:BSSCPopup('../Glossary/HTML.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">HTML</A> 
+   fragment and can include a wide range of HTML tags, for example:</P>
+  <P>
+   <TABLE WIDTH="80%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="27%" VALIGN=TOP>
+      <P>
+       &lt;I&gt;...&lt;/I&gt;</TD>
+     <TD WIDTH="73%" VALIGN=TOP>
+      <P>
+       The enclosed words will be displayed in italics.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="27%" VALIGN=TOP>
+      <P>
+       &lt;B&gt;...&lt;/B&gt;</TD>
+     <TD WIDTH="73%" VALIGN=TOP>
+      <P>
+       The enclosed words will be emboldened</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="27%" VALIGN=TOP>
+      <P>
+       &lt;BR&gt;</TD>
+     <TD WIDTH="73%" VALIGN=TOP>
+      <P>
+       Inserts a line break</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="27%" VALIGN=TOP>
+      <P>
+       &lt;P&gt;</TD>
+     <TD WIDTH="73%" VALIGN=TOP>
+      <P>
+       Starts a new paragraph</TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   Other possibilities include bulleted or numbered lists and tables. In 
+   fact almost any syntax included in the HTML 3.2 specification can be utilised.</P>
+  <P>
+   You can include special characters, including those with accents, by 
+   giving their character entity reference from the <A HREF="http://www.w3.org/TR/html401/sgml/entities.html#iso-88591">ISO
+    8859-1 (Latin-1) character set</A>. This consists of either a 
+   mnemonic or a character number. For example the character &eacute; 
+   can be written as &quot;&amp;eacute;&quot; or &quot;&amp;#233;&quot;.</P>
+  <H3>
+   Example</H3>
+  <P>
+   &lt;I&gt;Criorhina asilica&lt;/I&gt; (Fall&amp;#233;n, 1816) will be 
+   displayed in the Browser detail pane as <SPAN STYLE="font-style : italic;">Criorhina
+    asilica</SPAN> (Fall&eacute;n, 1816)</P>
+  <H3>
+   Including images</H3>
+  <P>
+   You can include a picture in the Fact simply by including an HTML IMG 
+   tag which points to the file containing the image (in GIF - including 
+   animated gifs, BMP, JPEG, PNG formats and including transparent 
+   images where these are supported by these file formats). For example 
+   &quot;&lt;IMG SRC=&quot;c:\temp\MyPicture.jpg&quot;&gt;.</P>
+  <P>
+   However, this may cause a problem if you exported the Fact to another 
+   computer. They might not keep their images in this directory. To help 
+   overcome this problem, you can use a special tag 
+   &quot;#LOCAL_IMAGES&quot; which stands for the path set in &quot;Image
+    files:&quot; in the <A HREF="Options_File_Locations.htm">Tools- 
+   Options - File Locations</A> page. The example would then become 
+   &quot;&lt;IMG SRC=&quot;#LOCAL_IMAGES\MyPicture.jpg&quot;&gt;. When 
+   you export the Fact, providing you also send the image file and it is 
+   put in the path pointed at by &quot;Image files:&quot; in the target 
+   copy of <SPAN STYLE="font-style : italic;">Recorder 2002</SPAN><SPAN STYLE="font-style : normal;">,
+    then the image will appear correctly. This allows the target copy's 
+   owner to keep Image file where he or she chooses.</SPAN></P>
+  <P>
+   <SPAN STYLE="font-style : normal;">You could embed other files (a 
+   sound or a movie clip for example) in your Fact using the same principles.</SPAN></P>
+  <H3>
+   Including a source for the Fact</H3>
+  <P>
+   If you put reference stored in the Documents table in <SPAN STYLE="font-style : italic;">Recorder
+    2002</SPAN><SPAN STYLE="font-style : normal;"> in the Source prompt 
+   of the <A HREF="Edit_Taxa_Facts_Tab.htm">Edit</A></SPAN><A HREF="Edit_Taxa_Facts_Tab.htm"> 
+   Taxon details - Facts</A> or <A HREF="New_Biotopes_Facts_Tab.htm">Edit
+    Biotope details - Facts</A> pages, it will appear as a hyperlink n 
+   the Browser detail pane. Clicking this hyperlink will open the 
+   Document window and select this reference.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Dictionaries overview;Dictionaries_Overview.htm"><PARAM
+    NAME="Item2" VALUE="Edit Biotopes Facts;New_Biotopes_Facts_Tab.htm"><PARAM
+    NAME="Item3" VALUE="Edit Taxa overview;Edit_Taxa_Overview.htm"></OBJECT>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

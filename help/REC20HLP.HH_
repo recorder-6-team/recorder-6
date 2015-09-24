@@ -1,0 +1,1088 @@
+<html>
+<!-- Sitemap 1.0 -->
+<object type="text/site properties">
+  <param name="SiteType" value="toc">
+  <param name="Window Styles" value="0x800002">
+  <param name="ExWindow Styles" value="0x100">
+</object>
+<ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Tasks">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Entering data">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Edit and Browse Modes">
+        <param name="Local" value="Topics\Modes.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Editing data">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Editing items">
+          <param name="Local" value="Topics\Editing_an_Item.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Deleting items">
+          <param name="Local" value="Topics\Delete.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Adding data">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Adding items">
+          <param name="Local" value="Topics\Add.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Entering a species record for a place">
+          <param name="Local" value="Topics\Species_Card.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Determining location positions">
+          <param name="Local" value="Topics\Getting_Grid_References_or_Locations_from_Maps.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Sources">
+          <param name="Local" value="Topics\Sources.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Measurements">
+          <param name="Local" value="Topics\Measurements.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="RTF Memos">
+          <param name="Local" value="Topics\RTF_Memos.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Negative records">
+          <param name="Local" value="Topics\Negative_Records.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Finding things">
+          <param name="Local" value="Topics\Finding_Things.htm">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Drag and Drop">
+            <param name="Local" value="Topics\Drag_and_Drop.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Copy and Paste">
+            <param name="Local" value="Topics\Copy_and_Paste.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Return data (F9)">
+            <param name="Local" value="Topics\Return_Data.htm">
+          </object>
+          </ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Using Record Cards">
+          <param name="Local" value="Topics\Quick_Record_Entry_Overview.htm">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Data entry">
+            <param name="Local" value="Topics\Entering_Data_Using_a_Recording_Card.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Using sample icons">
+            <param name="Local" value="Topics\Entering_records_by_placing_sample_icons.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="New Recording Card">
+            <param name="Local" value="Topics\New_Recording_Card.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Saving a Record Card">
+            <param name="Local" value="Topics\Saving_a_Record_Card.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Sharing Record Cards">
+            <param name="Local" value="Topics\Sharing_Record_Cards_with_Others.htm">
+          </object>
+          </ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="The Rucksack">
+          <param name="Local" value="Topics\Rucksack.htm">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Saving and loading">
+            <param name="Local" value="Topics\Saving_and_Loading_Rucksacks.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Using items">
+            <param name="Local" value="Topics\Using_Items.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Adding or deleting items">
+            <param name="Local" value="Topics\Adding_or_Deleting_Items.htm">
+          </object>
+          </ul>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Viewing data">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Find dialog">
+          <param name="Local" value="Topics\Find_Dialog.htm">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Admin Areas">
+            <param name="Local" value="Topics\Finding_Admin_Areas.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Biotopes">
+            <param name="Local" value="Topics\Finding_Biotopes.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Documents">
+            <param name="Local" value="Topics\Finding_Documents.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Locations">
+            <param name="Local" value="Topics\Finding_Locations.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Names and Addresses">
+            <param name="Local" value="Topics\Finding_Names_and_Addresses.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Samples">
+            <param name="Local" value="Topics\Finding_Samples.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Survey Events">
+            <param name="Local" value="Topics\Finding_Survey_Events.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Surveys">
+            <param name="Local" value="Topics\Finding_Surveys.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Taxa">
+            <param name="Local" value="Topics\Finding_taxa.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Finding Taxon Occurrences">
+            <param name="Local" value="Topics\Finding_related_taxon_occurrences.htm">
+          </object>
+          </ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Related data">
+          <param name="Local" value="Topics\Related_Data.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Simple filter">
+          <param name="Local" value="Topics\Simple_filter.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Sorting">
+          <param name="Local" value="Topics\Sorting.htm">
+        </object>
+        </ul>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="The main data types">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Locations">
+        <param name="Local" value="Topics\Location_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Location Hierarchies">
+          <param name="Local" value="Topics\Location_Hierarchies.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="General Tab">
+          <param name="Local" value="Topics\Location_General_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Designations Tab">
+          <param name="Local" value="Topics\Location_Designations_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Geo Info">
+          <param name="Local" value="Topics\Geographical_Information.htm">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Administrative Areas Tab">
+            <param name="Local" value="Topics\Location_Administrative_Areas_Tab.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Grid Squares Tab">
+            <param name="Local" value="Topics\Location_Grid_Squares_Tab.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Land Parcel Tab">
+            <param name="Local" value="Topics\Location_Land_Parcel_Tab.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Boundaries Tab">
+            <param name="Local" value="Topics\Location_Boundaries_Tab.htm">
+          </object>
+          </ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Other Info">
+          <param name="Local" value="Topics\Location_Other_Info_Tab.htm">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Relations Tab">
+            <param name="Local" value="Topics\Location_Relations_Tab.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Related site types">
+            <param name="Local" value="Topics\Related_site_types.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Uses Tab">
+            <param name="Local" value="Topics\Location_Uses_Tab.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Tenure Tab">
+            <param name="Local" value="Topics\Location_Tenure_Tab.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Approach Tab">
+            <param name="Local" value="Topics\Location_Approach_Tab.htm">
+          </object>
+          </ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Features">
+          <param name="Local" value="Topics\Features_Overview.htm">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="General Tab">
+            <param name="Local" value="Topics\Features_General_Tab.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Management Aims Tab">
+            <param name="Local" value="Topics\Features_Management_Aims_Tab.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Potential Threats Tab">
+            <param name="Local" value="Topics\Features_Pot_Threats_Tab.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Damage Occurrences Tab">
+            <param name="Local" value="Topics\Features_Damage_Occs_Tab.htm">
+          </object>
+          </ul>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Names and Addresses">
+        <param name="Local" value="Topics\Names_and_Addresses_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Individuals and Organisations">
+          <param name="Local" value="Topics\Individuals_and_Organisations.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Switching between organisations and individuals">
+          <param name="Local" value="Topics\Org_indiviuals.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Organisation Tab">
+          <param name="Local" value="Topics\Names_and_Addresses_Organisation_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Individual Tab">
+          <param name="Local" value="Topics\Names_and_Addresses_Individual_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Addresses Tab">
+          <param name="Local" value="Topics\Names_and_Addresses_Addresses_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Comms Tab">
+          <param name="Local" value="Topics\Names_and_Addresses_Comms_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Contact Nos Tab">
+          <param name="Local" value="Topics\Names_and_Addresses_Contact_Nos_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Assocs Tab">
+          <param name="Local" value="Topics\Names_and_Addresses_Assocs_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Biography Tab">
+          <param name="Local" value="Topics\Names_and_Addresses_Biography_Tab.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Documents">
+        <param name="Local" value="Topics\Documents_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="General Tab">
+          <param name="Local" value="Topics\Documents_General_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Details Tab">
+          <param name="Local" value="Topics\Documents_Details_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Other Tab">
+          <param name="Local" value="Topics\Documents_Other_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Authors and Editors">
+          <param name="Local" value="Topics\Authors_and_Editors.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Importing documents">
+          <param name="Local" value="Topics\Special_Considerations.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Surveys">
+        <param name="Local" value="Topics\Surveys_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="General Tab">
+          <param name="Local" value="Topics\Surveys_General_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Geography Tab">
+          <param name="Local" value="Topics\Surveys_Geography_Tab.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Survey events">
+        <param name="Local" value="Topics\Survey_Events_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="General Tab">
+          <param name="Local" value="Topics\Survey_Events_General_Tab.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Samples">
+        <param name="Local" value="Topics\Sample_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="General Tab">
+          <param name="Local" value="Topics\Sample_General_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Recorder(s) Tab">
+          <param name="Local" value="Topics\Sample_Recorder(s)_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Related Samples Tab">
+          <param name="Local" value="Topics\Sample_Related_Samples_Tab.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Taxon occurrences">
+        <param name="Local" value="Topics\Taxon_Occurrence_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Determinations">
+          <param name="Local" value="Topics\Determinations.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="General Tab">
+          <param name="Local" value="Topics\Taxon_Occurrence_General_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Measurements Tab">
+          <param name="Local" value="Topics\Taxon_Occurence_Measurements.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Taxon Occurence Related Occs Tab">
+          <param name="Local" value="Topics\Taxon_Occurence_Related_Occs_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Taxon Occurrence Specimens Tab">
+          <param name="Local" value="Topics\Taxon_Occurrence_Specimens_Tab.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Biotope occurrences">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Biotope occurences overview">
+          <param name="Local" value="Topics\Biotope_Occurrence_Overview.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="General Tab">
+          <param name="Local" value="Topics\Biotope_Occurrence_General_Tab.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Measurements Tab">
+          <param name="Local" value="Topics\Biotope_Occurrence_Measurements_Tab.htm">
+        </object>
+        </ul>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Dictionaries and term-lists">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="System Supplied vs User Added">
+        <param name="Local" value="Topics\System_Supplied_vs_User_Added.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Dictionaries">
+        <param name="Local" value="Topics\Dictionaries_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Taxon Dictionary Browser">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Taxon Dictionary Browser">
+            <param name="Local" value="Topics\Taxon_Dictionary_Browser.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Detail">
+            <param name="Local" value="Topics\Taxon_Browser_Detail.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Hierarchy">
+            <param name="Local" value="Topics\Taxon_Browser_Hierarchy.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="List">
+            <param name="Local" value="Topics\Taxon_Browser_List.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Abbreviated species names">
+            <param name="Local" value="Topics\Abbreviated_species_names.htm">
+          </object>
+          </ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Biotope Dictionary Browser">
+          <param name="Local" value="Topics\Biotope_Dictionary_Browser.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Admin Area Dictionary Browser">
+          <param name="Local" value="Topics\Admin_Area_Dictionary_Browser.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Dictionary updates">
+          <param name="Local" value="Topics\Centrally_supported_dictionaries.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Adding taxa and biotopes">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="New taxa">
+            <param name="Local" value="Topics\New_Taxa_Overview.htm">
+          </object>
+          <ul>
+            <li><object type="text/sitemap">
+              <param name="Name" value="General Tab">
+              <param name="Local" value="Topics\New_Taxa_General_Tab.htm">
+            </object>
+            <li><object type="text/sitemap">
+              <param name="Name" value="Facts Tab">
+              <param name="Local" value="Topics\New_Taxa_Facts_Tab.htm">
+            </object>
+            <li><object type="text/sitemap">
+              <param name="Name" value="Statuses Tab">
+              <param name="Local" value="Topics\New_Taxa_Statuses_Tab.htm">
+            </object>
+            </ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="New biotopes">
+            <param name="Local" value="Topics\New_Biotopes_Overview.htm">
+          </object>
+          <ul>
+            <li><object type="text/sitemap">
+              <param name="Name" value="General Tab">
+              <param name="Local" value="Topics\New_Biotopes_General_Tab.htm">
+            </object>
+            <li><object type="text/sitemap">
+              <param name="Name" value="Facts Tab">
+              <param name="Local" value="Topics\New_Biotopes_Facts_Tab.htm">
+            </object>
+            </ul>
+          </ul>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Term lists">
+        <param name="Local" value="Topics\Term-list_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Adding a Term to a list">
+          <param name="Local" value="Topics\Adding_a_Term_to_a_List.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Linked lists">
+          <param name="Local" value="Topics\Linked_Lists.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Sample type term list">
+          <param name="Local" value="Topics\Sample_type_term_list.htm">
+        </object>
+        </ul>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Dates">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Standard dates">
+        <param name="Local" value="Topics\Standard_Dates.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Date validation">
+        <param name="Local" value="Topics\Date_Validation.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Vague dates">
+        <param name="Local" value="Topics\Vague_Dates.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Mapping">
+      <param name="Local" value="Topics\Maps_Overview.htm">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="MapServer">
+        <param name="Local" value="Topics\MapServer.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Background vs Polygons">
+        <param name="Local" value="Topics\Background_vs_Polygons.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Base Map">
+        <param name="Local" value="Topics\Base_Map.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Selecting a base map">
+        <param name="Local" value="Topics\Selecting_a_base_map.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Resetting the map">
+        <param name="Local" value="Topics\Resetting_the_Map.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Vector and Raster maps">
+        <param name="Local" value="Topics\Vector_Raster_maps.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Map file formats">
+        <param name="Local" value="Topics\Map_formats.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Supply of maps">
+        <param name="Local" value="Topics\Supply_of_Maps.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Spatial references">
+        <param name="Local" value="Topics\Spatial_References_Overview.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="OS National Grid for GB">
+          <param name="Local" value="Topics\OS_National_Grid_for_GB.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="OS National Grid for Ireland">
+          <param name="Local" value="Topics\OS_National_Grid_for_Ireland.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Latitude and Longitude">
+          <param name="Local" value="Topics\Latitude_and_Longitude.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="UTM Co-ordinates">
+          <param name="Local" value="Topics\UTM_Co-ordinates.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Bounding Boxes">
+          <param name="Local" value="Topics\Bounding_Boxes.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Grid References &amp; spurious accuracy">
+          <param name="Local" value="Topics\Grid_References_and_Spurious_Accuracy.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Map browser">
+        <param name="Local" value="Topics\The_Map_Browser.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Pan">
+          <param name="Local" value="Topics\Map_Browser_Pan.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Pointer">
+          <param name="Local" value="Topics\Map_Browser_Pointer.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Un-Zoom">
+          <param name="Local" value="Topics\Map_Browser_Un-Zoom.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Zoom In">
+          <param name="Local" value="Topics\Map_Browser_Zoom_In.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Zoom to full extent">
+          <param name="Local" value="Topics\Map_Browser_Full_Zoom.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Site boundaries">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Adding site boundaries">
+          <param name="Local" value="Topics\Adding_Site_Boundaries.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Importing polygons">
+          <param name="Local" value="Topics\Importing_Polygons.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Drawing polygons">
+          <param name="Local" value="Topics\Drawing_Polygons.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Linking polygons to locations">
+          <param name="Local" value="Topics\Linking_Polygons_to_Locations.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Deleting polygons">
+          <param name="Local" value="Topics\Deleting_Polygons.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Distribution maps">
+        <param name="Local" value="Topics\Distribution_Maps.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Symbol size">
+          <param name="Local" value="Topics\Symbol_Size.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Grid overlay">
+          <param name="Local" value="Topics\Grid_Overlay.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Removing symbols">
+          <param name="Local" value="Topics\Removing_Symbols.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Printing maps">
+          <param name="Local" value="Topics\Printing_Maps.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="DMAP export">
+          <param name="Local" value="Topics\DMAP_Export.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Map configuration">
+        <param name="Local" value="Topics\Map_Configuration.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Map Layers">
+          <param name="Local" value="Topics\Map_Layers.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Adding background maps">
+          <param name="Local" value="Topics\Adding_Background_Maps.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Cut-In and Cut-Out Scales">
+          <param name="Local" value="Topics\Cut-In_and_Cut-Out_Scales.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Cut-off year">
+          <param name="Local" value="Topics\Cut-off_Year.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Map settings">
+          <param name="Local" value="Topics\Map_Settings.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Removing background maps">
+          <param name="Local" value="Topics\Removing_Background_Maps.htm">
+        </object>
+        </ul>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Reporting">
+      <param name="Local" value="Topics\Reporting_Overview.htm">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Using the Report Wizard">
+        <param name="Local" value="Topics\Using_the_Report_Wizard.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Select Report Style">
+          <param name="Local" value="Topics\Report_Wizard_Select_Report_Style.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Taxon Selection">
+          <param name="Local" value="Topics\Report_Wizard_Taxa_Selection.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Biotope Selection">
+          <param name="Local" value="Topics\Report_Wizard_Biotope_Selection.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Report about a place">
+          <param name="Local" value="Topics\Report_about_a_place.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Selection by Name">
+          <param name="Local" value="Topics\Selection_by_Name.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Selection by Bounding Box">
+          <param name="Local" value="Topics\Selection_by_Bounding_Box.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Filter by Source">
+          <param name="Local" value="Topics\Filter_by_Source.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Source Selection">
+          <param name="Local" value="Topics\Source_Selection.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Filter by Admin Area">
+          <param name="Local" value="Topics\Filter_by_Admin_Area.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Filter by Bounding Box">
+          <param name="Local" value="Topics\Filter_by_Bounding_Box.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Layout selection">
+          <param name="Local" value="Topics\Report_Wizard_Layout_Selection.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Additional filters">
+          <param name="Local" value="Topics\Additional_Filters_Overview.htm">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Conditions">
+            <param name="Local" value="Topics\Additional_Filters_Conditions.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Constraints">
+            <param name="Local" value="Topics\Additional_Filters_Contraints.htm">
+          </object>
+          </ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Using the report designer">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="New Layout">
+            <param name="Local" value="Topics\Report_Wizard_New_Layout.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Print Preview">
+            <param name="Local" value="Topics\Report_Wizard_Print_Preview.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Printing a report">
+            <param name="Local" value="Topics\Report_Wizard_Printing_a_report.htm">
+          </object>
+          </ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Select Attributes">
+          <param name="Local" value="Topics\Report_Wizard_Select_Attributes.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Sort Attributes">
+          <param name="Local" value="Topics\Report_Wizard_Sort_Attributes.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Selections summary">
+          <param name="Local" value="Topics\Report_Wizard_Summary.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Selection results">
+          <param name="Local" value="Topics\Report_Wizard_Filter_Result.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Saving a Report">
+          <param name="Local" value="Topics\Saving_a_query.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Standard reports">
+          <param name="Local" value="Topics\Standard_reports.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Re-using saved reports">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Report Layout Selection">
+          <param name="Local" value="Topics\Report_Layout_Selection.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Accessing data from other applications">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Accessing database from other software">
+          <param name="Local" value="Topics\Accessing_the_Database_from_Other_Software.htm">
+        </object>
+        </ul>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Data validation">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Validating determinations">
+        <param name="Local" value="Topics\Determination_validation.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Checking occurrence records">
+        <param name="Local" value="Topics\Checking_Occurrence_Records.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Confidential observations">
+        <param name="Local" value="Topics\Confidential_Observations.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Exchanging data">
+      <param name="Local" value="Topics\Data_Transfer.htm">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="NBN Transfer Format">
+        <param name="Local" value="Topics\NBN_Transfer_Format.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="XML">
+        <param name="Local" value="Topics\XML.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="NBN Globally Unique Identifiers">
+        <param name="Local" value="Topics\NBN_Globally_Unique_Identifiers.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Import NBN data">
+        <param name="Local" value="Topics\Import.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Import NBN data">
+          <param name="Local" value="Topics\Import_NBN_Data.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Duplicate items">
+          <param name="Local" value="Topics\Duplicate_Items.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Import duplication">
+          <param name="Local" value="Topics\Duplication_Resulting_From_Import.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Invalid items">
+          <param name="Local" value="Topics\Invalid_Items.htm">
+        </object>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Export NBN data">
+        <param name="Local" value="Topics\Export.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Export to NBN data">
+          <param name="Local" value="Topics\Export_to_NBN_Data.htm">
+        </object>
+        <li><object type="text/sitemap">
+          <param name="Name" value="First NBN export">
+          <param name="Local" value="Topics\First_XML_export.htm">
+        </object>
+        </ul>
+      </ul>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Command reference">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="The Menus">
+      <param name="Local" value="Topics\Menus.htm">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="File Menu">
+        <param name="Local" value="Topics\File_Menu.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Edit Menu">
+        <param name="Local" value="Topics\Edit_Menu.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Data Entry Menu">
+        <param name="Local" value="Topics\Data_Entry_Menu.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Dictionaries Menu">
+        <param name="Local" value="Topics\Dictionaries_Menu.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Map Menu">
+        <param name="Local" value="Topics\Map_Menu.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Reports Menu">
+        <param name="Local" value="Topics\Reports_Menu.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Tools Menu">
+        <param name="Local" value="Topics\Tools_Menu.htm">
+      </object>
+      <ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Install">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Install Add-On">
+            <param name="Local" value="Topics\Install_Addin.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Installing checklists">
+            <param name="Local" value="Topics\Installing_Checklists.htm">
+          </object>
+          </ul>
+        <li><object type="text/sitemap">
+          <param name="Name" value="Database tools">
+        </object>
+        <ul>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Compact">
+            <param name="Local" value="Topics\Compact.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Repair">
+            <param name="Local" value="Topics\Repair.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Merge data items">
+            <param name="Local" value="Topics\Merge_Data_Items.htm">
+          </object>
+          <li><object type="text/sitemap">
+            <param name="Name" value="Update Last Key">
+            <param name="Local" value="Topics\Update_Last_Key.htm">
+          </object>
+          </ul>
+        </ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Window Menu">
+        <param name="Local" value="Topics\Window_Menu.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Help Menu">
+        <param name="Local" value="Topics\Help_Menu.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="View Menu">
+        <param name="Local" value="Topics\View_Menu.htm">
+      </object>
+      </ul>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Advanced topics">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Security">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Changing your password">
+        <param name="Local" value="Topics\Changing_Your_Password.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="User access levels">
+        <param name="Local" value="Topics\User_Access_Levels.htm">
+      </object>
+      <li><object type="text/sitemap">
+        <param name="Name" value="User configuration">
+        <param name="Local" value="Topics\User_Configuration.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Customisations and extension">
+      <param name="Local" value="Topics\Extensibility_and_Customisation.htm">
+    </object>
+    <ul>
+      <li><object type="text/sitemap">
+        <param name="Name" value="Writing Add-Ons">
+        <param name="Local" value="Topics\Writing_Addins.htm">
+      </object>
+      </ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="How vague dates are stored">
+      <param name="Local" value="Topics\Vague_Dates_Stored.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="How spatial references are stored">
+      <param name="Local" value="Topics\How_Spatial_References_are_Stored.htm">
+    </object>
+    </ul>
+  <li><object type="text/sitemap">
+    <param name="Name" value="Some things you need to know about">
+  </object>
+  <ul>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Abbreviated species names">
+      <param name="Local" value="Topics\Abbreviated_species_names.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Base Map">
+      <param name="Local" value="Topics\Base_Map.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Dictionary updates">
+      <param name="Local" value="Topics\How_to_get_taxabiotopes_added.htm">
+    </object>
+    <li><object type="text/sitemap">
+      <param name="Name" value="Two digit years">
+      <param name="Local" value="Topics\Two_Digit_Years.htm">
+    </object>
+    </ul>
+</ul>
+</html>

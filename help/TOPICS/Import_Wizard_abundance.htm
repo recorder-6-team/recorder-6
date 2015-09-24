@@ -1,0 +1,280 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Import Wizard abundance</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Import Wizard - abundance data</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   To import abundance data via the import wizard you can select the 
+   following <A HREF="Import_Wizard_column_types_selection.htm">column types</A>:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Abundance Data </SPAN><SPAN STYLE="font-weight : normal;">and/or</SPAN></P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : normal;">one of the </SPAN><SPAN STYLE="font-weight : bold;">Taxon
+     Occurrence Data</SPAN><SPAN STYLE="font-weight : normal;"> options</SPAN></P>
+   </UL>
+  <H2>
+   <SPAN STYLE="font-weight : bold;">Abundance Data</SPAN></H2>
+  <P>
+   <SPAN STYLE="font-weight : normal;">An </SPAN><SPAN STYLE="font-weight : bold;">Abundance
+    Data </SPAN><SPAN STYLE="font-weight : normal;">column can contain a</SPAN> 
+   number of sets of abundance data separated by commas or semicolons 
+   (;), e.g. 1m,2f,3j. The first part of each field will appear in the 
+   'Data' column of the Measurements for the taxon occurrence. The 
+   second part will appear in the 'Qualifier' column of the 
+   Measurements. The wizard will ask you to match the qualifiers to 
+   Measurement Qualifiers from the Measurement Type <A HREF="Term-list_Overview.htm">term
+    list</A> items that are available on taxon occurrences. This option 
+   can be used in combination with <SPAN STYLE="font-weight : bold;">Taxon
+    Occurrence Data</SPAN><SPAN STYLE="font-weight : normal;">.</SPAN></P>
+  <H3>
+   <FONT COLOR="BLUE"><SPAN STYLE="font-weight : bold;">Examples</SPAN></FONT></H3>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="85%" CELLPADDING="8" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Abundance Data </SPAN><SPAN STYLE="font-weight : normal;">column</SPAN></TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        Measurements on the taxon occurrence</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">1m,2f,3j</SPAN> or<BR>
+        <SPAN STYLE="font-weight : bold;">1 male, 2 females, 3 juveniles</SPAN> 
+        import as:</P>
+       <BLOCKQUOTE>
+        <P>
+         provided<BR>
+         <SPAN STYLE="font-weight : bold;">m/male</SPAN> is matched to Male<BR>
+         <SPAN STYLE="font-weight : bold;">f/females</SPAN> is matched to Female<BR>
+         <SPAN STYLE="font-weight : bold;">j/juveniles</SPAN> is matched to Juvenile</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        <IMG SRC="..\screenshots\Import Wizard abundance 1m 2f 3j.gif" WIDTH="373" HEIGHT="127" VSPACE="0" HSPACE="0" BORDER="0"></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <BLOCKQUOTE>
+        <BLOCKQUOTE>
+         <P>
+          <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+         </BLOCKQUOTE>
+        <P>
+         <SPAN STYLE="font-weight : bold;">2</SPAN> imports as:</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        <IMG SRC="..\screenshots\Import Wizard abundance 2.gif" WIDTH="373" HEIGHT="90" VSPACE="0" HSPACE="0" BORDER="0"></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <BLOCKQUOTE>
+        <P>
+         &nbsp;</P>
+        <P>
+         <SPAN STYLE="font-weight : bold;">Female</SPAN> imports as:</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        <IMG SRC="..\screenshots\Import Wizard abundance female.gif" WIDTH="373" HEIGHT="95" VSPACE="0" HSPACE="0" BORDER="0"></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <BLOCKQUOTE>
+        <P>
+         <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+        <P>
+         You may prefer to import<BR>
+         <SPAN STYLE="font-weight : bold;">Present Female</SPAN><SPAN STYLE="font-weight : normal;"> instead</SPAN>:</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        <IMG SRC="..\screenshots\Import Wizard abundance female present.gif" WIDTH="373" HEIGHT="90" VSPACE="0" HSPACE="0" BORDER="0"></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <BLOCKQUOTE>
+        <P>
+         <SPAN STYLE="font-weight : bold;">dead adult</SPAN> imports as:</P>
+        <P>
+         It would be more appropriate to import dead as the Record type.</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        <IMG SRC="..\screenshots\Import Wizard abundance dead adult.gif" WIDTH="373" HEIGHT="92" VSPACE="0" HSPACE="0" BORDER="0"></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <BLOCKQUOTE>
+        <P>
+         <SPAN STYLE="font-weight : bold;">7 Mole Hill</SPAN> imports as:</P>
+        <P>
+         This would be better imported as <SPAN STYLE="font-weight : bold;">7 MoleHill</SPAN> 
+         with <SPAN STYLE="font-weight : bold;">MoleHill</SPAN> matched to <SPAN STYLE="font-weight : bold;">Mole
+          Hill</SPAN>, as below.</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        <IMG SRC="..\screenshots\Import Wizard abundance mole hill.gif" WIDTH="373" HEIGHT="90" VSPACE="0" HSPACE="0" BORDER="0"></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <BLOCKQUOTE>
+        <P>
+         <SPAN STYLE="font-weight : bold;">7 MoleHill</SPAN> imports as:</P>
+        <BLOCKQUOTE>
+         <P>
+          provided<BR>
+          <SPAN STYLE="font-weight : bold;">MoleHill</SPAN> is matched to <SPAN STYLE="font-weight : bold;">Mole
+           Hill</SPAN></P>
+         </BLOCKQUOTE>
+        <P>
+         <!-- $MVD$:spaceretainer() -->&nbsp;</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        <IMG SRC="..\screenshots\Import Wizard abundance molehill.gif" WIDTH="373" HEIGHT="90" VSPACE="0" HSPACE="0" BORDER="0"></TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: <SPAN STYLE="font-weight : normal;">An
+    </SPAN><SPAN STYLE="font-weight : bold;">Abundance Data </SPAN><SPAN STYLE="font-weight : normal;">column
+    can contain</SPAN> characters like -, *, + and #, but not $.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: If a set of abundance 
+   data ends in a character that isn't alphabetic or a ), a bracket, it 
+   is assumed that it consists of Measurement Data only so the whole set 
+   goes into Measurement Data and Measurement Qualifier is set to 
+   &quot;None&quot;. This enables values like &quot;10 - 20&quot; and 
+   &quot;&gt; 150&quot; to go into Measurement Data.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: If the data to go into 
+   Measurement Data is too long for the field in the database, i.e. 
+   greater than 20 characters, it will be flagged as an error and will 
+   have to be shortened before you can proceed.</P>
+  <H2>
+   <SPAN STYLE="font-weight : bold;">Taxon Occurrence Data</SPAN></H2>
+  <P>
+   This option is available under &lt;<SPAN STYLE="font-style : italic;">more
+    options</SPAN>&gt;. Clicking the <IMG SRC="..\buttonimages\TreePlus.gif" WIDTH="9" HEIGHT="9" VSPACE="0" HSPACE="0" BORDER="0"> 
+   beside it opens a list of every possible combination of Measurement 
+   Qualifier and Measurement Unit from the Measurement Type <A HREF="Term-list_Overview.htm">term
+    list</A> that is available on taxon occurrences. This is the same 
+   list that is available on the Measurements tab when <A HREF="New_Recording_Card.htm">constructing
+    a recording card</A>.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\screenshots\Import Wizard abundance taxon occ data.gif" WIDTH="370" HEIGHT="229" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   Any of these can be selected as the column type for a given column. 
+   Then, data like 2 adults and 3 juveniles could be input with</P>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <P>
+     2 in the Abundance of Adult (Count) column and<BR>
+     3 in the Abundance of Juvenile (Count) column</P>
+    </BLOCKQUOTE>
+   </BLOCKQUOTE>
+  <P>
+   These options can also be combined with an <SPAN STYLE="font-weight : bold;">Abundance
+    Data</SPAN><SPAN STYLE="font-weight : normal;"> column so that </SPAN><SPAN STYLE="font-weight : bold;">Taxon
+    Occurrence Data </SPAN><SPAN STYLE="font-weight : normal;">columns 
+   can be selected for commonly entered values but an </SPAN><SPAN STYLE="font-weight : bold;">Abundance
+    Data</SPAN><SPAN STYLE="font-weight : normal;"> column can be 
+   selected for anything else that is entered.</SPAN></P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: <SPAN STYLE="font-weight : bold;">Taxon
+    Occurrence Data </SPAN><SPAN STYLE="font-weight : normal;">columns 
+   can contain</SPAN> characters like -, *, + and #, but not $.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: If allowed values have 
+   been added to the measurement unit in the term lists for the unit 
+   selected the contents of this column will be validated against them.</P>
+  <P>
+   <FONT COLOR="BLUE"><SPAN STYLE="font-weight : bold;">Example</SPAN></FONT></P>
+  <P>
+   Import file:</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="70%" CELLPADDING="4" CELLSPACING="2" BORDER="1">
+     <TR>
+      <TD WIDTH="44%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Species</SPAN></TD>
+      <TD WIDTH="14%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Adults</SPAN></TD>
+      <TD WIDTH="15%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Juveniles</SPAN></TD>
+      <TD WIDTH="27%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Abundance</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="44%" VALIGN=TOP>
+       <P>
+        Clethrionomys glareolus (Bank Vole)</TD>
+      <TD WIDTH="14%" VALIGN=TOP>
+       <P>
+        &gt; 2</TD>
+      <TD WIDTH="15%" VALIGN=TOP>
+       <P>
+        4 - 5</TD>
+      <TD WIDTH="27%" VALIGN=TOP>
+       <P>
+        nest, Present Tracks</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   This data will import as follows provided the <SPAN STYLE="font-weight : bold;">Adults</SPAN> 
+   column is given a type of <SPAN STYLE="font-weight : bold;">Abundance 
+   of Adult (Range)</SPAN> and <SPAN STYLE="font-weight : bold;">Juveniles</SPAN> 
+   is given a type of <SPAN STYLE="font-weight : bold;">Abundance of 
+   Juvenile (Range)</SPAN>.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\screenshots\Import Wizard abundance plus columns.gif" WIDTH="373" HEIGHT="149" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="MS Sans Serif,8,0,,"><PARAM
+    NAME="Item1" VALUE="Import Wizard;Import_Wizard.htm"><PARAM
+    NAME="Item2" VALUE="Import Wizard - data format;Import_Wizard_data_format.htm"></OBJECT>
+ </BODY>
+</HTML>

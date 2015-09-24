@@ -1,0 +1,101 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Accessing the database from other software</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Accessing the database from other software</H1>
+  <P>
+   The database used to store all the data entered into the <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>application is a SQL Server database. It can be accessed 
+   directly if you have the appropriate tools, e.g. SQL Server 
+   Management Studio or Microsoft <SPAN STYLE="font-style : italic;">Access</SPAN>.</P>
+  <P>
+   The database can also be accessed through an ODBC connection, if 
+   required. This allows the use of other software tools for reporting 
+   and analysis.</P>
+  <P>
+   In a standard <SPAN STYLE="font-style : italic;">Recorder </SPAN>installation
+    the database will be a file called NBNData_Data.MDF. Associated with 
+   it will be a log file called NBNData_log.LDF. In a standard <A HREF="Installing_on_a_single_machine.htm">standalone</A> 
+   SQL Server Express installation with Windows XP, these will be stored 
+   in the Data folder in a Microsoft SQL Server folder, e.g. C:\Program 
+   Files\Microsoft SQL Server\MSSQL.1\MSSQL\Data for SQL Server 2005 Express.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note:</SPAN> The Setting table in 
+   NBNData_Data.MDF holds the version of the database in the DATA field 
+   where NAME = &quot;Version&quot;. It also holds the version of the 
+   dictionary in the DATA field where NAME = &quot;Dict Seq&quot;.</P>
+  <P CLASS="warning">
+   Warning: Please be aware that changing records directly can seriously 
+   affect the integrity of your database. IT SHOULD <SPAN STYLE="font-weight : bold;">NOT</SPAN> 
+   BE DONE UNLESS YOU ARE VERY SURE THAT YOU KNOW WHAT YOU ARE DOING.</P>
+  <P>
+   When <SPAN STYLE="font-style : italic;">Recorder</SPAN> is installed, 
+   a linked<SPAN STYLE="font-style : italic;"> Access </SPAN>database is 
+   also created so that users with <SPAN STYLE="font-style : italic;">Access</SPAN> 
+   expertise can query the SQL Server database directly. This database 
+   is a file called <SPAN STYLE="font-weight : bold;">NBNData.mdb</SPAN>.
+    In a standard installation, it is located in the <SPAN STYLE="font-style : italic;font-weight : normal;">Recorder
+    6</SPAN><SPAN STYLE="font-weight : normal;"> Database</SPAN> folder 
+   on the drive where <SPAN STYLE="font-style : italic;">Recorder </SPAN>is
+    installed<SPAN STYLE="font-style : italic;">. </SPAN><SPAN STYLE="font-style : normal;">Note
+    that it contains links to the tables in the SQL Server database, it 
+   does not contain the data itself.</SPAN></P>
+  <P>
+   <SPAN STYLE="font-style : normal;text-decoration : none;">Finally, 
+   you may choose to use the <A HREF="Reporting-The_snapshot_tool.htm">Snapshot
+    Tool</A> to provide you with the data that you need in a simplified format.</SPAN></P>
+  <P>
+   <SPAN STYLE="font-style : normal;text-decoration : none;">The 
+   advantages are:</SPAN></P>
+  <UL>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-style : normal;text-decoration : none;">The data is 
+     in a simpler format that will be easier to manipulate and use in 
+     another application</SPAN></P>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-style : normal;text-decoration : none;">The 
+     snapshot is not the database itself. Therefore, there is no chance of 
+     accidentally altering your </SPAN><SPAN STYLE="font-style : italic;text-decoration : none;">Recorder</SPAN><SPAN STYLE="font-style : normal;text-decoration : none;"> database.</SPAN></P>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-style : normal;text-decoration : none;">Once a 
+     snapshot is designed and made, it can be refreshed at the touch of a button.</SPAN></P>
+    </UL>
+   </UL>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Reporting Overview;Reporting_Overview.htm"><PARAM
+    NAME="Item2" VALUE="Reporting-The snapshot tool;Reporting-The_snapshot_tool.htm"></OBJECT>
+ </BODY>
+</HTML>

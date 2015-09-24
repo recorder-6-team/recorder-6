@@ -1,0 +1,94 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Installing on Windows 2000</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY BGPROPERTIES="FIXED" ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="75%" VALIGN=TOP>
+      <H1>
+       Installing on <SPAN STYLE="font-style : italic;">Windows 2000</SPAN></TD>
+     <TD WIDTH="25%" VALIGN=TOP>
+      <P STYLE="text-align : right;" ALIGN=RIGHT>
+       <IMG SRC="..\screenshots\new.gif" WIDTH="96" HEIGHT="24" VSPACE="0" HSPACE="0" BORDER="0"></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   The additional security implemented by <SPAN STYLE="font-style : italic;">Windows
+    2000<SPAN STYLE="font-style : normal;"> creates some extra issues 
+   when installing </SPAN></SPAN><SPAN STYLE="font-style : normal;"><SPAN STYLE="font-style : italic;">Recorder
+    2000</SPAN>:</SPAN></P>
+  <OL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;">To
+     install </SPAN></SPAN><SPAN STYLE="font-style : normal;"><SPAN STYLE="font-style : italic;">Recorder
+     2000</SPAN></SPAN><SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;"> 
+    (as with most packages) you must be logged on as a user with &quot;Administrator&quot;
+     privileges.</SPAN></SPAN></P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;">Installation
+     creates some registry settings which need to be copied to the 
+    profile of each user-name that will use </SPAN></SPAN><SPAN STYLE="font-style : normal;"><SPAN STYLE="font-style : italic;">Recorder
+     2000</SPAN></SPAN><SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;"> 
+    on that particular machine. It is therefore necessary to make files 
+    containing these settings:</SPAN></SPAN></P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;">Run
+      RegEdit (select </SPAN><SPAN STYLE="font-style : normal;font-weight : bold;">Start
+      - Run</SPAN><SPAN STYLE="font-style : normal;"> from the </SPAN></SPAN><SPAN STYLE="font-style : normal;"><SPAN STYLE="font-style : italic;">Windows</SPAN></SPAN><SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;"> menu, 
+     type &quot;regedit&quot; and click [OK])</SPAN></SPAN></P>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;">Select
+      the HKEY_CURRENT_USER\Software\JNCC key and then select </SPAN><SPAN STYLE="font-style : normal;font-weight : bold;">Registry
+      - Export Registry File</SPAN><SPAN STYLE="font-style : normal;"> 
+     from the menus. It is recommended that you save the file in \Recorder 2000\Settings.</SPAN></SPAN></P>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;">Select
+      HKEY_LOCAL_MACHINE\SOFTWARE\JNCC and export that key in the same way.</SPAN></SPAN></P>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;">Exit
+      from RegEdit.</SPAN></SPAN></P>
+    </UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;">Now
+     log &quot;Administrator&quot; off and log on using the user-name of 
+    one of the people who will use </SPAN></SPAN><SPAN STYLE="font-style : normal;"><SPAN STYLE="font-style : italic;">Recorder
+     2000</SPAN>. Go to the \Recorder 2000\Settings directory and double-click
+     on each of the two &quot;.reg&quot; files you saved in step 2. You 
+    should see a message saying the settings have been successfully imported
+     into the registry. This user should now be able to start <SPAN STYLE="font-style : italic;">Recorder
+     2000</SPAN></SPAN><SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;"> normally.</SPAN></SPAN></P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;">Repeat
+     step 3 for each user-name who will use </SPAN></SPAN><SPAN STYLE="font-style : normal;"><SPAN STYLE="font-style : italic;">Recorder
+     2000</SPAN></SPAN><SPAN STYLE="font-style : italic;"><SPAN STYLE="font-style : normal;"> 
+    on that computer.</SPAN></SPAN>
+ </BODY>
+</HTML>

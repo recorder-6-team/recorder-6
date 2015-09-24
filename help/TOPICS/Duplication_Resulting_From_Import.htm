@@ -1,0 +1,151 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Duplication resulting from import</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Duplication resulting from import</H1>
+  <P>
+   When data have been imported, it is not unusual to find that 
+   duplicates of some of the data items that were already present have 
+   been added. For example, if a particular recorder's name and address 
+   were entered independently in your copy and by the person from whom 
+   you have received data, then you will have duplicate entries for this 
+   name. Because these items were entered quite independently, they will 
+   not have the same key, and will not be detected as duplicates by the 
+   import process. They are, however, apparent to a user when the sorted 
+   list of names is viewed:</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Duplicate name.gif" WIDTH="385" HEIGHT="240" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   In many cases this will not actually cause too many problems, but 
+   there are at least two good reasons to find and deal with such duplicates:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    The information contained in the duplicated items may not be exactly 
+    the same (e.g. in the example shown above, the two entries were for 
+    'Dr. Stuart Ball' and 'Mr. Stuart Ball'). These differences cause 
+    confusion to users who are not familiar enough with the data to know 
+    whether these are actually duplicates of the same recorder, or are 
+    different recorders with similar names. This problem is particularly 
+    acute with duplicate location names. Quite a bit of research may be 
+    necessary to determine whether or not two locations that have been 
+    given the same name actually refer to the same piece of ground.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    If you want to generate a report based on the name (e.g. &quot;what 
+    records did I receive from this person in 1999?&quot;), then you must 
+    remember to find all instances of the name and include them in the 
+    query criteria in order to get an accurate answer. It is very easy to 
+    forget to do this or to leave out some instances (e.g. if another 
+    instance of this recorder's name was 'S. Ball' it would be less 
+    easily picked up).</P>
+   </UL>
+  <P>
+   It is not usually possible to simply delete duplicates, because they 
+   are referred to by other items in the database. For example, an entry 
+   in the <SPAN STYLE="font-weight : bold;">Names and Addresses</SPAN> 
+   table will usually have been imported, because it is referred to as a 
+   recorder and/or determiner in some of the observations that were 
+   imported. <SPAN STYLE="font-style : italic;">Recorder </SPAN> won't 
+   allow the name to be deleted while it is used by these other items. 
+   Because you are not allowed to change other people's data (such as 
+   data imported from another copy), you cannot even go through the 
+   related items and edit them manually. However, a tool is provided to 
+   automate the job.</P>
+  <P>
+   Duplicates can be dealt with using the <A HREF="Merge_Data_Items.htm">Merge
+    data</A> items tool. This process goes through all the items related 
+   to one of the pair of duplicate entries and changes them so that they 
+   refer to the other. The duplicate is then deleted.</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="80%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="50%" VALIGN=TOP>
+       <P>
+        At the <SPAN STYLE="font-weight : bold;">start</SPAN> of the process, 
+        each instance of the name is referred to as a recorder in some survey 
+        events and samples.</TD>
+      <TD WIDTH="51%" VALIGN=TOP>
+       <P>
+        At the <SPAN STYLE="font-weight : bold;">end</SPAN> of the process, 
+        all references are to the chosen instance of the name, and the other 
+        instance has been deleted.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="50%" VALIGN=TOP>
+       <P>
+        Stuart Ball</P>
+       <P STYLE="margin-left : 24.0pt;">
+        Survey event 1</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 1</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 2</P>
+       <P STYLE="margin-left : 24.0pt;">
+        Survey event 2</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 3</P>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Stuart Ball</SPAN></P>
+       <P STYLE="margin-left : 24.0pt;">
+        Survey event 3</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 4</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 5</TD>
+      <TD WIDTH="51%" VALIGN=TOP>
+       <P>
+        Stuart Ball</P>
+       <P STYLE="margin-left : 24.0pt;">
+        Survey event 1</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 1</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 2</P>
+       <P STYLE="margin-left : 24.0pt;">
+        Survey event 2</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 3</P>
+       <P STYLE="margin-left : 24.0pt;">
+        Survey event 3</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 4</P>
+       <P STYLE="margin-left : 48.0pt;">
+        Sample 5</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P>
+   &nbsp;&nbsp;<OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Duplicate Items;Duplicate_Items.htm"><PARAM NAME="item2" VALUE="Invalid Items;Invalid_Items.htm"><PARAM NAME="item3" VALUE="Merge Data Items;Merge_Data_Items.htm"></OBJECT>
+ </BODY>
+</HTML>

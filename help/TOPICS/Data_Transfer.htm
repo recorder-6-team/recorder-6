@@ -1,0 +1,142 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Data transfer</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Data transfer</H1>
+  <P>
+   Data about the natural environment in the UK are, for good practical 
+   and historical reasons, held in a variety of different formats on 
+   different types of computer hardware and are managed by a variety of 
+   software. Although, in attempting to define standards to allow 
+   networked access to a range of independent distributed data sets, the 
+   National Biodiversity Network (<A HREF="javascript:BSSCPopup('../Glossary/NBN.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">NBN</A>)
+    is attempting to influence this situation, it is highly unlikely 
+   that everyone concerned will adopt the same data structures and 
+   formats. Given the wide range of purposes for which data are 
+   collected and used, it would not be appropriate to expect universal 
+   adoption of any one standard or approach.</P>
+  <P>
+   Data exchange between different databases is rarely straightforward, 
+   and often requires sophisticated transfer programs to be developed. 
+   If such a system was needed for every pair of databases, the exercise 
+   would far exceed the resources available to the environmental community.</P>
+  <P>
+   The alternative is to adopt a common, intermediate format. Moving 
+   data between databases then becomes a two stage process: database <B><I>A</I></B> 
+   writes data from its internal format into the intermediate transfer 
+   format and <B><I>B</I></B> reads the transfer format and loads the 
+   data into its internal format. These processes can be separated in 
+   time and space and require no physical connection between <B><I>A</I></B> 
+   and <B><I>B</I></B>. The big advantage comes when <B><I>C</I></B> 
+   wishes to join in. The designers of <B><I>C</I></B> can design their 
+   system to read and write the intermediate format and immediately 
+   communicate with <B><I>A</I></B> and <B><I>B</I></B> without having 
+   to have any knowledge of their internal structure. As more players 
+   join, the benefits become greater for all concerned.</P>
+  <P>
+   Whatever mechanisms exist for the transfer of information between 
+   databases, data exchange cannot be meaningful unless the information 
+   they contain is compatible. There are two important areas:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Logical rules for the structure and relationships within the data.<BR>
+    <LI CLASS="mvd-P">Interpretation of terminology.</P>
+   </UL>
+  <P>
+   This is not meant to imply that the structure and terminology used by 
+   different databases must be the same (although that provides the 
+   simplest situation for data transfer). Two databases could, for 
+   example, hold information about designated sites consisting of a 
+   name, a spatial reference, area, reason why the site was selected and 
+   date it was designated, etc., but could store it quite different ways 
+   (e.g. one might store the spatial reference as an OS grid reference 
+   whilst the other used latitude and longitude). One might contain 
+   details not held by the other (e.g. ownership and management 
+   information about such sites). Despite these differences, the 
+   information they hold in common could be exchanged.</P>
+  <P>
+   Standardisation is clearly desirable in some areas, and transfer is 
+   much simpler between databases that rely on the same terminology. 
+   However, transfer is still possible between databases that do not 
+   share the same structure and terminology, provided the intermediate 
+   format includes sufficient information to allow unambiguous 
+   interpretation. For example, the transfer format for a spatial 
+   reference needs to include information about which spatial reference 
+   system was used (OS grid, lat./long.).</P>
+  <P>
+   Not all databases will be able to deal with all the information that 
+   is transferred. For example, the database which does not store 
+   information about designated site ownership will simply ignore that 
+   information in a transfer file. Because it is impossible to predict 
+   all the types of data that might eventually need to be covered, the 
+   transfer format should be extensible.</P>
+  <P>
+   In summary, the data exchange format should:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    be sufficiently flexible to cover all types of information that might 
+    be present in environmental data sets;</P>
+   <LI CLASS="mvd-P">
+   <P>
+    be extensible so that novel categories of data can be accommodated;</P>
+   <LI CLASS="mvd-P">
+   <P>
+    be independent of any particular software;</P>
+   <LI CLASS="mvd-P">
+   <P>
+    be independent of the physical medium used for transmission;</P>
+   <LI CLASS="mvd-P">
+   <P>
+    be independent of any particular language-related character set, and 
+    the character sets used, including punctuation characters used in the 
+    format definition itself, should be re-definable within the exchange language;</P>
+   <LI CLASS="mvd-P">
+   <P>
+    be capable of being stored in a format that can be easily manipulated 
+    by standard software tools (e.g. plain text files) and be 
+    intelligible in its own right;</P>
+   <LI CLASS="mvd-P">
+   <P>
+    be structured so that meaningful data can be generated from databases 
+    that do not contain the full range of data dealt with by the standard 
+    as a whole.</P>
+   </UL>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Export to NBN Data;Export_to_NBN_Data.htm"><PARAM NAME="item2" VALUE="XML;XML.htm"></OBJECT>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

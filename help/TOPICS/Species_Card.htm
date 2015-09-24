@@ -1,0 +1,400 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Species Card</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Species Card</H1>
+  <P>
+   The species card screen allows the user to enter a single observation 
+   or record for a location. The same data can be entered using the <A HREF="Observation_Window.htm">Observations
+    window</A>, but when using the species record card, the <A HREF="Survey_Events_Overview.htm">survey
+    event</A> and <A HREF="Sample_Overview.htm">sample</A> are created 
+   for you with the observations; you don't need to enter each item 
+   separately. In addition, when an observation is entered, the data for 
+   the sample are preserved on the card, so that another observation 
+   with some data in common can be entered quickly. If you need to enter 
+   more than one observation for a location, use a <A HREF="New_Recording_Card.htm">Recording
+    Card</A> instead.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Species Card.gif" WIDTH="670" HEIGHT="545" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <H3>
+   To enter a new species record:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Select <SPAN STYLE="font-weight : bold;">Data Entry &#150; Enter a 
+    species record</SPAN>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The species record card is displayed.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Enter the values for the new species record (see the table below).</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the [Save] button.</P>
+   </UL>
+  <P>
+   The information on a species card is stored as a new <A HREF="Sample_Overview.htm">sample</A> 
+   for the selected <A HREF="Surveys_Overview.htm">survey</A>. Where the 
+   sample is stored depends upon the location, date and recorder for the 
+   species card. If a <A HREF="Survey_Events_Overview.htm">survey event</A> 
+   already exists with the same location, date and recorder as the 
+   species card, then the card is added as a new sample for that event. 
+   However, if no matching event exists, a new survey event is created, 
+   and the card added as a new sample for this event.</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Survey</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P CLASS="warning">
+        <SPAN STYLE="font-weight : bold;">Required</SPAN>.</P>
+       <P>
+        Select a survey from the drop-down box.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Taxon</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P CLASS="warning">
+        <SPAN STYLE="font-weight : bold;">Required</SPAN>.</P>
+       <P>
+        To enter a taxon, use one of the methods described in <A HREF="Finding_Things.htm">Find
+         overview</A>.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Recorder(s)</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P CLASS="warning">
+        <SPAN STYLE="font-weight : bold;">Required</SPAN>.</P>
+       <P>
+        To enter a recorder(s) either:</P>
+       <UL TYPE="circle">
+        <LI CLASS="mvd-P">
+        <P>
+         Use one of the methods described in <A HREF="Finding_Things.htm">Find overview</A>.<BR>
+         <LI CLASS="mvd-P">Click the [Add] <IMG SRC="..\buttonimages\plus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+         button and the <SPAN STYLE="font-weight : bold;">Find Individual</SPAN> 
+         dialog box is displayed. See <A HREF="Finding_Things.htm">Find dialog</A>.</P>
+        </UL>
+       <P>
+        To delete a recorder:</P>
+       <UL TYPE="circle">
+        <LI CLASS="mvd-P">
+        <P>
+         Highlight the individual that you want to delete by clicking on the name.<BR>
+         <LI CLASS="mvd-P">Click the [Delete] <IMG SRC="..\buttonimages\minus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> button.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Document</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. To enter a document, use one of the methods described in <A HREF="Finding_Things.htm">Find
+         overview</A>.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Location</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. This is a reference to an item in the <SPAN STYLE="font-weight : normal;"><A HREF="Finding_Locations.htm">Locations</A></SPAN><SPAN STYLE="font-weight : bold;"> </SPAN>window.
+         To enter a location, use one of the methods described in <A HREF="Finding_Things.htm">Finding
+         things</A>.</P>
+       <P>
+        If a location is entered, the spatial reference value is completed 
+        with the location's central spatial reference by default. However, 
+        this default value can be edited if an exact spatial reference is available.</P>
+       <P>
+        Entering an exact spatial reference in the <SPAN STYLE="font-weight : bold;">Spatial
+         Ref</SPAN> field will not effect the location.</P>
+       <P CLASS="warning">
+        An entry in at least one of the Location, Location name or Spatial 
+        Reference fields is <SPAN STYLE="font-weight : bold;">REQUIRED</SPAN>,
+         i.e. some form of locality must be given.</P>
+       <P>
+        See <A HREF="Location_vs_Location_Name.htm">Location and Location Name</A> 
+        for more information on the distinction between the two.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Location Name</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. A name for the sampling location which is stored as text in 
+        the Survey event and Sample records rather than a reference to an 
+        item in the Locations window. If you enter a Location, this field can 
+        be used to provide additional details - for example, describing 
+        exactly where the observation was made within a large site. It is 
+        intended to enable a more detailed, textual description of the 
+        location of the observation to be entered.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Date</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P CLASS="warning">
+        <SPAN STYLE="font-weight : bold;">Required</SPAN>.<FONT COLOR="BLACK"> <FONT FACE="Arial"><SPAN STYLE="font-size : 10.0pt;">Enter
+         a valid </SPAN></FONT></FONT><A HREF="Vague_Dates.htm"><FONT FACE="Arial"><SPAN STYLE="font-size : 10.0pt;">vague
+         date</SPAN></FONT></A><FONT FACE="Arial"><SPAN STYLE="font-size : 10.0pt;"> </SPAN></FONT><FONT COLOR="BLACK"><FONT FACE="Arial"><SPAN STYLE="font-size : 10.0pt;">f</SPAN></FONT></FONT><FONT FACE="Arial"><SPAN STYLE="font-size : 10.0pt;"><FONT COLOR="BLACK">or
+         the observation.</FONT></SPAN></FONT></P>
+       <P>
+        The date, or date range, during which the sampling took place. 
+        'Unknown' is an acceptable value. The date given here must be on or 
+        after the start date of the survey to which this observation is 
+        attached, and on or before the end date (if one was given).</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Spatial Ref</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P CLASS="warning">
+        <SPAN STYLE="font-weight : bold;">Required, </SPAN><SPAN STYLE="font-weight : normal;">unless
+         Location Name is the only location information.</SPAN></P>
+       <P>
+        Enter a spatial reference. If this box was empty and you selected a 
+        location, then it will default to the centroid for that location. You 
+        can edit this reference manually, or you can obtain a spatial 
+        reference from the map - see <A HREF="Getting_Grid_References_or_Locations_from_Maps.htm">Getting
+         grid references or locations from maps</A>. If the point at which 
+        you clicked was within a boundary which is linked to a location, the 
+        name associated with that boundary will be returned in the location 
+        box - see <A HREF="Linking_Polygons_to_Locations.htm">Linking 
+        polygons to locations</A>.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Spatial Ref qualifier</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P CLASS="warning">
+        <SPAN STYLE="font-weight : bold;">Required, </SPAN><SPAN STYLE="font-weight : normal;">if
+         Spatial Ref is entered.</SPAN></P>
+       <P>
+        See <A HREF="Spatial_References_Overview.htm">Spatial references</A>.</P>
+       <P>
+        Describes how the spatial reference was obtained. Select a value from 
+        the drop-down box.</P>
+       <P>
+        The value of the spatial reference qualifier is entered automatically 
+        in the following situations:</P>
+       <UL>
+        <LI CLASS="mvd-P">
+        <P>
+         If you enter the spatial reference by using the <SPAN STYLE="font-weight : bold;">Map
+          browser</SPAN>, the value will be &#145;Internal Map&#146;.<BR>
+         <LI CLASS="mvd-P">If you select a location from the location 
+         hierarchy, the spatial reference will default to the centroid for 
+         that location and the qualifier will be &#145;Site Centroid&#146;.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Admin Area(s)</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Read-only. The information for admin area is displayed if there are 
+        associated admin areas for the location. To associate admin areas 
+        with a location, see <A HREF="Location_Administrative_Areas_Tab.htm">Location
+         Admin Areas</A>.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Sample Type</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P CLASS="warning">
+        <SPAN STYLE="font-weight : bold;">Required</SPAN>.</P>
+       <P>
+        Select a sample type from the drop-down box. The sample type is a 
+        &#145;term-list&#146;, and items in this list can be added or deleted 
+        by clicking <SPAN STYLE="font-weight : bold;">Tools - </SPAN><A HREF="Term-list_Overview.htm">Term-lists</A>.
+         The icon for the sample type is used for the sample in the <A HREF="Observations.htm">Observations
+         screen</A>.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Biotope</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. To enter a biotope, use one of the methods described in <A HREF="Finding_Things.htm">Find
+         overview</A>.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Count</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. The count list box allows the user to enter count 
+        information for the observations.</P>
+       <P>
+        To enter count information:</P>
+       <UL TYPE="circle">
+        <LI CLASS="mvd-P">
+        <P>
+         Click on the [Add] button <IMG SRC="..\buttonimages\plus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0">.<BR>
+         <LI CLASS="mvd-P">Type in the Count value (i.e. a number).</P>
+        <LI CLASS="mvd-P">
+        <P>
+         Click in the <SPAN STYLE="font-weight : bold;">Count Of</SPAN> box 
+         and use the drop-down arrow to select what has been counted (i.e. a 
+         qualifier such as Juvenile).<BR>
+         <LI CLASS="mvd-P">Select a value for the accuracy using the drop-down 
+         arrow (or type a user-defined accuracy).</P>
+        </UL>
+       <P>
+        To delete count information:</P>
+       <UL TYPE="circle">
+        <LI CLASS="mvd-P">
+        <P>
+         Select the count information that you want to delete.<BR>
+         <LI CLASS="mvd-P">Click the [Delete] button <IMG SRC="..\buttonimages\minus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0">.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Provenance</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. Select a value for the provenance for the species from the 
+        drop-down box.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Record Type</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. Select a value for the record type from the drop-down box.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Substrate</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. Select a value for the substrate from the drop-down box.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Determiner</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. To enter a determiner use one of the methods described in <A HREF="Finding_Things.htm">Find
+         overview</A>.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Date of Determination</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. If a determiner is entered, a valid determination date must 
+        be entered. This must be on or after the observation date.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Specimen Number</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional, unless any other specimen details are entered.<BR>
+        Free text. An identifier for the material that was retained, so that 
+        it can be located in future.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Specimen Type</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional, unless any other specimen details are entered.<BR>
+        Item selected from the specimen type <A HREF="Term-list_Overview.htm">term
+         list</A>. Users can add terms to this list if necessary.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Specimen Location</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. Free text. An indication of where the material is kept.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Specimen Comment</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. <A HREF="RTF_Memos.htm">RTF Memo</A>. Any text describing 
+        the material and its condition.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Comments</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Optional. Free text field for a comments about the sample.</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <H3>
+   To Reset:</H3>
+  <P>
+   The [Reset] button is used to clear some of the controls in the 
+   species card. It allows the user to abandon entering information 
+   about a particular observation while preserving values from the 
+   previous sample. The following controls are reset: count list box, 
+   provenance, record type, substrate, determiner, date of 
+   determination, specimen number, type and comment, and comments.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Entering Data Using a Recording Card;Entering_Data_Using_a_Recording_Card.htm"><PARAM
+    NAME="Item2" VALUE="Quick Record Entry Overview;Quick_Record_Entry_Overview.htm"><PARAM
+    NAME="Item3" VALUE="Saving a Record Card;Saving_a_Record_Card.htm"><PARAM
+    NAME="Item4" VALUE="Short-cut Keys;Short-cut_Keys.htm"></OBJECT>
+ </BODY>
+</HTML>

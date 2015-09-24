@@ -1,0 +1,241 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Verification of identifications</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   V<SPAN STYLE="font-weight : bold;">erification</SPAN> of identifications</H1>
+  <P>
+   Taxon and biotope occurrence records have a <SPAN STYLE="font-weight : bold;">Verified</SPAN> 
+   flag to indicate whether or not the taxon or biotope have been 
+   identified correctly. It can have one of three states:</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="10%" VALIGN=TOP>
+       <P>
+        0</TD>
+      <TD WIDTH="22%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Not verified</SPAN></TD>
+      <TD WIDTH="68%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">Verification </SPAN>has not been 
+        attempted. This is the default and all records will be flagged as <SPAN STYLE="font-weight : bold;">Not
+         verified</SPAN> unless the user specifies otherwise.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="10%" VALIGN=TOP>
+       <P>
+        1</TD>
+      <TD WIDTH="22%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Failed/pending verification</SPAN></TD>
+      <TD WIDTH="68%" VALIGN=TOP>
+       <P>
+        The taxon name attributed to this record has been checked and is 
+        believed to be incorrect (a reason should preferably be given in the 
+        comment), or it is awaiting v<SPAN STYLE="font-weight : normal;">erification</SPAN>.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="10%" VALIGN=TOP>
+       <P>
+        2</TD>
+      <TD WIDTH="22%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Passed verification</SPAN></TD>
+      <TD WIDTH="68%" VALIGN=TOP>
+       <P>
+        The taxon name attributed to this record has been checked and is 
+        believed to be correct.</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P>
+   The value of the Validation flag is shown on the <SPAN STYLE="font-weight : bold;">General</SPAN> 
+   tab of the <A HREF="Taxon_Occurrence_General_Tab.htm">Taxon</A> and <A HREF="Biotope_Occurrence_General_Tab.htm">Biotope</A> occurrences.</P>
+  <H3>
+   How is the Verified flag set?</H3>
+  <P>
+   It is set automatically depending on the determination type on the 
+   preferred determination for the <A HREF="Taxon_Occurrence_General_Tab.htm">Taxon</A> 
+   or <A HREF="Biotope_Occurrence_General_Tab.htm">Biotope occurrence</A>.
+    The values are:</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="60%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="46%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Determination Type</SPAN></TD>
+      <TD WIDTH="54%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Verified flag</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="46%" VALIGN=TOP>
+       <P>
+        Correct</TD>
+      <TD WIDTH="54%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">2 - Passed verification</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="46%" VALIGN=TOP>
+       <P>
+        Considered Correct</TD>
+      <TD WIDTH="54%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">2 - Passed verification</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="46%" VALIGN=TOP>
+       <P>
+        Considered Incorrect</TD>
+      <TD WIDTH="54%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">1 - Failed/pending verification</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="46%" VALIGN=TOP>
+       <P>
+        Incorrect</TD>
+      <TD WIDTH="54%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">1 - Failed/pending verification</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="46%" VALIGN=TOP>
+       <P>
+        Requires Confirmation</TD>
+      <TD WIDTH="54%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">1 - Failed/pending verification</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="46%" VALIGN=TOP>
+       <P>
+        Unconfirmed</TD>
+      <TD WIDTH="54%" VALIGN=TOP>
+       <P>
+        0 - <SPAN STYLE="font-weight : normal;">Not verified</SPAN></TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P>
+   <SPAN STYLE="font-weight : normal;">The determination types listed 
+   above were introduced in </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder
+    6</SPAN><SPAN STYLE="font-weight : normal;"> version 6.13 in 
+   response to user's requests for improved verification flagging. They 
+   are <A HREF="System_Supplied_vs_User_Added.htm">system supplied</A> 
+   entries in that version. The following determination types were 
+   present in earlier versions of the system as <A HREF="System_Supplied_vs_User_Added.htm">system
+    supplied</A> entries. They are also present in version 6.13 but if 
+   you have installed </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder
+    6</SPAN><SPAN STYLE="font-weight : normal;"> using a version 6,13 
+   installation CD you will find that they are flagged as hidden so that 
+   they can't be used for data entry.</SPAN></P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="60%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="47%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Determination Type</SPAN></TD>
+      <TD WIDTH="53%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Verified flag</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="47%" VALIGN=TOP>
+       <P>
+        Confirmation</TD>
+      <TD WIDTH="53%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">2 - Passed verification</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="47%" VALIGN=TOP>
+       <P>
+        Validation</TD>
+      <TD WIDTH="53%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">2 - Passed verification</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="47%" VALIGN=TOP>
+       <P>
+        Invalid</TD>
+      <TD WIDTH="53%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">1 - Failed/pending verification</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="47%" VALIGN=TOP>
+       <P>
+        Observation</TD>
+      <TD WIDTH="53%" VALIGN=TOP>
+       <P>
+        0 - <SPAN STYLE="font-weight : normal;">Not verified</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="47%" VALIGN=TOP>
+       <P>
+        Original</TD>
+      <TD WIDTH="53%" VALIGN=TOP>
+       <P>
+        0 - <SPAN STYLE="font-weight : normal;">Not verified</SPAN></TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: The <SPAN STYLE="font-weight : normal;">determination</SPAN> 
+   type is a <A HREF="Term-list_Overview.htm">Term List</A> which users 
+   can add to if they wish by selecting <A HREF="Adding_a_Term_to_a_List.htm">Tools
+    - Term Lists</A> from the main menu.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">Note:</SPAN> If an observation is 
+   flagged as <SPAN STYLE="font-weight : bold;">Failed/pending verification</SPAN>:</P>
+  <UL>
+   <LI CLASS="mvd-P-warning">
+   <P CLASS="warning">
+    It will not be exported in certain circumstances - see the notes in 
+    red in <A HREF="Export.htm">Exports</A>.<BR>
+    <LI CLASS="mvd-P-warning">It will not appear in reports unless you 
+    specifically indicate that observations flagged as <SPAN STYLE="font-weight : normal;">Failed/pending
+     verification</SPAN> should be included (<SPAN STYLE="font-weight : bold;">Reports
+     &#150; Wizard &#150; Additional filters &#150;</SPAN> <A HREF="Additional_Filters_Contraints.htm">Constraints</A>).</P>
+   </UL>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Biotope Determinations;Biotope_Determinations.htm"><PARAM
+    NAME="Item2" VALUE="Taxon Determinations;Taxon_Determinations.htm"></OBJECT>
+ </BODY>
+</HTML>

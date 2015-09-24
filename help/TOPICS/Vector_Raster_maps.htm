@@ -1,0 +1,112 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Vector and Raster maps</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Map file formats, vectors and rasters</H1>
+  <P>
+   A <SPAN STYLE="font-weight : bold;">vector</SPAN> map consists of 
+   lines defined by a series of co-ordinates. This is how digitised site 
+   boundaries are stored. Their advantages are that they can be stored 
+   in a fairly compact format and can be drawn at a wide range of scales 
+   without distortion or loss of detail. However, digitising a map is 
+   quite a long and labour intensive process. The co-ordinates of each 
+   twist and turn in the line that is being digitised have to be read 
+   off and recorded electronically. Consequently, vector datasets tend 
+   to be expensive and each set of data usually covers only one type of 
+   feature (e.g. the boundary of a site).</P>
+  <P>
+   A <SPAN STYLE="font-weight : bold;">raster tile</SPAN> is a picture 
+   consisting of rows and columns of coloured pixels. They are made by 
+   scanning a paper-map, a satellite image or an aerial photograph. 
+   Large images (such as a map sheet covering a sizeable area) are 
+   broken down into a set of '<SPAN STYLE="font-weight : bold;">tiles</SPAN>'
+    &#150; rectangular pieces of manageable size &#150; which can be 
+   shown side by side on screen to form the complete picture. Given the <A HREF="Bounding_Boxes.htm">spatial
+    co-ordinates</A> of the corners of a tile, the co-ordinate of any 
+   given pixel can be accurately determined. The advantage of raster 
+   maps is that they can contain a lot of information &#150; they can 
+   allow a conventional published map or an aerial photograph to be 
+   placed on screen. The main disadvantage is that a raster map can only 
+   be displayed at a limited range of scales around that at which it was 
+   scanned. If you try to display a it at a much smaller scale, then 
+   detail is rapidly lost and if you zoom in to a much larger scale then 
+   the screen image breaks down into a series of square blocks 
+   representing the individual pixels of the original scanned image.</P>
+  <P>
+   With the ready availability of cheap, desk-top scanners it is easy to 
+   scan a paper-map or an aerial photograph. However, the process of 
+   making it into useable raster tiles is quite involved and has to be 
+   done very carefully if you are going to rely on the result to derive 
+   accurate spatial references:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    When aerial photographs are taken, it is rare for the camera to be 
+    pointing absolutely vertically downwards, and this introduces 
+    distortions due to perspective. Also, the ground is not flat, and 
+    features on slopes will appear closer together or further apart 
+    depending on whether the slope faces towards or away from the camera. 
+    These distortions have to be corrected in the final image.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The rows and columns of pixels in the scanned image must be 
+    accurately aligned to the spatial co-ordinate system. Any rotation, 
+    or distortion due to variation in the scanning speed across the 
+    image, will lead to inaccuracies in the spatial co-ordinates derived 
+    from the map tile.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The edges of tiles have to be matched up accurately so that tiles fit 
+    together properly and features like roads and rivers run from one 
+    tile to the next without breaks at the tile boundaries.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Ideally, the whole process should be carried out so that the colours 
+    of features are consistent across the whole set of tiles. Then 
+    similar features can be recognised in different places on the 
+    resulting map irrespective of the tile on which they appear.</P>
+   </UL>
+  <P>
+   To do these jobs well requires high quality scanning equipment which 
+   can handle large originals (e.g. whole map sheets), and sophisticated 
+   software that can correct for distortions in the image and align it 
+   to the spatial co-ordinate system (ortho-rectification). There are 
+   many commercial agencies that offer these services.</P>
+  <P CLASS="warning">
+   The copyright conditions on published maps usually do not allow their 
+   scanning and storage in electronic form. This is the case, for 
+   example, for Ordnance Survey maps.</P>
+  <H1>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Map file formats;Map_formats.htm"><PARAM
+    NAME="Item2" VALUE="The Map Browser;The_Map_Browser.htm"></OBJECT>
+ </BODY>
+</HTML>

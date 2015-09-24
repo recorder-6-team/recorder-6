@@ -1,0 +1,124 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Report Wizard Polygon Selection</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Polygon selection</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   You see this screen if you selected the <SPAN STYLE="font-weight : bold;">Restrict
+    to one or more Polygons</SPAN> option in the starting screen of the 
+   Wizard. It is used to select the polygons on the map that you want to 
+   use to select observations (the report will then include observations 
+   which fall within the selected polygons).</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\Report Wizard Polygon Selection.gif" WIDTH="422" HEIGHT="374" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+    <TR>
+     <TD WIDTH="28%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Filter report by selected polygons</SPAN></TD>
+     <TD WIDTH="72%" VALIGN=TOP>
+      <P>
+       This list initially shows the names of your polygon layers. 
+       Double-click on a name, or click the <IMG SRC="..\buttonimages\TreePlus.gif" WIDTH="9" HEIGHT="9" VSPACE="0" HSPACE="0" BORDER="0"> 
+       button, to show the polygons on that layer. If you have linked a 
+       polygon to a location, you will see the name of the location, 
+       otherwise it will be shown as &quot;Unlinked Polygon [ID: <SPAN STYLE="font-style : italic;">nnn</SPAN>]&quot;.
+        You can select a polygon by clicking the check-box (so that it is 
+       ticked). Click again to unselect (which removes the tick).</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="28%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Find Polygon on Map</SPAN></TD>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <P>
+       Press this button to open the Map window. You can then select a 
+       polygon on the map by clicking on it. Press <A HREF="Return_Data.htm">return
+        data</A> [F9], to return to the Report Wizard. The polygon will now 
+       be ticked in the list.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="28%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Predefined Filter</SPAN></TD>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <P>
+       The list contains sets of polygons you have previously saved using 
+       the <SPAN STYLE="font-weight : bold;">Save Filter As</SPAN><SPAN STYLE="font-weight : normal;"> 
+       facility. Choose an item from this list and the list of polygons that 
+       was saved will be ticked.</SPAN></TD>
+    </TR>
+    <TR>
+     <TD WIDTH="28%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Save Filter As</SPAN></TD>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <P>
+       You can save the selection you have made for use on a future 
+       occasion. You will be prompted for the name of a file. It is saved in 
+       the directory nominated in the Polygon Filters: entry in <A HREF="Options_File_Locations.htm">Options
+        - File Locations</A>.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="28%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Include overlapping grid squares in 
+       report results</SPAN></TD>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <P>
+       Include grid squares that overlap the polygon boundary in the report results.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="28%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Exclude overlapping grid squares in 
+       report results</SPAN></TD>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <P>
+       Exclude grid squares that overlap the polygon boundary in the report results.</TD>
+    </TR>
+   </TABLE></P>
+  <P CLASS="warning">
+   Until the <SPAN STYLE="font-weight : bold;">Include/Exclude 
+   overlapping grid squares in report results</SPAN> options were 
+   introduced in 2008, an observation was selected for the report if its 
+   spatial reference fell within one of the selected polygons. Grid 
+   references like 10km squares, 1km squares or tetrads (2km squares) 
+   are represented internally by the spatial reference of the bottom 
+   left-hand corner. So, an observation for a 1km square, for example, 
+   was considered for the report if its bottom left-hand corner was 
+   within the polygon and irrespective of whether any other part of the 
+   1km square was within the polygon. Now you have the option to specify 
+   whether you want grid squares that overlap the polygon boundary 
+   included or excluded from the report results.</P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;
+ </BODY>
+</HTML>

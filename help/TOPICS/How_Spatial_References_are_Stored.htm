@@ -1,0 +1,99 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>How spatial references are stored</TITLE>
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css">
+ <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   How spatial references are stored</H1>
+  <P>
+   Internally, spatial references are converted to latitude and 
+   longitude co-ordinates in degrees, and are stored as a pair of 
+   floating point numbers. However, the original string that was entered 
+   by the user is also stored. This allows information about the 
+   precision of the original co-ordinate to be derived. It can also be 
+   used to check for rounding errors that might arise if co-ordinates 
+   were repeatedly converted between co-ordinate systems.</P>
+  <P>
+   Five fields are always stored:</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="36%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Spatial_ref</SPAN></TD>
+      <TD WIDTH="64%" VALIGN=TOP>
+       <P>
+        The string entered by the user (this is 'cleaned up' before storage 
+        &#150; e.g. letters are forced into upper case, extra spaces are trimmed).</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="36%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Lat</SPAN></TD>
+      <TD WIDTH="64%" VALIGN=TOP>
+       <P>
+        Latitude in degrees.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="36%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Long</SPAN></TD>
+      <TD WIDTH="64%" VALIGN=TOP>
+       <P>
+        Longitude in degrees.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="36%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Spatial_ref_system</SPAN></TD>
+      <TD WIDTH="64%" VALIGN=TOP>
+       <P>
+        This identifies the system that is used to covert to and from the 
+        value that was entered by the user to the stored lat/long (e.g. OSGB).</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="36%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Spatial_ref_qualifier</SPAN></TD>
+      <TD WIDTH="64%" VALIGN=TOP>
+       <P>
+        Information obtained from the user about how the spatial reference 
+        was obtained (e.g. 'estimated from map').</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P>
+   If a table stores more than one spatial reference, these field names 
+   are prefixed with a label indicating their purpose.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Spatial References Overview;Spatial_References_Overview.htm"></OBJECT>
+ </BODY>
+</HTML>

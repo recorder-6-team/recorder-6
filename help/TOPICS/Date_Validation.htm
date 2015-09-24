@@ -1,0 +1,91 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Date validation</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Date validation</H1>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Entries must be valid dates. For example, 31/11/1999 or 29/2/1999 are <FONT COLOR="RED">not</FONT> 
+    valid dates.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    In most circumstances, dates after today's date are not acceptable. 
+    You cannot specify that an observation was made, a specimen was 
+    determined, or a site was designated at a date in the future! There 
+    are a few exceptions to this: for example, you are allowed to set the 
+    end date for a survey into the future.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Where 'From' and 'To' dates are used, the date given in the 'From' 
+    prompt must be before the date given in the 'To' prompt.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Dates must be consistent with each other. For example, if you gave 
+    start and end dates for a survey, then dates given for the survey 
+    events and samples within that survey must be between the start and 
+    end dates you specified for the whole survey.</P>
+   </UL>
+  <H3>
+   Troubleshooting</H3>
+  <P>
+   If you are having problems with dates that appear perfectly valid 
+   being rejected, check the Regional settings in your <SPAN STYLE="font-style : italic;">Windows</SPAN> 
+   control panel, since this is where <SPAN STYLE="font-style : italic;">Windows</SPAN> 
+   programs get the information on how to <A HREF="Two_Digit_Years.htm">interpret
+    dates</A>. The two most likely problems are:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    The order of elements (day, month, year): For example, 31/3/1999 may 
+    or may not be valid, depending on the expected ordering of elements. 
+    If your Regional settings are for the American pattern of 'm/d/y' 
+    (i.e month number, then day number, then year) then this is not a 
+    valid date, but if the settings are for the European pattern 'd/m/y', 
+    then it is valid.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The Regional settings also specify the separator to be used between 
+    each element. If you selected 'English (British)' or 'English (United 
+    Kingdom)' in the 'Regional settings' tab, and have not changed the 
+    default, the separator will be &quot;/&quot;.</P>
+   </UL>
+  <P>
+   Another possible problem is inadvertently setting a date into the 
+   future because of the way that years entered with one or two digits 
+   are <A HREF="Two_Digit_Years.htm">interpreted</A>.</P>
+  <H1>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Standard Dates;Standard_Dates.htm"><PARAM
+    NAME="Item2" VALUE="Two Digit Years;Two_Digit_Years.htm"><PARAM
+    NAME="Item3" VALUE="Vague Dates;Vague_Dates.htm"></OBJECT>
+ </BODY>
+</HTML>

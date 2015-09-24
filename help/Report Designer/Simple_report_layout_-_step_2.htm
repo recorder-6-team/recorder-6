@@ -1,0 +1,158 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Simple report layout - step 2</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Simple report layout - step 2</H1>
+  <P>
+   The Report Designer in <SPAN STYLE="font-style : italic;">Recorder </SPAN> 
+   creates reports made up of sections or &quot;<A HREF="Designing_a_report_3.htm">bands</A>&quot;.
+    Each type of band has specific characteristics that control when it 
+   appears in your final report and how many times. Within each band you 
+   can position the data that you want along with images and dates etc.</P>
+  <H3>
+   Adding the bands</H3>
+  <P>
+   We want our report to contain the following:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    A title and the author's name printed on the first page only.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    A header on every page except the first containing a logo.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Some items of data from the observations selected in the Report 
+    Wizard. These will be laid out in columns with column headings at the 
+    top of each page.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    A summary section on the last page showing how many observations the 
+    report includes and a copyright/usage notice.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    A footer on each page showing the date and page number.</P>
+   </UL>
+  <H3>
+   To add the bands:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click on the &quot;add new band&quot; button <IMG SRC="Band button.gif" WIDTH="24" HEIGHT="23" VSPACE="0" HSPACE="0" BORDER="0"> 
+    and then click inside the blue dotted rectangle. A band will be added 
+    at the top of the layout area entitled &quot;BAND 1&quot; and the 
+    following dialog box will appear:</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="Band 1.gif" WIDTH="503" HEIGHT="421" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the correct band type and format your band using the elements 
+    in the dialog box. For example, when you select the &quot;Page 
+    header&quot; band, tick the &quot;Not on first page&quot; option if 
+    you don't want a header on the title page. Once you are happy with 
+    your selection, click [OK].</P>
+   <LI CLASS="mvd-P">
+   <P>
+    When the band is added to the design, you will see it on the layout 
+    like this:</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="New band.gif" WIDTH="415" HEIGHT="125" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P STYLE="text-align : left;" ALIGN=LEFT>
+     The bands are named &quot;BAND 1&quot;, &quot;BAND 2&quot;, etc in 
+     the order in which you add them<BR>
+     <LI CLASS="mvd-P">The band type is shown in small letters at the 
+     bottom left-hand corner of the band<BR>
+     <LI CLASS="mvd-P">The band has &quot;<A HREF="javascript:BSSCPopup('grab_handles.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">grab
+      handles</A>&quot;. You can use these to change the height of the band.</P>
+    </UL>
+   </UL>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   Add the following bands to your report:</P>
+  <DIV>
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    <TABLE WIDTH="80%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+     <TR>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Title</TD>
+      <TD WIDTH="80%" VALIGN=TOP>
+       <P>
+        for the title and author's name</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Page header</TD>
+      <TD WIDTH="80%" VALIGN=TOP>
+       <P>
+        for the logo. Remember to choose the &quot;Not on first page&quot; option.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Column header</TD>
+      <TD WIDTH="80%" VALIGN=TOP>
+       <P>
+        to provide headings for the data columns on each page</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Detail</TD>
+      <TD WIDTH="80%" VALIGN=TOP>
+       <P>
+        to contain columns of data from your observations</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Summary</TD>
+      <TD WIDTH="80%" VALIGN=TOP>
+       <P>
+        for the total number of observations</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Page footer</TD>
+      <TD WIDTH="80%" VALIGN=TOP>
+       <P>
+        for the date and page number</TD>
+     </TR>
+    </TABLE></P>
+   </DIV>
+  <P>
+   You are now ready to put information on the bands.</P>
+  <P>
+   <A HREF="Simple_report_layout_-_step_1.htm">Previous</A> | <A HREF="Simple_report_layout_-_step_3.htm">Next</A>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

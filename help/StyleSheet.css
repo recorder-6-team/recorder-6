@@ -1,0 +1,148 @@
+
+ /* $MVD$:color("18","deefef","Custom #1","0") */
+ /* $MVD$:color("19","f2fefe","Custom #2","0") */
+ /* $MVD$:color("20","cc33ff","Custom #3","0") */
+ /* $MVD$:color("21","dddddd","Custom #4","0") */
+ /* $MVD$:color("22","99ccff","Custom #5","0") */
+ /* $MVD$:color("23","d8fcfb","Custom #6","0") */
+ /* $MVD$:color("24","993399","Custom #7","0") */
+ /* $MVD$:color("25","ffffc1","Custom #8","0") */
+ /* $MVD$:color("26","d00000","Custom #9","0") */
+ /* $MVD$:fontset("Arial","Arial") */
+ /* $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") */
+ /* $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") */
+ BODY { background-attachment : fixed;
+        background-color : #FBFCD8;
+        background-image : url("logo_faded.jpg");}
+ .mvd-BODY { background-attachment : fixed;
+             background-color : #FBFCD8;
+             background-image : url("logo_faded.jpg");}
+ P { font-family : "Arial";
+     font-size : x-small;
+     color : black;}
+ .mvd-P { font-family : "Arial";
+          font-size : x-small;
+          color : black;}
+ H1 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 16.0pt;
+      color : blue;}
+ .mvd-H1 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 16.0pt;
+           color : blue;}
+ H2 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 14.0pt;
+      color : blue;}
+ .mvd-H2 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 14.0pt;
+           color : blue;}
+ H3 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 12.0pt;
+      color : blue;}
+ .mvd-H3 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 12.0pt;
+           color : blue;}
+ H4 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 12.0pt;}
+ .mvd-H4 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 12.0pt;}
+ H5 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 12.0pt;}
+ .mvd-H5 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 12.0pt;}
+ H6 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 12.0pt;}
+ .mvd-H6 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 12.0pt;}
+ A:link { text-decoration :underline;
+          color : blue;}
+ A:visited { text-decoration :underline;
+             color : blue;}
+ A:active { text-decoration :underline;
+          color : fuchsia;}
+ A.BSSCPopup:link { text-decoration : none;
+                    color : blue;}
+ A.BSSCPopup:visited { text-decoration : none;
+                       color : blue;}
+ A.BSSCPopup:active { text-decoration : none;
+                    color : blue;}
+ CITE.expandspot { font-style : normal;
+                   color : green;
+                   cursor: hand;}
+ .mvd-CITE-expandspot { font-style : normal;
+                        color : green;
+                        cursor: hand;}
+ DFN.collapsed { font-style : italic;
+                 font-weight : normal;
+                 color : red;}
+ .mvd-DFN-collapsed { font-style : italic;
+                      font-weight : normal;
+                      color : red;}
+ DFN.expanded { font-style : italic;
+                font-weight : normal;
+                color : red;}
+ .mvd-DFN-expanded { font-style : italic;
+                     font-weight : normal;
+                     color : red;}
+ EM.dropspot { color : green;
+               cursor: hand;}
+ .mvd-EM-dropspot { color : green;
+                    cursor: hand;}
+ CITE.glossterm { font-style : normal;
+                  color : maroon;
+                  cursor: hand;}
+ .mvd-CITE-glossterm { font-style : normal;
+                       color : maroon;
+                       cursor: hand;}
+ DFN.glosscollapsed { font-style : italic;
+                      font-weight : normal;
+                      display :  'none';
+                      color : blue;}
+ .mvd-DFN-glosscollapsed { font-style : italic;
+                           font-weight : normal;
+                           display :  'none';
+                           color : blue;}
+ DFN.glossexpanded { font-style : italic;
+                     font-weight : normal;
+                     color : blue;}
+ .mvd-DFN-glossexpanded { font-style : italic;
+                          font-weight : normal;
+                          color : blue;}
+ P.note { font-family : "Verdana", "Arial";
+          font-size : 9.0pt;
+          background-color : #C1FFFF;
+          text-align : left;
+          color : #0000D0;
+          border : solid #C1FFFF 4.0pt;
+          line-height : normal;
+          margin-right : 6.0pt;}
+ .mvd-P-note { font-family : "Verdana", "Arial";
+               font-size : 9.0pt;
+               background-color : #C1FFFF;
+               text-align : left;
+               color : #0000D0;
+               line-height : normal;
+               margin-right : 6.0pt;}
+ P.warning { font-family : "Verdana", "Arial", "Times New 12";
+             font-weight : normal;
+             font-size : 9.0pt;
+             background-color : white;
+             color : red;
+             border : solid white 4.0pt;}
+ .mvd-P-warning { font-family : "Verdana", "Arial", "Times New 12";
+                  font-weight : normal;
+                  font-size : 9.0pt;
+                  background-color : white;
+                  color : red;}
+ 

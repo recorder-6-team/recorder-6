@@ -1,0 +1,82 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Translating taxa</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Translating taxa</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></H1>
+  <P>
+   Translation between lists, standard &quot;recommended&quot; names and 
+   standard sort orders is provided by the Index_Taxon_List table in the 
+   database. This table is partly populated by the Nameserver table in 
+   the database. If you are concerned that the translations that you 
+   were hoping to have are not happening it is probably because the 
+   Nameserver is not fully populated. Discuss this with the Species 
+   dictionary team at the Natural History Museum. Each Taxon has a 
+   &quot;recommended&quot; name within the Taxon dictionary. This is 
+   usually a term off one of the preferred lists.</P>
+  <P CLASS="note">
+   Note: Recommended names are a scientific names that represent current 
+   taxonomic thought</P>
+  <P>
+   Recorder uses this &quot;recommended&quot; name to do it's translations.</P>
+  <P>
+   So, for instance,</P>
+  <P>
+   If you are reporting using the BAP species list, Recorder will;</P>
+  <BLOCKQUOTE>
+   <P>
+    1. Find out what that the currently recommenced name for each of the 
+    taxa on the BAP Species list is.</P>
+   <P>
+    2. Then find all other taxa that share this recommended name</P>
+   <P>
+    3. Produce a report based on all of these terms</P>
+   </BLOCKQUOTE>
+  <P>
+   As you can see from this. There may be cases where complex changes in 
+   terminology over time may case some unexpected results to come out of 
+   the translation. Because of this, there is always the option to show 
+   the original term recorded against in a report so that you can check 
+   for any discrepancies</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Dictionaries Menu;Dictionaries_Menu.htm"><PARAM
+    NAME="Item2" VALUE="Dictionaries overview;Dictionaries_Overview.htm"><PARAM
+    NAME="Item3" VALUE="Dictionary updates;Dictionary_Upgrades.htm"><PARAM
+    NAME="Item4" VALUE="Taxon Dictionary Browser;Taxon_Dictionary_Browser.htm"></OBJECT>
+ </BODY>
+</HTML>

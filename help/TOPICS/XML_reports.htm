@@ -1,0 +1,307 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>XML reports</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   XML reports</H1>
+  <P>
+   The introduction of XML reports in the SQL Server version of <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN><SPAN STYLE="font-style : normal;">was a</SPAN> significant 
+   enhancement to the system's reporting capabilities.</P>
+  <P>
+   <SPAN STYLE="font-style : italic;">Recorder </SPAN>comes with an 
+   extensive selection of XML reports - see <A HREF="XML_reports_supplied_with_Recorder.htm">XML
+    reports supplied with <SPAN STYLE="font-style : italic;">Recorder</SPAN>.</A> 
+   If you require a report that can't be produced using the <A HREF="Reporting_Overview.htm">report
+    wizard</A> you may find that it is already available as an XML 
+   report. Alternatively, you will be able to develop it yourself, 
+   provided you have access to the necessary computing skills. These 
+   reports can be run from within your <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   system using one of the methods described in <FONT COLOR="BLACK"><A HREF="Running_Reports.htm">Running
+    Reports</A></FONT>. They can also be designed to run from the <SPAN STYLE="font-weight : bold;">Quick
+    Report </SPAN>menu which appears when you right click certain items 
+   in a <SPAN STYLE="font-style : italic;">Recorder</SPAN> window.</P>
+  <P>
+   To produce them, you will need to be able to write SQL (Structured 
+   Query Language) or to design queries in Microsoft <SPAN STYLE="font-style : italic;">Access</SPAN> 
+   but, with these skills, you will be able to develop a wide variety of 
+   reports many of which could not be produced via the Report Wizard. 
+   The production of complex reports will require a high level of 
+   expertise but, with a modest level of expertise, you will still be 
+   able to produce useful reports. Two simple examples are provided 
+   below to illustrate the process. Further examples are available on 
+   the <SPAN STYLE="font-style : italic;">Recorder</SPAN> Forum, part of 
+   the <A HREF="http://forums.nbn.org.uk/index.php">NBN Forum</A>, which 
+   can also be accessed from the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   web site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A> 
+   - see File Uploads. Also on the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   web site is introductory documentation on writing <SPAN STYLE="font-weight : normal;">XML
+    reports. It is available </SPAN>in the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   Wiki where the links to follow are <SPAN STYLE="font-weight : bold;">Recorder
+    - Recorder 6 - Reporting - XML reports</SPAN>.</P>
+  <P>
+   If you need assistance with writing XML reports over and above that 
+   provided by the existing documentation, please contact the supplier 
+   of your copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>, 
+   or any of the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   suppliers who are listed on the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   web site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A>.
+    You can also seek help from other users via the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   Forum. Alternatively, you can ask <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   suppliers and others to produce XML reports for you.</P>
+  <P>
+   XML reports are text files which you would normally place in the <SPAN STYLE="font-weight : bold;">Reports
+    </SPAN>folder in the <SPAN STYLE="font-weight : bold;">User Files</SPAN> 
+   folder in your <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   system, in order to run them, unless the location of your reports has 
+   been changed using <A HREF="Options_File_Locations.htm">Tools - 
+   Options - File Locations</A>. If you choose to store them elsewhere 
+   you will be able to navigate to another folder to select and run 
+   them. See <SPAN STYLE="font-weight : normal;"><A HREF="Running_Reports.htm">Running
+    reports</A></SPAN> for information on running XML reports.</P>
+  <P>
+   In the examples below Microsoft <SPAN STYLE="font-style : italic;">Access</SPAN> 
+   was used to design the queries and the associated SQL was copied into 
+   the XML report. The SQL is everything between &lt;SQL&gt; and 
+   &lt;/SQL&gt; although the <SPAN STYLE="font-style : italic;">Access</SPAN> 
+   version needs minor modifications to work in an XML report.</P>
+  <P>
+   The clause starting &quot;&lt;CustomReport&quot; contains the name of 
+   the report (title=), i.e. the name that will appear in the <SPAN STYLE="font-weight : bold;">Reports
+    - Run</SPAN> menu, and a path (menupath=) which determines where the 
+   report will be listed in the menu's hierarchy. It also contains a 
+   description which will be displayed when the report is selected. See <A HREF="Running_Reports.htm">Running
+    reports</A> for how XML reports will appear.</P>
+  <P>
+   The &lt;Where Keytype=&quot;Default&quot;&gt;, and its closing tag 
+   &lt;/Where&gt;, are inserted in the SQL to say that the report is to 
+   be run from the <SPAN STYLE="font-weight : bold;">Reports - Run</SPAN> menu.</P>
+  <P>
+   Although not illustrated below, XML reports can be parameter driven 
+   to allow, for example, a report to be produced that lists all the 
+   observations for a given 1 km square. They can also be designed to be 
+   run from a selection in one of the <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>hierarchies.</P>
+  <P>
+   See <A HREF="XML_reports_supplied_with_Recorder.htm">XML reports 
+   supplied with <SPAN STYLE="font-style : italic;">Recorder</SPAN></A> 
+   for an introduction to modifying XML reports.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: Reports that have not 
+   been produced by JNCC should be given file names prefixed with 
+   information on their origin, e.g. a SITE ID or an organisation name. 
+   Comments in each report, i.e. the information between &lt;!-- and 
+   --&gt;, should include the author, a version number, the date the 
+   report was produced and/or amended, some information on how or why it 
+   was produced when appropriate and details of the parameters where 
+   applicable. If you amend a report supplied with <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    it should be renamed to make this clear to anyone who uses it.</P>
+  <H3>
+   Example 1: Alphabetic List of Locations</H3>
+  <P>
+   1. Open a text file in Notepad (<SPAN STYLE="font-weight : bold;">Start
+    - All Programs - Accessories - Notepad</SPAN> in Windows XP).</P>
+  <P>
+   2. Copy and paste the following into it:</P>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <P>
+     <FONT COLOR="BLACK">&lt;?xml version=&quot;1.0&quot; ?&gt;</FONT></P>
+    <P>
+     &lt;!-- SR000027: <FONT COLOR="BLACK">Alphabetic List of Locations. </FONT>XML
+      Report by Sally Rankin. Version 1, April 10 2009<BR>
+     --&gt;</P>
+    <P>
+     <FONT COLOR="BLACK">&lt;CustomReport menupath=&quot;</FONT>SR000027<FONT COLOR="BLACK"> 
+     Reports&quot; title=&quot;Alphabetic List of Locations&quot; 
+     description=&quot;Lists all location names in alphabetic order with 
+     their central spatial reference. Preferred is 'Yes' for preferred 
+     names and 'No' for alternative names.&quot;&gt;</FONT></P>
+    <P>
+     <FONT COLOR="BLACK">&lt;SQL&gt;</FONT></P>
+    <P>
+     <FONT COLOR="BLACK">Select</FONT></P>
+    <BLOCKQUOTE>
+     <P>
+      <FONT COLOR="BLACK">Location.Location_Key,</FONT><BR>
+      <FONT COLOR="BLACK">Location_Name.Item_Name,</FONT><BR>
+      <FONT COLOR="BLACK">Location_Name.Preferred,</FONT><BR>
+      <FONT COLOR="BLACK">Location.Spatial_Ref</FONT></P>
+     </BLOCKQUOTE>
+    <P>
+     <FONT COLOR="BLACK">From Location Inner Join Location_Name On 
+     Location.Location_Key = Location_Name.Location_Key</FONT></P>
+    <P>
+     <FONT COLOR="BLACK">&lt;Where Keytype=&quot;Default&quot;&gt;</FONT></P>
+    <P>
+     <FONT COLOR="BLACK">Order By Location_Name.Item_Name</FONT></P>
+    <P>
+     <FONT COLOR="BLACK">&lt;/Where&gt;</FONT></P>
+    <P>
+     <FONT COLOR="BLACK">&lt;/SQL&gt;</FONT></P>
+    <P>
+     <FONT COLOR="BLACK">&lt;/CustomReport&gt;</FONT></P>
+    </BLOCKQUOTE>
+   </BLOCKQUOTE>
+  <P>
+   Take care when pasting not to accidentally add a space before 
+   &lt;?xml. You can generally break lines and add spaces, but don't 
+   accidentally put spaces in the middle of SQL words.</P>
+  <P>
+   3. Save it as <SPAN STYLE="font-weight : bold;">SR000027 Alphabetic 
+   List of Locations.xml</SPAN> (or whatever you wish to call it, 
+   although the extension has to be .xml) in the folder you use for 
+   storing reports. The default is the <SPAN STYLE="font-weight : bold;">\User
+    Files\Reports</SPAN> folder in your <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   folder unless you have changed it.</P>
+  <P>
+   4. Open <SPAN STYLE="font-style : italic;">Recorder</SPAN> and use <SPAN STYLE="font-weight : bold;">Reports
+    - Run</SPAN> from the main menu to run the report, as specified in <A HREF="Running_Reports.htm">Running
+    reports</A>.</P>
+  <P>
+   The [Report output] button on the window that appears offers various 
+   options for what you can do with the results - see the <A HREF="Report_Wizard_Filter_Result.htm">filter
+    result</A>.</P>
+  <P>
+   Note that locations in <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   can have multiple names, one of which must be designated as the 
+   &quot;preferred&quot; name, hence the reference to Preferred being 
+   'Yes' or 'No' in the report description. The preferred name is the 
+   one that appears in the location hierarchy and in reports produced 
+   using the Report Wizard, although when searching for locations the 
+   search is done on the preferred and non-preferred names.</P>
+  <P>
+   The report only includes the fields listed between Select and From. 
+   If you want more included you will need to amend the Select clause.</P>
+  <H3>
+   Example 2: Number of Observations per Species</H3>
+  <P>
+   Follow the instructions in example 1 but copy and paste the following 
+   into the Notepad file, and save it as <SPAN STYLE="font-weight : bold;">SR000027
+    Number of Observations per Species.xml</SPAN>.</P>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <P>
+     &lt;?xml version=&quot;1.0&quot; ?&gt;</P>
+    <P>
+     &lt;!-- SR000027: Number of Observations per Species. XML Report by 
+     Sally Rankin. Version 1, April 10 2009<BR>
+     --&gt;</P>
+    <P>
+     &lt;CustomReport menupath=&quot;SR000027<FONT COLOR="BLACK"> Reports</FONT>&quot;
+      title=&quot;Number of Observations per Species&quot; 
+     description=&quot;Lists all the species for which there are 
+     observations in the database, and the number of observations for 
+     them, in preferred name sequence. If observations for a species have 
+     been input using different lists in the taxon dictionary there will 
+     be one count for each list.&quot;&gt;</P>
+    <P>
+     &lt;SQL&gt;</P>
+    <P>
+     Select</P>
+    <BLOCKQUOTE>
+     <P>
+      Taxon_Determination.Taxon_List_Item_Key,<BR>
+      Index_Taxon_Name.Actual_Name,<BR>
+      Index_Taxon_Name.Common_Name,<BR>
+      Index_Taxon_Name.Preferred_Name,<BR>
+      Count(Taxon_Occurrence.Taxon_Occurrence_Key) As Countoftaxon_Occurrence_Key,<BR>
+      Taxon_List.Item_Name</P>
+     </BLOCKQUOTE>
+    <P>
+     From (Taxon_Occurrence Inner Join Taxon_Determination On 
+     Taxon_Occurrence.Taxon_Occurrence_Key = Taxon_Determination.Taxon_Occurrence_Key)<BR>
+     Inner Join ((Index_Taxon_Name Inner Join Taxon_List_Version On 
+     Index_Taxon_Name.Taxon_List_Version_Key = Taxon_List_Version.Taxon_List_Version_Key)<BR>
+     Inner Join Taxon_List On Taxon_List_Version.Taxon_List_Key = 
+     Taxon_List.Taxon_List_Key) On Taxon_Determination.Taxon_List_Item_Key 
+     = Index_Taxon_Name.Taxon_List_Item_Key</P>
+    <P>
+     Group By Taxon_Determination.Taxon_List_Item_Key, 
+     Index_Taxon_Name.Actual_Name, Index_Taxon_Name.Common_Name, 
+     Index_Taxon_Name.Preferred_Name, Taxon_List.Item_Name, Taxon_Determination.Preferred</P>
+    <P>
+     Having (((Taxon_Determination.Preferred)=1))</P>
+    <P>
+     &lt;Where Keytype=&quot;Default&quot;&gt;</P>
+    <P>
+     Order By Index_Taxon_Name.Preferred_Name</P>
+    <P>
+     &lt;/Where&gt;</P>
+    <P>
+     &lt;/SQL&gt;</P>
+    <P>
+     &lt;/CustomReport&gt;</P>
+    </BLOCKQUOTE>
+   </BLOCKQUOTE>
+  <P>
+   When the SQL for this example was generated in <SPAN STYLE="font-style : italic;">Access</SPAN> 
+   ((Taxon_Determination.Preferred)=1) was 
+   ((Taxon_Determination.Preferred)=True). The &quot;True&quot; had to 
+   be changed to 1 to work in an XML report. This is included so that 
+   only preferred determinations are counted, i.e. so that each taxon 
+   occurrence (species observation) is only counted once.</P>
+  <P>
+   Three names from Index_taxon_name are included: Actual_name, 
+   Common_name and Preferred_name. Actual_name and Preferred_name are 
+   used to identify synonyms: if the Actual_name is a scientific name 
+   but is not equal to the Preferred_name, this means that the 
+   Actual_name is a synonym of the Preferred_name and that the 
+   observation was entered using the synonym. If Actual_name equals 
+   Common_name it means that the observation was entered using the 
+   common name.</P>
+  <P>
+   If you want column widths more appropriate for the size of the fields 
+   you will need to include the appropriate SQL, although the column 
+   widths can be altered by dragging the divider to the left or right as 
+   in Excel. The system supplied report, JNCC_St03_ObsvPerSpecies, is a 
+   more comprehensive version of this report. It contains clauses that 
+   specify the column widths, etc. which can be modified as specified in <A HREF="XML_reports_supplied_with_Recorder.htm">XML
+    reports supplied with <SPAN STYLE="font-style : italic;">Recorder</SPAN></A>.</P>
+  <P>
+   When doing a report for a specific taxon, this XML report provides a 
+   useful way of checking that your report includes the correct number 
+   of observations. If your observations have been entered using an 
+   inappropriate list in the taxon dictionary, which was easy to do in <SPAN STYLE="font-style : italic;">Recorder
+    2002</SPAN>, there is a danger that they will be left out of some 
+   reports. This can also happen if you are reporting on a taxon for 
+   which <A HREF="Translating_taxa.htm">NameServer</A> is not yet 
+   complete, or in the case of certain name changes.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="How vague dates are stored;Vague_Dates_Stored.htm"><PARAM
+    NAME="Item2" VALUE="Standard Dates;Standard_Dates.htm"><PARAM
+    NAME="Item3" VALUE="Vague Dates;Vague_Dates.htm"></OBJECT></P>
+  <P>
+   &nbsp;</P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;
+ </BODY>
+</HTML>

@@ -1,0 +1,137 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Edit and Browse Modes</TITLE>
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css">
+ <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Edit and Browse modes</H1>
+  <P>
+   <SPAN STYLE="font-style : italic;">Recorder 2002</SPAN> makes a 
+   distinction between 'Browse' mode, during which you are navigating 
+   around viewing data, but not changing anything; and 'Edit' mode, 
+   during which you are adding a new record or editing an existing one.</P>
+  <P>
+   This is one of the most important aspects of the system for a new 
+   user to get to grips with, and remains a source of annoyance for 
+   experienced users! It is very easy to start typing some change to 
+   your data, only to find it is not accepted because you are not in 
+   Edit mode!</P>
+  <P>
+   However, it was designed in this way to protect your data. The 
+   underlying database, <SPAN STYLE="font-style : italic;">Access 97</SPAN>,
+    is 'normally' in Edit mode, and saves changes when you move to 
+   another record. If this behaviour was allowed in <SPAN STYLE="font-style : italic;">Recorder
+    2002</SPAN>, it would be very easy to change something 
+   unintentionally (by hitting the wrong key while moving from one 
+   record to another, for example). If you then move to the next record, 
+   the change is committed and the original data lost for good. 
+   Consequently, in <SPAN STYLE="font-style : italic;">Recorder 2002</SPAN> 
+   you are forced to make an explicit decision to make a change &#150; 
+   even though it can be irritating at times to have to remember to do so!</P>
+  <P>
+   The detail panel on the right hand side of each of the main windows 
+   enters Edit mode when:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    You press [Add] (to add a new record) or [Edit] to make changes to 
+    the currently selected record.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    You select <SPAN STYLE="font-weight : bold;">Edit &#150; Add</SPAN>, 
+    or <SPAN STYLE="font-weight : bold;">Edit &#150; Edit</SPAN> from the 
+    Main menu.</P>
+   </UL>
+  <P>
+   <IMG SRC="..\screenshots\locations edit mode.gif" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <H3>
+   How do you know that a window is in Edit mode?</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    The [Add], [Edit] and [Delete] buttons on the left are inactive.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The [Save] and [Cancel] buttons in the detail panel on the right are active.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Required fields have a coloured background, if you have selected this 
+    option (see <SPAN STYLE="font-weight : bold;">Options &#150; </SPAN><A HREF="Options_Appearance.htm">Appearance</A>).</P>
+   </UL>
+  <H3>
+   Once in Edit mode, to return to Browse mode:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    You must ensure that all required fields contain valid data.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    You can optionally enter data into other fields.</P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     Choosing [Save] performs any outstanding validation checks and, if 
+     the data are valid, makes permanent changes to the database.<BR>
+     <LI CLASS="mvd-P">Choosing [Cancel] abandons any changes and returns 
+     the window to the state it was in before you entered Edit mode. No 
+     changes are made to the database.</P>
+    </UL>
+   </UL>
+  <H3>
+   Why can&#146;t I get into Edit mode?</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    If the [Add] button is inactive, you do not have sufficient access 
+    rights to add data here.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    If the [Edit] button is inactive, either you don&#146;t have 
+    sufficient access rights to edit this record, or it is not your 
+    record and, therefore, you cannot change it. This happens if data 
+    have been imported from elsewhere and 'belong' to a different site.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    If the [Delete] button is inactive, either you don&#146;t have 
+    sufficient access rights to delete this record, or you cannot remove 
+    it because other data depend on it (e.g. a sample which has 
+    observations attached). You must delete the dependent data first</P>
+   </UL>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">NOTE:</SPAN> <SPAN STYLE="font-style : italic;font-weight : normal;">Recorder
+    2002</SPAN> does not allow cascading deletes. You must explicitly 
+   remove dependent records before you can remove the record they depend on.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Adding Items;Add.htm"><PARAM
+    NAME="Item2" VALUE="Deleting Items;Delete.htm"><PARAM
+    NAME="Item3" VALUE="Editing an Item;Editing_an_Item.htm"><PARAM
+    NAME="Item4" VALUE="Main Windows;Main_Windows.htm"></OBJECT>
+ </BODY>
+</HTML>

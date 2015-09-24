@@ -1,0 +1,244 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Invalid items</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Invalid items</H1>
+  <P>
+   During the <A HREF="Import_Analysis.htm">Analysis</A> phase of an 
+   import, the data in the import file is copied into a temporary 
+   database and validated to ensure that it can be added to your copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   without causing any problems. Most of the errors detected in this 
+   phase are <SPAN STYLE="font-style : normal;font-weight : normal;">logical
+    errors,</SPAN> i.e. where items contravene the rules that <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>imposes about the relationships between them. If any Invalid 
+   Items are found they are listed on the <SPAN STYLE="font-weight : bold;">Invalid
+    Items</SPAN> tab in this window at the end of the Analysis phase:</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\Import invalid items.gif" WIDTH="762" HEIGHT="680" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   The list of Invalid Data is hierarchical with the table name at the 
+   top level and the keys of the invalid items at the next level down. 
+   If you select a key, the Details box will display the nature of the error.</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   The [Save Details] button allows you to save the details of the 
+   invalid items in a file. This will contain the information on view in 
+   the Invalid Items tab which should help with resolving the problems. 
+   If you are importing data from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   a .ref filter file will be saved which can be opened in Notepad or 
+   Excel. If you are importing data from Excel files, <FONT COLOR="BLACK">or
+    any file that has not been exported from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN></FONT>,
+    the information will be saved in a .csv file which can be opened in 
+   Excel. In this case the file will also contain the data from the the 
+   offending rows in the file you are importing. This data and the error 
+   messages should enable you to locate and correct the problems more 
+   easily. By default, the file will be stored in your User Files folder 
+   within your <SPAN STYLE="font-style : italic;">Recorder 6</SPAN> 
+   folder. If opening a .csv file into your version of Excel doesn't 
+   display the data in columns properly, open Excel and import it using 
+   From Text on the Data tab.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">Note:</SPAN> There is nothing you 
+   can do about <SPAN STYLE="font-weight : bold;">Invalid Items</SPAN> 
+   during the import process. If you choose to continue, then <SPAN STYLE="font-weight : bold;">Invalid
+    Items will not be imported</SPAN>, nor will any other item that 
+   depends on them, e.g. if a survey event is invalid it will not be 
+   imported, nor will any samples in it, nor will any observations they contain.</P>
+  <H3>
+   Importing data from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN></H3>
+  <P>
+   <FONT COLOR="BLACK">If you are importing data from another copy of <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN><SPAN STYLE="font-style : normal;">it </SPAN></FONT><SPAN STYLE="font-style : normal;"><FONT COLOR="BLACK">i</FONT></SPAN><FONT COLOR="BLACK"><SPAN STYLE="font-style : normal;">s
+    not uncommon to encounter </SPAN>invalid items caused by editing 
+   dates although the facilities that now exist to cascade date changes 
+   make this much less likely - see <A HREF="Validating_data.htm">Validating
+    data</A>. If a Survey Event and its samples all have dates of 
+   11/04/10 and a user changes the date in the Survey Event to say 
+   17/04/10 but does not also change the dates in its Samples, then the 
+   Sample(s) will be flagged as <SPAN STYLE="font-weight : bold;">Invalid
+    Item</SPAN>(s) when they are imported into another copy of </FONT><SPAN STYLE="font-style : italic;"><FONT COLOR="BLACK">Recorder</FONT></SPAN><FONT COLOR="BLACK">.
+    In this case the error message will be as shown in the window above. 
+   It is a common misconception that changing one date will 
+   automatically change them all but this will only happen if the change 
+   is cascaded. If users change a date for these items they should 
+   ensure that Sample dates are the same as or within the date range of 
+   their Survey Events and that Taxon and Biotope Determination dates 
+   are the same as or after their Sample dates.</FONT></P>
+  <P>
+   <FONT COLOR="BLACK">If you are importing data from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN></FONT> 
+   and the import detects invalid items, the ideal scenario is to:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    Use the [Save Details] button to save the details of the invalid 
+    items in a filter file which can be used to help resolve the problems 
+    in the originating system.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Abort the import.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Give the filter file to the user who supplied the import file and ask 
+    them to correct the invalid items in it. This file will contain the 
+    keys of the invalid items which can be used in <SPAN STYLE="font-weight : bold;">Tools
+     - Go To</SPAN> on the main menu, provided this <A HREF="Install_Addin.htm">add-in
+     is installed</A>, to quickly locate an invalid item and correct it. 
+    Alternatively, they can <A HREF="Loading_filters.htm">load the filter</A> 
+    if their system contains that facility (added in 2008).</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Re-export the data.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Try the import again.</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: in 2008, the export 
+   mechanism in <SPAN STYLE="font-style : italic;">Recorder</SPAN> was 
+   changed to automatically revalidate data as part of the export 
+   process and to exclude invalid items from the export file. Facilities 
+   were also provided to enable users to revalidate their data - see <A HREF="Validating_data.htm">Validating
+    data</A> for details. Hence, invalid items should be less of a 
+   problem in future but they will still be a problem when importing 
+   data from older versions of <SPAN STYLE="font-style : italic;">Recorder</SPAN>.</P>
+  <H3>
+   Importing data from other sources</H3>
+  <P>
+   <FONT COLOR="BLACK">If you are importing data from an Excel file, or 
+   any file that has not been exported from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    you may find, for example, that some of the dates of observations in 
+   the import file are outside the range of dates allowed for the Survey 
+   to which you want to add the observations. Similarly some of the grid 
+   references may be outside the Survey's bounding box. These would be 
+   flagged as <SPAN STYLE="font-weight : bold;">Invalid Item</SPAN>(s).</FONT></P>
+  <P>
+   <FONT COLOR="BLACK">During the Analysis phase </FONT><SPAN STYLE="font-weight : bold;">keys</SPAN> (<A HREF="NBN_Globally_Unique_Identifiers.htm">Globally
+    Unique Identifiers</A>) are assigned to the imported data and stored 
+   in the <FONT COLOR="BLACK">temporary database. These are the keys 
+   that appear in the <A HREF="Import_Analysis.htm">Analysis</A> Details 
+   window above but they are not in the import file so they can't be 
+   used to locate the rows in the import file that relate to them. 
+   However, the data from the import file is stored along side them and 
+   this can be used to locate the problem rows.</FONT></P>
+  <P>
+   <FONT COLOR="BLACK">In this case the ideal scenario</FONT> is to:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    Use the [Save Details] button to save the details of the invalid 
+    items in a .csv file.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Abort the import.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Locate and correct the invalid items in the import file using the 
+    information from the .csv file or, if dates or grid references are 
+    outside the range allowed for the Survey, it may be that the Survey 
+    needs to be changed.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Try the import again.</P>
+   </UL>
+  <P>
+   It will be quick and easy to run through the Import Wizard again for 
+   the corrected import file because <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   'remembers' the matches you made for species, people and Location 
+   names, etc.</P>
+  <H3>
+   The temporary database</H3>
+  <P>
+   When information is imported into <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    it is initially copied into a temporary Microsoft <SPAN STYLE="font-style : italic;">Access
+    2000</SPAN> database, which has the same table structure as the main 
+   database file <SPAN STYLE="font-weight : bold;">NBNData_Data.MDF</SPAN>.
+    When it has been checked and you click the [Do Import] button the 
+   valid data is then copied into your <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   database. If you are importing data from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    this temporary database will have the same name as the import file 
+   except that it will have an extension of .mdb, otherwise it will be 
+   something like IMP9C.tmp. A temporary database for each import is 
+   located in a folder called <SPAN STYLE="font-weight : bold;">NBN Import</SPAN> 
+   within the folder Windows uses for temporary storage.</P>
+  <P CLASS="note">
+   This is usually <SPAN STYLE="font-weight : bold;">C:\Winnt\Temp</SPAN> 
+   for <SPAN STYLE="font-style : italic;">Windows NT</SPAN> or <SPAN STYLE="font-weight : bold;">C:\Documents
+    and Settings\u</SPAN><SPAN STYLE="font-style : italic;font-weight : bold;">ser
+    name</SPAN><SPAN STYLE="font-weight : bold;">\Local Settings\Temp</SPAN> 
+   for <SPAN STYLE="font-style : italic;">Windows 2002</SPAN> or <SPAN STYLE="font-style : italic;">Windows
+    XP</SPAN>, but can be changed by the user - check your <SPAN STYLE="font-style : italic;">Windows</SPAN> 
+   configuration. You may need to set Windows to 'Show hidden files and 
+   folders' to locate the temporary database (<SPAN STYLE="font-weight : bold;">My
+    Computer - Tools - Folder Options - View </SPAN><SPAN STYLE="font-weight : normal;">tab</SPAN> 
+   in <SPAN STYLE="font-style : italic;">Windows XP</SPAN>).</P>
+  <P>
+   If you have a copy of <SPAN STYLE="font-style : italic;">Access 2000</SPAN> 
+   or later you can open the temporary database for a particular import.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: The next time you 
+   start <SPAN STYLE="font-style : italic;">Recorder</SPAN> it will 
+   automatically delete any temporary databases in the <SPAN STYLE="font-weight : bold;">NBN
+    Import</SPAN> folder. Therefore, if you want to use a temporary 
+   database, either do it before you next start <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   or make a copy of it in some other folder.</P>
+  <P>
+   Until the .csv file was extended to include data from the import 
+   file, the keys of the offending items, which are reported in the 
+   Invalid Items tab, could be used to locate the rows that had been 
+   identified as invalid in the temporary database. <SPAN STYLE="font-style : italic;">Access
+    </SPAN>queries could then be designed to show the related data to 
+   help you identify the problem rows in the import file.</P>
+  <P>
+   Dates in a <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   database are held as a number of days since 31/12/1899 (or negative 
+   numbers for dates before this) hence 28/05/2002 will be held as 
+   37404. To convert dates in this format to 'dd/mm/yyyy' format in your <SPAN STYLE="font-style : italic;">Access
+    </SPAN>queries you can use the CDate function. To do this in Design 
+   View in <SPAN STYLE="font-style : italic;">Access</SPAN> you would 
+   need to set the Field to, for example:</P>
+  <BLOCKQUOTE>
+   <P>
+    Start_date: CDate(Survey_Event!VAGUE_DATE_START)<BR>
+    End_date: CDate(Survey_Event!VAGUE_DATE_End)</P>
+   </BLOCKQUOTE>
+  <P>
+   For assistance, please make use of the Recorder Forum, part of the <A HREF="http://forums.nbn.org.uk/index.php">NBN
+    Forum</A>, which can also be accessed from the Recorder web site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A>,
+    or contact the supplier of your copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    or any of the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   suppliers who are listed on this web site.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Analysis and Import;Import_Analysis.htm"><PARAM
+    NAME="Item2" VALUE="Duplicate Items;Duplicate_Items.htm"><PARAM
+    NAME="Item3" VALUE="Duplication Resulting From Import;Duplication_Resulting_From_Import.htm"><PARAM
+    NAME="Item4" VALUE="Merge Data Items;Merge_Data_Items.htm"></OBJECT>
+ </BODY>
+</HTML>

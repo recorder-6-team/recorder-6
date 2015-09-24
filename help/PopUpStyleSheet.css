@@ -1,0 +1,127 @@
+
+ /* $MVD$:color("18","deefef","Custom #1","0") */
+ /* $MVD$:color("19","f2fefe","Custom #2","0") */
+ /* $MVD$:color("20","cc33ff","Custom #3","0") */
+ /* $MVD$:color("21","dddddd","Custom #4","0") */
+ /* $MVD$:color("22","99ccff","Custom #5","0") */
+ /* $MVD$:color("23","d8fcfb","Custom #6","0") */
+ /* $MVD$:color("24","993399","Custom #7","0") */
+ /* $MVD$:fontset("Arial","Arial") */
+ /* $MVD$:fontset("Garamond","Garamond") */
+ BODY { background-attachment : fixed;
+        background-color : #FEFEF2;
+        background-image : none;}
+ .mvd-BODY { background-attachment : fixed;
+             background-color : #FEFEF2;
+             background-image : none;}
+ P { font-family : "Arial";
+     font-size : 9.0pt;
+     text-align : left;
+     color : black;}
+ .mvd-P { font-family : "Arial";
+          font-size : 9.0pt;
+          text-align : left;
+          color : black;}
+ H1 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 12.0pt;
+      color : navy;
+      margin-top : auto;
+      margin-bottom : auto;}
+ .mvd-H1 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 12.0pt;
+           color : navy;
+           margin-top : auto;
+           margin-bottom : auto;}
+ H2 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 14.0pt;
+      color : blue;}
+ .mvd-H2 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 14.0pt;
+           color : blue;}
+ H3 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 12.0pt;
+      color : blue;}
+ .mvd-H3 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 12.0pt;
+           color : blue;}
+ H4 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 12.0pt;}
+ .mvd-H4 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 12.0pt;}
+ H5 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 12.0pt;}
+ .mvd-H5 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 12.0pt;}
+ H6 { font-family : "Arial";
+      font-weight : bold;
+      font-size : 12.0pt;}
+ .mvd-H6 { font-family : "Arial";
+           font-weight : bold;
+           font-size : 12.0pt;}
+ A:link { text-decoration : none;
+          color : fuchsia;}
+ A:visited { text-decoration :underline;
+             color : blue;}
+ CITE.expandspot { font-style : normal;
+                   color : green;
+                   cursor: hand;}
+ .mvd-CITE-expandspot { font-style : normal;
+                        color : green;
+                        cursor: hand;}
+ DFN.collapsed { font-style : italic;
+                 font-weight : normal;
+                 color : red;}
+ .mvd-DFN-collapsed { font-style : italic;
+                      font-weight : normal;
+                      color : red;}
+ DFN.expanded { font-style : italic;
+                font-weight : normal;
+                color : red;}
+ .mvd-DFN-expanded { font-style : italic;
+                     font-weight : normal;
+                     color : red;}
+ EM.dropspot { color : green;
+               cursor: hand;}
+ .mvd-EM-dropspot { color : green;
+                    cursor: hand;}
+ CITE.glossterm { font-style : normal;
+                  color : maroon;
+                  cursor: hand;}
+ .mvd-CITE-glossterm { font-style : normal;
+                       color : maroon;
+                       cursor: hand;}
+ DFN.glosscollapsed { font-style : italic;
+                      font-weight : normal;
+                      display :           'none';
+                      color : blue;}
+ .mvd-DFN-glosscollapsed { font-style : italic;
+                           font-weight : normal;
+                           display :           'none';
+                           color : blue;}
+ DFN.glossexpanded { font-style : italic;
+                     font-weight : normal;
+                     color : blue;}
+ .mvd-DFN-glossexpanded { font-style : italic;
+                          font-weight : normal;
+                          color : blue;}
+ SMALL { font-family : "Garamond";
+         font-size : 10.0pt;}
+ .mvd-SMALL { font-family : "Garamond";
+              font-size : 10.0pt;}
+ P.Quote { text-align : left;
+           margin-left : 16.0pt;
+           margin-right : 16.0pt;}
+ .mvd-P-Quote { text-align : left;
+                margin-left : 16.0pt;
+                margin-right : 16.0pt;}
+ 

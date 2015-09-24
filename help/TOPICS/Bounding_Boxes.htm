@@ -1,0 +1,153 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Bounding Boxes</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Bounding Boxes</H1>
+  <P>
+   A bounding box is a rectangular area defined by two spatial 
+   co-ordinates at the south-west and north-east corners (see <A HREF="Location_Boundaries_Tab.htm">Geo
+    Info - Location boundaries</A>). They are used for two purposes:</P>
+  <P>
+   To define the <A HREF="Surveys_Geography_Tab.htm">geographical 
+   coverage of a Survey</A>:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    In<SPAN STYLE="font-style : italic;"> Recorder</SPAN>, the bounding 
+    box for a survey is used to check that the spatial references for 
+    survey events and samples associated with that survey are within the 
+    bounding box (see <A HREF="Location_Grid_Squares_Tab.htm">spatial 
+    reference validation</A>).</P>
+   </UL>
+  <P>
+   To retrieve information:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    In the Report Wizard, bounding boxes can be used in a '<A HREF="Report_about_a_place.htm">Report
+     about a place'</A> to find all locations within the bounding box.<BR>
+    <LI CLASS="mvd-P">The '<A HREF="Report_Wizard_Select_Report_Style.htm">Restrict
+     by bounding box</A>' option can be used to find all taxon or biotope 
+    observations within the bounding box.</P>
+   </UL>
+  <H3>
+   Defining a bounding box</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Type the spatial references for the south-west and north-east corners 
+    of the desired rectangle. These will be checked to ensure that the SW 
+    reference is to the south and west of the NE reference. If the check 
+    fails, you will see the following message:</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\screenshots\Bounding box validation.gif" WIDTH="413" HEIGHT="129" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Choose the <IMG SRC="..\buttonimages\find.gif" WIDTH="22" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button in the bounding box prompt, and the <A HREF="The_Map_Browser.htm">Map
+     window</A> will be displayed with the cursor shown as a cross-hair.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Draw a rectangle by clicking at one of the corners of the desired 
+    rectangle. Then drag your mouse to the opposite corner while holding 
+    down the primary mouse button. A rectangle will be drawn connecting 
+    the point at which you clicked with the current mouse position.</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Bounding box from map.gif" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    When you have completed the rectangle, release the mouse button.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Return the SW and NE corner co-ordinates of the rectangle you have 
+    drawn by:</P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     Selecting <SPAN STYLE="font-weight : bold;">Edit - Return</SPAN> data 
+     from the Main menu.<BR>
+     <LI CLASS="mvd-P">Clicking the <IMG SRC="..\buttonimages\return.gif" WIDTH="16" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+     button in the active toolbar.<BR>
+     <LI CLASS="mvd-P">Pressing the short-cut key &lt;<A HREF="Return_Data.htm">F9</A>&gt;.</P>
+    </UL>
+   </UL>
+  <P>
+   Once the <SPAN STYLE="font-weight : bold;">Map</SPAN> window is 
+   displayed, you can use the <A HREF="Map_Browser_Zoom_In.htm">Zoom</A>,
+    <A HREF="Map_Browser_Un-Zoom.htm">Un-zoom</A>, <A HREF="Map_Browser_Pan.htm">Pan</A>,
+    etc. tools to move to the correct area of the map, so that you are 
+   able to draw the rectangle you want.</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    When you select one of the <SPAN STYLE="font-weight : bold;">Map Browser</SPAN> 
+    tools, you will see the</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\screenshots\Bounding box tool message.gif" WIDTH="360" HEIGHT="130" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Adjust the map display so that the correct area is displayed, and 
+    then select the <A HREF="Map_Browser_Pointer.htm">Pointer</A> tool by:</P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     Selecting <SPAN STYLE="font-weight : bold;">Map - Pointer</SPAN> from 
+     the Main menu.<BR>
+     <LI CLASS="mvd-P">Clicking the <IMG SRC="..\ButtonImages\Pointer.gif" WIDTH="16" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+     button on the active toolbar.<BR>
+     <LI CLASS="mvd-P">Pressing the short-cut key &lt;F5&gt;.</P>
+    </UL>
+   <LI CLASS="mvd-P">
+   <P>
+    You will see the following message:</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\screenshots\Bounding box pointer message.gif" WIDTH="315" HEIGHT="131" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    You can now proceed to draw the rectangle, and return the SW and NE 
+    corner co-ordinates as explained above.</P>
+   </UL>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Filter by Bounding Box;Filter_by_Bounding_Box.htm"><PARAM
+    NAME="Item2" VALUE="Selection by Bounding Box;Selection_by_Bounding_Box.htm"><PARAM
+    NAME="Item3" VALUE="Surveys Geography Tab;Surveys_Geography_Tab.htm"><PARAM
+    NAME="Item4" VALUE="The Map Browser;The_Map_Browser.htm"></OBJECT>
+ </BODY>
+</HTML>

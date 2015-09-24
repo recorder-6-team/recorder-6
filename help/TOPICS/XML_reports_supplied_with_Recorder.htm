@@ -1,0 +1,387 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>XML reports supplied with Recorder</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   XML reports supplied with <SPAN STYLE="font-style : italic;">Recorder</SPAN></H1>
+  <P>
+   Version 6.15 of <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   comes with numerous XML reports. Selecting <SPAN STYLE="font-weight : bold;">Reports
+    - Run</SPAN> from the main menu displays a hierarchy of the reports 
+   that can be run using that facility - for full details <FONT COLOR="BLACK">see
+    <A HREF="Running_Reports.htm">Running Reports</A>. The top level of 
+   the hierarchy lists the different categories of reports. Clicking </FONT>the
+    <IMG SRC="..\ButtonImages\TreePlus.gif" WIDTH="9" HEIGHT="9" VSPACE="0" HSPACE="0" BORDER="0"> button<FONT COLOR="BLACK"> 
+   beside a category displays the sub-categories or the XML reports 
+   themselves. Below is a list of the main categories followed by other 
+   information and a list of the XML reports in version 6.15. Note that 
+   a category will only appear if reports belonging to it are present.</FONT></P>
+  <P>
+   <FONT COLOR="BLACK">See <A HREF="XML_reports.htm">XML reports</A> for 
+   more information, including an introduction to writing XML reports.</FONT></P>
+  <H1>
+   <SPAN STYLE="font-size : 12.0pt;">Report categories</SPAN></H1>
+  <P>
+   <SPAN STYLE="font-weight : bold;">Redundant reports</SPAN></P>
+  <P>
+   This category is included simply to allow the deprecation of reports 
+   that are no longer required. Rather than deleting them from your 
+   system, upgrades usually re-categorise them into this folder and you 
+   can decide yourself whether to formally delete them from your system. 
+   Note that if all redundant reports are deleted this folder will no 
+   longer appear.</P>
+  <P>
+   <SPAN STYLE="font-weight : bold;">Geographic Area/Location Reports</SPAN></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Bounding Box Reports</SPAN> - these 
+    use a bounding box defined by the spatial reference of the SW and NE 
+    corner. Note that these reports convert the SW and NE spatial 
+    references to Lat/Long and use the Lat/Long of the records to select 
+    the data. The effect of this is that records close to the boundaries 
+    can be included or excluded from the report when they might not be if 
+    the selection were based on grid references. Grid Square reports 
+    produce more accurate results, but only include squares which are 
+    totally within the bounding box.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Circle Reports</SPAN> - reports 
+    based on a circle defined by the grid reference of the centre point 
+    and the diameter of the circle.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Location hierarchy reports</SPAN> - 
+    reports based on Locations that are defined in the Location hierarchy 
+    (rather than the Location Name attribute on Survey Events and 
+    Samples). These can usually also be run by right clicking a Location 
+    in the Location hierarchy and selecting <SPAN STYLE="font-weight : bold;">Quick
+     Report - Geographic Area/Location Reports</SPAN> etc.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Location Name Reports</SPAN> - 
+    reports based on Location Name from Survey Events and Samples.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Polygon Reports</SPAN> - reports 
+    based on polygons on the Map. These can usually also be run by right 
+    clicking a polygon on the map and selecting <SPAN STYLE="font-weight : bold;">Quick
+     Report </SPAN>etc.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Grid Square Reports</SPAN> - 
+    reports based on Grid Squares. These reports work on the spatial 
+    reference and only select records where the box defined by the sample 
+    spatial reference falls totally within the square (squares) selected. 
+    These are more accurate than bounding box reports.</P>
+   </UL>
+  <P>
+   <SPAN STYLE="font-weight : bold;">Biotope restricted reports</SPAN></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Biotope Reports</SPAN> - reports on 
+    Habitat (Biotope) data.</P>
+   </UL>
+  <P>
+   <SPAN STYLE="font-weight : bold;">System reports</SPAN></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">XML examples</SPAN> - example 
+    template included for tutorials etc.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Information</SPAN> - a variety of 
+    summary reports of the database contents such as possible duplicates, 
+    the lists in the taxon dictionary used to enter observations, etc.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Statistics</SPAN> - database 
+    statistics such as number of observations per survey, number of 
+    observations per taxon group etc.</P>
+   </UL>
+  <P>
+   <SPAN STYLE="font-weight : bold;">Measurement restricted reports</SPAN></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Measurement Reports</SPAN> - 
+    reports based on Taxon Occurrence Measurements (e.g. Abundance).</P>
+   </UL>
+  <P>
+   <SPAN STYLE="font-weight : bold;">Taxon restricted reports</SPAN></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Rucksack Reports</SPAN> - reports 
+    which select data based on Rucksacks</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Taxon Reports</SPAN> - these 
+    reports work on taxa selected either by name or from a dictionary</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Taxon Group</SPAN> - summary 
+    reports for a particular taxon group</P>
+   </UL>
+  <P>
+   <SPAN STYLE="font-weight : bold;">Record validation</SPAN></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Validation Reports </SPAN>- these 
+    reports validate records for exporting to the NBN Gateway (e.g. 
+    non-system supplied names and non UK and Irish geographic coordinates).</P>
+   </UL>
+  <P>
+   <SPAN STYLE="font-weight : bold;">Designations</SPAN></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Designation Reports </SPAN>- 
+    reports which provide taxon designation (status) information.</P>
+   </UL>
+  <H1>
+   <SPAN STYLE="font-size : 12.0pt;">Report names</SPAN></H1>
+  <P>
+   Each system supplied report is a separate XML file, with an extension 
+   of .xml, stored in the \User Files\Reports folder within your <SPAN STYLE="font-style : italic;">Recorder
+    6</SPAN> folder unless the location has been changed using <A HREF="Options_File_Locations.htm">Tools
+    - Options - File Locations</A>. In a standard standalone 
+   installation with Windows XP they will be in C:\Program 
+   Files\Recorder 6\User Files\Reports. The file names of the JNCC 
+   supplied ones start with JNCC followed by a unique reference which 
+   can be used to refer to the report, e.g. Ln5. This is made up of an 
+   abbreviation of the report type followed by a number. The name of the 
+   report, as it appears in the Reports - Run hierarchy, is stored in 
+   the file and is usually the file name without the &quot;JNCC&quot; 
+   providing a link from the report name to the file. Some of the system 
+   supplied reports were provided by Sussex Biological Record Centre.</P>
+  <H1>
+   <SPAN STYLE="font-size : 12.0pt;">Report parameters</SPAN></H1>
+  <P>
+   Many reports have parameters which allow you to specify what you want 
+   included in the report. Amongst these are often a set of filters 
+   which correspond to the <A HREF="Additional_Filters_Contraints.htm">constraints</A> 
+   that can be set via the <A HREF="Additional_Filters_Overview.htm">[Additional
+    Filters]</A> button on the <A HREF="Report_Wizard_Layout_Selection.htm">Layout
+    Selection</A> page in the <A HREF="Using_the_report_wizard.htm">Report
+    Wizard</A>. These offer the ability to include or exclude:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Confidential Data<BR>
+    <LI CLASS="mvd-P">Unchecked Data<BR>
+    <LI CLASS="mvd-P">Failed/Pending Verification Data<BR>
+    <LI CLASS="mvd-P">Zero Abundance Data</P>
+   </UL>
+  <P>
+   In addition, reports which select observations based on spatial 
+   references or bounding boxes often have the ability to include or 
+   exclude observations with a Spatial Reference Qualifier of 'Site 
+   Centroid'. Although not labelled as such this is displayed beside 
+   spatial references in the observation hierarchy and elsewhere.</P>
+  <H1>
+   <SPAN STYLE="font-size : 12.0pt;">Report output</SPAN></H1>
+  <P>
+   When an XML report is run the results are displayed in the <A HREF="Report_Wizard_Filter_Result.htm">filter
+    result</A>, in the same spreadsheet format as the results from the 
+   report wizard. From the filter result you can choose what to do with 
+   the selected data by clicking on the [Report output] button and 
+   selecting one the options that appear, e.g. <SPAN STYLE="font-weight : bold;">Copy
+    All</SPAN> to copy all the data to the Windows clipboard so that it 
+   can be pasted into a file such as an excel spreadsheet or word 
+   document, <SPAN STYLE="font-weight : bold;">Send to Map</SPAN> to do 
+   a distribution map of the data<SPAN STYLE="font-weight : bold;">, 
+   Export to Excel</SPAN> to save the data in a new excel file, etc. Any 
+   options that aren't available for the type of report you have done 
+   will be greyed out.</P>
+  <P>
+   When<SPAN STYLE="font-weight : bold;"> New Report Template</SPAN> is 
+   selected the report designer opens so that you can design a report 
+   layout which will enable you to print the data in a format suitable 
+   for giving to customers - see <A HREF="..\Report Designer\Designing_a_report_2.htm">Report
+    designer</A> for details. Note that at present the Report Designer 
+   isn't always reliable.</P>
+  <H1>
+   <SPAN STYLE="font-size : 12.0pt;">Modifying reports</SPAN></H1>
+  <P>
+   The system supplied reports will produce useful results but can also 
+   be adapted to meet your own needs. Alternatively, the techniques they 
+   include can be used to produce new reports.</P>
+  <P>
+   You should not change the actual system supplied reports, but take a 
+   copy of the file and rename it for your own use. If you don't do this 
+   then, for example, if an upgrade contains an updated version of it, 
+   this may overwrite your changed version. It is suggested that you 
+   replace the JNCC in the file name with your Site ID to make a unique 
+   file name, e.g. JNCC_Sq2_GridSquare.xml would become 
+   SR000027_Sq2a_GridSquare.xml. See Report names above for the location 
+   of the files.</P>
+  <P>
+   The XML reports are text files that can be opened by a number of 
+   programs but they will be easiest to edit in Notepad. Right click on 
+   the file and select &quot;Open With&quot; then &quot;Notepad&quot;, 
+   if that option is available. If not, select &quot;Choose Program&quot;
+    then select &quot;Notepad&quot;.</P>
+  <P>
+   To differentiate your report from the original, you should edit the 
+   menu path, title and description in the &lt;CustomReport tag near the 
+   start of the file as this is the information that appears in the 
+   report hierarchy in <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   to enable you to locate and run it. You should also edit the comment 
+   at the top, i.e. the information between &lt;!-- and --&gt; as 
+   recommended in the note in <A HREF="XML_reports.htm">XML reports</A>.</P>
+  <P>
+   For example: Change:</P>
+  <P>
+   &lt;CustomReport menupath=&quot;Geographic Area/Location Reports\Grid 
+   Square Reports&quot;<BR>
+   title=&quot;Sq2_Summary by Square(s)&quot; description=&quot;Displays 
+   records for specified Grid Square ...&quot; &gt; to:</P>
+  <P>
+   &lt;CustomReport menupath=&quot;SR000027 Reports&quot;<BR>
+   title=&quot;Sq2a_Summary by Square(s) for SR000027&quot; 
+   description=&quot;Displays records for specified Grid Square ... 
+   Modified for SR000027&quot; &gt;</P>
+  <P>
+   Amongst the easiest things to change in a report are the column 
+   widths, the order in which they appear and the column headings. In 
+   most reports the column layout is defined near the end of the report, 
+   so for example, to change the width of the spatial reference column 
+   in Sq2, change 60 to 80 in:</P>
+  <P>
+   &lt;Column name=&quot;Spatial_Ref&quot; width=&quot;60&quot; 
+   position=&quot;2&quot; caption=&quot;Spatial Ref&quot; /&gt;</P>
+  <P>
+   To change the order in which the columns appear, simply change the 
+   position attributes for each column. Similarly, you can change the 
+   column heading by altering the caption attribute. If you don't want a 
+   column to appear in the report add a visible attribute to the column 
+   and set it to false, e.g. visible=&quot;false&quot;.</P>
+  <P>
+   It is also relatively easy to add in extra columns if they are for 
+   data from tables that are already used, e.g. Spatial_Ref_Qualifier if 
+   the Sample table is already used. In Sq2 you would add 
+   &quot;S.Spatial_Ref_Qualifier,&quot; after &quot;S.Spatial_ref,&quot; 
+   in the SELECT clause near the start and an appropriate column name 
+   clause, such as &lt;Column name=&quot;Spatial_ref_qualifier&quot; 
+   width=&quot;80&quot; position=&quot;3&quot; caption=&quot;Spatial Ref 
+   Qual&quot; /&gt;. Note that the positions of the other columns would 
+   need to be changed. Also, the S in &quot;S.Spatial_ref,&quot; is an 
+   alias for the Sample table as defined in the FROM clause.</P>
+  <P>
+   See <A HREF="XML_reports.htm">XML reports</A> for an introduction to 
+   writing XML reports.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: JNCC and the other 
+   report providers accept no responsibility for the reports supplied, 
+   and advise users to test the output of each report to ensure that it 
+   is accurate and appropriate for their needs.</P>
+  <H1>
+   <SPAN STYLE="font-size : 12.0pt;">System supplied reports</SPAN></H1>
+  <P>
+   The following XML Reports are supplied with <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>version 6.15:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    JNCC_Bb1_BoundingReport<BR>
+    <LI CLASS="mvd-P">JNCC_Bb2_BoundingReport<BR>
+    <LI CLASS="mvd-P">JNCC_Bb3_BoundingReport<BR>
+    <LI CLASS="mvd-P">JNCC_Bi1_Biotope<BR>
+    <LI CLASS="mvd-P">JNCC_Ci1<BR>
+    <LI CLASS="mvd-P">JNCC_Ci2<BR>
+    <LI CLASS="mvd-P">JNCC_Example_1<BR>
+    <LI CLASS="mvd-P">JNCC_H1_Duplicates<BR>
+    <LI CLASS="mvd-P">JNCC_H2_Duplicates<BR>
+    <LI CLASS="mvd-P">JNCC_H3_TaxonGroups<BR>
+    <LI CLASS="mvd-P">JNCC_H4_Dictionaries<BR>
+    <LI CLASS="mvd-P">JNCC_H5_Measurement<BR>
+    <LI CLASS="mvd-P">JNCC_H6_CustodianStats<BR>
+    <LI CLASS="mvd-P">JNCC_H7_TaxonUsed<BR>
+    <LI CLASS="mvd-P">JNCC_H8_Measurement<BR>
+    <LI CLASS="mvd-P">JNCC_L1_Location<BR>
+    <LI CLASS="mvd-P">JNCC_L2_Location<BR>
+    <LI CLASS="mvd-P">JNCC_L3_LocationReport<BR>
+    <LI CLASS="mvd-P">JNCC_L4_LocationReport<BR>
+    <LI CLASS="mvd-P">JNCC_L5_Site Summary Report<BR>
+    <LI CLASS="mvd-P">JNCC_L6_Quick Species List (including subsites)<BR>
+    <LI CLASS="mvd-P">JNCC_L7_Quick Species list<BR>
+    <LI CLASS="mvd-P">JNCC_L8_LocationBiotope<BR>
+    <LI CLASS="mvd-P">JNCC_Ln1_LocationName<BR>
+    <LI CLASS="mvd-P">JNCC_Ln2_LocationName<BR>
+    <LI CLASS="mvd-P">JNCC_Ln3_LocationName<BR>
+    <LI CLASS="mvd-P">JNCC_Ln4_LocationName<BR>
+    <LI CLASS="mvd-P">JNCC_M1_Measurement<BR>
+    <LI CLASS="mvd-P">JNCC_M2_Measurement<BR>
+    <LI CLASS="mvd-P">JNCC_M3_Measurement<BR>
+    <LI CLASS="mvd-P">JNCC_M4_Measurement<BR>
+    <LI CLASS="mvd-P">JNCC_P1_Polygon<BR>
+    <LI CLASS="mvd-P">JNCC_P2_Polygon<BR>
+    <LI CLASS="mvd-P">JNCC_P3_Polygon<BR>
+    <LI CLASS="mvd-P">JNCC_P4_Polygon<BR>
+    <LI CLASS="mvd-P">JNCC_P5_Polygon<BR>
+    <LI CLASS="mvd-P">JNCC_P6_Polygon<BR>
+    <LI CLASS="mvd-P">JNCC_P7_SpObsvPerTaxonGroupInPolygon<BR>
+    <LI CLASS="mvd-P">JNCC_P8_SpObsvPerTaxonGroupPerSurveyInPolygon<BR>
+    <LI CLASS="mvd-P">JNCC_Rk1_Taxon<BR>
+    <LI CLASS="mvd-P">JNCC_Rk2_Taxon<BR>
+    <LI CLASS="mvd-P">JNCC_Sq1_GridSquare<BR>
+    <LI CLASS="mvd-P">JNCC_Sq2_GridSquare<BR>
+    <LI CLASS="mvd-P">JNCC_Sq3_GridSquare<BR>
+    <LI CLASS="mvd-P">JNCC_Sq4_GridSquare<BR>
+    <LI CLASS="mvd-P">JNCC_Sq5_Square_NewRecords<BR>
+    <LI CLASS="mvd-P">JNCC_Sq6_SpObsvPerTaxonGroupInGridSquare<BR>
+    <LI CLASS="mvd-P">JNCC_St01_SpObsvPerSurvey<BR>
+    <LI CLASS="mvd-P">JNCC_St02_HabObsvPerSurvey<BR>
+    <LI CLASS="mvd-P">JNCC_St03_ObsvPerSpecies<BR>
+    <LI CLASS="mvd-P">JNCC_St04_ObsvPerHabitat<BR>
+    <LI CLASS="mvd-P">JNCC_St05_SpObsvPerTaxonGroup<BR>
+    <LI CLASS="mvd-P">JNCC_St06_SpObsvPerTaxonGroupPerSurvey<BR>
+    <LI CLASS="mvd-P">JNCC_St10_SpObsvPerLocation<BR>
+    <LI CLASS="mvd-P">JNCC_St11_Survey Summary<BR>
+    <LI CLASS="mvd-P">JNCC_Sy02_TaxonUsedGrp<BR>
+    <LI CLASS="mvd-P">JNCC_sy04_NotAvailable<BR>
+    <LI CLASS="mvd-P">JNCC_sy05_DesTypeForSets<BR>
+    <LI CLASS="mvd-P">JNCC_T07_TaxonBiotope<BR>
+    <LI CLASS="mvd-P">JNCC_T1_Taxon<BR>
+    <LI CLASS="mvd-P">JNCC_T2_Taxon<BR>
+    <LI CLASS="mvd-P">JNCC_T3_DatesMonths<BR>
+    <LI CLASS="mvd-P">JNCC_T5_TaxonReports<BR>
+    <LI CLASS="mvd-P">JNCC_T6_Maximum Species Abundance by Month<BR>
+    <LI CLASS="mvd-P">JNCC_V1_NonSystem_TaxonListItems.xml<BR>
+    <LI CLASS="mvd-P">JNCC_V2_GeographicValidation.xml<BR>
+    <LI CLASS="mvd-P">SxBRC Count of records entered within a date range V07-12<BR>
+    <LI CLASS="mvd-P">SxBRC Detailed Species List<BR>
+    <LI CLASS="mvd-P">SxBRC Find designations for taxon<BR>
+    <LI CLASS="mvd-P">SxBRC Find preferred taxon name<BR>
+    <LI CLASS="mvd-P">SxBRC Most prolific recorders<BR>
+    <LI CLASS="mvd-P">SxBRC Record count<BR>
+    <LI CLASS="mvd-P">SxBRC View designation details</P>
+   </UL>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;
+ </BODY>
+</HTML>

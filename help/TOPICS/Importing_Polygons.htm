@@ -1,0 +1,296 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Importing polygons</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Importing polygons</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   Sets of polygons created in other systems such as <A HREF="javascript:BSSCPopup('../Glossary/GIS.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">GIS</A> 
+   like MapInfo and ArcView, can be imported into <SPAN STYLE="font-style : italic;">Recorder</SPAN>.
+    For a list of the formats that <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   will acccept see <A HREF="Map_formats.htm">Map formats</A>. Polygons 
+   are imported onto polygon layers each of which have their own pattern 
+   and selected and unselected colours. To add a new polygon layer to 
+   import a set of polygons onto see <A HREF="Adding_Map_Layers.htm">Adding
+    a map layer</A>.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: The Watsonian 
+   vice-county boundaries for Great Britain are available for download 
+   from the <A HREF="javascript:BSSCPopup('../Glossary/NBN.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup"><SPAN STYLE="font-weight : bold;">NBN</SPAN></A> 
+   for use as polygons in <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   - see <A HREF="http://www.nbn.org.uk/getdoc/39eca718-711e-4613-9fc5-352214e75e20/Mapping.aspx">Useful
+    things - Mapping tools</A> on the <A HREF="http://www.nbn.org.uk/">NBN
+    web-site</A>.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: A variety of 
+   boundaries are available for downloading from the <A HREF="http://www.naturalengland.org.uk/publications/data/default.aspx">Natural
+    England web-site</A>, e.g. NNR (Natural Nature Reserve) boundaries 
+   for a specified 100 KM square.</P>
+  <H3>
+   To import polygons:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the polygon layer onto which the polygons are to be imported 
+    using the down arrow in the <SPAN STYLE="font-weight : bold;">Current 
+    Polygon Layer</SPAN> box (bottom left corner of the map window).</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select <SPAN STYLE="font-weight : bold;">Map &#150; Add Boundary 
+    &#150; Import</SPAN> from the Main menu, or use the drop down arrow 
+    beside the boundary icon <IMG SRC="..\buttonimages\DrawPolygon.gif" WIDTH="17" HEIGHT="17" VSPACE="0" HSPACE="0" BORDER="0"> 
+    on the Active Window Toolbar to select <SPAN STYLE="font-weight : bold;">Import
+     onto layer.</SPAN></P>
+   <LI CLASS="mvd-P">
+   <P>
+    A standard <SPAN STYLE="font-weight : bold;">Windows file</SPAN> 
+    dialog will open. Locate and open the <A HREF="Background_vs_Polygons.htm">vector</A> 
+    file which contains the lines or polygons you wish to import and 
+    click [Open]. When the file has been read you will see the <SPAN STYLE="font-weight : bold;">Boundary
+     Import</SPAN> dialog:</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\Polygon import no match.gif" WIDTH="308" HEIGHT="160" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Match boundaries to existing locations</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        Select <SPAN STYLE="font-weight : bold;">No</SPAN> to import the 
+        polygons without matching them to locations in the location 
+        hierarchy. Click [Import] to proceed with the import. Click [Cancel] 
+        to cancel the polygon import.</P>
+       <P>
+        Select <SPAN STYLE="font-weight : bold;">Yes</SPAN> to import the 
+        polygons and match them to locations in the location hierarchy.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Boundary Attribute Field</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P CLASS="note">
+        <SPAN STYLE="font-weight : bold;">Note</SPAN>: This will be greyed 
+        out unless <SPAN STYLE="font-weight : bold;">Yes</SPAN> is selected 
+        for the options above.</P>
+       <P>
+        Select &lt;Manual Match&gt; to import the polygons and match them 
+        manually to locations in the location hierarchy. Click [OK] to 
+        proceed to the next dialog.</P>
+       <P>
+        To match the polygons to locations using one of the boundary 
+        attributes in the import file, use the drop down arrow to make your selection.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Location Field</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P CLASS="note">
+        <SPAN STYLE="font-weight : bold;">Note</SPAN>: This will be greyed 
+        out unless <SPAN STYLE="font-weight : bold;">Yes</SPAN> and an 
+        attribute are selected for the options above.</P>
+       <P>
+        Use the drop down arrow to select the <SPAN STYLE="font-weight : bold;">Location
+         Field</SPAN> from locations in the location hierarchy you want used 
+        to match to the selected <SPAN STYLE="font-weight : bold;">Boundary 
+        Attribute Field</SPAN><SPAN STYLE="font-weight : normal;">. The 
+        options are:</SPAN></P>
+       <UL>
+        <UL>
+         <LI CLASS="mvd-P">
+         <P>
+          <SPAN STYLE="font-weight : normal;">Location Key</SPAN><BR>
+          <LI CLASS="mvd-P"><SPAN STYLE="font-weight : normal;">Location Name</SPAN><BR>
+          <LI CLASS="mvd-P">Field Code</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    If Yes is selected for <SPAN STYLE="font-weight : bold;">Match 
+    boundaries to existing locations</SPAN>, NNR_NAME for <SPAN STYLE="font-weight : bold;">Boundary
+     Attribute Field</SPAN> and Location Name for <SPAN STYLE="font-weight : bold;">Location
+     Field</SPAN>,you will see the <SPAN STYLE="font-weight : bold;">Location
+     Match</SPAN> dialog:</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\Polygon import manual matching.gif" WIDTH="450" HEIGHT="313" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Boundary Count</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        A count of the number of polygons in the import file</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Matched Locations</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        A count of the number of polygons that have been matched to locations 
+        in the location hierarchy.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Boundary Attribute Field</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">If a specific </SPAN><SPAN STYLE="font-weight : bold;">Boundary
+         Attribute Field </SPAN><SPAN STYLE="font-weight : normal;">was 
+        selected in the previous dialog its name will appear in this box.</SPAN></P>
+       <P>
+        If &lt;Manual Match&gt; was selected, use the drop down arrow to 
+        select the <SPAN STYLE="font-weight : bold;">Boundary Attribute Field</SPAN><SPAN STYLE="font-weight : normal;"> 
+        you want to use to help match the polygons to locations.</SPAN></P>
+       <P>
+        <SPAN STYLE="font-weight : normal;">The values for the selected 
+        attribute from the import file will appear in the middle column in 
+        the table below alongside the polygon identifiers. You can switch to 
+        different attributes, e.g. grid reference, to help with the matching.</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="26%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Location Name</SPAN></TD>
+      <TD WIDTH="74%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">If a specific </SPAN><SPAN STYLE="font-weight : bold;">Boundary
+         Attribute Field </SPAN><SPAN STYLE="font-weight : normal;">was 
+        selected in the previous dialog, </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder</SPAN><SPAN STYLE="font-weight : normal;"> 
+        will search the location hierarchy for locations with the matching 
+        Location Fields (Location Key, Location Name or Field Code) and 
+        display the matching entries. You will be able to manually match any 
+        unmatched polygons, as specified below, if required.</SPAN></P>
+       <P>
+        If &lt;Manual Match&gt; was selected <SPAN STYLE="font-weight : normal;">in
+         the previous dialog, you will be able to manually match polygons, as 
+        specified below.</SPAN></TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <UL>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     To <SPAN STYLE="font-weight : normal;">match a polygon to a location, 
+     click in the Location Name box for it. The </SPAN>Get <IMG SRC="..\buttonimages\find.gif" WIDTH="20" HEIGHT="20" VSPACE="0" HSPACE="0" BORDER="0"> 
+     button appears and can be used it to select and <A HREF="Return_Data.htm">Return</A> <IMG SRC="..\buttonimages\return.gif" WIDTH="16" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+     the required location. Alternatively, type some text and press 
+     &lt;Enter&gt; as in <A HREF="Finding_Things.htm">Finding things</A>.</P>
+    </UL>
+   </UL>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <BLOCKQUOTE>
+     <P>
+      If a location doesn't exist you can use <SPAN STYLE="font-weight : bold;">Make
+       new Entry</SPAN> to create it in the location hierarchy.</P>
+     <P>
+      After matching all the polygons you can, you have the option to <SPAN STYLE="font-weight : bold;">Make
+       New Entries</SPAN> for all the remaining unmatched polygons.</P>
+     <P CLASS="note">
+      <SPAN STYLE="font-weight : bold;">Note</SPAN>: Clicking on a column 
+      heading will sort the rows into ascending sequence; clicking again 
+      will sort them into descending sequence.</P>
+     <P CLASS="note">
+      <SPAN STYLE="font-weight : bold;">Note</SPAN>: Unmatched polygons 
+      will be imported but not linked to locations.</P>
+     </BLOCKQUOTE>
+    </BLOCKQUOTE>
+   </BLOCKQUOTE>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click [Import] to proceed with the import.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click [Cancel] to cancel the polygon import. No polygons will be imported.</P>
+   </UL>
+  <P>
+   Note the progress bar and allow time for the polygons to be imported. 
+   The import process will convert the files you are importing into the 
+   format required by <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   and store the resulting information in the files that constitute the 
+   polygon layer in the <SPAN STYLE="font-weight : bold;">Object Sheet</SPAN> 
+   folder in the <SPAN STYLE="font-style : italic;">Recorder</SPAN> folder.</P>
+  <P>
+   Provided the import is successful, the lines and polygons contained 
+   in the file will be drawn on the map. They will have the properties 
+   (pattern, selected and unselected colours) of the layer to which they 
+   have been added. Users can <A HREF="Polygon_settings.htm">change</A> 
+   these properties, but any change affects all polygons on that layer.</P>
+  <P>
+   When polygons have been linked to locations, selecting the polygon on 
+   the map will display the location name in the <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+   box at the bottom of the map window. Also, <A HREF="Finding_a_Location_on_the_map.htm">Find
+    On Map</A> can be used from the location hierarchy to select a 
+   polygon on a map.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">TIP:</SPAN> You may not necessarily 
+   see all (or any!) of the imported objects, because they could be 
+   drawn on a part of the map that is not currently visible because you 
+   have <A HREF="Map_Browser_Zoom_In.htm">zoomed in</A> on another area. <A HREF="Map_Browser_Pan.htm">Pan</A> 
+   or <A HREF="Map_Browser_Un-Zoom.htm">zoom out</A> until the relevant 
+   area is visible. If you are not sure where the objects will be 
+   located, <A HREF="Map_Browser_Full_Zoom.htm">zoom to extents</A> will 
+   return you to a display of the entire map.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Add a map layer;Adding_Map_Layers.htm"><PARAM
+    NAME="Item2" VALUE="Background vs Polygons;Background_vs_Polygons.htm"><PARAM
+    NAME="Item3" VALUE="Drawing Polygons;Drawing_Polygons.htm"><PARAM
+    NAME="Item4" VALUE="Linking Polygons to Locations;Linking_Polygons_to_Locations.htm"><PARAM
+    NAME="Item5" VALUE="Maps overview;Maps_Overview.htm"><PARAM
+    NAME="Item6" VALUE="Vector and Raster maps;Vector_Raster_maps.htm"></OBJECT>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

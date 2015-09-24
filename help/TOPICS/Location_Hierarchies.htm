@@ -1,0 +1,156 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Location Hierarchies</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="81%" VALIGN=TOP>
+      <H1>
+       Location Hierarchies</TD>
+     <TD WIDTH="19%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   A location in <SPAN STYLE="font-style : italic;">Recorder </SPAN>uses 
+   the concept of sites and sub-sites. A site is the main location 
+   entity, and can be divided into any number of smaller entities or 
+   sub-sites. These sub-sites can form a hierarchy with any number of 
+   levels, and can be fairly complex. Information can be associated with 
+   sites and sub-sites in exactly the same way &#150; using the detail 
+   panel on the right hand side of the location explorer.</P>
+  <P>
+   The position of particular sites in the hierarchy can be changed by 
+   using either <A HREF="Drag_and_Drop.htm">drag and drop</A> or <A HREF="..\Report Designer\Cut_and_paste.htm">cut
+    and paste</A> in the Location tree view. To move a location in this way;</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    You must &quot;own&quot; the location, i.e. It must have been created 
+    on your copy of <SPAN STYLE="font-style : italic;">Recorder </SPAN>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The details of the location to be moved must not conflict with those 
+    of its new parent, i.e. if the new parent has been associated with 
+    specific grid squares, the child must be within those grid squares.</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: multiple locations can 
+   be selected for moving to a new position using &lt;Shift&gt; + left 
+   click of the mouse button or &lt;Ctrl&gt; + left click, as in Windows 
+   Explorer. They can then be dragged to the new position or moved to it 
+   by right clicking and selecting <SPAN STYLE="font-weight : bold;">Promote
+    to Top-Level</SPAN> or <SPAN STYLE="font-weight : bold;">Move to</SPAN>.
+    If <SPAN STYLE="font-weight : bold;">Move to</SPAN> is used, the <A HREF="Finding_Locations.htm">Find
+    location</A> dialogue box opens so that you can find the location to 
+   move them to.</P>
+  <H2>
+   &nbsp;To move any site or sub-site to a different level using drag 
+   and drop</H2>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click and hold down the left mouse button on the site or sub-site 
+    that you want to move.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The cursor changes to a drag cursor<IMG SRC="..\cursorimages\dragcursor.gif" WIDTH="21" HEIGHT="31" VSPACE="0" HSPACE="0" BORDER="0">.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    While holding down the button, drag the item to the site or sub-site 
+    that you want to move it to.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Release the mouse button.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    You will be prompted to confirm you really want to make the change.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The dragged item becomes a sub-site of the designated site or sub-site.</P>
+   </UL>
+  <H2>
+   To move any site or sub-site to a different level using cut and paste</H2>
+  <P>
+   You may prefer to use this method if you cannot see the original and 
+   destination positions of the site at the same time in the hierarchy.</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click on the site or sub-site that you want to move with the right 
+    mouse button.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select <SPAN STYLE="font-weight : bold;">Edit - Cut</SPAN> from the 
+    main menu.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Browse to the new position.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Right click on the new parent and select <SPAN STYLE="font-weight : bold;">Edit
+     - Past</SPAN>e from the main menu.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    You will be prompted to confirm you really want to make the change.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The dragged item becomes a sub-site of the designated site or sub-site.</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: Don't worry if you 
+   find that you cannot paste the site where you want to. Simply make 
+   the appropriate change and try again. You won't lose the site you are 
+   trying to move. If the 'paste' part of the operation is not 
+   completed, the 'cut' will also not occur.</P>
+  <H3>
+   To promote a sub-site to a site</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click on the sub-site that you want to promote with the right mouse button.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click on the <SPAN STYLE="font-weight : bold;">Promote to Top-Level</SPAN> 
+    menu item.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The sub-site is promoted to a site, and is displayed at the bottom of 
+    the tree view.</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">TIP:</SPAN> If you are moving or 
+   promoting a sub-site which already has a hierarchy beneath it, the 
+   hierarchy beneath it will be moved with the sub-site.</P>
+  <P>
+   &nbsp;<OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Location Overview;Location_Overview.htm"></OBJECT>
+ </BODY>
+</HTML>

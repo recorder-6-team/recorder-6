@@ -1,0 +1,95 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Report Wizard Designation Selection</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Report Wizard Designation Selection</H1>
+  <P>
+   You see this screen if you selected the <SPAN STYLE="font-weight : bold;">Restrict
+    report to one or more Designations</SPAN> option in the <A HREF="Report_Wizard_Select_Report_Style.htm">starting
+    screen of the Wizard</A>. It is used when you want to produce a 
+   report that only contains observations with specified designations.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\Wizard Designation Selection.gif" WIDTH="632" HEIGHT="494" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+    <TR>
+     <TD WIDTH="28%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Designation Set</SPAN></TD>
+     <TD WIDTH="72%" VALIGN=TOP>
+      <P>
+       Use the drop down arrow to select the set of designations you want to 
+       use for your report. The sets available in <SPAN STYLE="font-style : italic;">Recorder
+        6</SPAN> version 6.14 are:</P>
+      <P>
+       All Designated Species (excl Northern Ireland)<BR>
+       All European Designated (Birds Dir, H&amp;S, Berne, Bonn, EC CITES)<BR>
+       All UK Legally Protected (W&amp;C Act, Badgers and Cons Regs)<BR>
+       Wildlife &amp; Countryside Act (Sch 1, 5 &amp; 8)<BR>
+       IUCN Red Lists<BR>
+       Biodiversity Action Plan species (2007)<BR>
+       Country/UK Biodiversity Lists<BR>
+       NI Wildlife Order<BR>
+       Farmland Environment Planning<BR>
+       Planning Legislation<BR>
+       Statuses of Nationally: Rare, Notable, Scarce</P>
+      <P>
+       Additional <SPAN STYLE="font-weight : normal;">Designation Sets can 
+       be added to the system by those with appropriate skills. An XML Batch 
+       update could be written to do this.</SPAN></P>
+      <P CLASS="note">
+       <SPAN STYLE="font-weight : bold;">Note</SPAN>: If <SPAN STYLE="font-weight : normal;">Designation
+        Sets</SPAN> are added, the <SPAN STYLE="font-weight : bold;">Taxon 
+       Designation Index </SPAN><SPAN STYLE="font-weight : normal;">must be 
+       rebuilt by </SPAN>selecting <SPAN STYLE="font-weight : bold;">Tools - 
+       Database Tools - Rebuild Taxon Designation Index</SPAN> from the Main menu<SPAN STYLE="font-weight : normal;">.</SPAN></TD>
+    </TR>
+    <TR>
+     <TD WIDTH="28%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Available</SPAN></TD>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <P>
+       If you want observations with any of the designations in a 
+       designation set in your report use the double headed red arrow 
+       between the Available box and the Selected box on the right to send 
+       all the designations in the set to the Selected box.</P>
+      <P>
+       If you only want observations with some of them in your report, 
+       select the designations you require and use the single headed red 
+       arrow to send them to the Selected box.</P>
+      <P>
+       By changing your selection in the Designation Set box, you can add 
+       other designations from other sets.</P>
+      <P>
+       Observations will only be included in your report if they meet all 
+       the selection criteria you specify as you go through the report 
+       wizard. In the case of designations, observations will only be 
+       included if they have one or more of the designations listed in the 
+       Selected box on the right.</P>
+      <P>
+       The fields that appear in your report are controlled by your 
+       selection of <A HREF="Report_Wizard_Select_Attributes.htm">attributes</A>.</TD>
+    </TR>
+   </TABLE>
+ </BODY>
+</HTML>

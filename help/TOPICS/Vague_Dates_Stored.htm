@@ -1,0 +1,368 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>How vague dates are stored</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   How vague dates are stored</H1>
+  <P>
+   This is a technical topic which will be of use to more advanced users 
+   who wish to query the underlying database from other software tools.</P>
+  <P>
+   Vague dates are always stored as a range of dates using three fields 
+   in the database.</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="32%" VALIGN=TOP>
+       <P>
+        <B>Name</B></TD>
+      <TD WIDTH="55%" VALIGN=TOP>
+       <P>
+        <B>Purpose</B></TD>
+      <TD WIDTH="13%" VALIGN=TOP>
+       <P>
+        <B>Type</B></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="32%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Vague_date_start</SPAN></TD>
+      <TD WIDTH="55%" VALIGN=TOP>
+       <P>
+        the starting date of the range</TD>
+      <TD WIDTH="13%" VALIGN=TOP>
+       <P>
+        Date</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="32%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Vague_date_end</SPAN></TD>
+      <TD WIDTH="55%" VALIGN=TOP>
+       <P>
+        the ending date of the range</TD>
+      <TD WIDTH="13%" VALIGN=TOP>
+       <P>
+        Date</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="32%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Vague_date_type</SPAN></TD>
+      <TD WIDTH="55%" VALIGN=TOP>
+       <P>
+        a one or two letter code indicating which of the possible formats was entered</TD>
+      <TD WIDTH="13%" VALIGN=TOP>
+       <P>
+        Text</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P>
+   If a table contains more than one vague date, then two or more sets 
+   of these three fields will be present, and their names will be 
+   prefixed to indicate their purpose (e.g. born_vague_date_start, 
+   died_vague_date_start). The following indicates the contents of these 
+   three fields for the different types which are supported:</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="95%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        <B>Type</B></TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        <B>Example</B></TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        <B>Start_date</B></TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        <B>End_date</B></TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        <B>Type</B></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Standard date</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        23 Mar 1987</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        23/3/1987</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        23/3/1987</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        D</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Standard date range</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        23 Mar 1987 - 30 Mar 1987</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        23/3/1987</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        30/3/1987</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        DD</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Month</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        Mar 1987</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        1/3/1987</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        31/3/1987</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        O</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Month range</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        Mar 1987 - Jun 1987</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        1/3/1987</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        30/6/1987</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        OO</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Season</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        Summer 1987</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        1/6/1987</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        31/8/1987</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        P</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Year</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        1987</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        1/1/1987</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        31/12/1987</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        Y</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Year range</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        1981 - 1987</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        1/1/1981</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        31/12/1987</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        YY</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Open ended year range</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        1987 -</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        1/1/1987</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        &lt;empty&gt;</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        Y-</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Up to year</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        - 1987</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        &lt;empty&gt;</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        21/13/1987</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        -Y</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Month only</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        July</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        1/7/9999</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        31/7/9999</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        M</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Season only</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        Summer</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        1/6/9999</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        31/8/9999</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        S</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Unknown</TD>
+      <TD WIDTH="24%" VALIGN=TOP>
+       <P>
+        Unknown</TD>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        &lt;empty&gt;</TD>
+      <TD WIDTH="18%" VALIGN=TOP>
+       <P>
+        &lt;empty&gt;</TD>
+      <TD WIDTH="11%" VALIGN=TOP>
+       <P>
+        U</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P>
+   However, in the SQL Server database itself, the <SPAN STYLE="font-weight : bold;">Vague_date_start</SPAN><SPAN STYLE="font-weight : normal;"> 
+   and </SPAN><SPAN STYLE="font-weight : bold;">Vague_date_end</SPAN> 
+   are stored as integers. To view them as dates in Microsoft <SPAN STYLE="font-style : italic;">Access</SPAN> 
+   you will need to use a function such as CDate. For example:</P>
+  <P>
+   SELECT Sample.Sample_Key, Sample.Vague_Date_Start, 
+   CDate([Sample]![Vague_Date_Start]) AS StartDateddmmyy,<BR>
+   Sample.Vague_Date_End, CDate([Sample]![Vague_Date_End]) AS 
+   EndDateddmmyy, Sample.Vague_Date_Type, Sample.Entry_Date<BR>
+   FROM Sample<BR>
+   WHERE (((Sample.Entry_Date)&gt;#1/1/2011#))<BR>
+   ORDER BY Sample.Vague_Date_Start;</P>
+  <P>
+   This query lists the following data for samples entered after 
+   1/1/2011 in ascending Vague_Date_Start order: <BR>
+   Sample_Key, Vague_Date_Start as an integer, Vague_Date_Start in 
+   dd/mm/yyyy format,<BR>
+   Vague_Date_End as an integer, Vague_Date_End in dd/mm/yyyy format, 
+   Vague_Date_Type and Entry_Date.<BR>
+   In design view the Vague_Date_Start field in dd/mm/yyyy format would 
+   be StartDateddmmyy: CDate([Sample]![Vague_Date_Start]).</P>
+  <P>
+   To view the vague date integers as dates in a SQL Server query you 
+   will need to use a built in function such as LCReturnDate. For 
+   example, the query above in SQL Server would be:</P>
+  <P>
+   SELECT Sample.Sample_Key, Sample.Vague_Date_Start, 
+   dbo.LCReturnDate(Vague_Date_Start, Vague_Date_Type, 'F') AS 
+   StartDateddmmyy, Sample.Vague_Date_End, 
+   dbo.LCReturnDate(Vague_Date_End, Vague_Date_Type, 'F') AS 
+   EndDateddmmyy, Sample.Vague_Date_Type, Sample.Entry_Date<BR>
+   FROM Sample<BR>
+   WHERE Sample.Entry_Date &gt; '01/01/2011'<BR>
+   ORDER BY Sample.Vague_Date_Start</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: This query will return 
+   different results in an <A HREF="XML_reports.htm">XML report</A>, as 
+   including Sample.Vague_Date_Start, Sample.Vague_Date_End and 
+   Sample.Vague_Date_Type will return the date as entered so these three 
+   fields will return a single column containing vague dates like &quot;15/05/2007
+    - 20/05/2007&quot;, &quot;July 2009 - August 2009&quot;, &quot;2011&quot;.</P>
+  <H1>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Standard Dates;Standard_Dates.htm"><PARAM
+    NAME="Item2" VALUE="Vague Dates;Vague_Dates.htm"></OBJECT>
+ </BODY>
+</HTML>

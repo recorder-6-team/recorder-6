@@ -1,0 +1,104 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Map order</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Map layer order</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <H3>
+   Overview</H3>
+  <P>
+   If you have several map layers for a map that overlap in a given 
+   geographical area, the order in which they are drawn can be an issue. 
+   Think of them like a stack of sheets of paper. Whilst <A HREF="Vector_Raster_maps.htm">vector
+    maps</A> such as your polygon layers are transparent and allow other 
+   layers to show through, this is not the case with <A HREF="Vector_Raster_maps.htm">raster
+    maps</A> or backgrounds. Raster maps cover up and hide anything that 
+   is &quot;underneath&quot; them in the stack.</P>
+  <P>
+   For example, suppose you have an 1:50,000 map tile (a raster layer) 
+   showing a site in which you are interested and you also have a more 
+   detailed, 1:10,000 map tile (another raster layer) covering just that 
+   site. You would probably like to arrange things so that, as you zoom 
+   in on the area, the 1:50,000 map is displayed with the 1:10,000 map 
+   on top of it. This is a considerable help in selecting the right area 
+   to enlarge. You would set the &quot;Cut-in&quot; and 
+   &quot;Cut-out&quot; scales so that the 1:50,000 map 
+   &quot;cuts-out&quot; when you have zoomed in closer leaving just the 
+   more detailed map visible. However, if the order of display is such 
+   that the 1:50,000 map is &quot;on top&quot; of the 1:10,000 map, the 
+   latter will be hidden &quot;behind&quot; the former until it reaches 
+   its cut-out scale. Consequently you would not see the 1:10,000 map 
+   until you had zoomed right in. To fix the problem, move the 1:10,000 
+   map down of the list of map layers until it is below the 1:50,000 map.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: In <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    map layers are displayed &quot;on top&quot; of layers further up the 
+   list. However, the &quot;Base Map Sheet&quot; <IMG SRC="..\BaseMapIcon.gif" WIDTH="18" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+   is a special case and will always be appear &quot;on top&quot; of all 
+   other layers.</P>
+  <H3>
+   To change the order of display of map layers:</H3>
+  <P>
+   Use the <SPAN STYLE="font-weight : bold;">Map Layers</SPAN> box in 
+   the bottom left-hand corner of the open Map window. To open the map 
+   you want to work on select <SPAN STYLE="font-weight : bold;">Map - 
+   View Map</SPAN> from the Main menu then, in the sub-menu, select the 
+   required map, or use the <SPAN STYLE="font-weight : bold;">Display 
+   Map Window</SPAN> icon <IMG SRC="..\BaseMapIcon.gif" WIDTH="18" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+   on the toolbar. If the map window is already open, use the Active Map 
+   box (top left) to select the required map.</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click on a layer's name in the Map Layers list at the bottom left of 
+    the window to select it.<BR>
+    <LI CLASS="mvd-P">Drag it to a new position in the list, or use the 
+    up <IMG SRC="..\buttonimages\Up.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    or down <IMG SRC="..\buttonimages\Down.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    arrows at the top of the list to move it up or down.</P>
+   </UL>
+  <P>
+   Or, select <SPAN STYLE="font-weight : bold;">Map - Map Options</SPAN> 
+   from the main menu, then select the <SPAN STYLE="font-weight : bold;">Map
+    Layers</SPAN> tab. Select the map you want to work on using the drop 
+   down arrow beside the Map box. Note that this box is only displayed 
+   if you have more than one map loaded.</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the layer you want to move to select it.<BR>
+    <LI CLASS="mvd-P">Click the &quot;Move Up&quot; or &quot;Move 
+    Down&quot; buttons. The selected layer will move up or down one 
+    position in the list for each click.</P>
+   </UL>
+  <P>
+   <IMG SRC="..\screenshots\Map Options Polygons.gif" WIDTH="479" HEIGHT="361" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;
+ </BODY>
+</HTML>

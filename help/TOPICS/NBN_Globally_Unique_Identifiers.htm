@@ -1,0 +1,93 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>NBN Globally Unique Identifiers</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   NBN Globally Unique Identifiers</H1>
+  <P>
+   When data are stored in a database table, each row typically has to 
+   be identified by a unique 'key' which is used to find and retrieve 
+   that row. Keys can be constructed in many ways, but a common scheme 
+   is to use a running number. Thus, if you had 1,200 observations in a 
+   table, they would be identified by numbers 1 to 1200. The problem 
+   with this simple scheme is that if <I>A</I> wants to submit data to <I>B<SPAN STYLE="font-style : normal;">,</SPAN></I> 
+   then what happens when <I>A</I>&#146;s record 5 is copied into <I>B</I>&#146;s
+    database which already has its own row 5? Either <I>B</I>&#146;s 
+   record will be overwritten by <I>A</I>&#146;s and lost, or <I>A</I>&#146;s
+    data will be rejected.</P>
+  <P>
+   One way round this is for the import process in the application to 
+   detect that <I>A</I>&#146;s data have keys that are already in use, 
+   and renumber the incoming records, assigning the next available 
+   running numbers in <I>B</I>&#146;s database. So <I>A</I>&#146;s 
+   record 5 might become record 34,567 in the collated database. The 
+   problem with this is what happens if <I>A</I> changes record 5 and 
+   wants to update <I>B</I> (and perhaps other places to which copies 
+   have been sent). If <I>B</I> simply imports the record again, it will 
+   be renumbered to the next available running number, and <I>B</I> will 
+   now have two copies of the record - the original and the updated 
+   versions. To avoid this, the application would need to keep track of 
+   the information that <I>A</I>&#146;s record 5 is <I>B</I>&#146;s 
+   record 34567 - and, if this is done for all imported data, it quickly 
+   becomes a considerable overhead in managing the data.</P>
+  <P>
+   A better solution is to try and ensure that all data items in all 
+   copies of the software are uniquely identified by assigning a 
+   'Globally Unique Identifier'. A simple way to do this is to assign 
+   each copy of the application a unique number, and to form the key by 
+   combining the copy number and the running number in the table. <I>A</I>&#146;s
+    record might then be called A5 and <I>B</I>&#146;s B5. A5 can be 
+   copied into <I>B</I>&#146;s database without clashing with any of <I>B</I>&#146;s
+    records. When <I>A</I> updates A5 and sends a new copy to <I>B</I>, 
+   it is absolutely clear which record is involved. If records are 'date 
+   stamped' when they are first saved, or when they are changed, <I>B</I> 
+   can even know whether he is getting a new copy of A5 (because its 
+   date stamp will be later than the copy that is already present), or 
+   simply a duplicate which can be ignored.</P>
+  <P>
+   A scheme of GUIs, consisting of unique copy numbers and running 
+   numbers in each table has been devised for the National Biodiversity 
+   Network. Each copy of <SPAN STYLE="font-style : italic;">Recorder </SPAN> 
+   is given a unique identifier consisting of an 8-character string of 
+   upper case letters (A..Z) and digits (0..9) - i.e. 36 possible 
+   characters. Each table also has a running identifier similarly 
+   consisting of an 8-character string of upper case letters and digits. 
+   This allows 36<SUP><FONT SIZE="1">8</FONT></SUP> = 2,821,109,907,456 
+   possible values for each of these strings. The key for each record is 
+   then formed by concatenating the copy ID and the running ID to make a 
+   single, unique 16-character string.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Duplicate Items;Duplicate_Items.htm"><PARAM
+    NAME="Item2" VALUE="Duplication Resulting From Import;Duplication_Resulting_From_Import.htm"><PARAM
+    NAME="Item3" VALUE="Merge Data Items;Merge_Data_Items.htm"><PARAM
+    NAME="Item4" VALUE="Update Last Key;Update_Last_Key.htm"></OBJECT>
+ </BODY>
+</HTML>

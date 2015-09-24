@@ -1,0 +1,231 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Validating data</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Validating data</H1>
+  <P>
+   When entering data into <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   it is validated using a Standard Validation Library. Many checks are 
+   done such as checking that dates are valid <A HREF="Vague_Dates.htm">vague
+    dates</A>, that <A HREF="Spatial_References_Overview.htm">spatial references</A> 
+   are valid for the selected spatial reference system (Tools - Options 
+   - Spatial References) and that, taxa, biotopes, locations, 
+   individuals, organisations and documents exist in the the appropriate 
+   list or hierarchy. Checks are also done for consistency, e.g. that 
+   the dates of observations are within the allowed date range for the <A HREF="Surveys_Overview.htm">survey</A> 
+   to which they are to be added, and that the spatial references are 
+   within the bounding box of the survey. However, there are 
+   circumstances in which data can become invalid. A common example of 
+   this is when editing dates for observations. If a survey event, its 
+   samples and its taxon determinations all have dates of, say, 
+   12/05/2008 but then a user changes the date in the survey event to, 
+   say, 19/05/2008 without changing the dates in the samples, the 
+   samples become invalid because their dates are no longer equal to or 
+   within the survey event dates. If sample dates are changed but not 
+   the taxon determination dates of the observations in them, the taxon 
+   determinations will become invalid if their dates are <FONT COLOR="BLACK">no
+    longer equal to or after their sample date. Similarly with location 
+   data, the sample spatial reference must be equal to or within the 
+   survey event location, i.e. within the grid squares of the survey 
+   event location.</FONT></P>
+  <P>
+   Invalid items can easily go unnoticed but will cause problems when 
+   exchanging data between systems. When importing data, it is validated 
+   using the Standard Validation Library and invalid items are not 
+   imported - see <A HREF="Invalid_Items.htm">Invalid Items</A> for more information.</P>
+  <P>
+   In 2008, new facilities were introduced to help prevent items from 
+   becoming invalid and to detect any existing ones:</P>
+  <H3>
+   Editing dates and location data</H3>
+  <P>
+   When editing dates and location data in <A HREF="Survey_Events_General_Tab.htm">survey
+    events</A> you have the option to cascade the change through the 
+   samples in the event.<BR>
+   When editing dates and location data in <A HREF="Sample_General_Tab.htm">samples</A> 
+   you have the option to change the survey event at the same time, and 
+   the other samples in the same event.<BR>
+   In the case of changing dates the change can also be cascaded through 
+   the determinations.</P>
+  <P>
+   To use this facility, <A HREF="Editing_an_Item.htm">edit the item</A> 
+   as normal and make the required changes. If a date, location, 
+   location name or spatial reference has been changed, a dialogue box 
+   like this will appear when you click [Save].</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\Cascade event changes.gif" WIDTH="506" HEIGHT="271" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   These options appear when editing the date in a survey event. Select 
+   your desired option:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Do Nothing</SPAN> - only does the 
+    change in the item you have selected for editing.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Update all the child samples and 
+    determinations to match the survey event's updated Date</SPAN> - 
+    changes the date in the survey event, all its samples and all their determinations.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Update the child sample and 
+    determinations to match the survey event's updated Date but only if 
+    the values previously matched between the sample and survey event or determination</SPAN> 
+    - changes the date in the survey event, its samples and 
+    determinations but it only changes dates in samples and 
+    determinations which were the same as the event date beforehand.</P>
+   </UL>
+  <P>
+   Click [OK] to update the database and make the changes permanent.</P>
+  <P>
+   When editing sample data an additional option is available: <SPAN STYLE="font-weight : bold;">Also
+    update all samples and determinations within the same survey event 
+   using the same rules</SPAN>.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: the second and third 
+   messages will vary depending on whether you are editing a survey 
+   event or sample and on whether you are editing a date, location, 
+   location name and/or spatial reference.</P>
+  <H3>
+   Revalidating items</H3>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   If at any time you are concerned that your system may contain invalid 
+   data you can revalidate all data in a selected item:</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   To revalidate a <A HREF="Surveys_Tags_Tab.htm">survey tag</A>, i.e 
+   all surveys with a particular tag, a <A HREF="Observations.htm">survey</A>,
+    survey event, sample, taxon or biotope occurrence:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    Select the required item in the observation hierarchy.</P>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    Right click and select <SPAN STYLE="font-weight : bold;">Revalidate Record</SPAN> 
+    from the pop-up menu that appears.</P>
+   </UL>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   If the revalidation doesn't find any invalid items the system will 
+   respond saying 'The database validation was successful.'</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   If the revalidation finds invalid items the system will display a box 
+   that lists the invalid items with a message to say why the item has 
+   failed validation. It will also offer two options:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    [Save Details] - allows you to save the details of the invalid items 
+    in a file that can be opened in Notepad, Word, Excel or similar 
+    software. It can also be used as a filter that can be loaded to 
+    enable you to view the invalid items at a later date as when you 
+    select [View Results].</P>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    [View Results] - places a filter on the window concerned so that the 
+    invalid items are on view when items are expanded by clicking on the <IMG SRC="..\buttonimages\TreePlus.gif" ALIGN=BOTTOM VSPACE="0" HSPACE="0" BORDER="0" LOOP="0"> 
+    beside them. The invalid items will be highlighted and a message 
+    saying what is wrong with them will appear when you float the cursor 
+    over them. To remove the filter click [Show All] to the bottom right 
+    of the window.</P>
+   </UL>
+  <P>
+   <SPAN STYLE="font-weight : normal;">For details of how to load a 
+   saved filter and the format of a filter file, see <A HREF="Loading_filters.htm">Loading
+    filters.</A></SPAN></P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: other user added data, 
+   such as locations, can be revalidated in the same way.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: this facility is only 
+   available to System Managers - see <A HREF="User_Access_Levels.htm">User
+    access levels</A>.</P>
+  <H3>
+   Revalidating data selected by the Report Wizard</H3>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   To revalidate the observations in the report wizard's filter result 
+   go through the steps involved in <A HREF="Using_the_report_wizard.htm">using
+    the wizard</A> as normal until you are at the filter result. At this point:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    Click the [Report Output] button.</P>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    Select <SPAN STYLE="font-weight : bold;">Revalidate Items.</SPAN></P>
+   </UL>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   If the revalidation doesn't find any invalid items the system will 
+   respond saying 'The database validation was successful.'</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   If the revalidation finds invalid items the system will display a box 
+   that lists the invalid items with a message to say why the item has 
+   failed validation. It will also offer the two options above: [Save 
+   Details] and [View Results].</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: this facility is only 
+   available to System Managers - see <A HREF="User_Access_Levels.htm">User
+    access levels</A>.</P>
+  <H3>
+   Revalidating the entire database</H3>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   To revalidate the entire database:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    Select <SPAN STYLE="font-weight : bold;">Tools - Database Tools - 
+    Revalidate Database</SPAN> from the Main menu.</P>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    You will then be warned that this may take some time and you will be 
+    asked if you want to continue.</P>
+   </UL>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   If you say Yes the validation will proceed and when it is complete, 
+   if any invalid items have been found, the system will display a box 
+   that lists a summary of them along with the options to [Save Details] 
+   or [View Results] as above.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: this facility is only 
+   available to System Managers - see <A HREF="User_Access_Levels.htm">User
+    access levels</A>.</P>
+  <H3>
+   Revalidating data to be exported</H3>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   When data is exported e.g. for importing into another <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   system - see <A HREF="Export.htm">Export</A> for details - it is 
+   revalidated prior to export. If invalid items are found a message 
+   saying 'There are invalid records in the data you are about to 
+   export. These records will not be exported. Do you wish to continue?' 
+   If you say Yes the export will be done then, regardless of whether 
+   you said Yes or No, a filter will be loaded to enable you to see the 
+   invalid items.</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: selecting an item and 
+   clicking on the * on the numeric keypad on the keyboard will expand 
+   the item in full.</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   &nbsp;
+ </BODY>
+</HTML>

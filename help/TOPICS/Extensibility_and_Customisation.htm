@@ -1,0 +1,267 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Extensibility and Customisation</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Extensibility and Customisation</H1>
+  <P>
+   One of the strongest messages from the requirement analysis in the 
+   winter of 1997/98 was the immense diversity of biological recording 
+   activities. Although all surveys record some basic information (date 
+   and place of an observation, and what was observed), there is 
+   tremendous variation in the other details which are measured or 
+   recorded by different survey methods. It was quickly concluded that 
+   no one piece of software could hope to incorporate all these details, 
+   and still be practical for most people to use. The solution arrived 
+   at was to provide a general framework, and a mechanism by which this 
+   software could be extended and customised to meet specific needs in future.</P>
+  <P>
+   <B>Example:</B></P>
+  <P>
+   Measurements are very diverse, and could cover things like the 
+   altitude of a site or the estimated percentage cover of a species of 
+   plant within a quadrat. A general way of handling these has been 
+   designed, which we believe can cope with any type of measurement. 
+   This uses five data fields as follows:</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="95%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        <B>Field</B></TD>
+      <TD WIDTH="39%" VALIGN=TOP>
+       <P>
+        <B>Explanation</B></TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        <B>Example 1</B></TD>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        <B>Example 2</B></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        Measurement type</TD>
+      <TD WIDTH="39%" VALIGN=TOP>
+       <P>
+        The type of measurement being made (length, weight, count, etc.).</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Altitude</TD>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        Coverage</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        Qualifier</TD>
+      <TD WIDTH="39%" VALIGN=TOP>
+       <P>
+        What was being measured.</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Site minimum</TD>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        In quadrat</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        Data</TD>
+      <TD WIDTH="39%" VALIGN=TOP>
+       <P>
+        The actual measurement - either as a number or as a code.</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        125</TD>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        30</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        Measurement unit</TD>
+      <TD WIDTH="39%" VALIGN=TOP>
+       <P>
+        The units - which are related to the type of measurement.</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        M</TD>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        %</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        Accuracy</TD>
+      <TD WIDTH="39%" VALIGN=TOP>
+       <P>
+        An optional comment indicating precisely how the data were measured.</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        +/- 10</TD>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        Visual estimate</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P>
+   <SPAN STYLE="font-style : italic;">Recorder </SPAN> has a measurement 
+   screen for entry of these data for locations, samples, taxon 
+   occurrences and biotope occurrences in a spreadsheet-like grid. 
+   However, for many surveys it would be preferable if the user had a 
+   specific box in which to type the required data that:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Prompted the user with the terminology as it appears on physical 
+    recording form.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Allowed validation and control of what the user enters.</P>
+   </UL>
+  <P>
+   An Add-On can do this. It would be possible to design an Add-On form 
+   with an edit box labelled 'Minimum site altitude (m)', in which the 
+   user types a value, and checks that the value that is entered is a 
+   positive number between 0 and 1500. Behind the scenes, the data would 
+   actually be stored in the five fields above, with all but the data 
+   being automatically generated by the Add-on form.</P>
+  <P>
+   Similarly, a quadrat entry form might include a grid in which to 
+   enter the name and percentage coverage of each of the species 
+   observed in the quadrat. The form could ensure that the values 
+   entered were positive numbers that added up to 100. Again, behind the 
+   scenes, the data would be stored as above, with all the fields except 
+   the data automatically generated by the Add-on form.</P>
+  <H3>
+   So, how are Add-Ons produced?</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    The technology used is Microsoft&#146;s <A HREF="javascript:BSSCPopup('../Glossary/COM.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">COM</A> 
+    objects. A new form, for example, could be written as an ActiveX control.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Any <SPAN STYLE="font-style : italic;">Windows</SPAN> programming 
+    tool capable of producing a COM object could be used to build an 
+    Add-On (e.g. <SPAN STYLE="font-style : italic;">Visual Basic</SPAN>, <SPAN STYLE="font-style : italic;">C</SPAN>,
+     <SPAN STYLE="font-style : italic;">Delphi</SPAN>). The <SPAN STYLE="font-style : italic;">Recorder
+     </SPAN> type library is needed - this is installed as part of a 
+    standard installation.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Considerable <SPAN STYLE="font-style : italic;">Windows</SPAN> 
+    programming experience and knowledge is required. It will also be 
+    necessary to understand the <A HREF="NBN_Transfer_Format.htm">NBN 
+    data model</A> and its implementation in <SPAN STYLE="font-style : italic;">Recorder</SPAN>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    However, documentation and example code is freely available to anyone 
+    who wishes to produce Add-Ons.</P>
+   </UL>
+  <H3>
+   What aspects of <SPAN STYLE="font-style : italic;">Recorder </SPAN> 
+   can be customised or extended?</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Just about anything!</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Individual controls on existing forms can be replaced, and new 
+    controls can be added to existing forms.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Many of the forms use tabs to display different details about an item 
+    - it is possible to replace one of these tabs or add new ones.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Almost all existing screens and dialogs can be replaced.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    New screens and dialogs can be added.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    New validation rules can be added.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    New spatial reference systems can be added.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    New import methods can be added.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    New export methods can be added.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    It is possible to add a new 'action' (an item in the menus and/or a 
+    button on the toolbars) which could call anything when it is 
+    activated This could be used to add anything from customised reports 
+    to whole new areas of functionality.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Add-ons can gain access to information about what other screens are 
+    doing, take part in drag and drop operations, and use facilities like 
+    the Rucksack and import/export processes.</P>
+   </UL>
+  <H3>
+   What effect do Add-Ons have on the database, and import and export of data?</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Add-Ons can potentially add new tables to the database to store 
+    specific attributes which do not fit elsewhere.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    If an Add-On does this, then the developer needs to provide 
+    information to update the <A HREF="NBN_Transfer_Format.htm">Document 
+    Type Definition</A> (DTD). If the documented rules for naming <A HREF="XML.htm">XML</A> 
+    tags are followed, then <SPAN STYLE="font-style : italic;">Recorder 2002</SPAN>&#146;s
+     standard import and export facilities will export from and import to 
+    such additional tables.</P>
+   </UL>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Install Addin;Install_Addin.htm"><PARAM
+    NAME="Item2" VALUE="Writing Addins;Writing_Addins.htm"></OBJECT>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

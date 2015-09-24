@@ -1,0 +1,110 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Meta-data</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Meta-data</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></H1>
+  <P>
+   <SPAN STYLE="font-style : italic;">Recorder</SPAN><SPAN STYLE="font-style : normal;"> 
+   logs a selection of <A HREF="javascript:BSSCPopup('../Glossary/Meta-data.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">meta-data</A> 
+   for most items in the database, e.g. who created them and when, who 
+   last changed them and when - see <A HREF="Information_to_track_changes_to_items.htm">Information
+    to track changes to items</A>. This meta-data can be viewed using 
+   the Show Metadata icon along with the key, or unique identifier, for 
+   the selected item and, if it has been imported, the Site (or Copy) Id 
+   of the copy of </SPAN><SPAN STYLE="font-style : italic;">Recorder</SPAN><SPAN STYLE="font-style : normal;"> 
+   it was imported from. Also, if ownership/custody has been transferred </SPAN>from
+    another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN><SPAN STYLE="font-style : normal;">,
+    the Site Id of the </SPAN>copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN><SPAN STYLE="font-style : normal;"> 
+   that currently owns it will be displayed.</SPAN></P>
+  <P>
+   <SPAN STYLE="font-style : normal;">The unique identifiers for items 
+   stored in the </SPAN><SPAN STYLE="font-style : italic;">Recorder</SPAN><SPAN STYLE="font-style : normal;"> 
+   database, sometimes refered to as the </SPAN><A HREF="NBN_Globally_Unique_Identifiers.htm">NBN
+    Globally Unique Identifiers</A>, are 16 characters long. The first 8 
+   characters are the Site Id of the copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   to which the item was originally input. The second 8 characters are a 
+   running number made up of upper case letters (A..Z) and digits 
+   (0..9), i.e. 36 possible characters. The LAST_KEY table in the 
+   database records the last running number used to form a key for each 
+   table. When an item is added to the database, the running number for 
+   the relevant table is read from LAST_KEY, incremented by one, and 
+   combined with the copy ID to form a unique key for the new item. At 
+   the end of the process, the entry in LAST_KEY is updated.</P>
+  <P>
+   <SPAN STYLE="font-style : normal;">For the taxon and biotope 
+   dictionaries, the Show Metadata icon displays meta-data for the 
+   selected item and for the list or classification it is on.</SPAN></P>
+  <H3>
+   To view meta-data:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the item for which meta-data is required.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select <SPAN STYLE="font-weight : bold;">Edit - Show Metadata</SPAN> 
+    from the main menu, or</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the Show metadata button <IMG SRC="..\ButtonImages\InfoHot.gif" WIDTH="16" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+    in the active toolbar.</P>
+   </UL>
+  <H3>
+   Examples</H3>
+  <P>
+   The information displayed will vary depending on the item selected 
+   and its history. The meta data for a taxon occurrence will look 
+   something like this, if it has been changed, imported from another 
+   copy of <SPAN STYLE="font-style : italic;">Recorder,</SPAN> and if 
+   custody has been transferred from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    where SR000027 and SR000001 are the Site Ids of copies of <SPAN STYLE="font-style : italic;">Recorder</SPAN> <SPAN STYLE="font-style : normal;">involved:</SPAN></P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\MetaData.gif" WIDTH="389" HEIGHT="371" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P CLASS="note">
+   <SPAN STYLE="font-style : normal;font-weight : bold;">Note</SPAN><SPAN STYLE="font-style : normal;">:
+    If you know the key, or unique identifier, for a user added item you 
+   will be able to go to it at any time using </SPAN><SPAN STYLE="font-style : normal;font-weight : bold;">Tools
+    - Go To</SPAN><SPAN STYLE="font-style : normal;"> (key).</SPAN></P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   For Kingfisher in the BIRDS list in the taxon dictionary the metadata 
+   is: </P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\MetaData Taxon.gif" WIDTH="939" HEIGHT="692" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

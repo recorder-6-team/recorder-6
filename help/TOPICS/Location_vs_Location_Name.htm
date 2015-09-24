@@ -1,0 +1,113 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Location vs Location Name</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Location and Location Name</H1>
+  <P>
+   Within <SPAN STYLE="font-style : italic;">Recorder</SPAN> there are 
+   two separate concepts for holding the name of a location: 'location' 
+   and 'location name'. Both of these concepts can be defined at the <A HREF="Survey_Events_Overview.htm">survey
+    event</A> level and the <A HREF="Sample_Overview.htm">sample</A>, as 
+   illustrated in this screen shot of a sample:</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Sample General Location.gif" WIDTH="454" HEIGHT="318" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   There is a tendency for collators to define a formal <A HREF="Location_Overview.htm">location
+    hierarchy</A> into which all observations are associated and, in 
+   some cases, this hierarchy may actually be sent out to recorders to 
+   encourage them to associate their observations in the same way. The 
+   primary reason for doing this is that it eases reporting (for example 
+   a query such as show me all observations associated with a particular 
+   location becomes easier). However, there are a couple of risks with 
+   this approach:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Different recorders may have different interpretations of where the 
+    site is, for example where the boundary actually runs</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Many observations may not be associated with the location even though 
+    they do occur within it. This can occur where the recorder was not 
+    aware that the observation was made within a particular site. Where 
+    this occurs, using the location hierarchy for reporting can be very unreliable.</P>
+   </UL>
+  <P>
+   Generally, it is better to use the location name concept, except 
+   where the observations are genuinely associated with a known and well 
+   defined location (most typically where the same site is regularly 
+   being revisited (for example as part of a monitoring programme). 
+   However, location name can be used with a location from the location 
+   hierarchy to provide more information about the location of an 
+   observation, as illustrated above.</P>
+  <P>
+   In summary use:</P>
+  <P>
+   '<SPAN STYLE="font-weight : bold;">Location name</SPAN>' where the 
+   attribute is text describing the location where an observation was 
+   made, usually in addition to a spatial position (e.g. a grid 
+   reference). Typical values might be 'Field west of Monks Wood' or 'By 
+   entrance to reservoir on Kingwood Common'. This can be very useful 
+   when verifying the grid reference associated with the record or 
+   helping to identify the true grid reference if it has been 
+   incorrectly recorded or entered. In some cases the text may refer to 
+   a genuine recognised location (e.g. 'Monks Wood') but generally it is 
+   preferable to simply record the information as a 'location name' if 
+   in doubt.</P>
+  <P>
+   '<SPAN STYLE="font-weight : bold;">Location</SPAN>' where the 
+   observation is associated with a known, and previously defined, 
+   location for which you want to store the type of information that is 
+   held in the location hierarchy such as alternative names, a detailed 
+   description, designations, measurement data, etc. Typically this 
+   should be used when the same site is being visited repeatedly and 
+   there is a requirement to ensure that all the separate samples are 
+   formally 'tied together' in the Recorder database. Most typically 
+   this would be used for repeated monitoring data. The [Get] <IMG SRC="..\buttonimages\find.gif" WIDTH="22" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+   button located next to location prompts indicates that this field can 
+   be entered using one of the methods for <A HREF="Finding_Things.htm">finding
+    things</A> to get a location from the location hierarchy.<BR>
+   </P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Tip</SPAN>: Locations can be linked 
+   to administrative areas using the <A HREF="Location_Administrative_Areas_Tab.htm">Administrative
+    Areas tab</A> on the Geo Info tab in the location hierarchy. 
+   Observations not linked to locations can be linked to administrative 
+   areas using the <A HREF="Sample_Administrative_Areas_Tab.htm">Administrative
+    Areas tab</A> on the sample.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="MS Sans Serif,8,0,,"><PARAM
+    NAME="Item1" VALUE="Entering data using a Recording Card;Entering_Data_Using_a_Recording_Card.htm"><PARAM
+    NAME="Item2" VALUE="Sample General Tab;Sample_General_Tab.htm"><PARAM
+    NAME="Item3" VALUE="Species Card;Species_Card.htm"><PARAM
+    NAME="Item4" VALUE="Survey Events General Tab;Survey_Events_General_Tab.htm"></OBJECT>
+ </BODY>
+</HTML>

@@ -1,0 +1,243 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Analysis and Import</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Analysis and Import</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   Importing data from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   is done in two phases: an <SPAN STYLE="font-weight : bold;">Analysis</SPAN> 
+   phase and an <SPAN STYLE="font-weight : bold;">Import</SPAN> phase. 
+   When importing data from other sources you will be <A HREF="Import_Wizard.htm">guided
+    through the stages of the wizard </A>before reaching the <SPAN STYLE="font-weight : normal;">Analysis</SPAN> 
+   phase. The <SPAN STYLE="font-weight : bold;">Analysis</SPAN> phase involves:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Processing the import file</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Creating a temporary database</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Validating the data</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Checking for duplicates</P>
+   </UL>
+  <P>
+   Once this is done you will be presented with the following window:</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\screenshots\Import Analysis.gif" WIDTH="905" HEIGHT="660" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <H2>
+   Analysis</H2>
+  <P>
+   Data from the import file are loaded into a temporary database and 
+   validated. The validation process will detect errors in the imported 
+   data and list them on the Invalid Items tab. Most of the errors 
+   detected in this phase are <SPAN STYLE="font-weight : bold;">logical errors</SPAN>,
+    i.e. where items contravene the rules that <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>imposes about the relationships between things like <A HREF="Observations.htm">survey
+    events and samples</A>. For more information see <A HREF="Invalid_Items.htm">Invalid
+    Items</A>.</P>
+  <P>
+   If the data being imported has not come from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    the stage where you <A HREF="Import_Wizard_column_types_selection.htm">specify
+    the types of data in the different columns</A> will detect missing 
+   data and <SPAN STYLE="font-weight : bold;">syntax errors</SPAN>, i.e. 
+   invalid data fields that cannot be interpreted. A date like 
+   '31/02/2007' would come in this category (February does not have 31 
+   days) or a grid reference like 'SU123' (grid references must have an 
+   even number of digits).</P>
+  <P>
+   The Analysis phase also checks whether data items read from the 
+   import file already exist in the main database. It lists any that do 
+   on the <A HREF="Duplicate_Items.htm">Duplicate Items</A> tab.</P>
+  <P>
+   Progress is shown by a progress bar, and messages in the status bar 
+   at the bottom of the screen.</P>
+  <P>
+   At the end of the analysis phase, a window like the one above is 
+   produced indicating whether any <SPAN STYLE="font-weight : bold;">duplicate</SPAN> 
+   or <SPAN STYLE="font-weight : bold;">invalid</SPAN> items were found. 
+   If such items were encountered, you must decide how to deal with 
+   them. See&nbsp;<A HREF="Duplicate_Items.htm">Duplicate Items</A> for 
+   the options available for duplicates. See <A HREF="Invalid_Items.htm">Invalid
+    Items</A> for guidance, and for information on accessing and using 
+   the temporary database.</P>
+  <P>
+   Once you have made decisions about duplicate and invalid items, the 
+   [Do Import] button becomes active.</P>
+  <P>
+   Until you press the [Do Import] button, you have not actually made 
+   any changes to your database unless you have used the [<A HREF="Import_Wizard_matching_data.htm">Make
+    New Entry</A>] or [<A HREF="Import_Wizard_matching_data.htm">Make 
+   New Entries</A>] buttons when importing data that has not come from 
+   another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>. 
+   Hence, until that point, you can press [Cancel] to abort the import, 
+   in which case you will not have imported any data.</P>
+  <H2>
+   Import</H2>
+  <P>
+   Choose the [Do Import] button to actually copy the new data into your 
+   main database.</P>
+  <P>
+   A progress bar is shown in the status bar at the bottom of the 
+   screen. You cannot interrupt the process at this stage.</P>
+  <P>
+   At the end of the whole process, a completion message will appear 
+   indicating how many data items have been added and rejected. In this 
+   context, an 'item' is an entry into any table. For example, adding 
+   one species observation will involve adding entries in the 
+   Taxon_occurrence and Taxon_determination tables. New entries will 
+   also go into the Survey_event, Survey_event_recorder, Sample and 
+   Sample_recorder tables, when required. Measurement/abundance data 
+   will go into Taxon_occurrence_data, associated species will have 
+   their own entries in the Taxon_occurrence and Taxon_determination 
+   tables as well as entries in Taxon_occurrence_relation to link them 
+   together and references will have entries in Taxon_occurrence_sources 
+   to link the observation to the references, etc.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\Import Complete.gif" WIDTH="408" HEIGHT="297" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   The number of rejected items is a count of the number of items that 
+   haven't been added to the database, i.e. the number of items that 
+   failed validation checks and the number of items that rely on them 
+   and hence can't be imported. Any items that were identified as 
+   duplicates, will count as 'rejected' items if you decided to retain 
+   your original data, or if you selected '<SPAN STYLE="font-weight : bold;">All
+    Latest</SPAN>' and the date stamp of the imported item was earlier 
+   than the date stamp of the version in your database. Again, rejecting 
+   one observation may be counted as many 'items' because the 
+   information is actually stored across a number of underlying tables.</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Check here to view the details of 
+    rejected records</SPAN> - ticking this and then [OK] will display the 
+    contents of ImportRejects.txt.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Review the imported records</SPAN> 
+    - ticking this and then [OK] places filters on the windows to which 
+    imported data has been added so that the imported items can be viewed 
+    when things are expanded by clicking on the <IMG SRC="..\buttonimages\TreePlus.gif" ALIGN=BOTTOM VSPACE="0" HSPACE="0" BORDER="0" LOOP="0"> 
+    beside them. The imported items will be highlighted. To remove the 
+    filter click [Show All] to the bottom right of the window. Note that 
+    you will usually have to say [Yes] or [No] to a question about 
+    filtering screens other than the one you are currently viewing. If 
+    you say [No] and no other windows are open the system will respond 
+    saying 'No relevant records were found in the filter' so to see the 
+    imported data you need to select [Yes].</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;">Save the list of imported records 
+    as a filter file so that you can review them later</SPAN> - allows 
+    you to save the details of the imported items in a file that can be 
+    opened in Notepad, Word, Excel or similar software. It can also be 
+    used as a filter that can be loaded to enable you to view the 
+    imported items at a later stage as when you select <SPAN STYLE="font-weight : bold;">Review
+     the imported records </SPAN><SPAN STYLE="font-weight : normal;">- 
+    see Loading filters for details.</SPAN></P>
+   </UL>
+  <P>
+   <SPAN STYLE="font-weight : normal;">For details of how to load a 
+   saved filter and the format of a filter file, see <A HREF="Loading_filters.htm">Loading
+    filters.</A></SPAN></P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: selecting an item and 
+   clicking on the * on the numeric keypad on the keyboard will expand 
+   the item in full.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: It is important to 
+   realise that invalid items and items that rely on them are <SPAN STYLE="font-weight : bold;">not</SPAN> imported.</P>
+  <P>
+   For example, if a survey event fails a validation check (perhaps 
+   because its date is not between the start and end dates given for the 
+   survey to which it belongs), then any sample in that survey event 
+   cannot be imported nor can any taxon or biotope observations in these 
+   samples. One rejected survey event can, therefore, lead to many 
+   samples and observations being rejected.</P>
+  <H2>
+   Rejected Items</H2>
+  <P>
+   Information about items that were rejected during import, for reasons 
+   other than that they were duplicates of existing items, is written to 
+   a plain text file called <SPAN STYLE="font-weight : bold;">ImportRejects.txt</SPAN> 
+   located in the <SPAN STYLE="font-weight : bold;">\Recorder 6\User Files</SPAN> 
+   folder. This file contains the table name, the key of the rejected 
+   item and an error message from <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   for each rejected item. If the items were only rejected because they 
+   were duplicates then, although the message at the end of the import 
+   process includes them in the number of rejected items, this file will 
+   not contain any rejected items. Instead it will contain a statement like:</P>
+  <BLOCKQUOTE>
+   <P>
+    Recorder 6 did not reject any items in data imported at 15-17-47 on 12/04/2007.</P>
+   </BLOCKQUOTE>
+  <P>
+   Most rejected items will be related to an invalid item so if you 
+   correct the problems with <SPAN STYLE="font-weight : bold;">Invalid Items</SPAN> 
+   and try the import again you may find this file no longer contains 
+   any rejected items. Some rejected items can be safely ignored. For 
+   example, if a <SPAN STYLE="font-style : italic;font-weight : normal;">Recorder</SPAN> 
+   user exports data from a system containing Location A which is 
+   related to Location B and the export file contains observations for 
+   Location A but not Location B, then the export file may include 
+   Location A and the entry in the Location_relation table that relates 
+   it to Location B but not Location B itself. When this is imported 
+   into a Recorder system that does not contains Location B the entry in 
+   the Location_relation table will be rejected. Because this entry will 
+   refer to both locations, both of them need to be present before it 
+   can be added to the Location_relation table. The fact that it isn't 
+   imported will not materially affect the use of the imported 
+   observations in reports etc. but if you want Location B in your 
+   system you will need to import it independently.</P>
+  <P>
+   Rejected Items can be investigated using the temporary database - see <A HREF="Invalid_Items.htm">Invalid
+    Items</A> for information on accessing and using this database.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="MS Sans Serif,8,0,,"><PARAM
+    NAME="Item1" VALUE="Duplicate items;Duplicate_Items.htm"><PARAM
+    NAME="Item2" VALUE="Duplication resulting from import;Duplication_Resulting_From_Import.htm"><PARAM
+    NAME="Item3" VALUE="Import;Import.htm"><PARAM
+    NAME="Item4" VALUE="Import Wizard;Import_Wizard.htm"><PARAM
+    NAME="Item5" VALUE="Invalid items;Invalid_Items.htm"></OBJECT></P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;
+ </BODY>
+</HTML>

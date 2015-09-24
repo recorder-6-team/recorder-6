@@ -1,0 +1,257 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Location Boundaries Tab</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Location Boundaries page</H1>
+  <P>
+   Location boundaries are physical representations of the locations on 
+   the <A HREF="The_Map_Browser.htm">Map browser</A> as points, lines or 
+   polygons. Users can <A HREF="Importing_Polygons.htm">import</A> these 
+   boundaries or <A HREF="Drawing_Polygons.htm">draw</A> them directly 
+   onto an internal <SPAN STYLE="font-style : italic;">Recorder </SPAN>map,
+    and then <A HREF="Linking_Polygons_to_Locations.htm">associate</A> 
+   boundaries with locations.</P>
+  <P>
+   Once a location has been associated with a boundary, then when a user 
+   clicks on the boundary on a <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>map, the location name will display at the bottom of the <SPAN STYLE="font-weight : bold;">Map
+    browser</SPAN>. This allows a user to clearly identify the position 
+   of a location from an internal map, and provides a useful spatial 
+   validation when entering data.</P>
+  <P>
+   The location boundaries page holds information on the boundaries on 
+   an internal map associated with a location. It can also be used to 
+   hold external data, i.e. the <A HREF="javascript:BSSCPopup('../Glossary/GIS.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">GIS</A> 
+   file from which the polygon was imported. This page is used to add, 
+   edit or delete any number of boundaries for a location. Start by <A HREF="Editing_an_Item.htm">editing</A> 
+   the location for which you want to modify boundaries or external data.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Location Boundary.gif" WIDTH="379" HEIGHT="318" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   At the top of the screen is a box which shows the boundaries and 
+   external data associated with the location. It allows the user to 
+   add, edit or delete these entries.</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">From</SPAN></TD>
+      <TD WIDTH="81%" VALIGN=TOP>
+       <P>
+        Optional. Enter a valid <A HREF="Vague_Dates.htm">vague date</A> for 
+        when the boundary was first recognised or used.</TD>
+     </TR>
+     <TR>
+      <TD HEIGHT="15" WIDTH="19%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">To</SPAN></TD>
+      <TD HEIGHT="15" WIDTH="81%" VALIGN=TOP>
+       <P>
+        Optional. Enter a valid <A HREF="Vague_Dates.htm">vague date</A> for 
+        when the boundary was altered or no longer used (must be later than 
+        the From date).</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Version</SPAN></TD>
+      <TD WIDTH="81%" VALIGN=TOP>
+       <P CLASS="warning">
+        <SPAN STYLE="font-weight : bold;">Required</SPAN>.</P>
+       <P>
+        Enter an identifier for the boundary version. This value must be a number.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Map File</SPAN></TD>
+      <TD WIDTH="81%" VALIGN=TOP>
+       <P>
+        This displays the <SPAN STYLE="font-style : italic;">Recorder </SPAN>map
+         and polygon layer (in brackets) on which the polygon is stored when 
+        the entry represents a link between the location and a polygon on a 
+        map in <SPAN STYLE="font-style : italic;">Recorder</SPAN>.</P>
+       <P>
+        When the entry is used to store external data, e.g. the <A HREF="javascript:BSSCPopup('../Glossary/GIS.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">GIS</A> 
+        file from which the polygon was imported, it will contain a file name 
+        including the full file path.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="19%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Object ID</SPAN></TD>
+      <TD WIDTH="81%" VALIGN=TOP>
+       <P>
+        This displays the Object ID of the polygon to which the location is 
+        linked by this entry when it represents a link between the location 
+        and a polygon on a map in <SPAN STYLE="font-style : italic;">Recorder</SPAN>.</P>
+       <P>
+        When the entry is used to store external data, this contains the 
+        value of an attribute from the file selected in the Map File box. The 
+        type of attribute will be displayed above the Object ID.</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <H3>
+   <SPAN STYLE="font-size : 12.0pt;">To add a boundary:</SPAN></H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the [Add] <IMG SRC="..\buttonimages\plus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button on the <SPAN STYLE="font-weight : bold;">Geo Info - Boundaries</SPAN> tab.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the [Get] <IMG SRC="..\buttonimages\find.gif" WIDTH="22" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button beside the Object ID box to open the <A HREF="The_Map_Browser.htm">Map
+     browser</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select an existing boundary, or <A HREF="Drawing_Polygons.htm">draw</A> 
+    a new boundary on an internal map and select it.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the [Return data] <IMG SRC="..\buttonimages\return.gif" WIDTH="16" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button in the toolbar to <A HREF="Return_Data.htm">return</A> the 
+    required information to the Map File and Object ID boxes.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Enter the remaining values for the boundary.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the <IMG SRC="..\buttonimages\editaccept.gif" WIDTH="24" HEIGHT="23" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button to save your changes.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the <IMG SRC="..\buttonimages\editreject.gif" WIDTH="24" HEIGHT="23" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button to abandon your changes.</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: To import boundaries 
+   see <A HREF="Importing_Polygons.htm">Importing Polygons</A><SPAN STYLE="font-weight : normal;">.</SPAN></P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: Boundaries can also be 
+   added <SPAN STYLE="font-weight : normal;">from an internal </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder</SPAN><SPAN STYLE="font-weight : normal;"> 
+   map using the <A HREF="Linking_Polygons_to_Locations.htm">Associate Boundary</A> 
+   tool. When this option is used an entry is added to the Boundaries 
+   tab automatically.</SPAN></P>
+  <H3>
+   <SPAN STYLE="font-size : 12.0pt;">To store external data:</SPAN></H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the [Add] <IMG SRC="..\buttonimages\plus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button on the <SPAN STYLE="font-weight : bold;">Geo Info - Boundaries</SPAN> tab.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the <IMG SRC="..\buttonimages\ellipses.gif" WIDTH="20" HEIGHT="20" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button beside the Map File box to open a standard <SPAN STYLE="font-weight : bold;">Windows
+     </SPAN><SPAN STYLE="font-weight : normal;">file locator </SPAN>dialog
+     and locate the external file that contains a boundary for the 
+    selected location.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Use the drop down arrow beside the Boundary Attribute Field in the 
+    following dialog to select the attribute you want to store in the 
+    Object ID field:</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\Boundary Field Select.gif" WIDTH="299" HEIGHT="100" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click [OK].</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Use the drop down arrow beside the Object ID box to select a value 
+    for the specified attribute.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Enter the remaining values for the boundary.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the <IMG SRC="..\buttonimages\editaccept.gif" WIDTH="24" HEIGHT="23" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button to save your changes.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the <IMG SRC="..\buttonimages\editreject.gif" WIDTH="24" HEIGHT="23" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button to abandon your changes.</P>
+   </UL>
+  <H3>
+   To delete a boundary or external data:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Highlight the item you want to delete.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the [Delete] <IMG SRC="..\buttonimages\minus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> button.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    You will be prompted to confirm that you really want to remove the 
+    link between the location and the boundary.</P>
+   </UL>
+  <H3>
+   <SPAN STYLE="font-size : 12.0pt;">To edit a boundary:</SPAN></H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    There is no direct method of editing a boundary &#150; the shape of 
+    the boundary is fixed once it has been drawn or imported on an 
+    internal map. The best way to edit a boundary is to <A HREF="Deleting_Polygons.htm">delete</A> 
+    it then redraw it (or re-import it) as a new version of the boundary.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The [Edit] <IMG SRC="..\buttonimages\edit2.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button is used to change some of the information about a boundary, 
+    not the actual boundary itself, e.g. From date, To date and Version.</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">TIP:</SPAN> There are many sources 
+   for boundary data that can be used in <SPAN STYLE="font-style : italic;">Recorder</SPAN>.
+    See <A HREF="Importing_Polygons.htm">Importing polygons</A> for a 
+   couple of options.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Background vs Polygons;Background_vs_Polygons.htm"><PARAM
+    NAME="Item2" VALUE="Deleting Polygons;Deleting_Polygons.htm"><PARAM
+    NAME="Item3" VALUE="Drawing Polygons;Drawing_Polygons.htm"><PARAM
+    NAME="Item4" VALUE="Getting Grid References or Locations from Maps;Getting_Grid_References_or_Locations_from_Maps.htm"><PARAM
+    NAME="Item5" VALUE="Importing Polygons;Importing_Polygons.htm"><PARAM
+    NAME="Item6" VALUE="Linking Polygons to Locations;Linking_Polygons_to_Locations.htm"><PARAM
+    NAME="Item7" VALUE="Location Overview;Location_Overview.htm"></OBJECT>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

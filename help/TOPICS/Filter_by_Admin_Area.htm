@@ -1,0 +1,83 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Report Wizard Filter by Admin Area</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Filter by Admin Area</H1>
+  <P>
+   You will see this screen if you selected the option to 'Restrict 
+   report to one or more admin areas' when selecting the style of 
+   report. This screen allows you to select particular administrative areas.</P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Wizard Admin Areas.gif" WIDTH="422" HEIGHT="367" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Choose the type of administrative area (e.g. Vice-county, English 
+    Civil Parish) from the list in the box at the top. The 'Available' 
+    list will then show the administrative areas of that type.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Move the names of administrative areas whose associated observations 
+    you want to see in the report into the 'Selected' list. See <A HREF="Report_Wizard_Add_Items.htm">Add</A> 
+    and <A HREF="Report_Wizard_Remove_Items.htm">Remove</A> items from 
+    selected list.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    You can add one or more names to the 'Selected' list, and then select 
+    a different type. This will result in a different 'Available' list 
+    from which you can make additional selections. This allows you to 
+    build up a list of areas of different types (e.g. 
+    Vice-county,1974-1996 County and Unitary).</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">TIP:</SPAN> If a name is moved into 
+   the 'Selected' list, all of its children in the hierarchy will 
+   automatically be added as well. For example, if you add a 1974-1996 
+   English County to the selected list, its districts will also be 
+   added. If you don&#146;t want to include the districts for some 
+   reason, remove them from the 'Selected' list in the normal way. See <A HREF="Report_Wizard_Remove_Items.htm">Remove
+    items.</A></P>
+  <P CLASS="warning">
+   An observation is linked to an Administrative Area via a Survey event 
+   or Sample which refers to a Location which has this information 
+   listed (<SPAN STYLE="font-weight : bold;">Locations - Geo Info - 
+   Administrative Areas</SPAN>). Therefore, a report which uses this 
+   feature will only include records with such a linkage.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Admin Area Dictionary Browser;Admin_Area_Dictionary_Browser.htm"><PARAM
+    NAME="Item2" VALUE="Report Wizard Select Report Style;Report_Wizard_Select_Report_Style.htm"></OBJECT>
+ </BODY>
+</HTML>

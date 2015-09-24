@@ -1,0 +1,155 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Linking polygons to locations</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Linking polygons to locations</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   Polygons and lines can be associated with <SPAN STYLE="font-weight : bold;">Locations
+    </SPAN>in the location hierarchy or <SPAN STYLE="font-weight : bold;">Administrative
+    Areas </SPAN><SPAN STYLE="font-weight : normal;">in the Admin Area 
+   Dictionary. </SPAN>The entry in the location hierarchy provides 
+   information about the polygon, such as the name of the site and its 
+   designation status. When a polygon has be associated with a <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+   the <A HREF="Location_Boundaries_Tab.htm">Boundaries</A> tab under 
+   the <SPAN STYLE="font-weight : bold;">Geo Info</SPAN> tab will 
+   provides information about the polygon, such as the map and polygon 
+   layer it is on.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: The instructions below 
+   are for associating one polygon with one location. When <A HREF="Importing_Polygons.htm">importing
+    polygons</A> multiple polygons can be automatically linked to 
+   locations at the same time. You can match polygons to locations 
+   manually, one by one, or by matching a polygon attribute to <SPAN STYLE="font-weight : normal;">Location
+    Keys, Location Names or Field Codes for locations in the location hierarchy</SPAN>.</P>
+  <H3>
+   To associate a line or polygon with a location:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the <A HREF="Map_Browser_Pointer.htm">pointer tool</A> so that 
+    the map-cursor is <IMG SRC="..\CursorImages\PointerCursor.gif" WIDTH="10" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0">.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click on the polygon or line you wish to associate. It will change 
+    colour (from the unselected colour to its selected colour for that 
+    polygon layer) to indicate that it is selected.</P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     Select <SPAN STYLE="font-weight : bold;">Map &#150; Associate Boundary</SPAN> 
+     from the Main menu, or<BR>
+     <LI CLASS="mvd-P">Click the <IMG SRC="..\ButtonImages\AssocPolygon.gif" WIDTH="17" HEIGHT="17" VSPACE="0" HSPACE="0" BORDER="0"> 
+     button on the active toolbar, or<BR>
+     <LI CLASS="mvd-P">Right-click and select <SPAN STYLE="font-weight : bold;">Associate
+      Boundary </SPAN>from the resulting menu.</P>
+    </UL>
+   <LI CLASS="mvd-P">
+   <P>
+    If the line or polygon is already associated with a location, the <SPAN STYLE="font-weight : bold;">Location</SPAN><SPAN STYLE="font-weight : normal;"> 
+    or </SPAN><SPAN STYLE="font-weight : bold;">Admin Area Dictionary </SPAN>window
+     will open with the details of that particular location displayed.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    If the line or polygon is not yet associated with a location, you 
+    will be see a dialog:</P>
+   </UL>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <P>
+     <IMG SRC="..\ScreenShots\Attach_polygon_to_Location.gif" WIDTH="304" HEIGHT="244" VSPACE="0" HSPACE="0" BORDER="0"></P>
+    </BLOCKQUOTE>
+   </BLOCKQUOTE>
+  <UL>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-weight : bold;">Create a new location</SPAN>. 
+     Select this option and choose [OK]. The <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+     window will open in Edit mode. The site centroid grid reference is 
+     already filled in, and ready for the location name to be typed. Enter 
+     at least the required information for this location, and save the 
+     record to complete the link.</P>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-weight : bold;">Link the boundary to an existing location</SPAN>.
+      Select this option and choose [OK]. The <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+     window will open with the <SPAN STYLE="font-weight : bold;">Find location</SPAN> 
+     dialog displayed to locate the particular site. Select a location. It 
+     will be shown in Edit mode, with the polygon ID filled in 
+     appropriately. Save the record to complete the link.</P>
+    <LI CLASS="mvd-P">
+    <P>
+     <SPAN STYLE="font-weight : bold;">Link the boundary to an Admin Area</SPAN>.
+      If this option is selected, the <SPAN STYLE="font-weight : bold;">Admin
+      Area Type</SPAN> box will become active. You can select the type of 
+     Admin Area (e.g. county, vice-county, National Park, etc.) with which 
+     you wish to associate it. Choose [OK] and the <SPAN STYLE="font-weight : bold;">Link
+      Boundary to Admin Area</SPAN> dialog will open:</P>
+    </UL>
+   </UL>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <BLOCKQUOTE>
+     <P>
+      <IMG SRC="..\ScreenShots\Link boundary to admin area.gif" WIDTH="302" HEIGHT="319" VSPACE="0" HSPACE="0" BORDER="0"></P>
+     <P>
+      Type the name (or parts of it) of the Admin Area you want into the <SPAN STYLE="font-weight : bold;">Search
+       Text</SPAN> box and choose the required Admin Area from the list of <SPAN STYLE="font-weight : bold;">Matches</SPAN>.
+       Press [OK] to save the link. Pressing [Cancel] will abort the 
+      process - no link will be made. This dialog works the same as the one 
+      to <A HREF="Finding_Admin_Areas.htm">find Admin Areas</A>.</P>
+     </BLOCKQUOTE>
+    </BLOCKQUOTE>
+   </BLOCKQUOTE>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    You can also associate a location with a polygon starting from the <A HREF="Location_Overview.htm">Location
+     window.</A></P>
+   </UL>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Background vs Polygons;Background_vs_Polygons.htm"><PARAM
+    NAME="Item2" VALUE="Deleting Polygons;Deleting_Polygons.htm"><PARAM
+    NAME="Item3" VALUE="Drawing Polygons;Drawing_Polygons.htm"><PARAM
+    NAME="Item4" VALUE="Getting Grid References or Locations from Maps;Getting_Grid_References_or_Locations_from_Maps.htm"><PARAM
+    NAME="Item5" VALUE="Importing Polygons;Importing_Polygons.htm"><PARAM
+    NAME="Item6" VALUE="Location Boundaries Tab;Location_Boundaries_Tab.htm"><PARAM
+    NAME="Item7" VALUE="Maps overview;Maps_Overview.htm"></OBJECT>
+ </BODY>
+</HTML>
