@@ -15,7 +15,7 @@ unit RecorderAddInInstaller_TLB;
 // File generated on 15/02/2012 09:33:02 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\Localsource\Recorder\RecorderAddInInstaller\trunk\RecorderAddInInstaller.tlb (1)
+// Type Lib: C:\Localsource\Recorder\RecorderAddInInstaller\RecorderAddInInstaller.tlb (1)
 // LIBID: {88B2BD02-D46E-445B-99F1-0C0DD2F7A9F5}
 // LCID: 0
 // Helpfile: 

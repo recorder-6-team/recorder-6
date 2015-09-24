@@ -12,8 +12,8 @@ inherited frmSampleDetails: TfrmSampleDetails
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 385
-    Height = 361
+    Width = 377
+    Height = 357
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0

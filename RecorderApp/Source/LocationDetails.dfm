@@ -931,7 +931,7 @@ object frmLocationDetails: TfrmLocationDetails
                   Style = csDropDownList
                   Anchors = [akLeft, akTop, akRight]
                   Enabled = False
-                  ItemHeight = 13
+                  ItemHeight = 0
                   TabOrder = 7
                   OnChange = cmbMapFileChange
                 end
@@ -952,7 +952,7 @@ object frmLocationDetails: TfrmLocationDetails
                   Height = 21
                   Style = csDropDownList
                   Anchors = [akLeft, akRight, akBottom]
-                  ItemHeight = 13
+                  ItemHeight = 0
                   TabOrder = 9
                 end
               end

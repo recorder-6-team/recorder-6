@@ -10,10 +10,10 @@ inherited frmIndOrg: TfrmIndOrg
   PixelsPerInch = 96
   TextHeight = 13
   object splIndOrg: TSplitter [0]
-    Left = 273
+    Left = 265
     Top = 0
     Width = 10
-    Height = 375
+    Height = 363
     Align = alRight
     MinSize = 100
     OnCanResize = splIndOrgCanResize
@@ -22,14 +22,14 @@ inherited frmIndOrg: TfrmIndOrg
   end
   object pnlButtons: TPanel [1]
     Left = 0
-    Top = 375
-    Width = 706
+    Top = 363
+    Width = 698
     Height = 34
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     object pnlButtons2: TPanel
-      Left = 523
+      Left = 515
       Top = 0
       Width = 183
       Height = 34
@@ -105,15 +105,15 @@ inherited frmIndOrg: TfrmIndOrg
   object pnlIndOrg: TPanel [2]
     Left = 0
     Top = 0
-    Width = 273
-    Height = 375
+    Width = 265
+    Height = 363
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object pnlLabel: TPanel
       Left = 0
       Top = 0
-      Width = 273
+      Width = 265
       Height = 25
       Align = alTop
       BevelOuter = bvNone
@@ -237,8 +237,8 @@ inherited frmIndOrg: TfrmIndOrg
       Tag = 1
       Left = 0
       Top = 25
-      Width = 273
-      Height = 350
+      Width = 265
+      Height = 338
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 1
@@ -247,8 +247,8 @@ inherited frmIndOrg: TfrmIndOrg
       object tvOrganisations: TKeyboardRapidTree
         Left = 1
         Top = 1
-        Width = 271
-        Height = 348
+        Width = 263
+        Height = 336
         SmoothExpandCollapse = False
         FitColumnToClientWidth = True
         FitToHeight = False
@@ -286,8 +286,8 @@ inherited frmIndOrg: TfrmIndOrg
       object tvIndividuals: TKeyboardRapidTree
         Left = 1
         Top = 1
-        Width = 271
-        Height = 348
+        Width = 263
+        Height = 336
         SmoothExpandCollapse = False
         FitColumnToClientWidth = True
         FitToHeight = False
@@ -326,10 +326,10 @@ inherited frmIndOrg: TfrmIndOrg
     end
   end
   object pnlIndOrgDetails: TPanel [3]
-    Left = 283
+    Left = 275
     Top = 0
     Width = 423
-    Height = 375
+    Height = 363
     Align = alRight
     BevelOuter = bvLowered
     Constraints.MinWidth = 423

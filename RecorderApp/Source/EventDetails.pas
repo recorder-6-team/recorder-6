@@ -16,7 +16,7 @@
 //
 //==============================================================================
 
-{$I '..\..\Third Party\Dorset Software Services\DssVcl32\trunk\DelphiVersions.Inc'}
+{$I '..\..\Third Party\Dorset Software Services\DssVcl32\DelphiVersions.Inc'}
 
 { Event Details unit - Recorder 2000
      Contains details page for Survey Events. }

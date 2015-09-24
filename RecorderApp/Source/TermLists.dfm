@@ -11,10 +11,10 @@ inherited frmTermLists: TfrmTermLists
   PixelsPerInch = 96
   TextHeight = 13
   object TermListSplitter: TSplitter [0]
-    Left = 139
+    Left = 131
     Top = 29
     Width = 10
-    Height = 365
+    Height = 353
     Align = alRight
     Color = clBtnFace
     MinSize = 1
@@ -26,8 +26,8 @@ inherited frmTermLists: TfrmTermLists
   end
   object pnlButtons: TPanel [1]
     Left = 0
-    Top = 394
-    Width = 532
+    Top = 382
+    Width = 524
     Height = 34
     Align = alBottom
     BevelOuter = bvNone
@@ -72,7 +72,7 @@ inherited frmTermLists: TfrmTermLists
   object pnlLabel: TPanel [2]
     Left = 0
     Top = 0
-    Width = 532
+    Width = 524
     Height = 29
     Align = alTop
     BevelOuter = bvNone
@@ -96,10 +96,10 @@ inherited frmTermLists: TfrmTermLists
     end
   end
   object scbTermDetails: TScrollBox [3]
-    Left = 149
+    Left = 141
     Top = 29
     Width = 383
-    Height = 365
+    Height = 353
     Align = alRight
     Constraints.MinHeight = 337
     Constraints.MinWidth = 380
@@ -389,8 +389,8 @@ inherited frmTermLists: TfrmTermLists
   object tvTermList: TTreeView [4]
     Left = 0
     Top = 29
-    Width = 139
-    Height = 365
+    Width = 131
+    Height = 353
     Align = alClient
     HideSelection = False
     Indent = 35

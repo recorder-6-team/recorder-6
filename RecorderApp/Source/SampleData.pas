@@ -28,7 +28,7 @@
 //
 //==============================================================================
 
-{$I '..\..\Third Party\Dorset Software Services\DssVcl32\trunk\DelphiVersions.Inc'}
+{$I '..\..\Third Party\Dorset Software Services\DssVcl32\DelphiVersions.Inc'}
 
 unit SampleData;
 

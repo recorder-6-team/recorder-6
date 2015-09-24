@@ -12,10 +12,10 @@ inherited frmReferences: TfrmReferences
   PixelsPerInch = 96
   TextHeight = 13
   object ReferenceSplitter: TSplitter [0]
-    Left = 255
+    Left = 247
     Top = 0
     Width = 10
-    Height = 377
+    Height = 365
     Align = alRight
     MinSize = 100
     OnCanResize = ReferenceSplitterCanResize
@@ -24,14 +24,14 @@ inherited frmReferences: TfrmReferences
   end
   object pnlButtons: TPanel [1]
     Left = 0
-    Top = 377
-    Width = 618
+    Top = 365
+    Width = 610
     Height = 34
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     object pnlButtons2: TPanel
-      Left = 435
+      Left = 427
       Top = 0
       Width = 183
       Height = 34
@@ -116,8 +116,8 @@ inherited frmReferences: TfrmReferences
   object pnlReferences: TPanel [2]
     Left = 0
     Top = 0
-    Width = 255
-    Height = 377
+    Width = 247
+    Height = 365
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -125,8 +125,8 @@ inherited frmReferences: TfrmReferences
       Tag = 1
       Left = 0
       Top = 17
-      Width = 255
-      Height = 360
+      Width = 247
+      Height = 348
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 1
@@ -135,8 +135,8 @@ inherited frmReferences: TfrmReferences
       object dbgReferences: TDBJNCCGrid
         Left = 1
         Top = 1
-        Width = 253
-        Height = 358
+        Width = 245
+        Height = 346
         Align = alClient
         DataSource = dsReferences
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
@@ -155,7 +155,7 @@ inherited frmReferences: TfrmReferences
     object pnlLabel: TPanel
       Left = 0
       Top = 0
-      Width = 255
+      Width = 247
       Height = 17
       Align = alTop
       BevelOuter = bvNone
@@ -170,10 +170,10 @@ inherited frmReferences: TfrmReferences
     end
   end
   object pnlReferenceDetails: TPanel [3]
-    Left = 265
+    Left = 257
     Top = 0
     Width = 353
-    Height = 377
+    Height = 365
     Align = alRight
     BevelOuter = bvLowered
     Constraints.MinWidth = 353

@@ -15,7 +15,7 @@ unit Recorder2000_TLB;
 // File generated on 11/11/2011 13:02:42 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\Localsource\Recorder\RecorderApp\trunk\Recorder2000.tlb (1)
+// Type Lib: C:\Localsource\Recorder\RecorderApp\Recorder2000.tlb (1)
 // LIBID: {801EBE82-91CE-11D3-B564-005004B0B698}
 // LCID: 0
 // Helpfile: 
