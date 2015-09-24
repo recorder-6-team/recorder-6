@@ -1,0 +1,15 @@
+Delete Survey Addin for Recorder 6
+==================================
+
+11/08/2009 - modified to handle SURVEY tags
+-------------------------------------------
+If a SURVEY was tagged, referential integrity constraints between SURVEY and SURVEY_TAG
+prevented the SURBVEY from being deleted.
+
+If the SURVEY is just to be deleted, delete any entries under that SURVEY_KEY from SURVEY_TAG
+If the SURVEY is being emptied, change SURVEY_KEYs in SURVEY_TAG to "DeleteSurveyTemp",
+delete the SURVEY and then change them back to the original key
+
+(This is the same action that is used for SURVEY_KEYs in EXPORT_FILTER_SURVEY, so the
+function has been generalied to handle both tables. This will make it easier to maintain
+in future if any further tables containing SURVEY_KEY are added.)
