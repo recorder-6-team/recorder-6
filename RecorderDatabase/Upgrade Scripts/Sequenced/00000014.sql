@@ -1,0 +1,2 @@
+UPDATE Usable_Table SET Additional_Link=NULL
+WHERE Usable_Table_Key IN ('ABABABAB00000027', 'ABABABAB00000036')

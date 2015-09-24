@@ -1,0 +1,46 @@
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[FK_REPORT_ATTRIBUTE_REPORT_JOIN]') and OBJECTPROPERTY(id, N'IsForeignKey') = 1)
+ALTER TABLE [dbo].[REPORT_ATTRIBUTE] DROP CONSTRAINT FK_REPORT_ATTRIBUTE_REPORT_JOIN
+GO
+
+if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[REPORT_JOIN]') and OBJECTPROPERTY(id, N'IsUserTable') = 1)
+drop table [dbo].[REPORT_JOIN]
+GO
+
+CREATE TABLE [dbo].[REPORT_JOIN] (
+	[REPORT_JOIN_KEY] [char] (16) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL ,
+	[JOIN_SQL] [text] COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL ,
+	[ENTERED_BY] [char] (16) COLLATE SQL_Latin1_General_CP1_CI_AS NULL ,
+	[ENTRY_DATE] [smalldatetime] NULL ,
+	[CHANGED_BY] [char] (16) COLLATE SQL_Latin1_General_CP1_CI_AS NULL ,
+	[CHANGED_DATE] [smalldatetime] NULL ,
+	[SYSTEM_SUPPLIED_DATA] [bit] NULL 
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[REPORT_JOIN] WITH NOCHECK ADD 
+	CONSTRAINT [PK_JOIN] PRIMARY KEY  CLUSTERED 
+	(
+		[REPORT_JOIN_KEY]
+	)  ON [PRIMARY] 
+GO
+
+ALTER TABLE [dbo].[REPORT_JOIN] ADD 
+	CONSTRAINT [DF_REPORT_JOIN_ENTRY_DATE] DEFAULT (getdate()) FOR [ENTRY_DATE],
+	CONSTRAINT [DF_REPORT_JOIN_SYSTEM_SUPPLIED_DATA] DEFAULT (0) FOR [SYSTEM_SUPPLIED_DATA]
+GO
+
+GRANT  SELECT  ON [dbo].[REPORT_JOIN]  TO [R2k_ReadOnly]
+GO
+
+GRANT  SELECT  ON [dbo].[REPORT_JOIN]  TO [R2k_RecordCardsOnly]
+GO
+
+GRANT  SELECT  ON [dbo].[REPORT_JOIN]  TO [R2k_AddOnly]
+GO
+
+GRANT  SELECT  ON [dbo].[REPORT_JOIN]  TO [R2k_FullEdit]
+GO
+
+GRANT  SELECT  ON [dbo].[REPORT_JOIN]  TO [R2k_Administrator]
+GO
+

@@ -1,0 +1,3 @@
+ALTER TABLE Contact_Number
+	ALTER COLUMN Number VARCHAR(50)
+GO

@@ -1,0 +1,1 @@
+GRANT EXECUTE ON usp_LastSurveyEvent_ForLocation_Select TO PUBLIC

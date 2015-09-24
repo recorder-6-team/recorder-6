@@ -1,0 +1,1 @@
+UPDATE Setting SET Data = '6.2.4.0' WHERE Name = 'Version'

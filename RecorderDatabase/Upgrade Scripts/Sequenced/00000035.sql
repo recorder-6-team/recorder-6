@@ -1,0 +1,1 @@
+GRANT UPDATE ON Biotope_List_Item TO R2k_AddOnly

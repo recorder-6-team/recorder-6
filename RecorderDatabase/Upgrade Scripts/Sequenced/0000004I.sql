@@ -1,0 +1,1 @@
+GRANT UPDATE ON Special_Xml_Element TO R2K_FullEdit
