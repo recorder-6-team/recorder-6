@@ -1,0 +1,77 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>MapServer</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   <SPAN STYLE="font-style : italic;">MapServer</SPAN></H1>
+  <P>
+   The mapping facilities in <SPAN STYLE="font-style : italic;">Recorder 6</SPAN> 
+   are provided by a third party component library called <SPAN STYLE="font-style : italic;">MapServer
+    5 Turbo</SPAN>, available from Graticule (http://www.graticule.com). 
+   This component is used as the majority of alternative components 
+   require a license fee for each client installation, whereas <SPAN STYLE="font-style : italic;">MapServer
+    5 Turbo</SPAN> incurs a single fee for the developers only. <SPAN STYLE="font-style : italic;">MapServer</SPAN> 
+   can import maps in a number of common <A HREF="javascript:BSSCPopup('../Glossary/Vector.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">vector</A> 
+   and <A HREF="javascript:BSSCPopup('../Glossary/Raster.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">raster</A> <A HREF="Map_formats.htm">formats</A> 
+   used by various Geographical Information Systems (<A HREF="javascript:BSSCPopup('../Glossary/GIS.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">GIS</A>)
+    and drawing packages.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">NOTE: </SPAN>Known problems with <SPAN STYLE="font-style : italic;font-weight : normal;">MapServer</SPAN>:</P>
+  <UL>
+   <LI CLASS="mvd-P-warning">
+   <P CLASS="warning">
+    <SPAN STYLE="font-style : italic;">MapServer</SPAN> supports both 
+    bitmap and TIFF file formats in which raster format maps are usually 
+    supplied (e.g. OS map tiles are available in both these formats). 
+    However, both of these formats have optional variants which allow 
+    compression of the information they contain so that it takes less 
+    disk space and less resources when transmitted electronically. <SPAN STYLE="font-style : italic;">MapServer</SPAN><SPAN STYLE="font-style : normal;"> 
+    does not accept compressed bitmaps. Therefore, you should choose 
+    Uncompressed TIFF files and bitmaps that are not run-length-encoded.</SPAN></P>
+   <LI CLASS="mvd-P-warning">
+   <P CLASS="warning">
+    <SPAN STYLE="font-style : normal;">If you find you have a compressed 
+    file (</SPAN><SPAN STYLE="font-style : italic;">MapServer</SPAN><SPAN STYLE="font-style : normal;"> 
+    gives an error when you try to load it), then open it using a paint 
+    packages and save it to a new file using an uncompressed format.</SPAN></P>
+   </UL>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Background vs Polygons;Background_vs_Polygons.htm"><PARAM
+    NAME="Item2" VALUE="Map file formats;Map_formats.htm"><PARAM
+    NAME="Item3" VALUE="Maps Overview;Maps_Overview.htm"><PARAM
+    NAME="Item4" VALUE="The Map Browser;The_Map_Browser.htm"><PARAM
+    NAME="Item5" VALUE="Vector and Raster maps;Vector_Raster_maps.htm"></OBJECT>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

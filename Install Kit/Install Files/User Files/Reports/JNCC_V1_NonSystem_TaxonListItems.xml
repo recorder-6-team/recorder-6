@@ -1,0 +1,25 @@
+<?xml version='1.0' ?>
+
+
+<!-- Non-system supplied species names
+     XML Report by Steve Wilkinson
+     Version 5 - 28 November 2014
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="Non-system species names" menupath="System Supplied\Record validation"  
+description="Lists all species names which have records against them which are not system supplied (ie. the names have been added to the current database by the system user rather than by the species dictionary upgrades) and also counts the number of records of each. The query is designed for use when sharing records (e.g. export to the NBN Gateway) to see what will not be exported to other systems." >
+
+<SQL>
+
+<Where keytype="Default">
+select  tv.taxon_version_key, t.item_name, t.authority, count(toc.taxon_occurrence_key) as number_records from  taxon_occurrence toc left join taxon_determination td on toc.taxon_occurrence_key = td.taxon_occurrence_key left join taxon_list_item tli on td.taxon_list_item_key = tli.taxon_list_item_key LEFT join taxon_version tv on tli.taxon_version_key = tv.taxon_version_key left join taxon t on tv.taxon_key = t.taxon_key WHERE td.preferred = 1 and tli.system_supplied_data = 0 group by tv.taxon_version_key, t.item_name, t.authority
+</Where>
+
+
+</SQL>
+
+</CustomReport>

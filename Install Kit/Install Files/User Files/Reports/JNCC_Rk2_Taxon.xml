@@ -1,0 +1,199 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC  Record Count - Centuries for Taxa 
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 November 2014 
+
+   
+     QUICK REPORT ONLY - From Taxon Dictionary
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Unchedked - By parameter
+     Invalid = By parameter	
+   
+ --> 
+
+
+<CustomReport  title="Rk2 Records for each Century" menupath="System Supplied\Taxon restricted reports\Rucksack Reports"  
+description="Gives total records for each Century. Always excludes zero abundance and 'failed/pending validation' records. 
+" >
+
+
+<SQL>
+<Where keytype="Default">
+
+CREATE TABLE #Taxa (TLI_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, RecTLI_Key  char(16) COLLATE SQL_Latin1_General_CP1_CI_AS)
+INSERT INTO #Taxa (TLI_KEY,RecTLI_Key)
+SELECT DISTINCT ITN2.Taxon_List_Item_Key, 
+ITN.Recommended_Taxon_List_Item_Key
+FROM 
+Index_Taxon_Name ITN
+INNER JOIN Index_Taxon_Name ITN2 ON ITN.Recommended_Taxon_List_Item_Key =ITN2.Recommended_Taxon_List_Item_Key
+WHERE
+ 
+<Condition field= "ITN.Taxon_List_Item_key" entrycount ="-1" operator="equal" type="Taxon"  name="Select Rucksack" userucksack = "yes" />
+AND ITN2.System_Supplied_Data = 1
+AND ITN.System_Supplied_Data = 1
+
+
+
+CREATE TABLE #Main (Pref_TLI_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, century  char(2) COLLATE SQL_Latin1_General_CP1_CI_AS, dCount   int)
+
+
+
+INSERT INTO #Main (pref_TLI_key,century,dcount)
+SELECT  #Taxa.RecTLI_Key,
+dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'C') as century, count(TOCC.taxon_occurrence_key ) as dCount
+FROM Taxon_occurrence TOCC 
+INNER JOIN SAMPLE S ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+INNER JOIN Taxon_Determination TDET ON TDET.
+Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa ON TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+WHERE
+USR.Name_key IS NULL 
+AND TDET.PREFERRED = 1 
+AND Tocc.zero_abundance = 0
+AND Tocc.Verified &#60;&#62; 1
+AND S.vague_Date_Type not in('U','Y-','C-','S') 
+GROUP BY 
+#Taxa.RecTLI_Key,dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'C')
+  
+
+SELECT PREF_TLI_KEY, 
+
+SUM(CASE WHEN CENTURY&#60;17 THEN QTY END) AS [BEFORE 1700],
+SUM(CASE WHEN CENTURY=17 THEN QTY END) AS [1700-1799],
+SUM(CASE WHEN CENTURY=18 THEN QTY END) AS [1800-1899],
+SUM(CASE WHEN CENTURY=19 THEN QTY END) AS [1900-1999],
+SUM(CASE WHEN CENTURY=20 THEN QTY END) AS [2000-2099]
+
+
+INTO #MAIN2
+FROM (SELECT pref_tli_key, Century, dcount as qty From
+#main) as D
+
+Group by pref_tli_key
+
+
+
+SELECT ITN2.preferred_name, ITN2.Authority, ITN2.Common_name, TG.Taxon_Group_name, 
+M.*
+FROM #Main2 M
+INNER JOIN index_taxon_name ITN ON ITN.Taxon_List_item_key = m.pref_TLI_Key
+INNER JOIN index_taxon_name ITN2 ON ITN2.taxon_list_item_key = ITN.Recommended_taxon_list_Item_Key
+INNER JOIN taxon_list_item TLI ON TLI.taxon_list_item_key = ITN.taxon_List_item_key
+INNER JOIN taxon_version TV ON TV.Taxon_Version_key = TLI.Taxon_Version_Key
+INNER JOIN taxon_group TG ON TV.output_group_key = TG.Taxon_Group_Key
+WHERE
+ITN.System_Supplied_Data = 1
+AND
+ITN2.System_Supplied_Data = 1
+  
+
+
+
+DROP Table #Taxa
+DROP TABLE #Main
+
+</Where>
+
+<Where keytype="Taxon">
+CREATE TABLE #Taxa (TLI_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, RecTLI_Key  char(16) COLLATE SQL_Latin1_General_CP1_CI_AS)
+INSERT INTO #Taxa (TLI_KEY,RecTLI_Key)
+SELECT DISTINCT ITN2.Taxon_List_Item_Key, 
+ITN.Recommended_Taxon_List_Item_Key
+FROM 
+Index_Taxon_Name ITN
+INNER JOIN Index_Taxon_Name ITN2 ON ITN.Recommended_Taxon_List_Item_Key =ITN2.Recommended_Taxon_List_Item_Key
+WHERE
+ 
+ITN.Taxon_List_Item_Key = '%s'
+
+
+CREATE TABLE #Main (Pref_TLI_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, century  char(2) COLLATE SQL_Latin1_General_CP1_CI_AS, dCount   int)
+
+
+
+INSERT INTO #Main (pref_TLI_key,century,dcount)
+SELECT  #Taxa.RecTLI_Key,
+dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'C') as century, count(TOCC.taxon_occurrence_key ) as dCount
+FROM Taxon_occurrence TOCC 
+INNER JOIN SAMPLE S ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+INNER JOIN Taxon_Determination TDET ON TDET.
+Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+WHERE 
+USR.Name_Key IS NULL
+AND TDET.PREFERRED = 1 
+AND Tocc.zero_abundance = 0
+AND
+TOCC.Verified &#60;&#62; 1
+AND 
+S.vague_Date_Type not in('U','Y-','C-','S') 
+GROUP BY 
+#Taxa.RecTLI_Key,dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'C')
+  
+
+SELECT PREF_TLI_KEY, 
+
+SUM(CASE WHEN CENTURY&#60;17 THEN QTY END) AS [BEFORE 1700],
+SUM(CASE WHEN CENTURY=17 THEN QTY END) AS [1700-1799],
+SUM(CASE WHEN CENTURY=18 THEN QTY END) AS [1800-1899],
+SUM(CASE WHEN CENTURY=19 THEN QTY END) AS [1900-1999],
+SUM(CASE WHEN CENTURY=20 THEN QTY END) AS [2000-2099]
+
+INTO #MAIN2
+FROM (SELECT pref_tli_key, Century, dcount as qty From
+#main) as D
+Group by pref_tli_key
+
+
+
+SELECT ITN2.Preferred_name, ITN2.Authority, ITN2.Common_name, TG.Taxon_Group_name, 
+M.*
+FROM #Main2 M
+INNER JOIN index_taxon_name ITN ON ITN.Taxon_List_item_key = m.pref_TLI_Key
+INNER JOIN index_taxon_name ITN2 ON ITN2.taxon_list_item_key = ITN.Recommended_taxon_list_Item_Key
+INNER JOIN taxon_list_item TLI ON TLI.taxon_list_item_key = ITN.taxon_List_item_key
+INNER JOIN taxon_version TV ON TV.Taxon_Version_key = TLI.Taxon_Version_Key
+INNER JOIN taxon_group TG ON TV.output_group_key = TG.Taxon_Group_Key
+WHERE
+ITN.System_Supplied_Data = 1
+AND
+ITN2.System_Supplied_Data = 1
+
+
+DROP Table #Taxa
+DROP TABLE #Main
+
+
+
+</Where>
+
+
+</SQL>
+<Columns>
+
+  <Column name="Pref_TLI_Key"  visible = "false"  /> 
+  <Column name="Preferred_Name" width="200" position="1" caption="Scientific Name" /> 
+  <Column name="Authority" width="200" position="2" caption="Authority" /> 
+  <Column name="Common_Name" width="200" position="3" caption="Common Name" /> 
+  <Column name="Taxon_Group_name" width="100" position="4" caption="Taxon Group" /> 
+  
+
+
+  
+
+</Columns>
+</CustomReport>

@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+
+<!-- JNCC Statistics 5: Number of species observations per taxon group per survey
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert, for JNCC
+     Version 5 - 28 November 2014
+--> 
+
+<CustomReport menupath="System Supplied\Statistics" title="St05 Number of species observations per taxon group" description="Lists all taxon groups for which there are observations in the database, and the number of observations for them.">
+
+<SQL>
+
+<Where Keytype="Default">
+SELECT 
+TV.Output_Group_Key, TG.Taxon_Group_Name, TG.Sort_Order,  
+Count(TOcc.Taxon_Occurrence_Key) AS CountOfTOccKey
+
+FROM Taxon_Occurrence TOcc 
+INNER JOIN Taxon_Determination TDet ON TOcc.Taxon_Occurrence_Key = TDet.Taxon_Occurrence_Key 
+INNER JOIN Taxon_List_Item TLI ON TDet.Taxon_List_Item_Key = TLI.Taxon_List_Item_Key 
+INNER JOIN  Taxon_Version TV ON TLI.Taxon_Version_Key = TV.Taxon_Version_Key 
+LEFT JOIN Taxon_Group TG ON TV.Output_Group_Key = TG.Taxon_Group_Key
+INNER JOIN Sample S ON S.Sample_Key = TOCC.Sample_Key
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+WHERE
+USR.Name_Key IS NULL
+
+
+
+GROUP BY TV.Output_Group_Key, TG.Taxon_Group_Name, TG.Sort_Order, TDet.Preferred
+
+Having TDet.Preferred=1
+
+
+ORDER BY TG.Sort_Order
+
+</Where>
+
+</SQL>
+
+<Columns>
+<Column name="Output_Group_Key" caption="Group key" width="120" position="1"/>
+<Column name="Sort_Order" caption="Sort order" width="80" position="2"/>
+<Column name="Taxon_Group_Name" caption="Taxon group" width="200" position="3"/>
+<Column name="CountOfTOccKey" caption="No sp obsv" width="80" position="4"/>
+</Columns>
+
+</CustomReport>

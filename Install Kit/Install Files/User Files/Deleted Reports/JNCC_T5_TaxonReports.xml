@@ -1,0 +1,246 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC  First Last and Months Recorded for a taxa
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 3 - 14 May 2008  
+
+   
+     QUICK REPORT  - From Taxon Dictionary
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Unchedked - By parameter
+     Invalid = By parameter	
+   
+ -->  
+
+
+<CustomReport menupath="Taxon restricted reports\Taxon"  title="T5-First/Last Date + Months" 
+description="Reports on first and last date a species was recorded together with the month range 
+in which it has been recorded. Works on the name of a taxa or as a  quick report from the Taxon Dictionary.
+Records with dates for a Period, Month or Unknown are excluded. Months are only calculated for date ranges which are relevant. 
+Always excludes Zero abundance and items Failed/Pending verification " >
+
+
+<SQL>
+<Where keytype="Default">
+
+CREATE TABLE #Taxa (TLI_Key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS, RecTLI_Key  char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS)
+INSERT INTO #Taxa (TLI_KEY,RecTLI_Key)
+SELECT DISTINCT ITN2.Taxon_List_item_Key,ITN2.Recommended_Taxon_List_Item_Key
+FROM Index_Taxon_name ITN1
+INNER JOIN Index_Taxon_Name ITN2
+ON ITN1.Recommended_Taxon_List_Item_Key = ITN2.Recommended_taxon_List_item_key
+WHERE
+ 
+ITN1.System_Supplied_Data = 1 AND ITN2.System_Supplied_Data = 1 AND
+<Condition field= " ITN1.aCTUAL_NAME" operator="like" type="Text"  name="Taxon Name (Like) " />
+
+
+CREATE TABLE #Main (Pref_TLI_Key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS,VDSEarliest int,
+VDSLatest int, VDEEarliest int,
+VDELatest int, VDTEarliest varchar(2), VDTLatest varchar(2), mMin varchar(4), mMax varchar(4))
+
+INSERT INTO #Main (pref_TLI_key,VDSEarliest,VDEEarliest,VDTEarliest)
+SELECT pref_tli_key,
+CAST (SUBSTRING (binstr,25,4) as int ) as VDSEarliest,
+CAST (SUBSTRING (binstr,29,4) as int ) as VDEEarliest,
+CAST (SUBSTRING (binstr,33,2) as varchar(2) ) as VDTEarliest
+
+FROM (SELECT #Taxa.RecTLI_Key as pref_tli_key,
+MIN(CAST (999999 + s.vague_date_end as binary (4)) +
+CAST (999999-(s.vague_date_end -s.vague_date_start) as binary (4)) +
+CAST (s.Sample_key as binary (16)) +
+CAST (s.Vague_Date_start as binary (4)) +
+CAST (s.Vague_Date_end as  binary (4)) +
+CAST (s.Vague_Date_type as  binary (4))
+) as binstr
+FROM
+Sample S 
+INNER JOIN 
+Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN 
+Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 
+and TOCC.Zero_Abundance = 0 
+AND S.vague_Date_Type not in('M','S','P','U','Y-','C-') 
+GROUP BY   #Taxa.RecTLI_Key) AS D 
+
+
+
+
+UPDATE #Main set VDSLatest = CAST (SUBSTRING (binstr,25,4) as int ),
+VDELatest =CAST (SUBSTRING (binstr,29,4) as int ),
+VDTLatest = CAST (SUBSTRING (binstr,33,2) as varchar(2) ) 
+
+FROM (SELECT #Taxa.RecTLI_Key as pref_tli_key,
+MAX(CAST (9999999 + s.vague_date_start as binary (4)) +
+CAST (s.vague_date_end -s.vague_date_start as binary (4)) +
+CAST (s.Sample_key as binary (16)) +
+CAST (s.Vague_Date_start as binary (4)) +
+CAST (s.Vague_Date_end as  binary (4)) +
+CAST (s.Vague_Date_type as  binary (4))
+) as binstr
+FROM
+Sample S 
+INNER JOIN 
+Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN 
+Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 
+and TOCC.Zero_Abundance = 0 and TOCC.Verified != 1
+
+AND S.vague_Date_Type not in('M','S','P','U','-Y','-C') 
+GROUP BY   #Taxa.RecTLI_Key) AS D 
+WHERE #Main.Pref_TLI_Key = D.pref_tli_key
+
+UPDATE #Main set mMin = (select min(dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'M')) 
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified != 1
+AND S.vague_Date_Type not in('S','P','U','-Y','-C','YY','Y-','CC','C-', '-C') 
+AND #Main.Pref_TLI_Key = #Taxa.RecTLI_key)
+UPDATE #Main set mMax = (select max(dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'M')) 
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified != 1
+AND S.vague_Date_Type not in('S','P','U','-Y','-C','YY','Y-','CC','C-', '-C') 
+AND #Main.Pref_TLI_Key = #Taxa.RecTLI_key)
+
+SELECT ITN2.actual_name, ITN2.Authority, ITN2.Common_name, TG.Taxon_Group_name,
+dbo.lcreturnvaguedateshort(m.vdsearliest,m.vdeEarliest,m.vdtEarliest) as vdEarliest,dbo.lcreturnvaguedateshort(vdslatest,vdeLatest,vdtLatest) as vdlatest,
+dbo.LcReturnMonth(M.mmin) + ' - ' + dbo.LcReturnmonth(M.mmax)  as DateRange 
+
+FROM #Main M
+INNER JOIN index_taxon_name ITN ON ITN.Taxon_List_item_key = m.pref_TLI_Key
+INNER JOIN index_taxon_name ITN2 ON ITN2.taxon_list_item_key = ITN.Recommended_taxon_list_Item_Key
+INNER JOIN taxon_list_item TLI ON TLI.taxon_list_item_key = ITN.taxon_List_item_key
+INNER JOIN taxon_version TV ON TV.Taxon_Version_key = TLI.Taxon_Version_Key
+INNER JOIN taxon_group TG ON TV.output_group_key = TG.Taxon_Group_Key
+WHERE
+ITN.System_Supplied_data =1 and ITN2.System_Supplied_data =1 
+
+
+</Where>
+<Where keytype="Taxon">
+
+CREATE TABLE #Taxa (TLI_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, RecTLI_Key  char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS)
+INSERT INTO #Taxa (TLI_KEY,RecTLI_Key)
+SELECT DISTINCT ITN2.Taxon_List_item_Key,ITN2.Recommended_Taxon_List_Item_Key
+FROM Index_Taxon_name ITN1
+INNER JOIN Index_Taxon_Name ITN2
+ON ITN1.Recommended_Taxon_List_Item_Key = ITN2.Recommended_taxon_List_item_key
+WHERE
+ITN1.Recommended_Taxon_List_Item_Key = ITN2.Recommended_taxon_List_item_key AND
+ITN1.Taxon_list_item_key = '%s'AND 
+ITN1.System_Supplied_data =1 and ITN2.System_Supplied_data =1 
+
+CREATE TABLE #Main (Pref_TLI_Key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS,VDSEarliest int,
+VDSLatest int, VDEEarliest int,
+VDELatest int, VDTEarliest varchar(2), VDTLatest varchar(2), mMin varchar(4), mMax varchar(4))
+
+INSERT INTO #Main (pref_TLI_key,VDSEarliest,VDEEarliest,VDTEarliest)
+SELECT pref_tli_key,
+CAST (SUBSTRING (binstr,25,4) as int ) as VDSEarliest,
+CAST (SUBSTRING (binstr,29,4) as int ) as VDEEarliest,
+CAST (SUBSTRING (binstr,33,2) as varchar(2) ) as VDTEarliest
+
+FROM (SELECT #Taxa.RecTLI_Key as pref_tli_key,
+MIN(CAST (999999 + s.vague_date_end as binary (4)) +
+CAST (999999-(s.vague_date_end -s.vague_date_start) as binary (4)) +
+CAST (s.Sample_key as binary (16)) +
+CAST (s.Vague_Date_start as binary (4)) +
+CAST (s.Vague_Date_end as  binary (4)) +
+CAST (s.Vague_Date_type as  binary (4))
+) as binstr
+FROM
+Sample S 
+INNER JOIN 
+Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN 
+Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 
+and TOCC.Zero_Abundance = 0 
+AND S.vague_Date_Type not in('M','S','P','U','Y-','C-') 
+GROUP BY   #Taxa.RecTLI_Key) AS D 
+
+
+
+
+UPDATE #Main set VDSLatest = CAST (SUBSTRING (binstr,25,4) as int ),
+VDELatest =CAST (SUBSTRING (binstr,29,4) as int ),
+VDTLatest = CAST (SUBSTRING (binstr,33,2) as varchar(2) ) 
+
+FROM (SELECT #Taxa.RecTLI_Key as pref_tli_key,
+MAX(CAST (9999999 + s.vague_date_start as binary (4)) +
+CAST (s.vague_date_end -s.vague_date_start as binary (4)) +
+CAST (s.Sample_key as binary (16)) +
+CAST (s.Vague_Date_start as binary (4)) +
+CAST (s.Vague_Date_end as  binary (4)) +
+CAST (s.Vague_Date_type as  binary (4))
+) as binstr
+FROM
+Sample S 
+INNER JOIN 
+Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN 
+Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 
+and TOCC.Zero_Abundance = 0 and TOCC.Verified != 1
+
+AND S.vague_Date_Type not in('M','S','P','U','-Y','-C') 
+GROUP BY   #Taxa.RecTLI_Key) AS D 
+WHERE #Main.Pref_TLI_Key = D.pref_tli_key
+UPDATE #Main set mMin = (select min(dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'M')) 
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified != 1
+AND S.vague_Date_Type not in('S','P','U','-Y','-C','YY','Y-','CC','C-', '-C') 
+AND #Main.Pref_TLI_Key = #Taxa.RecTLI_key)
+UPDATE #Main set mMax = (select max(dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'M')) 
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified != 1
+AND S.vague_Date_Type not in('S','P','U','-Y','-C','YY','Y-','CC','C-', '-C') 
+AND #Main.Pref_TLI_Key = #Taxa.RecTLI_key)
+
+SELECT ITN2.actual_name, ITN2.Authority, ITN2.Common_name, TG.Taxon_Group_name,
+dbo.lcreturnvaguedateshort(m.vdsearliest,m.vdeearliest,m.vdtEarliest) as vdEarliest,dbo.lcreturnvaguedateshort(vdslatest,vdeLatest,vdtLatest) as vdlatest,
+dbo.LcReturnMonth(M.mmin) + ' - ' + dbo.LcReturnmonth(M.mmax)  as DateRange  
+FROM #Main M
+INNER JOIN index_taxon_name ITN ON ITN.Taxon_List_item_key = m.pref_TLI_Key
+INNER JOIN index_taxon_name ITN2 ON ITN2.taxon_list_item_key = ITN.Recommended_taxon_list_Item_Key
+INNER JOIN taxon_list_item TLI ON TLI.taxon_list_item_key = ITN.taxon_List_item_key
+INNER JOIN taxon_version TV ON TV.Taxon_Version_key = TLI.Taxon_Version_Key
+INNER JOIN taxon_group TG ON TV.output_group_key = TG.Taxon_Group_Key
+WHERE ITN.System_Supplied_data =1 and ITN2.System_Supplied_data =1 
+</Where>
+
+
+</SQL>
+<Columns>
+
+  <Column name="Actual_Name" width="200" position="1" caption="Scientific Name" /> 
+  <Column name="Authority" width="200" position="2" caption="Authority" /> 
+  <Column name="Common_Name" width="200" position="3" caption="Common Name" /> 
+  <Column name="Taxon_Group_name" width="300" position="4" caption="Taxon Group" /> 
+  <Column name="vdEarliest" width="100" position="5" caption="Earliest Date" /> 
+  <Column name="vdLatest" width="100" position="6" caption="Latest Date" /> 
+  <Column name="DateRange" width="100" position="7" caption="Month Range" />
+  
+
+</Columns>
+</CustomReport>

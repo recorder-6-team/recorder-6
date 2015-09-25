@@ -1,0 +1,225 @@
+<?xml version="1.0" ?>
+
+
+<!-- DMAP OUTPUT  ADDIN VERSION  
+     XML Report by Mike Weideli of Littlefield Consultancy
+     http://www.lfield.co.uk
+     Version 1.2 - 16 June 2011
+                
+ 
+
+  --> 
+
+<CustomReport menupath="DMAP Addin Output\OS\Date based" title="DMAP1 - OSGB/OSNI. On Taxon Group with option to have symbols Date Cut Off based."  description="Generates a report in the format required by traditional DMAP for OSGB and OSNI references.
+If 'Use Date Split' is specified then different symbol values are output depending on vague date start of record. The cut off date is determined by a keyword in the enhanced term list in the format 'DMAP CUT OFF 12/03/2007' Records BEFORE this date have one symbol 
+and ones after another. If the keyword is not set 01/01/2000 is used. When a date cut off is used records with dates type of 'Unknown' or 'Season' are excluded. 
+To extract all taxa in the database enter * as the Taxon Group (User defined taxa are not extracted). Note that this report produces one entry for every record selected and does not consolidate."
+>
+<SQL>
+
+<Where keytype="Default">
+CREATE TABLE #PARAMS (COD VARCHAR(20) COLLATE SQL_Latin1_General_CP1_CI_AS, CoDINT int, xDateSplit int)
+Insert into #PARAMS (COD) Values('01/01/2000')
+
+UPDATE #PARAMS SET COD = right(PlainText,10) 
+FROM TERM WHERE LEFT(TERM.PlainText,12) = 'DMAP CUT OFF'
+
+
+UPDATE #PARAMS SET CODINT = dbo.LCToRataDie(#PARAMS.COD)
+
+Update #Params set xDateSplit 
+<Condition field= "" operator="equal" type="OptionSet"  name="Date split" >
+        <Option name="Use" value = "1" />
+        <Option name="Do not use" value = "0" />
+</Condition>
+
+UPDATE #PARAMS SET CODINT = -999998 where xDateSplit = 0
+
+
+CREATE TABLE #RANGE(v  int, startV  int, endV  int, keytext varchar(50),SymbolValue int, symbol varchar(2))
+
+INSERT INTO #RANGE (v,StartV,endv,Keytext,symbolvalue)
+SELECT 1,-999999, CODINt-1,'Before ' +  #PARAMS.COD , 8 FROM #PARAMS
+  
+INSERT INTO #RANGE (v,StartV,endv,Keytext,symbolvalue)
+SELECT 2, CODINT, 999999,'On/After ' +  #PARAMS.COD , 9 FROM #PARAMS
+
+
+
+CREATE TABLE #SYMBOLS (SYMBOLTYPE INT, V  INT, SYMBOL CHAR(2) COLLATE SQL_Latin1_General_CP1_CI_AS)
+INSERT INTO #SYMBOLS values(1,9,'A')
+INSERT INTO #SYMBOLS values(1,8,'D')
+INSERT INTO #SYMBOLS values(1,7,'G')
+INSERT INTO #SYMBOLS values(1,6,'S')
+INSERT INTO #SYMBOLS values(1,5,'T')
+INSERT INTO #SYMBOLS values(1,4,'V')
+INSERT INTO #SYMBOLS values(1,3,'W')
+INSERT INTO #SYMBOLS values(1,2,'Y')
+INSERT INTO #SYMBOLS values(1,1,'Z')
+
+
+
+INSERT INTO #SYMBOLS values(4,9,'9')
+INSERT INTO #SYMBOLS values(4,8,'8')
+INSERT INTO #SYMBOLS values(4,7,'7')
+INSERT INTO #SYMBOLS values(4,6,'6')
+INSERT INTO #SYMBOLS values(4,5,'5')
+INSERT INTO #SYMBOLS values(4,4,'4')
+INSERT INTO #SYMBOLS values(4,3,'3')
+INSERT INTO #SYMBOLS values(4,2,'2')
+INSERT INTO #SYMBOLS values(4,1,'1')
+
+
+
+update #range set symbol = #symbols.symbol
+from #range inner join #symbols on
+#symbols.v = #range.symbolvalue where
+#symbols.symboltype = 1 
+
+   
+
+
+CREATE TABLE #Main_Results (DMAPFileName VarCHAR(50) COLLATE SQL_Latin1_General_CP1_CI_AS, TDET_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  TLI_KEY CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Recommended_Name VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  GridRef VARCHAR(30) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  SymbolCode VARCHAR(2) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  MeasurementValue Int,
+  Vague_Date int,
+  KeyOrder  int
+  
+)
+
+INSERT INTO #Main_Results (TDET_KEY,TLI_KEY,GridRef,KeyOrder,Vague_date)
+
+SELECT DISTINCT TDET.TAXON_DETERMINATION_KEY, ITN.RECOMMENDED_TAXON_LIST_ITem_KEY,S.SPATIAL_REF,
+99, S.Vague_Date_Start
+FROM SAMPLE S 
+INNER JOIN TAXON_OCCURRENCE TOCC ON S.SAMPLE_KEY = TOCC.SAMPLE_KEY
+INNER JOIN TAXON_DETERMINATION TDET ON TOCC.TAXON_OCCURRENCE_KEY = TDET.TAXON_OCCURRENCE_KEY
+INNER JOIN INDEX_TAXON_NAME ITN ON TDET.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = TDET.TAXON_LIST_ITEM_KEY
+INNER JOIN TAXON_VERSION TV ON TV.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+INNER JOIN TAXON_GROUP TG ON TG.TAXON_GROUP_KEY = TV.OUTPUT_GROUP_KEY 
+
+WHERE
+
+<Condition field= "TG.TAXON_GROUP_NAME" operator="like" type="Text"  name="Taxon Group(Wild card)" />
+
+AND 
+
+
+
+
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+
+	
+        <Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="not equal" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+        <Option name="Only" value = "0" />
+
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="not equal" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "0" />
+        <Option name="Only" value = "1" />
+
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="not equal" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+        <Option name="Only" value = "0" />
+
+</Condition> 
+AND
+
+<Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" >
+	
+        <Option name="Include" value = "'Anything'" />
+        <Option name="Exclude" value = "'Site Centroid'" />
+</Condition>
+AND
+
+(s.vague_date_type not in ('S','U') OR (SELECT xDATESplit from #params) = 0)
+
+AND
+
+(S.SPATIAL_REF_SYSTEM = 'OSGB' or S.SPATIAL_REF_SYSTEM = 'OSNI') 
+AND
+
+TDET.preferred = 1
+
+
+UPDATE #MAIN_RESULTS SET DMAPFileName 
+<Condition field= "" operator="equal" type="Text"  name="OutPut File Name (eg. DMAPEXPORT)" />
+
+
+
+UPDATE #Main_Results set symbolcode  = #range.symbol 
+from #Main_results, #range where #main_results.Vague_date &#62; #range.startv and
+#main_results.Vague_date &#60; #range.endv 
+
+UPDATE #Main_results set Recommended_Name = Actual_Name 
+From #Main_results #M
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = #M.TLI_Key
+WHERE ITN.System_Supplied_Data = (Select max(cast(system_supplied_data as int)) from Index_Taxon_Name ITN2 where
+ITN.Taxon_List_Item_Key = ITN2.Taxon_List_item_key) 
+
+
+While (Select  XDateSplit from #Params ) = 1 
+BEGIN
+  insert Into #Main_results (DMAPFileName,Recommended_name,gridref,KeyOrder)
+  SElect Distinct DMAPFileName,Recommended_name,'[Key]', 0
+  FROM #Main_results  where #Main_results.keyorder = 99 
+
+   insert Into #Main_results (DMAPFileName,Recommended_name,gridref,KeyOrder)
+   SElect Distinct DMAPFileName,Recommended_name,#range.symbol + ' ' + #range.Keytext,cast(#range.v as varchar(2)) 
+   FROM #Main_results, #range where #Main_results.keyorder = 99
+
+   insert Into #Main_results (DMAPFileName,Recommended_name,gridref,KeyOrder)
+   SElect Distinct DMAPFileName,Recommended_name,'[Data]', 20
+   FROM #Main_results  where #Main_results.keyorder = 99
+   BREAK
+END 
+
+
+
+
+DROP TABLE #PARAMS
+DROP TABLE #SYMBOLS
+DROP TABLE #RANGE
+
+
+
+
+SELECT  Recommended_name as [Recommended Taxon Name],keyorder, m.gridref as [Sample_Spatial_Ref], symbolCode as Symbol, M.DMAPFileName as [DMAPFileName]
+from #Main_results M  
+
+
+DROP TABLE #Main_Results
+
+
+
+
+
+
+
+</Where>
+
+</SQL>
+
+
+</CustomReport>
+
+
+ 

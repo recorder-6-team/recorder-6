@@ -1,0 +1,143 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC  Biotopes Data
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014       
+
+   
+     QUICK REPORT Dictionary
+    
+   
+ --> 
+
+
+<CustomReport  title="Bi1 Biotope Records" menupath="System Supplied\Biotope restricted reports\biotope"  
+description="Lists biotope records fora  specified biotope based on the original code. Use the wildcard * for all data in the system  
+
+" >
+
+
+<SQL>
+<Where keytype="Default">
+
+
+SELECT DISTINCT  S.Spatial_Ref, S.Vague_date_start, S.Vague_date_end,
+S.Vague_Date_Type, S.Location_Name, LN.Item_name, BC.Short_Name,B.Original_Code,B.Short_Term,dbo.ufn_HtmlToPlainText(B.Full_Term) as FullTerm
+
+FROM 
+SAMPLE S
+INNER JOIN 
+Biotope_Occurrence BOCC
+ON BOCC.sample_Key = S.Sample_Key
+INNER JOIN BIOTOPE_DETERMINATION BDET
+ON BDET.Biotope_Occurrence_Key = BOCC.Biotope_Occurrence_Key
+INNER JOIN 
+Biotope_List_Item BLI 
+ON BLI.Biotope_List_Item_Key = BDET.Biotope_List_Item_Key
+INNER JOIN
+BIOTOPE B 
+ON B.Biotope_Key = BLI.BIOTOPE_KEY
+INNER JOIN
+Biotope_Classification_Version BCV
+ON BCV.BT_CL_Version_Key = BLI.BT_CL_Version_Key
+INNER JOIN
+Biotope_Classification BC
+ON BC.Biotope_Classification_key = BCV.Biotope_Classification_key
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+LEFT JOIN Location L
+ON L.Location_Key = S.Location_Key
+LEFT JOIN LOcation_Name LN ON LN.Location_Key = L.LOcation_Key AND LN.Preferred = 1
+
+
+WHERE
+
+USR.Name_Key IS NULL
+
+AND 
+
+<Condition field= "B.Original_Code" operator="like" type="Text"  name="Biotope Original Code"  />
+
+
+AND
+
+BDET.Preferred = 1
+
+
+</Where>
+
+<Where keytype="Biotope">
+
+SELECT DISTINCT  S.Spatial_Ref, S.Vague_date_start, S.Vague_date_end,
+S.Vague_Date_Type, S.Location_Name, LN.Item_name, BC.Short_Name,B.Original_Code,B.Short_Term,dbo.ufn_HtmlToPlainText(B.Full_Term) as FullTerm
+
+FROM 
+Sample S 
+INNER JOIN
+Biotope_Occurrence BOCC
+ON BOCC.sample_Key = S.Sample_Key
+INNER JOIN BIOTOPE_DETERMINATION BDET
+ON BDET.Biotope_Occurrence_Key = BOCC.Biotope_Occurrence_Key
+INNER JOIN 
+Biotope_List_Item BLI 
+ON BLI.Biotope_List_Item_Key = BDET.Biotope_List_Item_Key
+INNER JOIN
+BIOTOPE B 
+ON B.Biotope_Key = BLI.BIOTOPE_KEY
+INNER JOIN
+Biotope_Classification_Version BCV
+ON BCV.BT_CL_Version_Key = BLI.BT_CL_Version_Key
+INNER JOIN
+Biotope_Classification BC
+ON BC.Biotope_Classification_key = BCV.Biotope_Classification_key
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+LEFT JOIN Location L
+ON L.Location_Key = S.Location_Key
+LEFT JOIN LOcation_Name LN ON LN.Location_Key = L.LOcation_Key AND LN.Preferred = 1
+
+
+WHERE
+
+USR.Name_Key IS NULL
+AND 
+
+
+BLI.Biotope_List_Item_Key  ='%s'
+
+AND
+
+BDET.Preferred = 1
+
+
+
+</Where>
+
+<OutputTableOrderby  name="Default" SQL="Order By spatial_Ref, Short_Name, Original_Code,Short_Term "/>
+
+
+
+</SQL>
+<Columns>
+     <Column name="Spatial_ref" width="100" position="1" caption="Sample Grid Ref" /> 
+     <Column name="Vague_Date_start" width="100" position="2" caption="Date" /> 
+     <Column name="Location_Name" width="250" position="3" caption="Sample Location Name" /> 
+     <Column name="Item_Name" width="250" position="4" caption="Location" /> 
+     <Column name="Short_Name" width="200" position="5" caption="Classification" /> 
+     <Column name="Short_Name" width="200" position="6" caption="Classification" /> 
+     <Column name="Original_Code" width="100" position="7" caption="Code" /> 
+     <Column name="Short_Term" width="200" position="8" caption="Habitat (short term)" /> 
+     <Column name="Fullterm" width="300" position="9" caption="Habitat (full term)" /> 
+  
+ 
+
+  
+
+</Columns>
+</CustomReport>

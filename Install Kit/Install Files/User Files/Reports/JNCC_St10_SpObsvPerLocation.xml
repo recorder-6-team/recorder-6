@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+
+<!-- JNCC Statistics 1: Number of species observations per location
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert, for JNCC
+     Version 5 - 28 November 2014
+       
+--> 
+
+<CustomReport menupath="System Supplied\Statistics" title="St10 Number of species observations per location" description="Lists all locations that contain species observations and the number they contain">
+
+<SQL>
+<Where Keytype="Default">
+SELECT
+L.Location_Key, LN.Item_Name,   
+Count(TOcc.Taxon_Occurrence_Key) AS CountOfTOccKey,
+L.Spatial_Ref, L.Custodian
+
+FROM Sample S 
+INNER JOIN Taxon_Occurrence TOcc ON S.Sample_Key = TOcc.Sample_Key
+LEFT JOIN Location L ON S.Location_Key = L.Location_Key
+LEFT JOIN Location_Name LN ON L.Location_Key = LN.Location_Key AND LN.Preferred = 1
+
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+WHERE 
+USR.Name_Key IS NULL 
+
+GROUP BY L.Location_Key, LN.Item_Name, L.Spatial_Ref, L.Custodian, LN.Preferred
+
+
+
+ORDER BY LN.Item_Name
+
+</Where>
+
+</SQL>
+
+<Columns>
+<Column name="Location_Key" caption="Location key" width="120" position="1"/>
+<Column name="Item_Name" caption="Location name" width="280" position="2"/>
+<Column name="CountOfTOccKey" caption="No sp obsv" width="80" position="3"/>
+<Column name="Spatial_Ref" caption="Spatial ref" width="80" position="4"/>
+<Column name="Custodian" caption="Custodian" width="80" position="5"/>
+</Columns>
+
+</CustomReport>

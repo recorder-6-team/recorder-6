@@ -1,0 +1,134 @@
+<?xml version="1.0" ?>
+<!-- JNCC  Records for Location
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014   
+ -->
+
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Location hierarchy reports" title="L6 Quick species list for a &lt;location&gt; hierarchy V06-12" description="Generates a list of species.  Enter values for the following parameters to filter the report.">
+<SQL>
+CREATE TABLE #Locations (
+  Location_Key CHAR(16) COLLATE Database_Default PRIMARY KEY
+)
+
+<Where keytype="Default">
+INSERT INTO #Locations VALUES ({0})
+--<Condition field="" operator="equal" type="Location" name="Location" SubstituteFor="{0}" />
+WHILE 1=1 BEGIN
+  INSERT INTO #Locations
+    SELECT L.Location_Key
+    FROM Location L
+    INNER JOIN #Locations Tinc on L.Parent_Key=TInc.Location_Key
+    LEFT JOIN #Locations Texc ON Texc.Location_Key=L.Location_Key
+    WHERE Texc.Location_Key IS NULL
+  IF @@ROWCOUNT=0
+    BREAK
+END
+
+SELECT DISTINCT
+  ITN2.Taxon_List_Item_Key,
+  ITN2.Sort_Order,
+  ITN2.preferred_name + ISNULL( ' ' + ITN2.authority, '') AS Latin,
+  ITN2.Common_Name,
+  TG.Taxon_Group_Name
+FROM [Sample] S
+INNER JOIN #Locations T
+  ON T.Location_Key=S.Location_Key
+INNER JOIN Taxon_Occurrence XO
+  ON XO.Sample_Key=S.Sample_Key
+INNER JOIN Taxon_Determination TD
+  ON TD.Taxon_Occurrence_Key=XO.Taxon_Occurrence_Key
+  AND TD.Preferred=1
+INNER JOIN Index_Taxon_Name ITN1
+  ON ITN1.Taxon_List_Item_Key=TD.Taxon_List_Item_Key
+  AND ITN1.System_Supplied_Data=1
+INNER JOIN Index_Taxon_Name ITN2
+  ON ITN2.Taxon_List_Item_Key=ITN1.Recommended_Taxon_List_Item_Key
+  AND ITN2.system_supplied_data=1
+INNER JOIN Taxon_List_Item TLI
+  ON TLI.Taxon_List_Item_Key=ITN2.Taxon_List_Item_KEy
+INNER JOIN Taxon_Version TV
+  ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key
+LEFT JOIN Taxon_Group TG
+  ON TG.Taxon_Group_Key=TV.Output_Group_Key
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+WHERE 
+USR.Name_key = NULL
+
+
+
+
+DROP TABLE #Locations
+</Where>
+
+<Where keytype="Location">
+INSERT INTO #Locations VALUES ('%s')
+
+WHILE 1=1 BEGIN
+  INSERT INTO #Locations
+    SELECT L.Location_Key
+    FROM Location L
+    INNER JOIN #Locations Tinc on L.Parent_Key=TInc.Location_Key
+    LEFT JOIN #Locations Texc ON Texc.Location_Key=L.Location_Key
+    WHERE Texc.Location_Key IS NULL
+  IF @@ROWCOUNT=0
+    BREAK
+END
+
+SELECT DISTINCT
+  ITN2.Taxon_List_Item_Key,
+  ITN2.Sort_Order,
+  ITN2.preferred_name + ISNULL( ' ' + ITN2.authority, '') AS Latin,
+  ITN2.Common_Name,
+  TG.Taxon_Group_Name
+FROM [Sample] S
+INNER JOIN #Locations T
+  ON T.Location_Key=S.Location_Key
+INNER JOIN Taxon_Occurrence XO
+  ON XO.Sample_Key=S.Sample_Key
+INNER JOIN Taxon_Determination TD
+  ON TD.Taxon_Occurrence_Key=XO.Taxon_Occurrence_Key
+  AND TD.Preferred=1
+INNER JOIN Index_Taxon_Name ITN1
+  ON ITN1.Taxon_List_Item_Key=TD.Taxon_List_Item_Key
+  AND ITN1.System_Supplied_Data=1
+INNER JOIN Index_Taxon_Name ITN2
+  ON ITN2.Taxon_List_Item_Key=ITN1.Recommended_Taxon_List_Item_Key
+  AND ITN2.system_supplied_data=1
+INNER JOIN Taxon_List_Item TLI
+  ON TLI.Taxon_List_Item_Key=ITN2.Taxon_List_Item_KEy
+INNER JOIN Taxon_Version TV
+  ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key
+LEFT JOIN Taxon_Group TG
+  ON TG.Taxon_Group_Key=TV.Output_Group_Key
+
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+WHERE
+USr.Name_key is null
+
+
+DROP TABLE #Locations
+
+</Where>
+
+<OutputTableOrderby  name="Default" SQL="Order By Sort_Order "/>
+
+
+</SQL>
+<Columns>
+<Column name="Taxon_List_Item_Key" visible="False" tablename="taxon" />
+<Column name="Sort_Order" visible="False" />
+<Column name="Latin" position="1" caption="Formal Name" keycolumn="Taxon_List_Item_Key" width="300"/>
+<Column name="Common_Name" position="2" caption="Common Name" keycolumn="Taxon_List_Item_Key" width="200"/>
+<Column name="taxon_group_name" position="3" caption="Taxon Group" width="200" />
+</Columns>
+</CustomReport>

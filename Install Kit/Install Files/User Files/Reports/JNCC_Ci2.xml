@@ -1,0 +1,137 @@
+<?xml version="1.0" ?>
+<!-- Records within a circle of defined radius and centre
+  
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014   
+ -->
+     		
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Circle Reports" 
+title="Ci1 Records (inc. Abundance) within circle " 
+description="Reports on records within a Circle identified by the Grid Ref for the centre of the circle and the radius of the circle in metres. Includes abundance. Works for OSGB and OSNI spatial references. 
+Uses either the SW corner, centre of the sample grid ref, any corner or centre, or all 4 corners to determine whether or not to include the sample in the report. 
+Automatically determines if the centre of the circle is OSGB or OSNI.
+
+" 
+ >
+
+
+<SQL>
+	
+
+<Where keytype="default">
+ 
+                   
+   SELECT  tOcc.taxon_occurrence_key,S.Spatial_ref, LN.ITEM_NAME,  S.LOCATION_NAME,
+   s.vague_date_start,s.vague_date_end,s.vague_date_type, 
+   dbo.FormatEventRecorders(s.sample_key) as Recorders,dbo.FormatIndividual(I.title,I.Initials,I.Forename,I.Surname) as Determiner,
+   ITN.Preferred_name ,ITN.Authority,ITN.Common_Name,ITN2.Actual_Name, dbo.LCFormatAbundanceData(TOCC.Taxon_Occurrence_Key) as Abundance,TG.Taxon_group_name as TaxonGroup,
+   ITN.Sort_Order 
+   from sample S
+   LEFT JOIN LOCATION_NAME LN on  s.Location_key = LN.Location_Key AND LN.Preferred = 1
+   INNER JOIN  Taxon_Occurrence Tocc on Tocc.Sample_key = s.sample_key
+   INNER JOIN  TAXON_DETERMINATION TDET ON TDET.TAXON_OCCURRENCE_KEY = TOCC.TAXON_OCCURRENCE_KEY
+   INNER JOIN  INDEX_TAXON_NAME ITN ON ITN.TAXON_LIST_ITEM_KEY = TDET.TAXON_LIST_ITEM_KEY
+   INNER JOIN  TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = TDET.TAXON_LIST_ITEM_KEY 
+   INNER JOIN  INDEX_TAXON_NAME ITN2 ON ITN2.Taxon_List_item_Key = ITN.Recommended_Taxon_List_Item_key 
+   INNER JOIN  TAXON_VERSION TV ON TV.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+   INNER JOIN  TAXON_GROUP  TG ON TG.TAXON_GROUP_KEY = TV.OUTPUT_GROUP_KEY 
+   INNER JOIN  INDIVIDUAL I ON I.NAME_KEY = TDET.DETERMINER
+
+   INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+   LEFT JOIN User_Survey_Restriction USR
+   ON  USR.Survey_Key = SE.Survey_Key AND 
+   <Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+
+   where 
+   USR.NAME_Key IS NULL AND 
+
+   TDET.PREFERRED = 1  and   dbo.LCReturnWithinCircle(S.spatial_ref,s.spatial_ref_system,
+      
+
+    {0}, '{1}', {2}) = 1
+   
+   <Condition field =""  operator="equal" type="Text" SubstituteFor="{0}" name="Grid Ref. Centre" entrycount="1"  />
+
+   <Condition field =""  operator="equal" type="Number" SubstituteFor="{1}" name="Radius metres max 100000" entrycount="1"  />
+  
+   <Condition field =""  operator="equal" type="OptionSet" SubstituteFor="{2}" name="Sample Grid Ref point(s) to be used"   >
+
+	<Option name="SW Corner " value = "0" />
+        <Option name="Centre point only" value = "1" />
+
+        <Option name="Any Corner or Centre" value = "2" />
+        <Option name="All 4 corners " value = "3" />
+
+   </Condition>
+   
+   AND
+
+   <Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+
+	
+        <Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+    </Condition>
+
+
+   AND 
+   <Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+   </Condition>
+        AND
+   <Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+   </Condition> 
+        AND        
+   <Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+   </Condition>     
+         AND        
+    <Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" >
+        <Option name="Include" value = "'Anything'" />
+        <Option name="Exclude" value = "'Site Centroid'" />
+    </Condition>    
+    
+</Where>
+
+
+<OutputTableOrderby name="by Taxon Group" SQL="Order By taxongroup, preferred_name,vague_date_start "/>
+ 
+<OutputTableOrderby name="by Scientific Name" SQL="Order By preferred_name, vague_date_start "/>
+
+<OutputTableOrderby name="Taxanomic Order" SQL="Order By Sort_Order, vague_date_start "/>
+
+
+</SQL>
+
+<Columns>
+  <Column name="Taxon_occurrence_key" visible= "false" tablename =  "Taxon_Occurrence" />
+  <Column name="Spatial_ref" visible= "true" position = "1" caption = "Grid Ref" width = "80" keycolumn = "Taxon_Occurrence_key" />
+  <Column name="Item_name" visible= "true" position = "2" caption = "Location"  width = "200"/>
+  <Column name="Location_Name" visible= "true" position = "3" caption = "Location Name"  width = "200"/>
+  <Column name="Vague_date_start" visible= "true" position = "4" caption = "Date" width = "120" />
+  <Column name="Item_name" visible= "true" position = "5" caption = "Location"  width = "200"/>
+  <Column name="Recorders" visible= "true" position = "6" caption = "Recorders" width = "150" />
+  <Column name="Determiner" visible= "true" position = "7" caption = "Determiner" width = "150" />
+  <Column name="Taxongroup" visible= "true" position = "8" caption = "Group" width="150"  />
+  <Column name="Preferred_Name" visible= "true" position = "9" caption = "Scientific Name" width = "200" />
+  <Column name="Authority" visible= "true" position = "10" caption = "Authority" width ="100" />
+  <Column name="Common_Name" visible= "true" position = "11" caption = "Common Name" width="150"  />
+  <Column name="Actual_Name" visible= "true" position = "12" caption = "Recommended Name" width = "200" />
+  <Column name="Abundance" visible= "true" position = "13" caption = "Abundance" width="100"  />
+  <Column name="Sort_Order" visible= "false"  />
+ 
+
+
+ 
+</Columns>
+
+</CustomReport>

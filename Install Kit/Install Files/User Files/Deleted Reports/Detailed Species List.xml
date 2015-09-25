@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<CustomReport title="Detailed species list for a single &lt;location&gt;V06-12" 
+description="Please delete file name 'Detailed species list.xml' from your Recorder user\reports folder. A report of the same name which replaces
+this can be found in Geographic/Location Reports" menupath="Redundant Reports">
+<SQL>
+<Where keytype="Default">
+Select Distinct 'Please delete this report' as Message from Setting
+
+</Where>
+
+
+</SQL>
+
+
+<Columns>
+
+</Columns>
+</CustomReport>

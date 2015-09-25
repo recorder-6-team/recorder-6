@@ -1,0 +1,60 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Grid references and spurious accuracy</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Grid references and spurious accuracy</H1>
+  <P>
+   Consider the following map image.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\screenshots\gbmap.gif" WIDTH="277" HEIGHT="407" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   This image is approximately 300 pixels wide and 500 high, and 
+   represents an area on the ground about 800 km east to west and 1,300 
+   km north to south. Therefore, an individual pixel on the screen 
+   represents an area nearly 3km square on the ground. Taking this into 
+   account, it is unrealistic to derive a grid reference that is more 
+   precise than a 10km square (e.g. NZ16) when you click on the map to 
+   obtain a spatial reference. However, the software is quite capable of 
+   generating a spatial reference to the nearest metre (e,g, NZ 12345 
+   67890). If this was allowed, it would be a case of 'spurious accuracy'.</P>
+  <P>
+   <SPAN STYLE="font-style : italic;">Recorder </SPAN> uses the scale of 
+   the map displayed in the <A HREF="The_Map_Browser.htm">Map Browser</A> 
+   to calculate the size on the ground represented by a pixel. This 
+   information is used to decide the appropriate precision for the 
+   spatial reference that is shown when you click on the map. So, as you 
+   zoom in, the spatial reference shown when you click becomes more precise.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Spatial References Overview;Spatial_References_Overview.htm"><PARAM
+    NAME="Item2" VALUE="The Map Browser;The_Map_Browser.htm"></OBJECT>
+ </BODY>
+</HTML>

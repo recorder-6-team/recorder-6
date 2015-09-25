@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<!-- COUNT OF RECORDS ENTERED WITHIN A DATE RANGE
+     XML Report by Charles Roper of the Sussex Biodiversity Record Centre
+     http://www.sxbrc.org.uk/
+      Version 5 - 28 November 2014
+-->
+<CustomReport title="Count of records entered within &lt;date range&gt; V07-12" menupath="System Supplied\Statistics"
+ description="Shows count of occurrences (records), per data keyer, entered within a specified date range.">
+<SQL>
+SELECT     dbo.FormatIndividual(I.TITLE, I.INITIALS, I.FORENAME, I.SURNAME) AS [Entered by],
+           COUNT(TXO.TAXON_OCCURRENCE_KEY) AS 'No of Records'
+<Where keytype="Default">
+FROM       SAMPLE AS S
+INNER JOIN SURVEY_EVENT SE ON
+           S.SURVEY_EVENT_KEY = SE.SURVEY_EVENT_KEY
+INNER JOIN [NAME] N ON
+           SE.ENTERED_BY = N.NAME_KEY
+INNER JOIN INDIVIDUAL I	ON
+           N.NAME_KEY = I.NAME_KEY
+INNER JOIN TAXON_OCCURRENCE TXO ON
+           S.SAMPLE_KEY = TXO.SAMPLE_KEY
+WHERE      SE.VAGUE_DATE_TYPE != 'U'
+AND        <Condition field="SE.ENTRY_DATE" operator="greater than equal" type="Date" name="Start Date" />
+AND        <Condition field="SE.ENTRY_DATE" operator="less than equal" type="Date" name="End Date" />
+GROUP BY   dbo.FormatIndividual(I.TITLE, I.INITIALS, I.FORENAME, I.SURNAME)
+
+</Where>
+  <OutputTableOrderby name="by Taxanomic Order" SQL="Order By [No of Records] DESC "/>
+</SQL>
+
+<Columns></Columns>
+
+</CustomReport>

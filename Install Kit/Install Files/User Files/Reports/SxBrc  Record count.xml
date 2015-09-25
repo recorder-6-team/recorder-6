@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<!-- RECORD COUNT - XML Report by Charles Roper of the Sussex Biodiversity Record Centre
+     http://www.sxbrc.org.uk/
+     Version 5 - 28 November 2014
+-->
+<CustomReport title="Record count V06-12" menupath="System Supplied\Statistics" description="Counts the number of records (taxon occurrences) within the database">
+  <SQL>
+    SELECT COUNT(TXO.TAXON_OCCURRENCE_KEY) AS RECORD_COUNT
+    FROM TAXON_OCCURRENCE TXO
+    <Where keytype="Default">
+    </Where>
+    <Where keytype="Survey">
+      INNER JOIN SAMPLE	ON TXO.SAMPLE_KEY = SAMPLE.SAMPLE_KEY
+      INNER JOIN SURVEY_EVENT ON SAMPLE.SURVEY_EVENT_KEY = SURVEY_EVENT.SURVEY_EVENT_KEY
+      INNER JOIN SURVEY ON SURVEY_EVENT.SURVEY_KEY = SURVEY.SURVEY_KEY
+      WHERE SURVEY.SURVEY_KEY='%s'
+    </Where>
+    <Where keytype="Location">
+      INNER JOIN SAMPLE ON TXO.SAMPLE_KEY = SAMPLE.SAMPLE_KEY
+      WHERE SAMPLE.LOCATION_KEY='%s'
+    </Where>
+    <Where keytype="Name">
+      INNER JOIN SAMPLE AS S ON TXO.SAMPLE_KEY = S.SAMPLE_KEY
+      INNER JOIN SURVEY_EVENT AS SE ON S.SURVEY_EVENT_KEY = SE.SURVEY_EVENT_KEY
+      INNER JOIN SURVEY_EVENT_RECORDER AS SER ON SE.SURVEY_EVENT_KEY = SER.SURVEY_EVENT_KEY
+      WHERE SER.NAME_KEY = '%s'
+    </Where>
+  </SQL>
+
+  <Columns>
+    <Column name="RECORD_COUNT" position="1" caption="Count" width="100"/>
+  </Columns>
+
+</CustomReport>

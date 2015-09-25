@@ -1,0 +1,115 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC  Count of records in a Bounding Box
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 4 - 17 April 2009
+     Version 5 - 28 Nov 2014    
+   
+     QUICK REPORT - Not implemented
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Unchedked - By parameter
+     Invalid = By parameter	
+   
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Bounding Box Reports"  title="Bb3 Count of Records in bounding box " 
+description= "Count of records for a bounding box,consolidated by recommended name. The bounding box details are entered as Grid References, but the selection is actually based on Lat/Long. For this reason the correct records may not be selected if they are close to the box boundaries " >
+
+<SQL>
+
+Select COUNT (TOCC.Taxon_Occurrence_Key) as Records ,  ITN2.Actual_name as Preferred_name, ITN2.Common_Name as Preferred_Common,
+TG.Taxon_Group_Name,ITN2.Sort_Order
+
+From Sample S
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDET on TDET.Taxon_Occurrence_key = TOCC.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDET.Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
+LEFT JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_taxon_Name ITN2 ON ITN2.Taxon_List_Item_key = ITN.Recommended_Taxon_List_item_key
+ 
+
+<Where keytype="Default">
+
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+where  
+
+USR.Name_Key IS NULL
+AND
+
+ITN.System_Supplied_Data = 1 
+AND
+ITN2.System_Supplied_Data = 1
+AND
+TDET.Preferred = 1 and 
+
+<Condition field= "S." operator="equal" type="BoundingBox"  name="Bounding Box" entrycount="-1" />
+  
+and
+
+
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+
+	
+        <Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition> 
+
+GROUP BY  ITN2.Actual_name , ITN2.Common_Name ,
+TG.Taxon_Group_Name,ITN2.Sort_Order
+
+
+
+
+
+
+
+</Where>
+
+
+
+ 
+<OutputTableOrderby name="by Scientific Name" SQL="Order By Preferred_name"/>
+
+<OutputTableOrderby name="Taxanomic Order" SQL="Order By Sort_Order"/>
+
+</SQL>
+<Columns>
+   <Column name="Records" width="100" position="1" caption="No. of Records" />
+   <Column name="Taxon_Group_name" width="200" position="2" caption="Taxon Group" /> 
+   <Column name="Preferred_name" width="200" position="3" caption="Scientific Name" /> 
+   <Column name="Preferred_Common" width="200" position="4" caption="Common Name" /> 
+   <Column name="Sort_Order" width="200" visible="false"   /> 
+
+</Columns>
+</CustomReport>

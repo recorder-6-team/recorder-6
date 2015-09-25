@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<!-- COUNT OF RECORDS ENTERED WITHIN A DATE RANGE
+     XML Report by Charles Roper of the Sussex Biodiversity Record Centre
+     http://www.sxbrc.org.uk/
+     Version 1.2 - 12/01/2007
+-->
+<CustomReport title="Count of records made within &lt;date range&gt; V07-12" 
+menupath="Redundant reports" description="
+Please delete file 'SxBRC Count of records made within a date range.xml' from your Recorder user\reports folder
+It has been replaced by a report of the same name in System reports/Statistical reports.   
+"> 
+<SQL>
+
+<Where keytype="Default">
+ Select distinct 'Please delete this report' as Message from setting
+
+</Where>
+
+
+
+</SQL>
+<Columns>
+
+</Columns>
+</CustomReport>
+
+

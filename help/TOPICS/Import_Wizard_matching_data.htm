@@ -1,0 +1,447 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Import Wizard - matching data</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Import Wizard - matching data</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   The data in a number of the column types that you can select when 
+   importing observations need to exist in the appropriate tables in the 
+   database prior to adding the observations to the database:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Observer(s) </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">and</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK"> 
+    Determiner Name </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">must
+     b</FONT>e in th</SPAN>e list of <A HREF="Individuals_and_Organisations.htm">individuals</A> 
+    in the Names and Addresses list - for more information see section below.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Species Name </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">and</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK"> 
+    Associated Species </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">mu</FONT>st
+     be </SPAN>in the <A HREF="Dictionaries_Overview.htm">Taxon dictionary</A> 
+    - for more information see section below.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Location </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">must</FONT> 
+    be </SPAN>in the location hierarchy or stored in <SPAN STYLE="font-weight : bold;">Location
+     Name</SPAN> - for more information see section below.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Abundance Data</FONT></SPAN><FONT COLOR="BLACK"> 
+    - t</FONT>he measurement qualifiers in this column type must be one 
+    of the qualifiers from a measurement type that is available on taxon 
+    occurrences - see the measurement type <A HREF="Term-list_Overview.htm">term
+     list</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Association 
+    Type </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">mu</FONT>st
+     be in </SPAN>the Relationship Type <A HREF="Term-list_Overview.htm">term
+     list</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Biotope </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">must
+     be </FONT>in </SPAN>the <A HREF="Dictionaries_Overview.htm">Biotope dictionary</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Determination 
+    Reference </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">and</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK"> 
+    Publication Reference </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">must
+     be in </FONT></SPAN><FONT COLOR="BLACK">the <A HREF="Documents_Overview.htm">document</A> list.</FONT></P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Determination 
+    Type </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">must
+     b</FONT>e in </SPAN>the <FONT COLOR="BLACK"><SPAN STYLE="font-weight : normal;">Determination
+     Type</SPAN></FONT> <A HREF="Term-list_Overview.htm">term list</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Determiner Role </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">must
+     b</FONT>e in </SPAN>the <FONT COLOR="BLACK"><SPAN STYLE="font-weight : normal;">Determin</SPAN></FONT><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">er</FONT></SPAN><FONT COLOR="BLACK"><SPAN STYLE="font-weight : normal;"> </SPAN></FONT><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">Rol</FONT></SPAN><FONT COLOR="BLACK"><SPAN STYLE="font-weight : normal;">e</SPAN></FONT> <A HREF="Term-list_Overview.htm">term
+     list</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Record Type </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">must
+     b</FONT>e in </SPAN>the Record Type <A HREF="Term-list_Overview.htm">term
+     list</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Sampling Method </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">mu</FONT>st
+     be in </SPAN>the Sample Type <A HREF="Term-list_Overview.htm">term list</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Specimen Type </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">mus</FONT>t
+     be in </SPAN>the Specimen Type <A HREF="Term-list_Overview.htm">term list</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Substrate </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">mu</FONT>st
+     be in </SPAN>the Substrate <A HREF="Term-list_Overview.htm">term list</A>.</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: the supported columns 
+   above are available in <SPAN STYLE="font-style : italic;">Recorder 6</SPAN> 
+   up to and including version 6.16. However, the Import Wizard has been 
+   designed in such a way as to make it comparatively easy to modify it 
+   to import additional fields so subsequent versions are likely to 
+   support additional column types. Check what is currently available by 
+   selecting &lt;more options&gt; in the drop down box for <A HREF="Import_Wizard_column_types_selection.htm">selecting
+    column types</A>.</P>
+  <P>
+   Following the page where you enter the <A HREF="Import_Wizard_missing_data_selection.htm">required
+    data</A> that is not in the import file, <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>will display a page for each of the above column types that 
+   is present. In most cases, it will automatically check whether the 
+   data are already present in the database, then display a table which 
+   lists all the distinct values from the file being imported, and the 
+   match it has found. On all the pages, you won't be able to proceed 
+   (the [Next] button will be inactive) until you have specified what is 
+   to be done with all the unmatched items. When a <SPAN STYLE="font-weight : normal;">[</SPAN><SPAN STYLE="font-weight : bold;">Make
+    New Entry</SPAN>] button is present one option is to select the 
+   unmatched item and click <SPAN STYLE="font-weight : normal;">[</SPAN><SPAN STYLE="font-weight : bold;">Make
+    New Entry</SPAN><SPAN STYLE="font-weight : normal;">]</SPAN>. 
+   Alternatively, <SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">[</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Make
+    New Entries</FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">]
+    can be used to create new entries for all unmatched it</FONT></SPAN><FONT COLOR="BLACK">ems
+    in one operation. </FONT>This will add the selected item(s) to the 
+   relevant table(s) in the database when the button is clicked (the 
+   observations themselves aren't added until later in the process). 
+   Another option is to manually match the item concerned to an entry 
+   that already exists, e.g. Kate Wood could be matched to Katherine 
+   Wood; a measurement qualifier of 'males' could be matched to 'Male'.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;"><FONT COLOR="RED">Note</FONT></SPAN><FONT COLOR="RED">:
+    Indiscriminate use of </FONT><SPAN STYLE="font-weight : normal;"><FONT COLOR="RED">[</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="RED">Make
+    New Entry</FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="RED">]</FONT></SPAN><FONT COLOR="RED"> 
+   and </FONT><SPAN STYLE="font-weight : normal;"><FONT COLOR="RED">[</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="RED">Make
+    New Entries</FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="RED">]
+    </FONT></SPAN><FONT COLOR="RED">can lead to unnecessary duplication 
+   in your <SPAN STYLE="font-style : italic;">Recorder </SPAN>database, 
+   e.g. you could easily end up with both </FONT>Kate Wood and Katherine 
+   Wood in your Names and <FONT COLOR="RED">Addresses list when they are 
+   the same person.</FONT></P>
+  <P>
+   To match an item manually, or to change the match that <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   has returned:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click in the <SPAN STYLE="font-style : normal;">Recorder </SPAN>Matches
+     box for the item you want to match or re-match.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    If a drop-down arrow appears, use it to select an existing item.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    If a Get <IMG SRC="..\buttonimages\find.gif" WIDTH="20" HEIGHT="20" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button appears use it to select and <A HREF="Return_Data.htm">Return</A> <IMG SRC="..\buttonimages\return.gif" WIDTH="16" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+    the required item as normal, or use one of the other methods for <A HREF="Finding_Things.htm">Getting
+     things</A>.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    In some of the matching pages you can type some matching text in the <SPAN STYLE="font-style : normal;">Recorder
+     </SPAN>Matches box and click &lt;Enter&gt;. If there is only one 
+    match it will be returned. If there is more than one, a Find box will 
+    appear listing all the matches inviting you to select the required 
+    one. In the case of locations, i<SPAN STYLE="font-weight : normal;">f 
+    you choose </SPAN>Location Type, Spatial Reference and/or File Code <SPAN STYLE="font-weight : normal;">using
+     &quot;</SPAN><SPAN STYLE="font-weight : bold;">Extra Location Search Columns</SPAN>&quot;
+     on the General tab in <A HREF="Options_General.htm"><SPAN STYLE="font-weight : normal;">Tools
+     - Options</SPAN></A><SPAN STYLE="font-weight : normal;">, then the 
+    selected types of data will by appear alongside the location names 
+    listed in the Matches box.</SPAN></P>
+   </UL>
+  <P>
+   To delete a match, click in the <SPAN STYLE="font-style : normal;">Recorder
+    </SPAN>Matches box containing the item you want to delete and press 
+   the &lt;Delete&gt; key.</P>
+  <P>
+   When all the items are matched, if required, click [Next] to move 
+   onto the next page. On the last matching page this will cause <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>to automatically move on to the <A HREF="Import_Analysis.htm">Analysis
+    and import</A> phases.</P>
+  <P>
+   <SPAN STYLE="font-style : italic;">Recorder </SPAN>remembers matches 
+   in a series of tables in the database called IW_Matched_... In 
+   subsequent imports, these will be used when the system is looking for 
+   matches for the imported data to save you having to do so many manual 
+   matches. They are highlighted in pale green to distinguish them from 
+   automatic matches and to encourage you to check that they are correct 
+   for the current import.</P>
+  <P>
+   <FONT COLOR="BLACK">The [</FONT><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Commit
+    Matches</FONT></SPAN><FONT COLOR="BLACK">] buttons on the matching 
+   pages of the wizard enable you to control when matches are stored in 
+   the database for future use. If, for example, you are working on a 
+   large import that requires a lot of manual matching but you run out 
+   of time to complete it, you can click [</FONT><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Commit
+    Matches</FONT></SPAN><FONT COLOR="BLACK">] to save the matches you 
+   have done so far before cancelling the import. This will enable you 
+   resume the import more quickly as the matches already done will be remembered.</FONT></P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   For help with these stages of an import, see the text on the left of 
+   the page. The [Next] button won't become active until all the issues 
+   are resolved for the current page.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: if you open other <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   windows while using the wizard, you can return to it by selecting <SPAN STYLE="font-weight : bold;">Window
+    - Import Wizard</SPAN> from the main menu. If you add any data in 
+   the other window that you want to use in the wizard, you may need to 
+   use the [Previous] button then the [Next] button to effectively 
+   refresh the matching page.</P>
+  <P>
+   <SPAN STYLE="font-style : normal;">The general principles of the 
+   matching pages are the same, although there are some important 
+   differences for <FONT COLOR="BLACK">O</FONT></SPAN><FONT COLOR="BLACK">bserver(s)/Determiner,
+    </FONT><SPAN STYLE="font-style : normal;">Species and Location matching:</SPAN></P>
+  <H2>
+   <SPAN STYLE="font-weight : bold;">Observer(s) </SPAN><SPAN STYLE="font-weight : normal;">and</SPAN><SPAN STYLE="font-weight : bold;"> 
+   Determiner </SPAN>matching page</H2>
+  <P>
+   <FONT COLOR="BLACK">If the import file contains <SPAN STYLE="font-weight : bold;">Observer(s)</SPAN> 
+   and/or <SPAN STYLE="font-weight : bold;">Determiner Name</SPAN> 
+   columns, this page is displayed, and the Imported Data column will 
+   list all the observers and determiners in the import file. The 
+   Recorder Matches column will contain the observers and determiners 
+   from the list of <A HREF="Individuals_and_Organisations.htm">individuals</A> 
+   in the </FONT><A HREF="Names_and_Addresses_Overview.htm">Names and 
+   Addresses list</A><FONT COLOR="BLACK"> that match those in the import 
+   file, and any remembered matches (shaded pale green). It is advisable 
+   to check the remembered matches.</FONT></P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: the import wizard can 
+   import multiple observers for an observation but only one determiner. 
+   Hence, if the Observer(s) column contains multiple names they will be 
+   split into multiple entries in the Imported Data column - see <A HREF="Import_Wizard_observers.htm">examples</A>,
+    but if the determiner column in the import file contains say 
+   &quot;Thomas Jensen, Roger Little&quot;, a cell in the Imported Data 
+   column will contain the same text. One of them will need to be chosen 
+   as the determiner for the observation.</P>
+  <H2 STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Import Wizard matching names.gif" WIDTH="726" HEIGHT="402" VSPACE="0" HSPACE="0" BORDER="0"></H2>
+  <P>
+   <FONT COLOR="BLACK">For any unmatched observers and determiners the 
+   options are:</FONT></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <FONT COLOR="BLACK">Manually match the observer/determiner to an 
+    existing one, as described above.</FONT></P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : normal;">S</SPAN>elect the unmatched item 
+    and click <SPAN STYLE="font-weight : normal;">[</SPAN><SPAN STYLE="font-weight : bold;">Make
+     New Entry</SPAN><SPAN STYLE="font-weight : normal;">]<FONT COLOR="BLACK"> 
+    to create the entry in the </FONT></SPAN><FONT COLOR="BLACK">the list 
+    of <A HREF="Individuals_and_Organisations.htm">individuals</A> in the </FONT><A HREF="Names_and_Addresses_Overview.htm">Names
+     and Addresses list</A><SPAN STYLE="font-weight : normal;"><FONT COLOR="#993399">.</FONT></SPAN></P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">Click</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK"> </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">[</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Make
+     New Entries</FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">]
+     to create new entries for all unmatched </FONT></SPAN><FONT COLOR="BLACK">observers
+     and determiners in one operation.</FONT></P>
+   </UL>
+  <P>
+   <FONT COLOR="BLACK">When <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   matches are completed for all the names listed, click [Next] to move 
+   onto the next page.</FONT></P>
+  <H2>
+   Species matching page</H2>
+  <P>
+   Matching <SPAN STYLE="font-weight : normal;">Species</SPAN> and <SPAN STYLE="font-weight : normal;">Associated
+    Species</SPAN> are done on separate pages. The first time this page 
+   opens, <FONT COLOR="BLACK">the Imported Data column will list all the 
+   names from the column type <SPAN STYLE="font-weight : bold;">Species Name</SPAN> 
+   but no matches will be listed until you trigger a search. After you 
+   have clicked on the Search botton Recorder will populate the Recorder 
+   Matches column with the matches it finds in the selected checklist. 
+   If the import file contains an <SPAN STYLE="font-weight : bold;">Associated
+    species</SPAN> column, the page will open again, after the <SPAN STYLE="font-weight : bold;">Species
+    Name</SPAN> matching is complete, listing all the names from that column.</FONT></P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <FONT COLOR="BLACK"><IMG SRC="..\ScreenShots\Import Wizard matching species.gif" WIDTH="1015" HEIGHT="453" VSPACE="0" HSPACE="0" BORDER="0"></FONT></P>
+  <P>
+   When matching species, you need to specify which list in the taxon 
+   dictionary to use to find the matches:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the drop-down arrow beside <SPAN STYLE="font-weight : bold;">Checklist
+     to use for search</SPAN> and select the required list. Note that <SPAN STYLE="font-weight : bold;">All
+     preferred lists</SPAN> is available at the top of the drop-down 
+    list. If this is used the search is done across all the preferred 
+    lists, as in other parts of the system, e.g. in the <A HREF="Taxon_Dictionary_Browser.htm">taxon
+     dictionary </A>itself.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the [Search] button and wait for the search to complete.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Check remembered matc<FONT COLOR="BLACK">hes (shaded pale green).</FONT></P>
+   <LI CLASS="mvd-P">
+   <P>
+    <FONT COLOR="BLACK">M</FONT>atch any unmatched items manually, as 
+    described above. If there are any you can't match, you could return 
+    to the <A HREF="Import_Wizard_column_types_selection.htm">Column type selection</A> 
+    page and remove the rows that contain them for processing later 
+    (species many need to be added to the taxon dictionary). If <SPAN STYLE="font-weight : bold;">Auto-complete
+     search in Import Wizard</SPAN> is ticked on the General tab in <A HREF="Options_General.htm"><SPAN STYLE="font-weight : normal;">Tools
+     - Options</SPAN></A><SPAN STYLE="font-weight : normal;">, then when 
+    you use the </SPAN>Get <IMG SRC="..\buttonimages\find.gif" WIDTH="20" HEIGHT="20" VSPACE="0" HSPACE="0" BORDER="0"> button<SPAN STYLE="font-weight : normal;"> 
+    to find matches </SPAN>for species in the import wizard, <SPAN STYLE="font-weight : normal;">the
+     </SPAN>Find Taxon<SPAN STYLE="font-weight : normal;"> dialogue will 
+    open with the Search Text box populated with the species name from 
+    the Imported Data column. </SPAN>You can then edit the Search Text to 
+    help find a match. If you also have <SPAN STYLE="font-weight : bold;">Enable
+     partial name search for taxa</SPAN> ticked you will have more 
+    options for editing the Search Text, e.g. you will be able to remove 
+    characters from the end of the genus. This will often speed up the 
+    matching process.</P>
+   </UL>
+  <P>
+   Repeat the process with other lists, if necessary.</P>
+  <P>
+   When all species have been matched, click [Next] to move onto the 
+   next page. On the last matching page this will cause <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   to automatically move on to the <A HREF="Import_Analysis.htm">Analysis
+    and import</A> phases.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: for remembered species 
+   matches, the checklist is also remembered to help avoid problems with 
+   species like Redshank (plant and bird). However, this means that if, 
+   for example, a plant is matched when the LEPIDOPTERA list is selected 
+   at the top this match won't be remembered next time the wizard is 
+   used if the VASCULAR PLANTS list is selected. It will only be 
+   remembered if the LEPIDOPTERA list is selected. </P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: if you have matched 
+   all entries and the [Next] button is still greyed out, try clicking 
+   on another box. Changes to a box are not registered until you click 
+   away from it.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: <SPAN STYLE="font-weight : normal;">for
+    some lists searching the dictionary will be noticeably faster if the <A HREF="Hiding_or_Showing_dictionary_details.htm">dictionary
+    details are hidden</A>.</SPAN></P>
+  <H2>
+   Location matching page</H2>
+  <P>
+   <FONT COLOR="BLACK">If the import file contains a column given a type 
+   of <SPAN STYLE="font-weight : bold;">Location</SPAN> (not <SPAN STYLE="font-weight : bold;">Location
+    Name</SPAN>), this page is displayed, the Imported Data column will 
+   list all the names from the <SPAN STYLE="font-weight : bold;">Location</SPAN><SPAN STYLE="font-weight : normal;"> </SPAN>column<SPAN STYLE="font-weight : normal;"> 
+   and the Grid Reference column will list </SPAN></FONT><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">entries
+    from the </FONT></SPAN><FONT COLOR="BLACK"><SPAN STYLE="font-weight : bold;">Grid
+    Reference</SPAN><SPAN STYLE="font-weight : normal;"> </SPAN>column 
+   in the import file<SPAN STYLE="font-weight : normal;">. </SPAN>Note 
+   that the contents of the <SPAN STYLE="font-weight : bold;">Location Name</SPAN> 
+   column, if present, will not be included. </FONT>See <A HREF="Location_vs_Location_Name.htm">Location
+    and Location Name</A> for information on the distinction between the two.<FONT COLOR="BLACK"> 
+   Recorder Matches will contain the locations from the <A HREF="Location_Overview.htm">Location
+    hierarchy</A> that match those in the import file, and any 
+   remembered matches (shaded pale green). It is advisable to check the 
+   remembered matches. The Centriod column will contain the central 
+   spatial references for the matched locations.</FONT></P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <FONT COLOR="BLACK"><IMG SRC="..\ScreenShots\Import Wizard matching locations.gif" WIDTH="1005" HEIGHT="511" VSPACE="0" HSPACE="0" BORDER="0"></FONT></P>
+  <P>
+   For any unmatched locations the options are:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Manually match the location to an existing one, as described above.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : normal;">S</SPAN>elect the unmatched item 
+    and click <SPAN STYLE="font-weight : normal;">[</SPAN><SPAN STYLE="font-weight : bold;">Make
+     New Entry</SPAN><SPAN STYLE="font-weight : normal;">] to create the 
+    entry in the location hierarchy. </SPAN><FONT COLOR="BLACK">If there 
+    is more than one grid reference for the location in the import file 
+    you will need to decide which to use as the site centroid or central 
+    spatial reference for the new location. To do this:</FONT></P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     <FONT COLOR="BLACK">Click in the corresponding Centroid box.</FONT></P>
+    <LI CLASS="mvd-P">
+    <P>
+     <FONT COLOR="BLACK">Type in a grid reference for the site centroid or 
+     click on the drop-down arrow that appears and select one of the grid 
+     references from the import file.</FONT></P>
+    <LI CLASS="mvd-P">
+    <P>
+     <FONT COLOR="BLACK">Click </FONT><SPAN STYLE="font-weight : normal;">[</SPAN><SPAN STYLE="font-weight : bold;">Make
+      New Entry</SPAN><SPAN STYLE="font-weight : normal;">].</SPAN></P>
+    </UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">Click</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK"> </FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">[</FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Make
+     New Entries</FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">]
+     to create new entries for all unmatched </FONT></SPAN>locations<FONT COLOR="BLACK"> 
+    in one operation.</FONT></P>
+   <LI CLASS="mvd-P">
+   <P>
+    <SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">Tick </FONT></SPAN><SPAN STYLE="font-weight : bold;"><FONT COLOR="BLACK">Place
+     any remaining unmatched locations into location name</FONT></SPAN><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">.
+     When this is selected the location information from the import file 
+    will be stored </FONT></SPAN><FONT COLOR="BLACK">in (Survey) Event 
+    Location Name and Sample Location</FONT><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK"> </FONT></SPAN><FONT COLOR="BLACK">Name
+     </FONT><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">for 
+    any unmatched locations; the observations will not be linked to </FONT></SPAN>locations
+     in the location hierarchy<SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">.
+     If location name is also present the two </FONT></SPAN><FONT COLOR="BLACK">will
+     be concatenated</FONT><SPAN STYLE="font-weight : normal;"><FONT COLOR="BLACK">.</FONT></SPAN></P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: you have the option to <SPAN STYLE="font-weight : bold;">Use
+    the first listed grid reference when making new entry</SPAN> by 
+   ticking the box at the top.</P>
+  <P>
+   <FONT COLOR="BLACK">If you use </FONT><SPAN STYLE="font-weight : normal;">[</SPAN><SPAN STYLE="font-weight : bold;">Make
+    New Entry</SPAN><SPAN STYLE="font-weight : normal;">] </SPAN><FONT COLOR="BLACK">the
+    new location will be added at the top level in the <A HREF="Location_Hierarchies.htm">location
+    hierarchy</A> although it can be moved later, if required.</FONT></P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: if you want to add the 
+   location directly into the location hierarchy so that it goes in at 
+   the appropriate level rather than at the top level, simply click on 
+   the Get <IMG SRC="..\buttonimages\find.gif" WIDTH="20" HEIGHT="20" VSPACE="0" HSPACE="0" BORDER="0"> 
+   button that appears when you click in the Recorder Matches box to 
+   open the location window and <A HREF="Add.htm">add</A> it, then 
+   select the <A HREF="Return_Data.htm">Return</A> <IMG SRC="..\buttonimages\return.gif" WIDTH="16" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+   button to return it to the location matching page.</P>
+  <P>
+   When you have taken the appropriate actions for all the unmatched 
+   locations, click [Next] to move onto the next page. On the last 
+   matching page this will cause <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   to automatically move on to the <A HREF="Import_Analysis.htm">Analysis
+    and import</A> phases.</P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;
+ </BODY>
+</HTML>

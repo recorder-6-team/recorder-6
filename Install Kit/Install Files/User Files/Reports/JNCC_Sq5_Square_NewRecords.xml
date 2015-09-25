@@ -1,0 +1,155 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC  New Records for since a given date. 
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 November 2014
+
+   
+     QUICK REPORT - Not implemented
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Unchedked - By parameter
+     Invalid = By parameter	
+   
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Grid Square Reports"  title="Sq5 New Records (for Square)" 
+description="Selects new records since a a given date based on date the records were entered into Recorder. Then selects 
+records for a specified date range and 10km square. The date range is entered as a Recorder vague date (eg 1/1/2000 - 31/12/2000). " 
+>
+
+<SQL>
+<Where keytype="Default">
+Select s.sample_key,TOCC.Taxon_Occurrence_key, S.Spatial_Ref,S.Location_Name,cast(S.Lat as varchar(20)) as Latitude, cast(s.Long as varchar(20)) as Longitude, S.spatial_ref_system,
+s.vague_date_start,s.vague_date_end,s.vague_date_type,dbo.formateventRecorders(s.sample_key) as Recorders, 
+dbo.FormatIndividual (I.Title, I.Initials, I.Forename, I.Surname) as Determiner,
+ITN.Preferred_name, ITN.Authority,ITN.Common_name, ITN2.Actual_name as Recommended_name, ITN2.Common_Name as Recommended_Common,
+TG.Taxon_Group_Name,ITN2.Sort_order
+
+
+FROM Sample S 
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDET on TDET.Taxon_Occurrence_key = TOCC.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDET.Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
+INNER JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_taxon_Name ITN2 ON ITN2.Taxon_List_Item_key = ITN.Recommended_Taxon_List_item_key
+INNER JOIN Individual I on I.name_key = TDET.Determiner  
+
+
+
+
+
+
+
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+WHERE
+USR.Name_Key IS NULL
+
+AND
+  
+
+ITN.System_Supplied_Data = 1
+AND
+ITN2.System_Supplied_Data = 1
+
+AND
+<Condition field= "" operator="equal" type="Date"  name="New Records after (entry date) " SubstituteFor = "{0}"/>
+<Condition field= "S." operator="equal" type="VagueDate"  name="Dates Recorded - Range "  />
+
+
+and 
+<Condition field= "" operator="equal" type="Text"  name="10km Square" SubstituteFor = "{1}"/>
+
+dbo.FormatGridRef(S.Spatial_ref, S.Spatial_ref_system, 0) = {1} 
+
+and
+
+
+TOCC.Entry_date &#62;= {0}
+
+and
+
+
+TDET.Preferred = 1 and 
+
+
+
+
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Pending/Failed verification" >
+
+	
+        <Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition> 
+
+	
+
+
+
+
+</Where>
+
+
+<OutputTableOrderby name="by Location Name/Scientific Name" SQL="Order by Location_Name, taxon_group_name, preferred_name"/>
+<OutputTableOrderby name="by Taxon_Group/Scientific Name" SQL="Order by  taxon_group_name, preferred_name,Location_Name"/>
+
+<OutputTableOrderby name="Taxanomic Order/Location Name" SQL="Order by  sort_order,Location_Name"/>
+
+
+ 
+</SQL>
+<Columns>
+  <Column name="Taxon_Occurrence_key" visible="false"  />
+<Column name="Sample_key" visible="false"  />
+  <Column name="Spatial_ref" width="60" position="1" caption="Spatial Ref" />   
+  <Column name="Spatial_ref_system" width="60" caption="Spatial Ref_System" visible="false"/>  
+   <Column name="Latitude" width="60"  caption="Latitude" visible="false" />  
+   <Column name="Longitude" width="60"  caption="Longitude" visible="false" />  
+ 
+  <Column name="Location_name" width="200" position="2" caption="Sample Location Name" /> 
+  <Column name="Vague_date_start" width="100" position="3" caption="Date" /> 
+  <Column name="Recorders" width="200" position="4" caption="Recorders" /> 
+  <Column name="Determiner" width="120" position="5" caption="Determiner" /> 
+  <Column name="Taxon_Group_name" width="200" position="6" caption="Taxon Group" /> 
+ 
+ <Column name="Preferred_Name" width="200" position="7" caption="Scientific Name" /> 
+  <Column name="Authority" width="200" position="8" caption="Authority" /> 
+  <Column name="Common_Name" width="200" position="9" caption="Common Name" /> 
+  <Column name="Recommended_name" width="200" position="10" caption="Recommended Name" /> 
+  <Column name="Recommended_Common" width="200" position="11" caption="Recommended Common Name" /> 
+  <Column name="Sort_order" visible="false" /> 
+ 
+
+   
+
+ 
+</Columns>
+</CustomReport>

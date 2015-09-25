@@ -1,0 +1,136 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Import Wizard observers</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Import Wizard observers</H1>
+  <P>
+   The Import Wizard processes the contents of the <SPAN STYLE="font-weight : bold;">Observer(s)
+    </SPAN><SPAN STYLE="font-weight : normal;">column</SPAN> by 
+   splitting up the contents into separate names so that each can be 
+   listed as a separate recorder on the survey events and samples. The 
+   accepted separators are , ; / \ &quot;and&quot; &amp; +. Because of 
+   the variations in the way the separators are used in normal usage 
+   problems have arisen with the splitting of the <SPAN STYLE="font-weight : bold;">Observer(s)</SPAN> 
+   into separate names. Below are some examples that are handled 
+   correctly. If your import file contains names in formats not handled 
+   correctly by the wizard, you should convert them to another format. 
+   You can try importing them and check whether they are split correctly 
+   in the window that enables you to match the <SPAN STYLE="font-weight : bold;">Observers</SPAN><SPAN STYLE="font-weight : normal;"> 
+   to individuals in your Names and Addresses list. If the split is not 
+   satisfactory you will need to abort the import and edit the import file.</SPAN></P>
+  <H3>
+   <FONT COLOR="BLUE"><SPAN STYLE="font-weight : bold;">Examples</SPAN></FONT></H3>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="85%" CELLPADDING="8" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Observer(s) </SPAN><SPAN STYLE="font-weight : normal;">column</SPAN></TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        Handled as:</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        Alice Jones and John North</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        Alice Jones, John North</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        Mr and Mrs D Smith</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        Mr D Smith, Mrs D Smith</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        Dr G R and K Wood</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        Dr G R Wood, K Wood</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        Richard &amp; Susan Brown, John North</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        Richard Brown, Susan Brown, John North</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        T &amp; R Green</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        T Green, R Green</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        Wood, Mr J.C., Green, R.A.</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        Mr J.C. Wood, R.A. Green</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        Jones, Alice, Smith, David</TD>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        Alice Jones, David Smith</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: Names containing 
+   apostrophes and hyphens are handled correctly when initials precede 
+   the surname but not when they follow the surname. For example, 
+   &quot;O'Sullivan, I.K. and Taylor-Wilson, N.V.&quot; will be split 
+   into 4 names: &quot;O'Sullivan&quot; and &quot;I.K.&quot;, 
+   &quot;Taylor-Wilson&quot; and &quot;N.V.&quot; In this case 
+   O'Sullivan and I.K. can both be matched to I.K O'Sullivan and the 
+   import wizard will import the observations correctly, but then both 
+   will be logged as remembered matches in IW_Matched_Names which may 
+   cause problems in future imports. Likewise with Taylor-Wilson, N.V.</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="MS Sans Serif,8,0,,"><PARAM
+    NAME="Item1" VALUE="Import Wizard;Import_Wizard.htm"><PARAM
+    NAME="Item2" VALUE="Import Wizard - data format;Import_Wizard_data_format.htm"></OBJECT>
+ </BODY>
+</HTML>

@@ -1,0 +1,1787 @@
+<!--NBN Data DTD version 2.25-->
+<!--Updated 26/01/09 by PBD-->
+
+<!ELEMENT short_name	(#PCDATA)>
+<!ELEMENT long_name	(#PCDATA)>
+<!ELEMENT description	(#PCDATA)>
+<!--2.20 added by SGB-->
+<!ELEMENT quality	(#PCDATA)>
+
+<!ELEMENT free_term	(#PCDATA)>
+
+<!ELEMENT comment	(#PCDATA)>
+<!ATTLIST comment
+	comment_type	NMTOKEN	#IMPLIED>
+
+<!ELEMENT date	(#PCDATA)>
+<!ATTLIST date	
+	specifier	CDATA	#IMPLIED
+	format	(vague|ddmmyyyy|mmddyyyy|isodate|eudate)	 "ddmmyyyy">
+
+<!ELEMENT spatial_ref	(#PCDATA)>
+<!ATTLIST spatial_ref
+	specifier		CDATA	#IMPLIED
+	system		NMTOKEN	"OSGB"
+	applies_to	(centroid|spot|ends|corners)	 "centroid"
+	qualifier 		CDATA	"original"
+	checked		(Yes|No)	"No">
+
+<!ELEMENT item_name (#PCDATA)>
+
+<!ELEMENT source_key	(#PCDATA)>
+<!ATTLIST source_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT initials	(#PCDATA)>
+
+<!--v211 Added element authority-->
+<!ELEMENT authority	(#PCDATA)>
+
+<!ELEMENT author_key	(#PCDATA)>
+<!ATTLIST author_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v210 changed reference_author - added  initials, item_name, also needs a source_key-->
+<!--v211 removed source key as it is implied by being nested within reference, added ATTLIST for entered_by etc.-->
+<!--v213 added sort_order to ATTLIST-->
+
+<!ELEMENT reference_author	(author_key?, initials?, item_name)>
+<!ATTLIST reference_author
+	sort_order		CDATA	#REQUIRED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT editor_key	(#PCDATA)>
+<!ATTLIST editor_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v210 added source_key-->
+<!--v211 removed source key as it is implied by being nested within reference, added ATTLIST for entered_by etc.-->
+<!--v213 added sort_order to ATTLIST-->
+<!ELEMENT reference_editor (editor_key?, initials?, item_name)>
+<!ATTLIST reference_editor
+	sort_order		CDATA	#REQUIRED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!--v214 added element dataset_title-->
+<!ELEMENT dataset_title	(#PCDATA)>
+<!ELEMENT title	(#PCDATA)>
+<!ELEMENT volume	(#PCDATA)>
+<!ELEMENT part	(#PCDATA)>
+<!ELEMENT number	(#PCDATA)>
+<!ELEMENT pages	(#PCDATA)>
+<!ELEMENT supplement	(#PCDATA)>
+<!ELEMENT edition		(#PCDATA)>
+<!ELEMENT place_of_publication	(#PCDATA)>
+<!ELEMENT symposium_title	(#PCDATA)>
+<!--v210 symposium_editor now has same structure as reference_editor-->
+<!--v211 added ATTLIST for entered_by etc.-->
+<!--v213 added sort_order to ATTLIST-->
+<!ELEMENT symposium_editor (editor_key?, initials?, item_name, source_key?)>
+<!ATTLIST symposium_editor
+	sort_order	CDATA	#REQUIRED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT symposium	(symposium_title, symposium_editor*)>
+<!ELEMENT publisher	(#PCDATA)>
+
+<!ELEMENT reference_number_type (#PCDATA)>
+
+<!ELEMENT reference_number_key	(#PCDATA)>
+<!ATTLIST  reference_number_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v212 changed reference_number_key to optional, added the actual number and added the ATTLIST-->
+<!ELEMENT reference_number	(reference_number_key?, number, reference_number_type)>
+<!ATTLIST reference_number
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT journal_key	(#PCDATA)>
+<!ATTLIST journal_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v211 removed desciption and ATTLIST so consistent with other term lists-->
+<!ELEMENT journal	(journal_key|free_term)>
+
+<!ELEMENT full_reference	(#PCDATA)>
+
+<!--v210 removed obsolete reference_type termlist stuff- it is referred to by an attribute-->
+<!--v211 added reference_editor to ELEMENT, changed full_reference OR details to AND as Recorder 2000 contains both, made title optional as a result-->
+
+<!--v216 added original file element and added to reference-->
+<!ELEMENT original_file	(#PCDATA)>
+
+<!ELEMENT name_type_concept_key (#PCDATA)>
+<!ATTLIST name_type_concept_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT language_key (#PCDATA)>
+<!ATTLIST language_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT language (language_key?, item_name)>
+<!ATTLIST language
+	priority	CDATA	#IMPLIED>
+
+<!ELEMENT subject_area_key (#PCDATA)>
+<!ATTLIST subject_area_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT subject_area (subject_area_key?, item_name, comment?)>
+<!ATTLIST subject_area
+	entered_session_id	CDATA	#REQUIRED
+	changed_session_id	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT domain_key (#PCDATA)>
+<!ATTLIST domain_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT domain (domain_key?, item_name, (subject_area|subject_area_key))>
+<!ATTLIST domain
+	has_occurrences			(Yes|No) "No"
+	entered_session_id	CDATA	#REQUIRED
+	changed_session_id	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT local_domain_key (#PCDATA)>
+<!ATTLIST local_domain_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT concept_group_label (#PCDATA)>
+
+<!ELEMENT local_domain (local_domain_key?, (domain|domain_key), item_name, concept_group_label, (language|language_key))>
+<!ATTLIST local_domain
+	entered_session_id	CDATA	#REQUIRED
+	changed_session_id	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT concept_group_key (#PCDATA)>
+<!ATTLIST concept_group_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT url (#PCDATA)>
+
+<!ELEMENT concept_group (concept_group_key?, (local_domain|local_domain_key), item_name, authority, url)>
+<!ATTLIST concept_group
+	entered_session_id	CDATA	#REQUIRED
+	changed_session_id	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT author_copy (#PCDATA)>
+
+<!ELEMENT sort_code (#PCDATA)>
+
+<!ELEMENT list_code (#PCDATA)>
+
+<!ELEMENT term_key (#PCDATA)>
+<!ATTLIST term_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT plaintext (#PCDATA)>
+
+<!ELEMENT keyword (term_key?, item_name, plaintext, (language|language_key))>
+<!ATTLIST keyword
+	entered_session_id	CDATA	#REQUIRED
+	changed_session_id	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT meaning_key (#PCDATA)>
+<!ATTLIST meaning_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT meaning	(meaning_key?)>
+
+<!ELEMENT concept_key (#PCDATA)>
+<!ATTLIST concept_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT concept (concept_key?, (concept_group|concept_group_key), (keyword|term_key), name_type_concept_key, meaning_key, author_copy?, sort_code?, list_code?)>
+<!ATTLIST concept
+	list_preferred			(Yes|No) "Yes"
+	is_current				(Yes|No) "Yes"
+	preferred				(Yes|No) "Yes"
+	entered_session_id	CDATA	#REQUIRED
+	changed_session_id	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT reference_keyword_key (#PCDATA)>
+<!ATTLIST reference_keyword_key
+	type	(nbn|local) #REQUIRED>
+
+<!ELEMENT reference_keyword (reference_keyword_key?, (concept|concept_key))>
+<!ATTLIST reference_keyword
+	entered_session_id	CDATA	#REQUIRED
+	changed_session_id	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT reference	(source_key?, reference_author+, date, full_reference, title?, journal?, volume?, part?, number?, pages?, supplement?, edition?, symposium?, publisher?, place_of_publication?, reference_editor*, reference_number*, original_file?, reference_keyword*)>
+<!ATTLIST reference
+	reference_type	(Journal|Book|Symposium|Bulletin|Memoirs|Published|Unpublished|Thesis|Notebook|Ephemera|Other)	"Other"
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT file_name (#PCDATA)>
+<!ELEMENT source_file (file_name)>
+
+<!ELEMENT source (source_key?, (reference|source_file))>
+
+<!--Added source_link_key-->
+<!ELEMENT source_link_key   	(#PCDATA)>
+<!ATTLIST source_link_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT source_link	((source_link_key?,source_key)|source)>
+<!ATTLIST source_link	
+	original	 (Yes|No) 	#REQUIRED>
+
+<!ELEMENT term_key	(#PCDATA)>
+<!ATTLIST term_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT term	(#PCDATA)>
+
+<!ELEMENT term_code	(#PCDATA)>
+<!ATTLIST term_code
+	code_system	CDATA	#IMPLIED
+	sort_code	(Yes|No)	"No">
+
+<!ELEMENT additional_field (#PCDATA)>
+<!ATTLIST additional_field
+	specifier CDATA #REQUIRED>
+
+<!ELEMENT term_definition	(#PCDATA)>
+<!ELEMENT termlist_item	(term_key, term, long_name?, term_code*, term_definition?, source*, additional_field*)>
+<!ATTLIST termlist_item
+	parent_term	NMTOKEN	#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT termlist	(source?, description?, termlist_item+)>
+<!ATTLIST termlist
+	term_list_name	CDATA	#REQUIRED
+	subject_area	CDATA	#IMPLIED
+	owner	CDATA	#IMPLIED
+	type	(nbn|local)	#REQUIRED
+	system_supplied_data	(Yes|No)	#IMPLIED>
+
+<!ELEMENT data	(#PCDATA)>
+
+<!--v2.21 Qualifier now a term list.  The following structure has been adopted for
+reasons of backwards compatibilty.  The qualifier element is synonymous with a free_term
+for measurement_qualifier.  If a measurement_qualifier is specified by keym then the 
+linked measurement_type must match that identified by the measurement_unit, otherwise
+an invalid record is generated.-->
+
+<!ELEMENT measurement_qualifier_key	(#PCDATA)>
+<!ATTLIST measurement_qualifier_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT qualifier (#PCDATA)>
+
+<!ELEMENT measurement_qualifier (measurement_qualifier_key|free_term)>
+
+<!ELEMENT measurement_type_key	(#PCDATA)>
+<!ATTLIST measurement_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT measurement_type	(measurement_type_key|free_term)>
+
+<!ELEMENT measurement_unit_key	(#PCDATA)>
+<!ATTLIST measurement_unit_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT measurement_unit	((measurement_unit_key|free_term), measurement_type)>
+
+<!ELEMENT measurement	(data, (qualifier|measurement_qualifier), measurement_unit)>
+<!ATTLIST measurement
+	accuracy	CDATA	"unknown">
+
+<!ELEMENT address_key	(#PCDATA)>
+<!ATTLIST address_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v212 removed full_address-->
+
+<!--v212 address_line changed to address_1 to address_4, added address_postcode and address_country-->
+
+<!ELEMENT address_1 	(#PCDATA)>
+<!ELEMENT address_2 	(#PCDATA)>
+<!ELEMENT address_3	(#PCDATA)>
+<!ELEMENT address_4 	(#PCDATA)>
+<!ELEMENT address_postcode	(#PCDATA)>
+<!ELEMENT address_country 	(#PCDATA)>
+
+<!--v211 type - removed "other" and default to "home", preferred changed from REQUIRED to IMPLIED, switched address_line+ ahead of full_address, moved dates from ATTLIST to ELEMENT-->
+<!--v216 type changed to work_address - type should be used for nbn/local keys-->
+<!ELEMENT address	(address_key?, address_1?, address_2?, address_3?, address_4?, address_postcode?, address_country?, date*, comment?)>
+<!ATTLIST address
+	work_address		(Yes|No)	"No"
+	preferred			(Yes|No)	#IMPLIED
+	entered_by			CDATA		#REQUIRED
+	entry_date			CDATA		#REQUIRED
+	changed_by			CDATA		#IMPLIED
+	changed_date		CDATA		#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT prefix	(#PCDATA)>
+<!ELEMENT constraints	(#PCDATA)>
+
+
+<!ELEMENT contact_number_key	(#PCDATA)>
+<!ATTLIST contact_number_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v211 changed contact_number_type from CDATA to NMTOKEN-->
+<!ELEMENT contact_number	(contact_number_key?, prefix?, number, constraints?)>
+<!ATTLIST contact_number
+	contact_number_type	NMTOKEN	#REQUIRED
+	preferred			(Yes|No)	#IMPLIED
+	entered_by			CDATA	#REQUIRED
+	entry_date			CDATA	#REQUIRED
+	changed_by			CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT name_key	(#PCDATA)>
+<!ATTLIST name_key
+	type		(nbn|local)				#REQUIRED>
+
+<!ELEMENT full_name	(#PCDATA)>
+
+<!ELEMENT forename	(#PCDATA)>
+<!ELEMENT surname	(#PCDATA)>
+<!ELEMENT honorifics	(#PCDATA)>
+<!ELEMENT acronym	(#PCDATA)>
+
+<!ELEMENT name_relation_key	(#PCDATA)>
+<!ATTLIST name_relation_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT role	(#PCDATA)>
+
+<!--v211 removed type and system_supplied_data from ATTLIST-->
+
+<!ELEMENT name_relation	(name_relation_key?, date*, role, comment?)>
+<!ATTLIST name_relation
+	name_key_1		CDATA	#REQUIRED
+	name_key_2		CDATA	#REQUIRED
+	name_code		CDATA	#IMPLIED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!--v211 added new ELEMENT person_floreat, incorporated into individual ELEMENT, moved honorifics, added changed_by, changed_date to ATTLIST-->
+<!ELEMENT person_floreat (#PCDATA)>
+
+<!ELEMENT individual	(((initials?, forename?, surname, title?)|full_name), date*, person_floreat?, honorifics?, comment?)>
+<!ATTLIST individual
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No">
+
+<!ELEMENT organisation_department_key (#PCDATA)>
+<!ATTLIST organisation_department_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT organisation_department (organisation_department_key?, acronym, item_name)>
+<!ATTLIST organisation_department 
+	entered_by			CDATA		#REQUIRED
+	entry_date			CDATA		#REQUIRED
+	changed_by			CDATA		#IMPLIED
+	changed_date		CDATA		#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT organisation_type_key	(#PCDATA)>
+<!ATTLIST organisation_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT organisation_type	(organisation_type_key|free_term)>
+
+<!--v211 added changed_by, changed_date to ATTLIST-->
+<!ELEMENT organisation	(full_name, acronym?, date*, organisation_type?, comment?, organisation_department*)>
+<!ATTLIST organisation 
+	entered_by			CDATA		#REQUIRED
+	entry_date			CDATA		#REQUIRED
+	changed_by			CDATA		#IMPLIED
+	changed_date		CDATA		#IMPLIED
+	system_supplied_data	(Yes|No)	"No">
+
+<!--v211 removed element comm_content-->
+<!ELEMENT communication_key	(#PCDATA)>
+<!ATTLIST communication_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v211 changed comm_content to communication_content, made date required and singular, communication_type made required and NMTOKEN, removed type from ATTLIST-->
+<!ELEMENT communication_content	(#PCDATA)>
+
+<!ELEMENT communication	(communication_key?, communication_content?, date, comment?)>
+<!ATTLIST communication
+	communication_type	NMTOKEN	#REQUIRED
+	name_key_1			CDATA		#REQUIRED
+	name_key_2			CDATA		#REQUIRED
+	file_ref			CDATA		#IMPLIED
+	entered_by			CDATA		#REQUIRED
+	entry_date			CDATA		#REQUIRED
+	changed_by			CDATA		#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!--v211 removed duplicated source-->
+<!ELEMENT name	(name_key?, (individual|organisation),address*, comment?, name_relation*, contact_number*, communication*, source_link*)>
+<!ATTLIST name
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT identification_key	(#PCDATA)>
+<!ATTLIST identification_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT name_term	(#PCDATA)>
+<!ATTLIST name_term
+	author	CDATA	#IMPLIED
+	date	CDATA	#IMPLIED>
+
+
+<!--v210 Removed Checklist_key - not required.  Identifications can now identify a LIST_ITEM_KEY through identification_key-->
+
+<!ELEMENT checklist_term (#PCDATA)>
+
+<!ELEMENT identification (identification_key|(name_term,checklist_term))>
+<!ATTLIST identification	
+	specifier  	(taxon|biotope|mineral|rock|stratigraphy|soil)	#REQUIRED>
+
+<!ELEMENT determiner_name_key	(#PCDATA)>
+<!ATTLIST determiner_name_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT determiner_ref_code	(#PCDATA)>
+<!ATTLIST determiner_ref_code
+	type	CDATA	#REQUIRED>
+
+<!ELEMENT determiner_name	(#PCDATA)>
+
+<!ELEMENT determiner	(determiner_name_key|determiner_name|determiner_ref_code|name)>
+
+
+<!ELEMENT determination_type_key (#PCDATA)>
+<!ATTLIST determination_type_key 
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT determination_key (#PCDATA)>
+<!ATTLIST determination_key 
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT determination_type (determination_type_key|free_term)>
+
+<!ELEMENT determiner_role_key (#PCDATA)>
+<!ATTLIST determiner_role_key 
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT determiner_role (determiner_role_key|free_term)>
+
+<!--v211 Added changed_by and changed_date for completeness to ATTLIST-->
+<!ELEMENT determination	(determination_key?, identification, determiner+, date, determination_type, determiner_role, (source_key|source)?, comment?)>
+<!ATTLIST determination
+	preferred 		(Yes|No)	#IMPLIED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT survey_key	(#PCDATA)>
+<!ATTLIST survey_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--215 removed create_date attribute as duplicated in dataset_source elements-->
+<!ELEMENT dataset_copy_origin	(#PCDATA)>
+<!ATTLIST dataset_copy_origin
+	created_by	CDATA	#REQUIRED>
+
+<!ELEMENT agreement_key	(#PCDATA)>
+<!ATTLIST agreement_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT agreement_detail	(#PCDATA)>
+
+<!ELEMENT exchange_comm_key	(#PCDATA)>
+<!ATTLIST exchange_comm_key
+	type	(nbn|local)	#REQUIRED>
+
+
+<!ELEMENT communication_file_ref	(#PCDATA)>
+
+<!ELEMENT exchange_communication  (exchange_comm_key, communication_content, communication_file_ref)>
+<!ATTLIST exchange_communication
+	communication_type	NMTOKEN	#IMPLIED
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED>
+
+<!ELEMENT exchange_agreement	(source_key?, agreement_key?, date, agreement_detail, exchange_communication*)>
+<!ATTLIST exchange_agreement
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED>
+
+<!ELEMENT dataset_name	(#PCDATA)>
+<!ELEMENT version	(#PCDATA)>
+<!ELEMENT dataset_owner	(#PCDATA)>
+<!ELEMENT dataset_status	(#PCDATA)>
+<!ELEMENT dataset_validation	(#PCDATA)>
+<!ELEMENT dataset_restrictions	(#PCDATA)>
+
+<!ELEMENT date_created (#PCDATA)>
+<!--v217 added date_exported-->
+<!ELEMENT date_exported (#PCDATA)>
+<!--v211 removed redundant element fullref and changed to full_reference-->
+<!ELEMENT dataset_source	(survey_key?, dataset_name, (source_key|full_reference)*, version?, dataset_owner, dataset_copy_origin, dataset_status, dataset_validation, dataset_restrictions, date_created?, date_exported?)>
+<!ATTLIST dataset_source
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	completeness	(full|partial)	#IMPLIED
+	system_supplied_data	(Yes|No)	"No">
+
+<!ELEMENT climate_code_key	(#PCDATA)>
+<!ATTLIST climate_code_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT climate_code	(climate_code_key|free_term)>
+
+
+<!ELEMENT climate_type	(climate_code, description)>
+<!ATTLIST climate_type
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	system_supplied_data	(Yes|No)	"No">
+
+<!ELEMENT location_feature_key	(#PCDATA)>
+<!ATTLIST location_feature_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v211 restructured location feature type and grading to work in the same way as for measurements-->
+
+<!ELEMENT location_feature_type_key	(#PCDATA)>
+<!ATTLIST location_feature_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT location_feature_type	(location_feature_type_key|free_term)>
+
+<!ELEMENT location_feature_grading_key	(#PCDATA)>
+<!ATTLIST location_feature_grading_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT location_feature_grading	((location_feature_grading_key|free_term), location_feature_type)>
+
+<!ELEMENT threat_type_key	(#PCDATA)>
+<!ATTLIST threat_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT potential_threat_key	(#PCDATA)>
+<!ATTLIST potential_threat_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT threat_type	(threat_type_key|free_term)>
+
+<!--v211 added threat element for use in potential_threat-->
+<!ELEMENT threat	(#PCDATA)>
+
+<!--v211 added threat to ELEMENT and made date optional-->
+<!ELEMENT potential_threat	(potential_threat_key?, threat, threat_type, date?, comment?)>
+<!ATTLIST potential_threat
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT damage_occurrence_key (#PCDATA)>
+<!ATTLIST damage_occurrence_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v211 moved source from ATTLIST to ELEMENT, made comment required-->
+<!ELEMENT damage_occurrence	(damage_occurrence_key?, threat_type?, date, comment, source*)>
+<!ATTLIST damage_occurrence
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT management_aim_key	(#PCDATA)>
+<!ATTLIST management_aim_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT aim	(#PCDATA)>
+
+<!ELEMENT agreement_date (#PCDATA)>
+
+<!ELEMENT next_appraisal_date (#PCDATA)>
+
+<!--v211 moved source from ATTLIST to ELEMENT, added authority to ELEMENT, changed comment to description, dates - must specify the agreement date for Recorder 2000, added aim to store the actual management aim, added next_appraisal_date as this is a textual field in Rec2K-->
+<!ELEMENT management_aim	(management_aim_key?, item_name, (authority|name_key), agreement_date, next_appraisal_date?, description?)>
+<!ATTLIST management_aim
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT location_event_key	(#PCDATA)>
+<!ATTLIST location_event_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT location_event	(location_event_key?, name*, date*, comment*)>
+<!ATTLIST location_event
+	event_type	CDATA	#IMPLIED
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED>
+
+<!--v211 moved source from ATTLIST to ELEMENT, moved authority to management_aim, made location_feature_key and location_feature_grading optional, comment optional-->
+<!ELEMENT location_feature	(location_feature_key?, item_name, date*, location_feature_grading?, comment?, potential_threat*, damage_occurrence*, management_aim*, location_event*, source_link*)>
+<!ATTLIST location_feature
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT location_key	(#PCDATA)>
+<!ATTLIST location_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT location_type_key	(#PCDATA)>
+<!ATTLIST location_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT location_type	(location_type_key|free_term)>
+
+<!ELEMENT location_name_key	(#PCDATA)>
+<!ATTLIST location_name_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT location_name	(location_name_key?,item_name)>
+<!ATTLIST location_name
+	preferred	(Yes|No)	#IMPLIED
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT parent_key	(#PCDATA)>
+<!ATTLIST parent_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT location_code	(#PCDATA)>
+<!ATTLIST location_code
+	code_system	CDATA	#IMPLIED 
+	entered_by	CDATA	#IMPLIED 
+	entry_date	CDATA	#IMPLIED 
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No">
+
+
+<!ELEMENT location_relation_key	(#PCDATA)>
+<!ATTLIST location_relation_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT relationship	(#PCDATA)>
+
+<!--v211 removed attributes changed_by, changed_date, type, added location_key_1, location_key_2 to ELEMENT-->
+<!--v212 removed location_key_1 and location_key_2 as elements and added to ATTLIST so that it works like name_relation, added changed_by and changed_date to ATTLIST-->
+<!ELEMENT location_relation	(location_relation_key?, relationship)>
+<!ATTLIST location_relation
+	location_key_1	CDATA	#REQUIRED
+	location_key_2	CDATA	#REQUIRED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+
+<!ELEMENT designation_key	(#PCDATA)>
+<!ATTLIST designation_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT site_status_key	(#PCDATA)>
+<!ATTLIST site_status_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT site_status	(site_status_key|free_term)>
+
+<!--v211 moved source from ATTLIST to ELEMENT, moved authority from ATTLIST to ELEMENT, made site_status required-->
+<!--v12 removed authority option-->
+<!--Note that name_key is used to identify the authority for the location_designation-->
+<!ELEMENT location_designation  (designation_key?, site_status, name_key, date*, comment?, source*)>
+<!ATTLIST location_designation
+	ref_code		CDATA	#IMPLIED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT enclosures	(#PCDATA)>
+
+<!ELEMENT location_use_key	(#PCDATA)>
+<!ATTLIST location_use_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v211 removed use_type and added use to actually store the use of the location-->
+
+<!--v211 added potential ELEMENT for use in location_use-->
+<!ELEMENT potential (#PCDATA)>
+<!ELEMENT use	(#PCDATA)>
+
+<!--v211 moved source from ATTLIST to ELEMENT, date changed from * to +-->
+<!ELEMENT location_use	(location_use_key?, use, potential?, date*, comment?, source*)>
+<!ATTLIST location_use
+
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT tenure_key	(#PCDATA)>
+<!ATTLIST tenure_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT tenure_type_key	(#PCDATA)>
+<!ATTLIST tenure_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT tenure_type	(tenure_type_key|free_term)>
+
+<!--v211 removed ATTLIST for owned_by-->
+<!ELEMENT owned_by	(#PCDATA)>
+
+<!--v211 moved source from ATTLIST to ELEMENT, changed name to name_key-->
+<!ELEMENT tenure	(tenure_key?, (owned_by|name_key)+, tenure_type, date*, comment?, source*)>
+<!ATTLIST tenure
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+<!--v211 added grid_square_key ELEMENT-->
+<!ELEMENT grid_square_key	(#PCDATA)>
+<!ATTLIST grid_square_key
+	type	(nbn|local)	#REQUIRED>
+
+
+
+<!--v210 added entered_by and entry_date to grid_square, changed grid_square_size to enumeration to control the data better-->
+<!--v211 added changed_by and changed_date, added "tetrad" to enumeration, incorporated new grid_square_key ELEMENT, removed system attribute and replaced with spatial_ref in ELEMENT-->
+<!ELEMENT grid_square	(grid_square_key?, spatial_ref)>
+<!ATTLIST grid_square
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	size	CDATA	#REQUIRED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT admin_area_key	(#PCDATA)>
+<!ATTLIST admin_area_key
+	type	(nbn|local)	#REQUIRED
+	parent_key	CDATA	#IMPLIED>
+
+<!ELEMENT admin_code	(#PCDATA)>
+<!ATTLIST admin_code
+	code_system	CDATA	#REQUIRED
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT admin_type_key	(#PCDATA)>
+<!ATTLIST admin_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v211 changed element admin_type to correspond with ADMIN_TYPE table in data model for Recorder 2000.-->
+<!ELEMENT admin_type (admin_type_key, short_name, long_name?, description?, date*)>
+<!ATTLIST admin_type
+	authority	CDATA		#IMPLIED
+entered_by 	CDATA 	#REQUIRED
+	entry_date	CDATA		#REQUIRED
+	changed_by	CDATA		#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data (Yes|No) "Yes"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT parent (#PCDATA)>
+
+<!--v211 system_supplied_data default to "Yes", added admin_code as an optional sub-element-->
+<!ELEMENT admin_area (admin_area_key, admin_code?, item_name, (admin_type_key|admin_type), parent?)>
+<!ATTLIST admin_area
+	entered_by 	CDATA 	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data (Yes|No) "Yes"
+	custodian	CDATA	#IMPLIED>
+
+<!--v211 added location_admin_areas_key ELEMENT-->
+<!ELEMENT location_admin_areas_key	(#PCDATA)>
+<!ATTLIST location_admin_areas_key 
+	type	(nbn|local)	#REQUIRED>
+<!ELEMENT location_admin_areas (location_admin_areas_key?, (admin_area_key* | admin_area* | admin_code* ))>
+
+<!ATTLIST location_admin_areas 
+	entered_by	CDATA	#IMPLIED
+	entry_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT sample_admin_areas_key	(#PCDATA)>
+<!ATTLIST sample_admin_areas_key 
+	type	(nbn|local)	#REQUIRED>
+<!ELEMENT sample_admin_areas (sample_admin_areas_key?, (admin_area_key* | admin_area* | admin_code* ))>
+<!ATTLIST sample_admin_areas 
+	entered_by	CDATA	#IMPLIED
+	entry_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT location_boundary_key	(#PCDATA)>
+<!ATTLIST location_boundary_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT map_sheet_key	(#PCDATA)>
+
+<!--v214 removed object id.  This data is not relevant outside the context of a single system-->
+<!ELEMENT boundary_data	(#PCDATA)>
+<!ATTLIST boundary_data
+	element_type	CDATA	"embedded"
+	format		CDATA	#REQUIRED
+	length		CDATA	#REQUIRED
+	source		CDATA	#REQUIRED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No">
+
+<!--v211 moved source from ATTLIST to ELEMENT, location_boundary_key optional, version required-->
+<!--v213 made first object regarding boundary data (map_file, object_id)-->
+<!ELEMENT location_boundary  (location_boundary_key?, date*, version, (map_sheet_key|boundary_data), source*)>
+<!ATTLIST location_boundary
+	entered_by				CDATA		#REQUIRED
+	entry_date				CDATA		#REQUIRED
+	changed_by				CDATA		#IMPLIED
+	changed_date			CDATA		#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian				CDATA		#IMPLIED>
+
+<!ELEMENT location_data_key	(#PCDATA)>
+<!ATTLIST location_data_key
+	   type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT location_data	(location_data_key?, measurement)>
+<!ATTLIST location_data
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+<!-- v2.11 Land parcel - added key and map_sheet -->
+<!ELEMENT land_parcel_key	(#PCDATA)>
+<!ATTLIST land_parcel_key
+	   type	(nbn|local)	#REQUIRED>
+
+<!--v212 renamed map_sheet to land_parcel_map_sheet so that it doesn't conflict with the MAP_SHEET table for the Recorder 2000 database-->
+
+<!ELEMENT land_parcel_map_sheet	(#PCDATA)>
+
+<!ELEMENT land_parcel_number	(#PCDATA)>
+
+<!ELEMENT land_parcel		(land_parcel_key?, land_parcel_number, land_parcel_map_sheet)>
+<!ATTLIST land_parcel
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT approach	(#PCDATA)>
+
+<!ELEMENT restriction	(#PCDATA)>
+
+<!ELEMENT location	(location_key?, location_type, location_name+, parent_key?, location_code*, spatial_ref*, description*, location_relation*, location_designation*, enclosures?, location_use*, tenure*, location_feature*, grid_square*, location_admin_areas*, location_boundary*, location_data*, land_parcel*, climate_type?, approach?, restriction?, source_link*)>
+<!ATTLIST location
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No)	"No"
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT specimen_key	(#PCDATA)>
+<!ATTLIST specimen_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT specimen_type_key	(#PCDATA)>
+<!ATTLIST specimen_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT specimen_type	(specimen_type_key|free_term)>
+
+<!ELEMENT specimen_data_key	(#PCDATA)>
+<!ATTLIST specimen_data_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT specimen_data	(specimen_data_key?, measurement)>
+<!ATTLIST specimen_data
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED>
+
+<!ELEMENT specimen_number	(#PCDATA)>
+<!ELEMENT spec_ref_number	(#PCDATA)>
+<!ELEMENT originator_name	(#PCDATA)>
+
+<!ELEMENT originator_code	(#PCDATA)>
+<!ATTLIST originator_code
+	code_type	CDATA	#IMPLIED>
+
+<!ELEMENT number_originator	(originator_name|(originator_name, originator_code)|name)>
+
+<!ELEMENT number_applied_to_specimen (specimen_number, spec_ref_number?, date?, number_originator)>
+<!ATTLIST number_applied_to_specimen
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED>
+
+<!--v211 added specimen_location, moved number from ATTLIST to ELEMENT and renamed specimen_number, made date optional to correspond with ACCESSION_DATE in the data model, added changed_by and changed_date to ATTLIST-->
+
+<!ELEMENT specimen_location	(#PCDATA)>
+
+<!ELEMENT taxon_specimen	(specimen_key?, specimen_number, specimen_type, specimen_location?, number_applied_to_specimen*, date?, specimen_data*, comment?)>
+<!ATTLIST taxon_specimen
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT taxon_occurrence_key	(#PCDATA)>
+<!ATTLIST taxon_occurrence_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT record_type_key	(#PCDATA)>
+<!ATTLIST record_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT record_type	(record_type_key|free_term)>
+
+<!ELEMENT provenance	(#PCDATA)>
+
+<!ELEMENT substrate_key	(#PCDATA)>
+<!ATTLIST substrate_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT substrate	(substrate_key|free_term)>
+
+<!ELEMENT taxon_occurrence_relation_key	(#PCDATA)>
+<!ATTLIST taxon_occurrence_relation_key
+	type	(nbn|local)	#REQUIRED>
+<!--v211 added ELEMENT relationship_type, taxon_occurrence_key_1, taxon_occurrence_key_2 and associated with taxon_occurrence_relation, changed from optional to mandatory, removed type-->
+
+<!--v216 Relationship type now standard termlist format-->
+<!ELEMENT relationship_type_key (#PCDATA)>
+<!ATTLIST relationship_type_key 
+	type	(nbn|local)	#REQUIRED>
+<!ELEMENT relationship_type	(relationship_type_key|free_term)>
+
+<!--v212 removed elements taxon_occurrence_key_1 and taxon_occurrence_key_2 and added to ATTLIST to work like name_relation-->
+<!ELEMENT taxon_occurrence_relation (taxon_occurrence_relation_key?, relationship_type , comment?)>
+<!ATTLIST taxon_occurrence_relation
+	taxon_occurrence_key_1	CDATA	#REQUIRED
+	taxon_occurrence_key_2	CDATA	#REQUIRED
+	entered_by			CDATA	#REQUIRED
+	entry_date			CDATA	#REQUIRED
+	changed_by			CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT taxon_occurrence_data_key	(#PCDATA)>
+<!ATTLIST taxon_occurrence_data_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT taxon_occurrence_data (taxon_occurrence_data_key?, measurement)>
+<!ATTLIST taxon_occurrence_data
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+
+<!--v211 added source_link to element definition, made substrate optional NOT 0 to many, added surveyors_ref ELEMENT, moved from ATTLIST to ELEMENT and made optional, added verified to ATTLIST, defaulted checked and verified to "Yes" as they can't be exported otherwise-->
+
+<!ELEMENT	surveyors_ref	(#PCDATA)>
+
+<!--v213 changed verified from Yes/No to 0,1 or 2 where 0 indicates not done, 1 indicates checked and failed, 2 indicates checked and succeeded-->
+<!ELEMENT taxon_occurrence  (taxon_occurrence_key?, surveyors_ref?, record_type?, determination+, provenance?, substrate?, taxon_occurrence_relation*, taxon_occurrence_data*, taxon_specimen*, comment?, source_link*)>
+<!ATTLIST taxon_occurrence	
+	zero_abundance	(Yes|No)	"No"	
+	confidential	(Yes|No)	"No"
+	verified		(0|1|2)	"0"
+	checked		(Yes|No)	"Yes"
+	checked_by		CDATA	#IMPLIED
+	checked_date	CDATA	#IMPLIED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT biotope_occurrence_key	(#PCDATA)>
+<!ATTLIST biotope_occurrence_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v211 renamed bt_occ_data_key to biotope_occurrence_data_key-->
+<!ELEMENT biotope_occurrence_data_key	(#PCDATA)>
+<!ATTLIST biotope_occurrence_data_key
+	type	(nbn|local)	#REQUIRED>
+
+
+<!ELEMENT biotope_occurrence_data (biotope_occurrence_data_key?, measurement)>
+<!ATTLIST biotope_occurrence_data
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!--v211 moved record_type attribute into element, changed confidential_flag to confidential, added verified to ATTLIST and defaulted verified and checked to "Yes", moved surveyors_ref into ELEMENT-->
+<!--v213 changed verified from Yes/No to 0,1 or 2 where 0 indicates not done, 1 indicates checked and failed, 2 indicates checked and succeeded-->
+<!ELEMENT biotope_occurrence	(biotope_occurrence_key?, surveyors_ref?, record_type?, determination+, biotope_occurrence_data*, comment?, source_link*)>
+<!ATTLIST biotope_occurrence
+	confidential	(Yes|No)	"No"
+	digitised		(Yes|No)	"No"
+	verified		(0|1|2)	"0"	
+	checked		(Yes|No)	"Yes"
+	checked_by		CDATA		#IMPLIED
+	checked_date	CDATA		#IMPLIED
+	entered_by		CDATA		#REQUIRED
+	entry_date		CDATA		#REQUIRED
+	changed_by		CDATA		#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT soil_type_key		(#PCDATA)>
+<!ATTLIST soil_type_key
+	type		(nbn|local)	#REQUIRED >
+
+<!ELEMENT soil_type_occurrence (soil_type_key|free_term) >
+<!ATTLIST soil_type_occurrence
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED>
+
+<!ELEMENT sample_reference	(#PCDATA)>
+<!ELEMENT time	(#PCDATA)>
+<!ELEMENT duration	(#PCDATA)>
+
+<!ELEMENT sample_key	(#PCDATA)>
+<!ATTLIST sample_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT sample_type_key	(#PCDATA)>
+<!ATTLIST sample_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT sample_type	(sample_type_key|free_term)>
+
+<!ELEMENT sample_scale	(#PCDATA)>
+<!ATTLIST sample_scale
+	type	CDATA	#REQUIRED
+	units	CDATA	#REQUIRED>
+
+<!ELEMENT position_number	(#PCDATA)>
+
+<!--v211 - made description optional, removed type from ATTLIST, added sample_relation_key and added to sample_relation ELEMENT, moved sample_key_1 and sample_key_2 into ELEMENT and added sample_key_1, sample_key_2 as elements-->
+
+<!ELEMENT sample_relation_key	(#PCDATA)>
+<!ATTLIST sample_relation_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v212 removed elements sample_key_1 and sample_key_2 and added to the ATTLIST to work as for name_relation-->
+<!ELEMENT sample_relation	(sample_relation_key?, description?, position_number?)>
+<!ATTLIST sample_relation
+	sample_key_1	CDATA	#REQUIRED
+	sample_key_2	CDATA	#REQUIRED
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT sample_data_key	(#PCDATA)>
+<!ATTLIST sample_data_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT sample_data	(sample_data_key?, measurement)>
+<!ATTLIST sample_data
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT recorder_role_key	(#PCDATA)>
+<!ATTLIST recorder_role_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT recorder_role	(recorder_role_key|free_term)>
+
+<!ELEMENT se_recorder_key	(#PCDATA)>
+<!ATTLIST se_recorder_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT recorder_name	(#PCDATA)>
+
+<!ELEMENT recorder	(name_key)>
+<!--v215 made se_recorder_key compulsory, otherwise it cannot be referred to by sample_recorder.  Can be local though.  Recorder cannot be  a recorder_name - impossible to lookup reliably-->
+<!ELEMENT survey_event_recorder	(se_recorder_key, recorder, recorder_role)>
+<!ATTLIST survey_event_recorder	
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!--v215 sample recorder must refer directly to se_recorder_key by local or nbn key-->
+<!ELEMENT sample_recorder    (se_recorder_key)>
+<!ATTLIST sample_recorder
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED>
+
+<!--new element in v218-->
+<!ELEMENT vague_location_name	(#PCDATA)>
+
+<!--v211 made spatial_ref ? NOT *, made sample_recorder+ NOT * - must specify at least one for Recorder 2000, removed + from date -->
+<!--v218 added vague_location_name-->
+<!ELEMENT sample	(sample_key?, sample_reference?, sample_type, date, spatial_ref?, time?, duration?, sample_scale?, (location_key|location)?, vague_location_name?, sample_recorder+, sample_relation*, sample_data*, biotope_occurrence*, taxon_occurrence*, soil_type_occurrence*, comment?, source_link*, sample_admin_areas*)>
+<!ATTLIST sample	
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT survey_event_owner_type_key (#PCDATA)>
+<!ATTLIST survey_event_owner_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT survey_event_owner_type (survey_event_owner_type_key?, short_name, long_name?, description?)>
+<!ATTLIST survey_event_owner_type	
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No">
+
+<!ELEMENT survey_event_owner_key (#PCDATA)>
+<!ATTLIST survey_event_owner_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT survey_event_owner (survey_event_owner_key?, (name|name_key), (survey_event_owner_type_key|survey_event_owner_type))>
+<!ATTLIST survey_event_owner
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED
+	system_supplied_data	(Yes|No) "No">
+
+<!ELEMENT survey_event_key	(#PCDATA)>
+<!ATTLIST survey_event_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT survey_event_weather	(#PCDATA)>
+
+<!--v211 made date required, made spatial_ref and (location_key|location_name) optional NOT 0 to many-->
+<!--v218 added vague_location_name-->
+<!ELEMENT survey_event	(survey_event_key?, (location_key|location_name)?, vague_location_name?, spatial_ref?, date, survey_event_weather?, survey_event_recorder+, sample*, comment?, source_link*, survey_event_owner*)>
+<!ATTLIST survey_event
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT survey_status_key 	(#PCDATA)>
+<!ATTLIST survey_status_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT survey_status	(survey_status_key|free_term)>
+
+<!ELEMENT survey_media_key	(#PCDATA)>
+<!ATTLIST survey_media_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT survey_media	(survey_media_key|free_term)>
+
+<!ELEMENT survey_type_key	(#PCDATA)>
+<!ATTLIST survey_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT survey_type	(survey_type_key|free_term)>
+
+<!ELEMENT periodicity	(#PCDATA)>
+<!ELEMENT run_by	(#PCDATA)>
+<!ELEMENT survey_purpose	(#PCDATA)>
+<!ELEMENT geographic_coverage	(#PCDATA)>
+<!ELEMENT quality_control	(#PCDATA)>
+
+<!ELEMENT sw_spatial_ref (#PCDATA)>
+<!ELEMENT ne_spatial_ref (#PCDATA)>
+<!ELEMENT bounding_box	(sw_spatial_ref, ne_spatial_ref)>
+<!ATTLIST bounding_box
+	system		NMTOKEN	"OSGB"
+	entered_by		CDATA	#REQUIRED	
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED>
+
+<!--v211 made entered_by, entry_date required in ATTLIST, made description optional, made date + instead of * as the from date is required in Recorder 2000, changed bounding box conditions so that "AND" comes before "OR"-->
+
+<!ELEMENT survey  ((survey_key?, item_name, description?, survey_type, date+, survey_status?, periodicity?, run_by, survey_purpose?, survey_media?, ((geographic_coverage, bounding_box)|(geographic_coverage|bounding_box)), quality_control?), survey_event*, source_link*)>
+<!ATTLIST survey	
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- Taxon dictionary specific entity Declarations -->
+<!-- ********************************************* -->
+
+
+<!ELEMENT taxon_key	(#PCDATA)>
+<!ATTLIST taxon_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT taxon_version_key	(#PCDATA)>
+<!ATTLIST taxon_version_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v213 moved and renamed taxon_list_vs_key to taxon_list_version_key so that taxon_list_item can be defined before taxon_version-->
+<!ELEMENT taxon_list_version_key	(#PCDATA)>
+<!ATTLIST taxon_list_version_key
+	type	(nbn|local)	#REQUIRED>
+
+
+<!ELEMENT taxon_authority (#PCDATA)>
+
+
+<!-- Taxon Facts -->
+<!ELEMENT taxon_fact_key	(#PCDATA)>
+<!ATTLIST taxon_fact_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v213 Removed taxon_fact_type element, changed account_type to type, made date optional, changed source_link to source-->
+
+<!--v214 Made title optional-->
+<!--v222 Corrected Source to Source_Key, as data model does not support multiple fact or designation sources-->
+<!ELEMENT taxon_fact (taxon_fact_key, title?, data, date?, (source_key|source)?) >
+<!ATTLIST taxon_fact
+	type			(T|A|W|B|J) "T"
+	system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- taxon version relationships -->
+
+<!ELEMENT taxon_version_relation_key	(#PCDATA)>
+<!ATTLIST taxon_version_relation_key
+	type	(nbn|local)	#REQUIRED>
+
+<!-- Note taxon_version_relation is for nomenclatural relationships e.g. notes on how taxonomy has been managed
+or records of parents in hybrid situations. Biological associations e.g. host-parasite,
+commensalism etc. go in taxon_taxon_association -->
+<!--v213 changed source_link to source, changed to work like name_relation element-->
+<!ELEMENT taxon_version_relation (taxon_version_relation_key?,relationship, source*)>
+<!ATTLIST taxon_version_relation 	
+	taxon_version_key_1	CDATA #REQUIRED
+taxon_version_key_2	CDATA #REQUIRED
+system_supplied_data	(Yes|No) "No"
+	entered_by			CDATA	#REQUIRED
+	entry_date			CDATA	#REQUIRED
+	changed_by			CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- taxon biotope association -->  
+<!-- in tba taxon version key is the key to the second taxon in the association.  
+date is date of association fact. biotope can be a free-term or a key to a standard list  -->
+
+<!ELEMENT association_key (#PCDATA)>
+<!ATTLIST association_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT biotope_key  (#PCDATA)>
+<!ATTLIST biotope_key
+	type  (nbn|local) #REQUIRED >
+
+<!ELEMENT association (#PCDATA) >
+
+<!ELEMENT strength (#PCDATA) >
+
+<!ELEMENT geographic_context (#PCDATA) >
+
+<!--v213 changed source_link to source-->
+<!--v214 Made geographic_context optional not multiple-->
+<!ELEMENT taxon_biotope_association (association_key, (biotope_key|free_term), date?, association, strength?, geographic_context?, source*)>
+<!ATTLIST taxon_biotope_association
+	system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!--v214 Added taxon_version_key_1 and taxon_version_key_2 as attributes, made date optional not required to tie in with data model, removed taxon_version_key and replaced with association_key-->
+<!ELEMENT taxon_taxon_association (association_key?, association, strength?, geographic_context?, comment?, date?) >
+<!ATTLIST taxon_taxon_association
+	taxon_version_key_1	CDATA #REQUIRED
+	taxon_version_key_2	CDATA #REQUIRED
+	system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT taxon_list_item_key	(#PCDATA)>
+<!ATTLIST taxon_list_item_key
+	type	(nbn|local)	#REQUIRED>
+
+<!-- Taxon Rank Element -->
+<!ELEMENT taxon_rank_key	(#PCDATA)>
+<!ATTLIST taxon_rank_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v213 Made taxon_rank have the termlist structure, removed taxon_rank_type-->
+<!ELEMENT taxon_rank  (taxon_rank_key|free_term)>
+
+<!-- Taxon List Item Relation elements -->
+<!ELEMENT tli_key	(#PCDATA)>
+<!ATTLIST tli_key
+	type	(nbn|local)	#REQUIRED>
+
+<!-- taxon_list_item_key in relation is the taxon_list_item_key_2 in model -->
+<!--v213 changed source_link to source-->
+<!ELEMENT taxon_list_item_relation (tli_key,taxon_list_item_key, relationship, source*)>
+<!ATTLIST taxon_list_item_relation 	
+	system_supplied_data	(Yes|No) "No"
+	entered_by			CDATA	#REQUIRED
+	entry_date			CDATA	#REQUIRED
+	changed_by			CDATA	#IMPLIED
+	changed_date		CDATA	#IMPLIED >
+
+
+<!-- Taxon Designation Elements -->
+
+<!ELEMENT taxon_designation_key	(#PCDATA)>
+<!ATTLIST taxon_designation_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT kind   (#PCDATA) >
+
+<!--v213 changed designation_type_key to taxon_designation_type_key-->
+<!ELEMENT taxon_designation_type_key	(#PCDATA)>
+<!ATTLIST taxon_designation_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v213 Made taxon_designation_type a termlist-->
+<!ELEMENT taxon_designation_type	(taxon_designation_type_key|free_term)>
+
+<!ELEMENT status_constraint	(#PCDATA) >
+
+<!ELEMENT status_exclusion	(#PCDATA) >
+<!--v213 Added detail element-->
+<!ELEMENT detail	(#PCDATA) >
+<!--v213 changed comment to detail in element definition which contains the actual details of the taxon designation, changed source_link to source-->
+<!--v222 Corrected Source to Source_Key, as data model does not support multiple fact or designation sources-->
+<!ELEMENT taxon_designation (taxon_designation_key, taxon_designation_type, date*,geographic_context?,status_constraint?,status_exclusion?,detail?, (source_key|source)?)>
+<!ATTLIST taxon_designation	
+	system_supplied_data	(Yes|No) "No"
+	entered_by			CDATA	#REQUIRED
+	entry_date			CDATA	#REQUIRED
+	changed_by			CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- Taxon List Item Elements -->
+
+<!--v213 changed preferred_name to be the same as taxon_list_item_key-->
+<!ELEMENT preferred_name	(#PCDATA)>
+<!ATTLIST preferred_name
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT taxon_code	(#PCDATA)>
+
+<!--added v2.23-->
+<!ELEMENT taxon_code_source   (#PCDATA)>
+<!ELEMENT abbreviation    (#PCDATA)>
+
+<!--v219 added Taxon_Common_Name-->
+<!ELEMENT taxon_common_name (taxon_version_key)>
+
+<!--v224 Added Taxon Group Index and contained_list_item_key-->
+<!ELEMENT contained_list_item_key  (#PCDATA)>
+<!ATTLIST contained_list_item_key
+	type	(nbn|local)	#REQUIRED>
+<!ELEMENT taxon_group_index (contained_list_item_key)>
+<!ATTLIST taxon_group_index 
+	system_supplied_data	(Yes|No) "No">
+
+<!--v213 Removed preferred_flag from ATTLIST, made parent_key optional, incorporated taxon_rank, changed taxon_version_key|free_term option to (taxon_version_key, taxon_list_version_key)|taxon_list_version_key| taxon_version_key where the first option is used for defining taxon_list_item elements individually, the second option when nested within a taxon_version and the third when nested inside a taxon_list_version-->
+<!--v223 added taxon_source_code-->
+<!ELEMENT taxon_list_item  (taxon_list_item_key,((taxon_version_key, taxon_list_version_key)|taxon_list_version_key|taxon_version_key), taxon_rank, preferred_name?, parent_key?, taxon_code*,taxon_list_item_relation*, taxon_designation*, taxon_common_name?, taxon_code_source*, taxon_group_index*)>
+<!ATTLIST taxon_list_item
+	sort_code			CDATA	#REQUIRED
+	system_supplied_data	(Yes|No) "No"
+	entered_by			CDATA	#REQUIRED
+	entry_date			CDATA	#REQUIRED
+	changed_by			CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- taxon version -->
+<!--v214 Added version_attribute element and incorporated this into the taxon_version element-->
+<!ELEMENT version_attribute	(#PCDATA)>
+<!-- date specifiers may be date_from and date_to -->
+<!--v213 Removed taxon_key and taxon_taxon_association(see taxon element), added taxon_list_item, changed source_link to source-->
+<!--v214 Replaced taxon_taxon_association-->
+<!ELEMENT taxon_version (taxon_version_key, version_attribute?, authority?, date*, comment?, taxon_fact*,taxon_version_relation*, taxon_taxon_association*, taxon_biotope_association*, taxon_list_item*, source*)>
+<!ATTLIST taxon_version
+	validation_level 	(0|1|2|3) "0"
+	uk_native		(Yes|No)  "Yes"
+	system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date		CDATA	#IMPLIED
+	quality			CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- Taxon Element -->
+
+<!ELEMENT taxon_name_type_key	(#PCDATA)>
+<!ATTLIST taxon_name_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!-- taxon name is called ITEM_NAME in Rec 2000 -->
+<!ELEMENT taxon_name	(#PCDATA)>
+
+<!--v213 Changed taxon_name_type element so it matches a term list definition-->
+<!ELEMENT taxon_name_type  (taxon_name_type_key|free_term)>
+
+<!-- specifier for date is taxon_date -->
+<!--v213 Renamed attribute taxon_language to language, use just taxon_name_type in element definition - no longer need for taxon_name_type_key option-->
+<!--v223 added abbreviation-->
+<!ELEMENT taxon (taxon_key,taxon_name_type,taxon_name,authority?,date?, taxon_version*, source_link*, abbreviation*)>
+<!ATTLIST taxon	
+	language		CDATA	#REQUIRED
+	system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- Taxon List Elements -->
+<!-- list_vs_name includes Version number as used in Recorder 2000 but allows for alpha names
+as well as version numbers -->
+
+<!-- Taxon List Type Elements -->
+<!ELEMENT taxon_list_type_key	(#PCDATA)>
+<!ATTLIST taxon_list_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v213 Made taxon_list_type have the termlist structure-->
+<!ELEMENT taxon_list_type  (taxon_list_type_key|free_term)>
+
+<!ELEMENT list_vs_name	(#PCDATA) >
+
+<!--Can now specify taxon_list_item_key instead of taxon_list_item in taxon_list_version-->
+<!--2.20 - added Quality SGB-->
+<!ELEMENT taxon_list_version	(taxon_list_version_key, version, list_vs_name?, authority?, description?, quality?, date*, (taxon_list_item*|taxon_list_item_key*), source*) >
+<!ATTLIST taxon_list_version	
+	system_supplied_data	(Yes|No) "No"
+	entered_by			CDATA	#REQUIRED
+	entry_date			CDATA	#REQUIRED
+	changed_by			CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT taxon_list_name	(#PCDATA) >
+
+<!ELEMENT taxon_list_key	(#PCDATA)>
+<!ATTLIST taxon_list_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v213 Changed so can have several taxon_list_versions in a taxon_list NOT taxon_list_version_key, incorporated taxon_list_type instead of taxon_list_type_key, changed source_link to source-->
+<!ELEMENT taxon_list (taxon_list_key,taxon_list_name, taxon_list_type, description?, authority?, taxon_list_version*, source*) >
+<!ATTLIST taxon_list
+	system_supplied_data	(Yes|No) "No"
+	entered_by			CDATA	#REQUIRED
+	entry_date			CDATA	#REQUIRED
+	changed_by			CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT taxondict ( ((taxon+|taxon_list+)|(taxon+,taxon_list+)), reference*) >
+
+<!--****************************************************-->
+<!--v213 Biotope Dictionary - added and modified 31/8/99-->
+<!--****************************************************-->
+
+<!ELEMENT biotope_fact_key	(#PCDATA)>
+<!ATTLIST biotope_fact_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v213 Removed fact_type element, added type to ATTLIST, made date optional, changed source_link to source-->
+<!--v214 Made title optional-->
+<!ELEMENT biotope_fact (biotope_fact_key, date?, title?, data, source*) >
+<!ATTLIST biotope_fact
+	type			(T|A|W|B|J)	"T"
+	system_supplied_data	(Yes|No) "No"
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT original_code (#PCDATA) >
+
+<!--v213 Moved biotope_list_item definition ahead of biotope so that it can be nested-->
+
+<!--v214 Removed Biotope_Rank_Key element-->
+<!ELEMENT designation_acronym	(#PCDATA)>
+<!ELEMENT commissioned_by	(#PCDATA)>
+<!ELEMENT created_by		(#PCDATA)>
+<!ELEMENT revision_number	(#PCDATA)>
+<!ELEMENT revision_name		(#PCDATA)>
+
+<!ELEMENT biotope_list_item_key	(#PCDATA)>
+<!ATTLIST biotope_list_item_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v214 Removed Biotope_Rank element-->
+
+<!-- BIOTOPE EQUIVALENCES  used to map one classification to another -->
+<!-- *************************************************************** -->
+
+<!ELEMENT biotope_relation_key	(#PCDATA)>
+<!ATTLIST biotope_relation_key
+	type	(nbn|local)	#REQUIRED>
+
+<!-- biotope_relation_admin_area is a list of geographic areas within which the biotope equivalence is valid -->
+<!ELEMENT biotope_relation_admin_area (admin_area_key, biotope_relation_key)>
+<!ATTLIST biotope_relation_admin_area
+	system_supplied_data	(Yes|No) "No"
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED>
+
+<!-- biotope_relation_location lists sites for site specific biotope equivalences -->
+<!ELEMENT biotope_relation_location (location_key, biotope_relation_key)>
+<!ATTLIST biotope_relation_location
+	system_supplied_data	(Yes|No) "No"
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED>
+
+<!-- biotope_relation_join is called related_biotope in nbn model -->
+<!ELEMENT biotope_relation_join (biotope_relation_key, biotope_list_item_key)>
+<!ATTLIST biotope_relation_join
+	system_supplied_data	(Yes|No) "No"
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED>
+
+<!-- biotope_relation is now called biotope_equivalents in the nbn data model -->
+<!ELEMENT biotope_relation (biotope_relation_key, biotope_list_item_key,biotope_relation_admin_area*,biotope_relation_location*, biotope_relation_join*, comment?)>
+<!ATTLIST biotope_relation
+	system_supplied_data	(Yes|No) "No"
+	entered_by	CDATA	#REQUIRED
+	entry_date	CDATA	#REQUIRED
+	changed_by	CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- BIOTOPE DESIGNATION - protected or other listed status -->
+<!-- ****************************************************** -->
+
+<!ELEMENT biotope_designation_type_key	(#PCDATA)>
+<!ATTLIST biotope_designation_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT controlling_authority	(#PCDATA)>
+
+<!--v213 Made biotope_designation_type have the termlist structure-->
+<!ELEMENT biotope_designation_type  (biotope_designation_type_key|free_term)>
+
+<!ELEMENT biotope_designation_key	(#PCDATA)>
+<!ATTLIST biotope_designation_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v213 Incorporated biotope_designation_type, changed source_link to source-->
+<!ELEMENT biotope_designation (biotope_designation_key, biotope_designation_type, date*, geographic_context?, status_constraint?, status_exclusion?, description?, source*)>
+<!ATTLIST biotope_designation
+	system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!ELEMENT bt_cl_version_key	(#PCDATA)>
+<!ATTLIST bt_cl_version_key
+	type	(nbn|local)	#REQUIRED>
+
+<!--v213 Moved sort_code to ATTLIST, changed parent to parent_key, incorporated biotope_rank, changed biotope_key to (biotope_key, bt_cl_version_key)| bt_cl_version_key|biotope_key) where the first option is used for defining biotope_list_item elements individually, the second option when nested within a biotope and the third when nested inside a biotope_classification_version-->
+<!--v214 Removed Biotope_Rank-->
+<!ELEMENT biotope_list_item (biotope_list_item_key, ((biotope_key, bt_cl_version_key)|bt_cl_version_key|biotope_key), parent_key?, biotope_relation*, biotope_designation*)>
+<!ATTLIST biotope_list_item
+	sort_code		CDATA	#REQUIRED
+system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- specifier for date is biotope_date -->
+<!--v213 added biotope_list_item so that can nest within biotopes to define new biotope records for existing lists-->
+<!--v214 made short_name and original_code optional and long_name required.  Added term_status as an attribute with options Current and Replaced-->
+<!ELEMENT biotope (biotope_key, short_name?, long_name, original_code?, biotope_fact*, biotope_list_item*, source_link*)>
+<!ATTLIST biotope
+	term_current	(Yes|No)  "Yes"
+	term_status		(Current|Replaced)	"Current"
+	system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+
+<!-- Biotope checklists and list-associated facts -->
+<!-- ******************************************** -->
+
+<!--v213 Treated biotope_classification_type as a termlist-->
+<!ELEMENT bt_cl_type_key	(#PCDATA)>
+<!ATTLIST bt_cl_type_key
+	type	(nbn|local)	#REQUIRED>
+
+<!ELEMENT biotope_classification_type (bt_cl_type_key|free_term)>
+
+<!ELEMENT biotope_classification_key	(#PCDATA)>
+<!ATTLIST biotope_classification_key
+	type	(nbn|local)	#REQUIRED>
+
+
+<!--v213 made date optional-->
+<!ELEMENT biotope_classification_version (bt_cl_version_key, revision_number, revision_name?, date?, description?, biotope_list_item*)>
+<!ATTLIST biotope_classification_version
+	system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!-- Recorder 2K objectives = description -->
+<!--v213 Made biotope_classification_type required, made date optional, changed biotope_classification_version to * NOT + and source_link to source-->
+<!--V222 Biotope Classification Type not required-->
+<!ELEMENT biotope_classification (biotope_classification_key, biotope_classification_type?, short_name, long_name?, designation_acronym?, commissioned_by?,created_by?, date?, description?, biotope_classification_version*,source*)>
+<!ATTLIST biotope_classification
+	system_supplied_data	(Yes|No) "No"
+	entered_by		CDATA	#REQUIRED
+	entry_date		CDATA	#REQUIRED
+	changed_by		CDATA	#IMPLIED
+	changed_date	CDATA	#IMPLIED
+	custodian	CDATA	#IMPLIED>
+
+<!--v213 Removed biotope_termlists as no equivalent for taxon dictionary-->
+
+<!ELEMENT biotopedict ( ((biotope+|biotope_classification+)|(biotope+,biotope_classification+)), source* ) >
+
+<!--v214 Changed title to dataset_title-->
+
+<!ELEMENT metadata	(dataset_title, dataset_source?, comment?)>
+
+<!ELEMENT content	ANY>
+
+<!ELEMENT termlists	(termlist+)>
+
+<!ELEMENT nbndata	(metadata, content, termlists?)>
+
+
+

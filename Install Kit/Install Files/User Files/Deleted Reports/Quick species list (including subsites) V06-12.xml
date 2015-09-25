@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<CustomReport menupath="Redundant reports" title="Quick species list for a &lt;location&gt; hierarchy V06-12" 
+description="Please delete file name 'Quick species list (including subsites) V06-12.xml' from your Recorder user\reports folder. Report L6 which replaces
+this can be found in Geographic/Location Reports" >
+<SQL>
+<Where keytype="Default">
+ Select Distinct 'Please delete this report' as Message From setting
+
+
+</Where>
+
+
+</SQL>
+
+
+<Columns>
+
+</Columns>
+</CustomReport>

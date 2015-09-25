@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+
+<!-- JNCC Statistics 9: Number of species observations per taxon group in grid squares
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert, for JNCC
+     Based on JNCC_Sq2_GridSquare.xml by Mike Weideli of Littlefield Consultancy for JNCC
+     Version 5 - 28 November 2014
+
+   
+     QUICK REPORT - Not implemented   
+     Square Size - by parameter - 1km, 2km (Tetrad), 5km, 10km 
+     Square(s) - by parameter 
+--> 
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Grid Square Reports"  title="Sq6 No of sp obsv per taxon group in grid squares" description="Lists all taxon groups for which there are species observations in the specified grid squares with the number of species observations for each." >
+
+<SQL>
+
+<Where keytype="Default">
+    
+CREATE TABLE #LCP (
+  	GridSize Varchar(30)
+	)
+
+INSERT INTO #LCP (GridSize)
+VALUES('
+ <Condition field= "L" operator="equal" type="OptionSet"  name="Square Size" >
+       <Option name="1km" value = "1" />
+       <Option name="2km (Tetrad)" value = "2" />
+       <Option name="5km " value = "5" />
+       <Option name="10km" value = "0" />
+
+</Condition>   ')
+
+SELECT 
+dbo.LCRectifyGR(s.Spatial_Ref,s.spatial_ref_system,cast(right(RTRIm(#LCP.GRidSize),1) as Integer)) As GrSquare,
+TV.Output_group_key, TG.Taxon_group_name, TG.Sort_order,
+Count(TOcc.Taxon_Occurrence_key) AS CountOfTOcc
+
+From #LCP,Sample S 
+INNER JOIN Taxon_Occurrence TOcc ON TOcc.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDet on TDet.Taxon_Occurrence_key = TOcc.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDet.Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
+LEFT JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
+
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+WHERE 
+USR.Name_Key IS NULL AND
+
+<Condition field= "dbo.LCRectifyGR(s.Spatial_Ref,s.spatial_ref_system, cast(right(RTRIm(#LCP.GRidSize),1) as Integer))" operator="equal" type="Text"  name="Grid Squares" entrycount ="-1" />
+AND
+TDET.Preferred = 1
+GROUP BY dbo.LCRectifyGR(s.Spatial_Ref,s.spatial_ref_system,cast(right(RTRIm(#LCP.GRidSize),1) as Integer)),
+TV.Output_group_key, TG.Taxon_group_name, TG.Sort_order
+
+DROP TABLE #LCP
+
+</Where>
+
+<OutputTableOrderby name="by Grid Square/Taxon Group" SQL="Order By GrSquare, Sort_order  "/>
+ 
+</SQL>
+
+<Columns>
+<Column name="GrSquare" width="80" position="1" caption="Grid square" /> 
+<Column name="Output_group_key" caption="Group key" width="120" position="2"/>
+<Column name="Sort_order" caption="Sort order" width="80" position="3"/>
+<Column name="Taxon_Group_name" width="200" position="4" caption="Taxon group" /> 
+<Column name="CountOfTOCC" caption="No sp obsv" width="80" position="5"/>
+</Columns>
+
+</CustomReport>

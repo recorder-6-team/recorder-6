@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC  List all samples for the selected Sample Location Name
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 November 2014
+      
+   
+     QUICK REPORT - Not implemented
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Validated - By parameter
+     Invalid = By parameter	
+   
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Location Name Reports"  title="Ln4 Location Name, Samnple within" 
+description="Select details of all samples for a specified sample location name identified by a wild card" >
+<SQL>
+
+
+<Where keytype="Default">
+
+SELECT SV.Item_Name as Survey, S.Sample_Key, S.Location_name,S.Spatial_ref, S.Spatial_Ref_qualifier,S.Vague_date_start,
+S.Vague_date_End, s.Vague_date_Type, LN.Item_Name,L.Spatial_Ref as LSpatialRef,L.Spatial_ref_qualifier as LSpatialRefQual 
+FROM
+Sample S
+LEFT JOIN LOCATION L ON L.Location_Key = S.Location_key 
+LEFT JOIN Location_name LN ON.LN.Location_Key = L.Location_Key and LN.Preferred = 1
+INNER JOIN Survey_Event SE
+ON SE.Survey_Event_Key = S.Survey_Event_Key
+INNER JOIN Survey SV
+ON SV.Survey_Key = SE.Survey_Key
+ 
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+where  
+
+
+USR.Name_Key IS NULL
+
+AND  
+
+<Condition field= "S.Location_Name" operator="like" type="text"  name="Location Name (Sample)"  />
+  
+
+
+
+</Where>
+
+<OutputTableOrderby name="by Sample Location Name" SQL="Order By Location_Name"/>
+ 
+<OutputTableOrderby name="by Survey" SQL="Order By Survey"/>
+
+<OutputTableOrderby name="Location" SQL="Order By item_Name"/>
+
+
+
+</SQL>
+<Columns>
+  <Column name="Sample_Key" visible="false"  tablename= "Sample" />
+  <Column name="Survey" width="300" position="1" caption="Survey Name" />  
+  <Column name="Location_Name" width="300" position="2" caption="Sample Location Name" />  
+  <Column name="Spatial_ref" width="100" position="3" caption="Sample spatial Ref" />   
+  <Column name="Spatial_ref_qualifier" width="100" position="4" caption="Sample Ref Qualifier" />   
+  <Column name="Vague_Date_start" width="100" position="5" caption="Date" />   
+  <Column name="Item_Name" width="300" position="6" caption="Location" />   
+  <Column name="LSpatialref" width="100" position="7" caption="Location spatial Ref" />   
+  <Column name="LSpatialrefqual" width="100" position="8" caption="Location Ref Qualifier" />   
+   
+
+ 
+</Columns>
+
+</CustomReport>

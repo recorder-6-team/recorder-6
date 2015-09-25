@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+
+<!-- JNCC Statistics 4: Number of observations per habitat
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert, for JNCC
+     Version 5 - 28 November 2014
+--> 
+
+<CustomReport menupath="System Supplied\Statistics" title="St04 Number of observations per habitat" description="Lists all habitats for which there are observations in the database, and the number of observations for them, in habitat code sequence.">
+
+<SQL>
+<Where Keytype="Default">
+SELECT
+BDet.Biotope_List_Item_Key, Bt.Original_Code, Bt.Short_Term,
+Count(BOcc.Biotope_Occurrence_Key) As CountOfBOccKey,
+BC.Long_Name
+
+FROM Biotope_Occurrence BOcc 
+INNER JOIN Biotope_Determination BDet ON BOcc.Biotope_Occurrence_Key = BDet.Biotope_Occurrence_Key
+INNER JOIN Biotope_List_Item BLI ON BDet.Biotope_List_Item_Key = BLI.Biotope_List_Item_Key
+INNER JOIN Biotope Bt ON BLI.Biotope_Key = Bt.Biotope_Key
+INNER JOIN Biotope_Classification_Version BCV ON BLI.Bt_Cl_Version_Key = BCV.Bt_Cl_Version_Key 
+INNER JOIN Biotope_Classification BC ON BCV.Biotope_Classification_Key = BC.Biotope_Classification_Key
+INNER JOIN Sample S ON S.Sample_Key = BOCC.Sample_Key
+INNER JOIN  Survey_Event SE ON
+            SE.Survey_Event_Key=S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+WHERE
+USr.Name_Key IS NULL
+
+GROUP BY BDet.Biotope_List_Item_Key, Bt.Original_Code, Bt.Short_Term, BC.Long_Name, BDet.Preferred
+
+Having BDet.Preferred=1
+
+
+
+Order By Bt.Original_Code
+
+</Where>
+
+</SQL>
+
+<Columns>
+<Column name="Biotope_List_Item_Key" caption="Biotope list item key" width="120" position="1"/>
+<Column name="Original_Code" caption="Original code" width="80" position="2"/>
+<Column name="Short_Term" caption="Habitat" width="280" position="3"/>
+<Column name="CountOfBOccKey" caption="No hab obsv" width="80" position="4"/>
+<Column name="Long_Name" caption="Biotope classification" width="280" position="5"/>
+</Columns>
+
+</CustomReport>
+

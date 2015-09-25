@@ -1,0 +1,134 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Install Add-On</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Installing Add-Ins</H1>
+  <P>
+   For details of the add-ins that can be installed in <SPAN STYLE="font-style : italic;">Recorder,</SPAN> 
+   see the Recorder web site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A>.</P>
+  <P>
+   This facility is accessed by selecting <SPAN STYLE="font-weight : bold;">Tools
+    &#150; Install &#150; Add-In</SPAN> module from the Main menu.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Install add on.gif" WIDTH="419" HEIGHT="373" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   The list shows modules that are already installed. If a module is 
+   selected in the list, its description (Read-only) will appear in the 
+   'Description' box.</P>
+  <H3>
+   To install an Add-In:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click [Install].</P>
+   <LI CLASS="mvd-P">
+   <P>
+    This will open a standard <SPAN STYLE="font-weight : bold;">Windows 
+    file </SPAN>location dialog.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Locate the Add-In module&#146;s file which will have a .ocx or .dll extension.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Choose [Open] to install the selected file and close the <SPAN STYLE="font-weight : bold;">file</SPAN> dialog.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The module will be installed.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    If this module has previously been installed on this copy (an earlier 
+    version, for example) - even if it has been removed - you will see 
+    the following message. Click [Yes] and installation will proceed normally.</P>
+   </UL>
+  <BLOCKQUOTE>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <IMG SRC="..\ScreenShots\Addin install message.gif" WIDTH="390" HEIGHT="122" VSPACE="0" HSPACE="0" BORDER="0"></P>
+   </BLOCKQUOTE>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">NOTE:</SPAN></P>
+  <UL>
+   <LI CLASS="mvd-P-warning">
+   <P CLASS="warning">
+    An add-in may be supplied with several files, apart from the .dll or 
+    .ocx itself. These typically include one or more files with 
+    &quot;.bmp&quot; extensions and sometimes an &quot;.mdb&quot; file 
+    and perhaps others. All these files MUST be in the same directory as 
+    the .dll or .ocx file when you do the installation. If the files that 
+    the add-in requires cannot be found, the installation will fail.</P>
+   <LI CLASS="mvd-P-warning">
+   <P CLASS="warning">
+    You cannot install an add-in from the \Recorder\Addins directory. You 
+    must install the add-in and its related files from a floppy-disk, CD 
+    or some other location on your computer's hard disk. <SPAN STYLE="font-style : italic;font-weight : normal;">Recorder
+     </SPAN>will copy the files to the Addins directory as part of the 
+    installation process. If you attempt to install an add-in from the 
+    same directory that <SPAN STYLE="font-style : italic;font-weight : normal;">Recorder
+     </SPAN>is trying to copy it to, you will see the message:</P>
+   </UL>
+  <BLOCKQUOTE>
+   <BLOCKQUOTE>
+    <P>
+     <IMG SRC="..\ScreenShots\Addin already in use message.gif" WIDTH="561" HEIGHT="129" VSPACE="0" HSPACE="0" BORDER="0"></P>
+    </BLOCKQUOTE>
+   <P>
+    The error occurs, in this case, because <SPAN STYLE="font-style : italic;">Recorder
+     </SPAN>itself is the 'other process' that is already using the file. 
+    What you have asked it to do is to simultaneously read and write the 
+    same file!</P>
+   </BLOCKQUOTE>
+  <H3>
+   To remove an Add-In module:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Highlight the module you wish to remove in the list.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click [Remove].</P>
+   <LI CLASS="mvd-P">
+   <P>
+    You will be asked to confirm that you really want to remove this module.</P>
+   </UL>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">NOTE: </SPAN>If the Add-In module 
+   is implemented as a DLL, you will be unable to remove it and then 
+   install it again within the same session (if you attempt this, you 
+   will see the &quot;Error 32:&quot; message above). You must close the 
+   application and restart before the add-in can be re-installed. This 
+   is a limitation imposed by <SPAN STYLE="font-style : italic;font-weight : normal;">Windows</SPAN>,
+    because DLLs are not removed from memory until the programme that 
+   loaded them terminates.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Extensibility and Customisation;Extensibility_and_Customisation.htm"><PARAM
+    NAME="Item2" VALUE="Writing Addins;Writing_Addins.htm"></OBJECT>
+ </BODY>
+</HTML>

@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<!-- GET SPECIES DESIGNATION
+     XML Report by Charles Roper of the Sussex Biodiversity Record Centre
+     http://www.sxbrc.org.uk/
+     Version 5 - 28 November 2014
+
+     NOTE: Requires the HtmltoPlainText function included in Recorder 6 from version 6.10.4 onwards.
+-->
+<CustomReport title="Find designations for &lt;taxon&gt;" description="Find all designations for specified taxon" menupath="System Supplied\information">
+<SQL>
+  SELECT DISTINCT
+              ITN.TAXON_LIST_ITEM_KEY,
+              ITNS1.COMMON_NAME AS [DESIGNATED AS],
+              TXG.TAXON_GROUP_NAME AS [TAXON GROUP],
+              TDT.KIND AS [STATUS KIND],
+              TDT.SHORT_NAME,
+              TDT.LONG_NAME,
+              dbo.ufn_RtfToPlaintext(replace(dbo.ufn_HtmlToPlainText(replace(dbo.ufn_HtmlToPlainText(TDT.DESCRIPTION), char(13), '')), char(10), '')) AS DESCRIPTION,
+              TD.STATUS_GEOGRAPHIC_AREA AS SGA,
+              CONVERT(VARCHAR(10), TD.DATE_FROM, 103) AS [D ON],
+              CONVERT(VARCHAR(10), TD.DATE_TO, 103) AS [D EXP]
+  FROM        INDEX_TAXON_NAME ITN
+  INNER JOIN  INDEX_TAXON_GROUP ITG ON
+              ITN.TAXON_LIST_ITEM_KEY=ITG.CONTAINED_LIST_ITEM_KEY
+  INNER JOIN  INDEX_TAXON_NAME ITNS1 ON
+              ITG.TAXON_LIST_ITEM_KEY=ITNS1.TAXON_LIST_ITEM_KEY
+  INNER JOIN  INDEX_TAXON_NAME ITNS2 ON
+              ITNS1.RECOMMENDED_TAXON_LIST_ITEM_KEY=ITNS2.RECOMMENDED_TAXON_LIST_ITEM_KEY
+  INNER JOIN  TAXON_DESIGNATION TD ON
+              ITNS2.TAXON_LIST_ITEM_KEY=TD.TAXON_LIST_ITEM_KEY
+  INNER JOIN  TAXON_DESIGNATION_TYPE TDT ON
+              TD.TAXON_DESIGNATION_TYPE_KEY = TDT.TAXON_DESIGNATION_TYPE_KEY
+  INNER JOIN  TAXON_LIST_ITEM TLI ON
+              ITN.TAXON_LIST_ITEM_KEY = TLI.TAXON_LIST_ITEM_KEY
+  INNER JOIN	TAXON_VERSION TXV ON
+              TLI.TAXON_VERSION_KEY = TXV.TAXON_VERSION_KEY
+  INNER JOIN	TAXON_GROUP TXG ON
+              TXV.OUTPUT_GROUP_KEY = TXG.TAXON_GROUP_KEY
+<Where keytype="Default">
+  WHERE <Condition field="ITN.TAXON_LIST_ITEM_KEY" operator="equal" type="Taxon" name="Taxon" />
+</Where>
+<Where keytype="Taxon">
+  WHERE 			ITN.TAXON_LIST_ITEM_KEY = '%s'
+ 
+</Where>
+
+<OutputTableOrderby name="Default" SQL="Order By [STATUS KIND]"/>
+
+
+</SQL>
+<Columns>
+  <Column name="Taxon_List_Item_Key" tablename="Taxon" visible="False" />
+  <Column name="DESIGNATED AS"     position="1" caption="Designated As"  keycolumn="Taxon_List_Item_Key" width="150"/>
+  <Column name="TAXON GROUP"       position="2" caption="Taxon Group"         width="150" />
+  <Column name="STATUS KIND"       position="3" caption="Status Abbrev."      width="100" />
+  <Column name="SHORT_NAME"        position="4" caption="Designation"         width="175" />
+  <Column name="LONG_NAME"         position="5" caption="Designation (Full)"  width="300" />
+  <Column name="DESCRIPTION"			 position="6" caption="Description"					width="300" />
+  <Column name="SGA"               position="7" caption="Applies to"          width="100" />
+  <Column name="D ON"              position="8" caption="Designated On"       width="100" />
+  <Column name="D EXP"             position="9" caption="Designation Expired" width="100" />
+</Columns>
+</CustomReport>
+

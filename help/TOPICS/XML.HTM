@@ -1,0 +1,152 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>XML</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   XML</H1>
+  <P>
+   XML (eXtensible Markup Language) has the following characteristics:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    XML is a method of putting structured data into text files. It is a 
+    set of rules for designing text formats for data which are easy to 
+    generate and read (by a computer), unambiguous and avoid common 
+    pitfalls like platform-dependency and lack of extensibility. It 
+    provides support for internationalisation and use of different 
+    character sets.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    XML is text, but it isn&#146;t meant to be human-readable. Because 
+    XML files are simple text files, they can be transferred between 
+    different types of computers without difficulty and can be examined 
+    and edited using any text editor if necessary. However, they are 
+    meant to be written and read by computer programmes, and are not 
+    designed to be easily read by people.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    XML files are extremely verbose, but that is not really a problem. 
+    Wrapping each datum in a tag makes the files very repetitive and 
+    large - usually much larger than the original data in the internal 
+    format of the application that generated them. However, disk space is 
+    no longer expensive, and highly repetitive text files zip very 
+    efficiently for transfer by disk or across communication lines. XML 
+    files typically compress by at least 98%.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    XML is new, but not that new. XML is based on SGML (Standard General 
+    Mark-up Language) which was developed in the 1980&#146;s, and has 
+    been an ISO standard since 1986. It is widely used in the library 
+    world, and for large documentation projects. However, the SGML 
+    standard is extremely complex. The designers of XML took the best 
+    bits of SGML, guided by experience with HTML, and produced something 
+    that is no less powerful, but is vastly more regular and simpler to 
+    use. The down-side is that XML is much stricter than SGML, and a 
+    missing tag, or an attribute without a quote, makes the file 
+    unusable. The complexity of SGML is largely about allowing, or at 
+    least tolerating, these sort of things, but makes writing programmes 
+    to deal with SGML files complex and difficult. Development of XML 
+    started in 1996. Version 1.0 was adopted as a standard by W3C (the 
+    World Wide Web Consortium) in February 1998.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    XML is part of a family of technologies. A problem with HTML is that 
+    is mixes up two concepts that should be kept separate - the <I>content</I> 
+    and <I>layout</I> of information. For example, HTML header 
+    (&lt;H1&gt;) or paragraph (&lt;P&gt;) tags identify content, whereas 
+    bold (&lt;B&gt;) or italic (&lt;I&gt;) specify layout. The family of 
+    technologies of which XML is a part address this. XML deals only with 
+    content. Cascading Style Sheets, or the newer XSL (eXtended Style 
+    Language), provide the means of defining how the information should 
+    be presented. For example, an XSL style sheet might specify that the 
+    &lt;spatial_ref&gt; tag illustrated above should be shown at the top 
+    left of a page in red, 12 point Arial text. This is tremendously 
+    powerful - the XML file exported by <SPAN STYLE="font-style : italic;">Recorder
+     </SPAN>could be published as a printed document, or used to generate 
+    a set of web pages, just by applying appropriate style sheets. Xlink 
+    is a standard that is still under development to describe a way of 
+    adding hyperlinks to XML documents, and Xdata is also under 
+    development to improve the way XML handles data from relational 
+    databases (preserving referential integrity, etc). There are many 
+    other related initiatives described on the W3C technical report web page.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    XML is licence free and well supported. It is being increasingly 
+    supported by software packages and tools. For example,<SPAN STYLE="font-style : italic;"> </SPAN><SPAN STYLE="font-style : normal;">Microsoft
+     </SPAN><SPAN STYLE="font-style : italic;">Office 2002 </SPAN>uses it 
+    extensively and it is supported by the latest version of <SPAN STYLE="font-style : italic;">Internet
+     Explorer</SPAN> and <SPAN STYLE="font-style : italic;">Netscape </SPAN>browsers.
+     There is an extensive and rapidly growing body of literature 
+    available both via the internet and in publications.</P>
+   </UL>
+  <P>
+   XML looks like HTML (Hyper-Text Mark-up Language - the language of 
+   the world wide web), which is by now a familiar format to most 
+   computer users. Like HTML, XML uses <I>tags</I> (words bracketed by 
+   &quot;&lt;...&gt;&quot;) and <I>attributes</I> (terms like <I>name=&quot;value&quot;</I> 
+   inside these tags). For example:</P>
+  <BLOCKQUOTE>
+   <P>
+    &lt;spatial_ref system=&quot;OSGB&quot;&gt;NZ1265&lt;/spatial_ref&gt;</P>
+   </BLOCKQUOTE>
+  <P>
+   However, HTML defines a limited set of tags and attributes and, in 
+   many cases, specifies what the text in the tags must be like. XML 
+   only defines the rules for defining tags and attributes. The specific 
+   tags and attributes used for a particular application are entirely up 
+   to the designers of that application to specify using these rules, 
+   and the text they contain is up to the application to interpret.</P>
+  <P>
+   The specification, or <I>schema</I>, for a particular XML application 
+   is defined in a <I>Document Type Definition</I> (DTD). The DTD for 
+   National Biodiversity Network (<A HREF="javascript:BSSCPopup('../Glossary/NBN.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">NBN</A>)
+    exchange format is freely available from the NBN web site at <A HREF="http://www.nbn.org.uk/">www.nbn.org.uk</A>.
+    This defines the set of rules governing the tags (<I>elements</I>) 
+   and attributes which can be used in the application. The DTD 
+   specifies whether tags and attributes are required or optional, the 
+   default that will be used if optional data is not present, what order 
+   tags should appear in and what type of data they can contain. Tools 
+   (such as Microsoft&#146;s <SPAN STYLE="font-style : italic;">Internet 
+   Explorer 5</SPAN> and <SPAN STYLE="font-style : italic;">XML Notebook</SPAN>)
+    are freely available and can check that a particular XML file obeys 
+   the rules set out in the DTD. This means that individuals or 
+   organisations who wish to use the <A HREF="NBN_Transfer_Format.htm">NBN
+    data exchange format</A> have a way of checking that their transfer 
+   files are correctly formatted even if they do not have access to NBN software.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Data Transfer;Data_Transfer.htm"><PARAM
+    NAME="Item2" VALUE="Export to NBN Data;Export_to_NBN_Data.htm"><PARAM NAME="item3" VALUE="NBN Transfer Format;NBN_Transfer_Format.htm"></OBJECT>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

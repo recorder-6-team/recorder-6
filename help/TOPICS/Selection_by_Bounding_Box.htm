@@ -1,0 +1,97 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Selection by Bounding Box</TITLE>
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css">
+ <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Selection by Bounding Box</H1>
+  <P>
+   You will see this screen if you choose to select places or 
+   observations using spatial references.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Wizard Bounding Boxes.gif" WIDTH="422" HEIGHT="367" VSPACE="0" HSPACE="0" BORDER="0" USEMAP="#Wizard Bounding Boxes"></P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="30%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">NE and SW corners</SPAN></TD>
+      <TD WIDTH="70%" VALIGN=TOP>
+       <P>
+        Enter a pair of <A HREF="Spatial_References_Overview.htm">spatial references</A> 
+        which define a rectangular area.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="30%" VALIGN=TOP>
+       <P>
+        <IMG SRC="..\buttonimages\find.gif" WIDTH="22" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"></TD>
+      <TD WIDTH="70%" VALIGN=TOP>
+       <P>
+        This button will open the <A HREF="The_Map_Browser.htm">Map Browser</A> 
+        allowing you to specify the spatial references by drawing a rectangle 
+        on the map.</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P>
+   Locations are selected by testing whether the grid squares and 
+   centroid listed for the location lie within the rectangular area 
+   defined by the SW and NE corner.</P>
+  <P>
+   For example, if a <A HREF="Bounding_Boxes.htm">bounding box</A> was 
+   defined as SW corner = NZ063151, NE corner = NZ283733, then a 
+   location with NZ16 (green hatched) listed as its Grid Square is 
+   entirely within the bounding box, and would always be selected. 
+   However, a location with NZ26 (red hatched) listed as its grid square 
+   is not entirely within the bounding box. In this case, the setting of 
+   the options 'Include places partially inside the bounding box' or 'Do 
+   not include places partially inside the bounding box' determines 
+   whether or not the location is selected. If the first option is 
+   selected, it will be included; if the second is selected, it will not.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\screenshots\inboundingbox.gif" WIDTH="300" HEIGHT="300" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">NOTE: </SPAN>The selection of 
+   locations using a bounding box is made entirely using the grid 
+   squares and site centroid given in the location record, even if the 
+   location is associated with a site boundary shown on the map. Site 
+   boundaries are <SPAN STYLE="font-weight : bold;">NOT</SPAN> used in 
+   this selection.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Bounding Boxes;Bounding_Boxes.htm"><PARAM
+    NAME="Item2" VALUE="Location Grid Squares Tab;Location_Grid_Squares_Tab.htm"><PARAM
+    NAME="Item3" VALUE="Report about a place;Report_about_a_place.htm"><PARAM
+    NAME="Item4" VALUE="Reporting Overview;Reporting_Overview.htm"><PARAM
+    NAME="Item5" VALUE="Using the Report Wizard;Using_the_Report_Wizard.htm"></OBJECT>
+ </BODY>
+</HTML>

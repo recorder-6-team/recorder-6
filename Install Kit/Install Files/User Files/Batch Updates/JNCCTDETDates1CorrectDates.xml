@@ -1,0 +1,226 @@
+<?xml version="1.0" ?> 
+
+<!-- CORRECTIONS OF SITUATION WHERE TAXON DETERMINATION DATES ARE NOT COMPATIBLE WITH THE SAMPLE DATES
+     XML Report by Mike Weideli of Littlefield Consultancy 
+     Version 4.0 - 28/7/2010
+     
+     Works only on records which are in the custodianship of the system.
+   
+     Needs Recorder 6.14 or above to work.			
+     
+     Works on thy whole database or as a Quick Report on a Survey
+
+     Action taken is as follows 
+     
+	
+	The following combinations of dates are possible.
+
+	1.	TDVDS = SVDS AND TDVDE = SVDE	(Allowed) - No action required
+	2.	TDVDS = SVDS AND TDVDE > SVDE	(Fails validation) - make TDVDS =  SVDS + 1 and change type to DD
+	3.	TDVDS = SVDS AND TDVDE < SVDE	(Allowed) - No action required
+
+
+	4.	TDVDS > SVDS AND TDVDE = SVDE	(Allowed) - No action required
+	5.	TDVDS > SVDS AND TDVDE > SVDE	(Allowed) - No action required
+	6.	TDVDS > SVDS AND TDVDE < SVDE	(Allowed) - No action required 
+	7.	TDVDS < SVDS AND TDVDE = SVDE	(Fails validation) - Make Taxon Determination dates same as sample dates  
+	8.	TDVDS < SVDS AND TDVDE > SVDE	(Fails validation) -  make TDVDS =  SVDS + 1 and change type to DD
+	9.	TDVDS < SVDS AND TDVDE < SVDE	(Fails validation) - Make Taxon Determination dates same as sample dates 
+
+	10. 	Taxon Determination vague date type = 'U' and Sample vague date Type <> 'U' (Fails validation)
+							   - Make Taxon Determination dates same as sample dates  
+   
+       (TDVDS = Taxon Determination vague Date start 
+	TDVDE = Taxon Determination vague Date End
+	SVDS  = sample vague Date start 
+	SVDE  = sample vague Date End) 
+
+       
+-->
+
+
+<batchupdate title="TDET_Dates_1 - Corrects Taxon Determination dates" menupath="System Supplied\Problem Correction" description= "Corrects Taxon Determination dates which are not compatible with the Sample dates">
+
+<SQL>
+
+
+
+
+<Where keytype="Default">
+DECLARE @Custodian char(8)
+DECLARE @UserId char(16)
+DECLARE @DateChanged datetime
+
+SET	@DateChanged	=	GETDATE()
+
+SET  @UserID = (SELECT NAME_KEY FROM NAME WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" /> )
+ 
+SELECT  @Custodian = Data 
+FROM
+Setting 
+WHERE
+Name = 'SiteID'
+
+
+CREATE TABLE #Corrections  (Taxon_Determination_key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS PRIMARY KEY,
+  			 Action Integer )
+
+
+
+
+INSERT INTO #Corrections (TAXON_Determination_KEY, Action)
+SELECT TDET.TAXON_Determination_key, 1
+FROM TAXON_DETERMINATION TDET INNER JOIN
+TAXON_OCCURRENCE TOCC 
+ON TOCC.Taxon_Occurrence_Key = TDET.taxon_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = TOCC.sample_key
+WHERE 
+TDET.Custodian = @Custodian 
+AND ((TDET.vague_date_start &#60; S.Vague_date_start
+and TDET.vague_date_end &#60; S.Vague_date_end) OR
+( TDET.vague_date_start &#60; S.Vague_date_start
+and TDET.vague_date_end =  S.Vague_date_end)
+OR (TDET.vague_date_type = 'U' and S.Vague_date_type &#60;&#62; 'U') 
+)
+
+
+
+INSERT INTO #Corrections (TAXON_Determination_KEY, Action)
+SELECT TDET.TAXON_Determination_KEY, 2
+FROM TAXON_DETERMINATION TDET 
+INNER JOIN
+TAXON_OCCURRENCE TOCC 
+ON TOCC.Taxon_Occurrence_Key = TDET.taxon_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = TOCC.sample_key
+WHERE TDET.vague_date_type  &#60;&#62; 'U' AND TDET.Custodian = @Custodian 
+AND 
+((TDET.vague_date_start &#60; S.Vague_date_start
+and TDET.vague_date_end &#62; S.Vague_date_end) OR
+(TDET.vague_date_start = S.Vague_date_start
+and TDET.vague_date_end &#62; S.Vague_date_end)) 
+
+
+UPDATE Taxon_Determination SET Vague_date_start = S.vague_date_start, Vague_date_end = s.vague_date_end,Vague_date_type = s.vague_date_type,
+changed_by =  @UserID, changed_date = @DateChanged 
+FROM Taxon_Determination TDET
+INNER JOIN #Corrections on #Corrections.Taxon_Determination_key = TDET.Taxon_Determination_Key
+INNER JOIN TAXON_OCCURRENCE TOCC 
+ON TOCC.Taxon_Occurrence_Key = TDET.taxon_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = TOCC.sample_key
+WHERE #Corrections.Action = 1
+
+
+UPDATE Taxon_Determination SET Vague_date_start = S.vague_date_start +1 , Vague_date_type = 'DD',
+changed_by =  @UserID, changed_date = @DateChanged 
+FROM Taxon_Determination TDET
+INNER JOIN #Corrections on #Corrections.Taxon_Determination_key = TDET.Taxon_Determination_Key
+INNER JOIN TAXON_OCCURRENCE TOCC 
+ON TOCC.Taxon_Occurrence_Key = TDET.taxon_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = TOCC.sample_key
+WHERE #Corrections.Action = 2
+
+
+
+
+DROP TABLE #Corrections
+
+</Where>
+
+
+<Where keytype="Survey">
+DECLARE @Custodian char(8)
+DECLARE @UserId char(16)
+DECLARE @DateChanged datetime
+DECLARE @Survey CHAR(16)
+SET @Survey = '%s'
+SET	@DateChanged	=	GETDATE()
+
+SET  @UserID = (SELECT NAME_KEY FROM NAME WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" /> )
+ 
+SELECT  @Custodian = Data 
+FROM
+Setting 
+WHERE
+Name = 'SiteID'
+
+
+CREATE TABLE #Corrections  (Taxon_Determination_key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS PRIMARY KEY,
+  			 Action Integer )
+
+INSERT INTO #Corrections (TAXON_Determination_KEY, Action)
+SELECT TDET.TAXON_Determination_key, 1
+FROM TAXON_DETERMINATION TDET INNER JOIN
+TAXON_OCCURRENCE TOCC 
+ON TOCC.Taxon_Occurrence_Key = TDET.taxon_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = TOCC.sample_key
+INNER JOIN SURVEY_EVENT SE
+ON SE.SURVEY_EVENT_KEY = S.SURVEY_EVENT_KEY 
+WHERE 
+TDET.Custodian = @Custodian 
+AND ((TDET.vague_date_start &#60; S.Vague_date_start
+and TDET.vague_date_end &#60; S.Vague_date_end) OR
+( TDET.vague_date_start &#60; S.Vague_date_start
+and TDET.vague_date_end =  S.Vague_date_end)
+OR (TDET.vague_date_type = 'U' and S.Vague_date_type &#60;&#62; 'U') 
+)
+
+
+
+INSERT INTO #Corrections (TAXON_Determination_KEY, Action)
+SELECT TDET.TAXON_Determination_KEY, 2
+FROM TAXON_DETERMINATION TDET 
+INNER JOIN
+TAXON_OCCURRENCE TOCC 
+ON TOCC.Taxon_Occurrence_Key = TDET.taxon_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = TOCC.sample_key
+INNER JOIN SURVEY_EVENT SE
+ON SE.SURVEY_EVENT_KEY = S.SURVEY_EVENT_KEY 
+WHERE TDET.vague_date_type  &#60;&#62; 'U' AND TDET.Custodian = @Custodian 
+AND SE.Survey_Key = @Survey AND 
+((TDET.vague_date_start &#60; S.Vague_date_start
+and TDET.vague_date_end &#62; S.Vague_date_end) OR
+(TDET.vague_date_start = S.Vague_date_start
+and TDET.vague_date_end &#62; S.Vague_date_end)) 
+
+
+
+
+UPDATE Taxon_Determination SET Vague_date_start = S.vague_date_start, Vague_date_end = s.vague_date_end,Vague_date_type = s.vague_date_type,
+changed_by =  @UserID, changed_date = @DateChanged 
+FROM Taxon_Determination TDET
+INNER JOIN #Corrections on #Corrections.Taxon_Determination_key = TDET.Taxon_Determination_Key
+INNER JOIN TAXON_OCCURRENCE TOCC 
+ON TOCC.Taxon_Occurrence_Key = TDET.taxon_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = TOCC.sample_key
+WHERE #Corrections.Action = 1
+
+
+UPDATE Taxon_Determination SET Vague_date_start = S.vague_date_start + 1 , Vague_date_type = 'DD',
+changed_by =  @UserID, changed_date = @DateChanged 
+FROM Taxon_Determination TDET
+INNER JOIN #Corrections on #Corrections.Taxon_Determination_key = TDET.Taxon_Determination_Key
+INNER JOIN TAXON_OCCURRENCE TOCC 
+ON TOCC.Taxon_Occurrence_Key = TDET.taxon_Occurrence_Key
+INNER JOIN Sample S
+ON S.Sample_Key = TOCC.sample_key
+WHERE #Corrections.Action = 2
+
+
+
+
+DROP TABLE #Corrections
+
+ </Where>
+
+</SQL>
+
+</batchupdate>

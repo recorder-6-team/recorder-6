@@ -1,0 +1,96 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Lists the Taxon  used in the system
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014    
+             
+--> 
+
+
+ 
+<CustomReport menupath="System Supplied\Information"  title="H7 - Taxon (Used in system)" 
+description="List of Taxon used in the system showing the Recommended Taxon. This report is useful in investigating problems with reporting. 
+Taxa which are not linked to a preferred list may not show correctly on reports and will not be sorted correctly into taxonomic order.
+
+" >
+
+<SQL>
+
+<Where keytype="Default">
+
+SELECT DISTINCT 
+ITN.Preferred_List,ITN2.Preferred_List  as Preferred_Avail, ITN.taxon_List_Item_key as Used_Key,ITN.Preferred_Name as Pref_Name,ITN2.Taxon_List_Item_Key as Rec_Key,
+ITN.Actual_Name as Used_Name ,TL.Item_Name AS Used_Dict,ITN2.Actual_Name as REC_Name ,TL2.Item_Name as Rec_Dict,TV.Attribute as UsedAttrib,TLI.Preferred_name as pref_Key,
+TV2.Attribute as RecAttrib,
+'Preferred' = 
+CASE
+          WHEN ITN.taxon_List_Item_key =  ITN2.Taxon_List_Item_Key THEN 'Yes'
+          ELSE 'No'
+
+ END 
+FROM
+Taxon_Determination TDET
+INNER JOIN Index_Taxon_Name  ITN
+ON 
+TDET.Taxon_List_item_Key = ITN.Taxon_List_item_Key
+INNER JOIN
+Taxon_List_Item TLI
+ON TLI.Taxon_List_Item_Key = TDET.taxon_List_Item_Key
+INNER JOIN
+TAXON_VERSION TV
+ON TV.Taxon_Version_Key = TLI.Taxon_version_key
+INNER JOIN
+Taxon_List_Version TLV
+ON TLV.Taxon_List_Version_Key = TLI.Taxon_List_Version_Key
+INNER JOIN
+Taxon_List TL
+ON TL.Taxon_List_Key = TLV.Taxon_List_Key
+INNER JOIN Index_Taxon_Name ITN2
+ON ITN.Recommended_taxon_List_Item_key = ITN2.taxon_List_Item_Key
+INNER JOIN
+Taxon_List_Item TLI2
+ON TLI2.Taxon_List_Item_Key = ITN2.taxon_List_Item_Key
+INNER JOIN
+Taxon_Version TV2
+ON TV2.taxon_Version_key =  TLI2.taxon_version_Key
+INNER JOIN
+Taxon_List_Version TLV2
+ON TLV2.Taxon_List_Version_Key = TLI2.Taxon_List_Version_Key
+INNER JOIN
+Taxon_List TL2
+ON TL2.Taxon_List_Key = TLV2.Taxon_List_Key
+
+
+WHERE
+ITN.System_Supplied_Data = 1
+AND
+ITN2.System_Supplied_Data = 1
+
+
+ 
+</Where>
+
+<OutputTableOrderby name="Default" SQL="Order By Used_Name, Used_Dict "/>
+
+</SQL>
+<Columns>
+  <Column name="Preferred_list" width="150" position="1" caption="Preferred List Used " /> 
+  <Column name="Preferred_Avail" width="150" position="2" caption="Linked to preferred list " /> 
+  <Column name="Preferred" width="150" position="3" caption="Recommended Taxa Used " /> 
+  <Column name="Used_Key" width="150" position="4" caption="TLI Key Used" /> 
+  <Column name="Pref_Key" width="150" position="5" caption="Preferred Key" /> 
+  <Column name="Rec_Key" width="150" position="6" caption="TLI Key Recommended" /> 
+  <Column name="Used_Name" width="200" position="7" caption="Taxa Used in System" /> 
+  <Column name="UsedAttrib" width="160" position="8" caption="Attribute Used in System" /> 
+  <Column name="Used_Dict" width="300" position="9" caption="Dictionary of Used Taxa " /> 
+  <Column name="Pref_Name" width="200" position="10" caption="Preferred Taxa" /> 
+  <Column name="Rec_Name" width="200" position="11" caption="Recommended Taxa" /> 
+  <Column name="RecAttrib" width="200" position="12" caption="Attribute of Recommended Taxa" /> 
+  <Column name="Rec_Dict" width="160" position="13" caption="Dictionary of Recommended Taxa" /> 
+  
+  
+ 
+</Columns>
+</CustomReport>

@@ -1,0 +1,233 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Sources</TITLE>
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css">
+ <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Source page</H1>
+  <P>
+   This page occurs in most of the main data entry screens. It allows 
+   documentary sources of information to be indicated by referring to an 
+   entry in the <SPAN STYLE="font-weight : bold;">Documents </SPAN>window.
+    It also allows external files to be linked to the record. These 
+   could include word-processor files containing further details, 
+   pictures, sounds or any other type of file supported by your computer.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Source tab.gif" WIDTH="355" HEIGHT="265" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <H2>
+   Internal references</H2>
+  <P>
+   A list of items from the <SPAN STYLE="font-weight : bold;">Document</SPAN> 
+   window associated with the current record.</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Reference</SPAN></TD>
+      <TD WIDTH="79%" VALIGN=TOP>
+       <P>
+        Identifies the item in the <SPAN STYLE="font-weight : bold;">Document</SPAN> window</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Original</SPAN></TD>
+      <TD WIDTH="79%" VALIGN=TOP>
+       <P>
+        Is this the original source of information (Yes/No), or is it 
+        indirect i.e. a document that cites another source as the original?</P>
+       <P>
+        For example, <I>A</I> finds a rare species and publishes the 
+        observation. Later <I>B</I> publishes a review of the species which 
+        cites <I>A</I>'s publication. Both publications might appear in the 
+        Sources page of a taxon occurrence entry detailing this observation:<I> A</I>'s
+         publication is the original source and would be flagged 'Yes' whilst <I>B</I>'s
+         publication would be flagged 'No'.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="21%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Type</SPAN></TD>
+      <TD WIDTH="79%" VALIGN=TOP>
+       <P>
+        The type of document. Automatically filled in.</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <H3>
+   To add an internal reference:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Ensure the detail panel is in <A HREF="Modes.htm">Edit mode</A> (The 
+    [Save] and [Cancel] buttons in the detail panel will be active).<BR>
+    <LI CLASS="mvd-P">Locate the desired documentary reference. You can 
+    do this by:</P>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     Dragging the document from the document window or <A HREF="Rucksack.htm">Rucksack</A> 
+     into the grid.<BR>
+     <LI CLASS="mvd-P">Click the <IMG SRC="..\buttonimages\plus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+     button to open the <A HREF="Finding_Documents.htm">Find Document dialog</A>.
+      Highlight the document you want in the list, and click [OK] or press &lt;Enter&gt;.<BR>
+     <LI CLASS="mvd-P">Choose the <IMG SRC="..\buttonimages\find.gif" WIDTH="22" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+     button. The Document window will be displayed. Select the document 
+     you want and return it (by selecting <SPAN STYLE="font-weight : bold;">Edit
+      &#150; </SPAN><A HREF="Return_Data.htm">Return data</A> from the 
+     menu, clicking the <IMG SRC="..\buttonimages\return.gif" WIDTH="16" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0"> 
+     button in the active toolbar, or pressing the short-cut key &lt;<A HREF="Return_Data.htm">F9</A>&gt;).</P>
+    </UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Change the setting in the 'Original' column if necessary &#150; it 
+    defaults to 'No'.</P>
+   </UL>
+  <H3>
+   To edit an internal reference:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Ensure the detail panel is in <A HREF="Modes.htm">Edit mode</A> (The 
+    [Save] and [Cancel] buttons in the detail panel will be active).</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click on the cell you wish to edit and make the desired changes. 
+    Changing the document is the same as adding it. Use drag and drop; 
+    the <IMG SRC="..\buttonimages\plus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button to open the <SPAN STYLE="font-weight : bold;">Find Document</SPAN> 
+    dialog, or the <IMG SRC="..\buttonimages\find.gif" WIDTH="22" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button to locate an entry in the <SPAN STYLE="font-weight : bold;">Document</SPAN> 
+    window, and then Return the data by pressing &lt;<A HREF="Return_Data.htm">F9</A>&gt;.</P>
+   </UL>
+  <H3>
+   To remove an internal reference:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Ensure the detail panel is in <A HREF="Modes.htm">Edit mode</A> (The 
+    [Save] and [Cancel] buttons in the detail panel will be active).</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the row in the grid that you wish to delete by clicking on one 
+    of its cells with your mouse, or by moving to a row using the &lt;up 
+    arrow&gt;,&lt;down arrow&gt;, &lt;PgUp&gt;, &lt;PgDn&gt;, &lt;Home&gt;
+     and &lt;End&gt; keys.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Choose the <IMG SRC="..\buttonimages\minus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button. You will be prompted to confirm that you really want to 
+    delete the selected item.</P>
+   </UL>
+  <H2>
+   External references</H2>
+  <P>
+   These consist of a list of files available on this computer, or the 
+   network to which it is attached.</P>
+  <H3>
+   To add an external reference:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Ensure the detail panel is in <A HREF="Modes.htm">Edit mode</A> (The 
+    [Save] and [Cancel] buttons in the detail panel will be active).</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the <IMG SRC="..\buttonimages\plus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button to open a standard <SPAN STYLE="font-style : italic;font-weight : bold;">Windows</SPAN><SPAN STYLE="font-weight : bold;"> 
+    file location</SPAN> dialog. Select the file you require, and choose 
+    [Open] in the dialog. The path and name of the selected file will 
+    appear in the list.</P>
+   </UL>
+  <H3>
+   To delete an external reference:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Ensure the detail panel is in <A HREF="Modes.htm">Edit mode</A> (The 
+    [Save] and [Cancel] buttons in the detail panel will be active).</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the file name you wish to delete by clicking with your mouse, 
+    or by moving to a row using the &lt;up arrow&gt;, &lt;down arrow&gt;, 
+    &lt;PgUp&gt;, &lt;PgDn&gt;,&lt;[Home&gt; and &lt;End&gt; keys.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Choose the <IMG SRC="..\buttonimages\minus.gif" WIDTH="23" HEIGHT="22" VSPACE="0" HSPACE="0" BORDER="0"> 
+    button. You will be prompted to confirm that you really want to 
+    delete the selected item.</P>
+   </UL>
+  <P>
+   You cannot edit a file name. To make a change, delete the file, and 
+   then add the new version.</P>
+  <H3>
+   To view an external file:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the file name you wish to view by clicking with your mouse, or 
+    by moving to a row using the &lt;up arrow&gt;, &lt;down arrow&gt;, 
+    &lt;PgUp&gt;, &lt;PgDn&gt;, &lt;Home&gt; and &lt;End&gt; keys.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the <IMG SRC="..\buttonimages\ellipses.gif" WIDTH="20" HEIGHT="20" VSPACE="0" HSPACE="0" BORDER="0"> button</P>
+   </UL>
+  <P>
+   OR</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Double click on the name of the file you wish to view.</P>
+   </UL>
+  <P>
+   The application which is registered with<SPAN STYLE="font-style : italic;"> Windows</SPAN> 
+   to view that type of file will be launched, and the file loaded into 
+   it. For example, if you view a .txt file, <SPAN STYLE="font-style : italic;">Windows</SPAN> 
+   will open <SPAN STYLE="font-style : italic;font-weight : normal;">Notepad</SPAN> 
+   with that file loaded into it.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">NOTE:</SPAN> Viewing a file uses 
+   the facility provided by <SPAN STYLE="font-style : italic;font-weight : normal;">Windows</SPAN> 
+   to launch the application required to view that file. This is based 
+   on that file&#146;s extension (.txt, .bmp, etc). It therefore relies 
+   upon the file extension being correctly registered with <SPAN STYLE="font-style : italic;font-weight : normal;">Windows</SPAN>,
+    and the necessary application being available.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Biotope Occurrence Overview;Biotope_Occurrence_Overview.htm"><PARAM
+    NAME="Item2" VALUE="Location Overview;Location_Overview.htm"><PARAM
+    NAME="Item3" VALUE="Names and Addresses Overview;Names_and_Addresses_Overview.htm"><PARAM
+    NAME="Item4" VALUE="Sample Overview;Sample_Overview.htm"><PARAM
+    NAME="Item5" VALUE="Survey Events Overview;Survey_Events_Overview.htm"><PARAM
+    NAME="Item6" VALUE="Surveys Overview;Surveys_Overview.htm"><PARAM
+    NAME="Item7" VALUE="Taxon Occurrence Overview;Taxon_Occurrence_Overview.htm"></OBJECT>
+ </BODY>
+</HTML>

@@ -1,0 +1,149 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Statistics for Custodians recorded in database
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014  
+
+   
+            
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Statistics"  title="H6 - Custodian Stats" 
+description="List of Custodians (site id's) recorded in database.
+" >
+
+<SQL>
+
+<Where keytype="Default">
+CREATE TABLE #LCTemp (Custodian char(8)  COLLATE SQL_Latin1_General_CP1_CI_AS,CountSamples int,CountLocations int,CountIndividuals  int,CountOrganisations int,CountRecords int,
+Vague_Date_Start int,Vague_Date_end int,Vague_date_Type varchar(2))
+INSERT INTO #LCTemp (Custodian)
+SELECT DISTINCT Custodian FROM Sample
+UNION
+SELECT DISTINCT Custodian FROM Location
+UNION
+SELECT DISTINCT Custodian FROM  Name 
+UNION
+SELECT DISTINCT Custodian FROM  Taxon_Occurrence
+
+UPDATE #LCTemp SET CountSamples = 
+(SELECT count(*) 
+FROM Sample S
+Where #LCTemp.Custodian = s.Custodian
+GROUP BY Custodian
+
+)
+
+UPDATE #LCTemp SET CountLocations = 
+(SELECT count(*) 
+FROM Location L
+Where #LCTemp.Custodian = L.Custodian
+GROUP BY Custodian
+
+)
+ 
+UPDATE #LCTemp SET CountIndividuals = 
+(SELECT count(*) 
+FROM Name N
+Where #LCTemp.Custodian = N.Custodian and Organisation = 0
+GROUP BY Custodian
+
+)
+
+UPDATE #LCTemp SET CountOrganisations = 
+(SELECT count(*) 
+FROM Name N
+Where #LCTemp.Custodian = N.Custodian and Organisation = 1
+GROUP BY Custodian
+
+)
+
+
+UPDATE #LCTemp SET CountRecords = 
+(SELECT count(*) 
+FROM Taxon_Occurrence TOCC
+Where #LCTemp.Custodian = TOCC.Custodian 
+GROUP BY Custodian
+
+)
+
+UPDATE #LCTemp SET Vague_date_start = S.Vague_Date_Start
+FROM Sample S Where S.Vague_date_start = 
+(SELECT min(vague_date_Start) 
+FROM Sample S2 
+Where #LCTemp.Custodian = S2.Custodian 
+AND
+Vague_date_Type NOT IN  ('U','-Y','S','-C') 
+
+)
+
+
+
+UPDATE #LCTemp SET Vague_date_end = S.Vague_Date_end
+FROM Sample S Where S.Vague_date_end = 
+(SELECT max(vague_date_end) 
+FROM Sample S2 
+Where #LCTemp.Custodian = S2.Custodian 
+AND Vague_date_Type NOT IN  ('U','Y-','S','C-') 
+
+)
+
+UPDATE #LCTemp SET Vague_date_type = 'DD'
+FROM #LCTemp
+WHERE 
+#LCTemp.Vague_date_start != #LCTemp.Vague_date_end
+AND Vague_date_start IS NOT NULL
+ 
+
+UPDATE #LCTemp SET Vague_date_type = 'D'
+FROM #LCTemp
+WHERE 
+#LCTemp.Vague_date_start = #LCTemp.Vague_date_end
+AND Vague_date_start IS NOT NULL
+ 
+UPDATE #LCTemp SET Vague_date_type = 'Y-'
+FROM #LCTemp
+WHERE 
+#LCTemp.Vague_date_start IS NOT NULL 
+AND  #LCTemp.Vague_date_end IS  NULL
+
+
+UPDATE #LCTemp SET Vague_date_type = '-Y'
+FROM #LCTemp
+WHERE 
+#LCTemp.Vague_date_start IS NULL 
+AND  #LCTemp.Vague_date_end IS NOT NULL
+
+
+UPDATE #LCTemp SET Vague_date_type = 'U', Vague_date_start = 0,Vague_date_end = 0
+FROM #LCTemp
+WHERE 
+Vague_date_start IS  NULL AND Vague_date_End  iS NULL
+
+SELECT * FROM #LCTEMP
+
+
+
+
+
+</Where>
+
+
+</SQL>
+<Columns>
+ <Column name="Custodian" width="150" position="1" caption="Custodian" /> 
+ <Column name="CountSamples" width="150" position="2" caption="Number of Samples" /> 
+ <Column name="CountLocations" width="150" position="3" caption="Number of Locations " /> 
+ <Column name="CountIndividuals" width="150" position="4" caption="Number of Individuals" /> 
+ <Column name="CountOrganisations" width="150" position="5" caption="Number of Organisations" /> 
+ <Column name="CountRecords" width="150" position="6" caption="Number of Records" /> 
+ <Column name="Vague_Date_Start" width="200" position="7" caption="Date Range" /> 
+  
+  
+ 
+</Columns>
+</CustomReport>

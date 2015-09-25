@@ -1,0 +1,260 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC  Records for selected Locations  
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014   
+   
+     QUICK REPORT - On a selected Location
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Unchedked - By parameter
+     Invalid = By parameter	
+   
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Location hierarchy reports"  title="L3 Location Records inc. Sub Sites" 
+description="Records for one or more Locations selected from the Location hierarchy or as a Quick report on the Location selected. 
+Includes records from both the Location AND those below it in the Location hierarchy. Does not include status. 
+
+" >
+
+<SQL>
+
+<Where keytype="Default">
+
+CREATE TABLE #Locations (Location_Key CHAR(16) COLLATE Database_Default PRIMARY KEY,
+  			 Parent_Key CHAR(16)  COLLATE Database_Default)
+
+INSERT INTO #Locations (LOcation_Key,Parent_Key) SELECT L.LOCATION_KEY, L.LOCATION_KEY  
+FROM  
+LOCATION L
+ 
+WHERE  
+
+<Condition field= "L.Location_key" operator="equal" type="Location"  name="Select Locations" entrycount="-1" />
+  
+
+
+WHILE 1=1 BEGIN
+	INSERT INTO #Locations
+		SELECT L.Location_Key, Tinc.Parent_Key
+		FROM Location L
+		INNER JOIN #Locations Tinc on L.Parent_Key=Tinc.Location_Key
+		LEFT JOIN #Locations Texc ON Texc.Location_Key=L.Location_Key
+		WHERE Texc.Location_Key IS NULL
+	IF @@ROWCOUNT=0
+		BREAK
+END
+
+
+
+Select TOCC.Taxon_Occurrence_key, LN.Item_name,L.Spatial_Ref,S.Spatial_ref as grid_ref,S.Location_name,s.vague_date_start,s.vague_date_end,s.vague_date_type,dbo.formateventRecorders
+(s.sample_key) as Recorders, dbo.FormatIndividual (I.Title, I.Initials, I.Forename, I.Surname) as Determiner,
+ITN.Preferred_name, ITN.Authority,ITN.Common_name, ITN2.Actual_name as Recommended_name, ITN2.Common_Name as Recommended_Common,
+TG.TAXON_GROUP_NAME.itn2.Sort_Order
+From LOcation L 
+INNER JOIN Location_name LN ON LN.Location_key = L.Location_key
+INNER JOIN Sample S ON S.Location_key = L.Location_key
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDET on TDET.Taxon_Occurrence_key = TOCC.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDET.Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
+LEFT JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_taxon_Name ITN2 ON ITN2.Taxon_List_Item_key = ITN.Recommended_Taxon_List_item_key
+INNER JOIN Individual I on I.name_key = TDET.Determiner  
+INNER JOIN #LOCATIONS SL ON SL.LOCATION_KEY = L.LOCATION_KEY
+INNER JOIN Survey_Event SE ON S.Survey_event_key  = SE.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+where  
+USr.Name_key IS NULL
+AND
+ITN.System_Supplied_Data = 1 
+AND
+ITN2.System_Supplied_Data = 1
+AND
+LN.preferred=1 AND
+
+TDET.Preferred = 1 AND 
+
+
+
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+
+	
+        <Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition> 
+
+ drop table #Locations
+
+
+
+</Where> 
+
+<Where keytype="Location">
+
+CREATE TABLE #Locations (Location_Key CHAR(16) COLLATE Database_Default PRIMARY KEY,
+  			 Parent_Key CHAR(16)  COLLATE Database_Default)
+
+INSERT INTO #Locations (LOcation_Key,Parent_Key) SELECT L.LOCATION_KEY, L.LOCATION_KEY  
+FROM  
+LOCATION L
+ 
+WHERE  
+
+L.Location_key = '%s'  
+
+
+WHILE 1=1 BEGIN
+	INSERT INTO #Locations
+		SELECT L.Location_Key, Tinc.Parent_Key
+		FROM Location L
+		INNER JOIN #Locations Tinc on L.Parent_Key=Tinc.Location_Key
+		LEFT JOIN #Locations Texc ON Texc.Location_Key=L.Location_Key
+		WHERE Texc.Location_Key IS NULL
+	IF @@ROWCOUNT=0
+		BREAK
+END
+
+
+
+Select TOCC.Taxon_Occurrence_key, LN.Item_name,L.Spatial_Ref,s.spatial_ref as grid_ref,S.Location_name,s.vague_date_start,s.vague_date_end,s.vague_date_type,dbo.formateventRecorders
+(s.sample_key) as Recorders, dbo.FormatIndividual (I.Title, I.Initials, I.Forename, I.Surname) as Determiner,
+ITN.Preferred_name, ITN.Authority,ITN.Common_name, ITN2.Actual_name as Recommended_name, ITN2.Common_Name as Recommended_Common,TG.TAXON_GROUP_NAME,itn2.Sort_Order
+
+From LOcation L 
+INNER JOIN Location_name LN ON LN.Location_key = L.Location_key
+INNER JOIN Sample S ON S.Location_key = L.Location_key
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDET on TDET.Taxon_Occurrence_key = TOCC.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDET.Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
+INNER JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_taxon_Name ITN2 ON ITN2.Taxon_List_Item_key = ITN.Recommended_Taxon_List_item_key
+INNER JOIN Individual I on I.name_key = TDET.Determiner  
+INNER JOIN #LOCATIONS SL ON SL.LOCATION_KEY = L.LOCATION_KEY
+INNER JOIN Survey_Event SE ON S.Survey_event_key  = SE.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+where  
+
+USr.Name_key IS NULL
+
+AND
+
+LN.preferred=1 AND
+
+TDET.Preferred = 1 AND 
+
+
+  
+
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+
+	
+        <Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition> 
+
+	
+
+
+
+
+
+
+
+
+ drop table #Locations
+ 
+
+
+
+
+</Where> 
+
+
+<OutputTableOrderby name="by Taxon Group" SQL="Order By taxon_group_name, preferred_name,vague_date_start"/>
+ 
+<OutputTableOrderby name="by Scientific Name" SQL="Order By preferred_name, vague_date_start "/>
+
+<OutputTableOrderby name="Taxonomic Order" SQL="Order By  Sort_Order, vague_date_start "/>
+
+</SQL>
+
+
+<Columns>
+  <Column name="Taxon_Occurrence_key" visible="false"  />
+  <Column name="Item_name" width="200" position="1" caption="Location(Site) Name" /> 
+  <Column name="Spatial_ref" width="90" position="2" caption="Location Spatial Ref" />   
+   <Column name="Grid_ref" width="90" position="3" caption="Sample Spatial Ref" />   
+ 
+  <Column name="Location_name" width="200" position="4" caption="Sample Location Name" /> 
+  <Column name="Vague_date_start" width="100" position="5" caption="Date" /> 
+  <Column name="Recorders" width="200" position="6" caption="Recorders" /> 
+  <Column name="Determiner" width="120" position="7" caption="Determiner" /> 
+   <Column name="Taxon_Group_name" width="200" position="8" caption="Taxon Group" /> 
+ 
+  <Column name="Preferred_Name" width="200" position="9" caption="Scientific Name" /> 
+   <Column name="Authority" width="200" position="11" caption="Authority" /> 
+   <Column name="Common_Name" width="200" position="12" caption="Common Name" /> 
+   <Column name="Recommended_name" width="200" position="13" caption="Recommended Name" /> 
+   <Column name="Recommended_Common" width="200" position="14" caption="Recommended Common Name" /> 
+  
+  <Column name="Sort_order" visible="false"  /> 
+  
+</Columns>
+</CustomReport>

@@ -1,0 +1,82 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>System supplied vs User added</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   System supplied vs User added</H1>
+  <P>
+   Information supplied with <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    mainly as part of the dictionaries or term-lists, is marked as 
+   'System-supplied'. Updates (e.g. of dictionaries) supplied via the <A HREF="..\Glossary\NBN.htm">NBN</A> 
+   web site will be similarly marked (see the <A HREF="http://www.nbn.org.uk/">NBN
+    website</A>).</P>
+  <P>
+   Users are not allowed to edit information which is marked as system-supplied.</P>
+  <P>
+   When users make additions to term-lists or add new taxa or biotopes, 
+   these entries are distinguished from the centrally supplied and 
+   supported entries because they are not marked as system-supplied.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">NOTE:</SPAN> New taxa and biotopes 
+   that are added by the user, and are therefore not marked as 
+   system-supplied, are not exported (which means none of the data 
+   associated with them, such as observations, are exported).</P>
+  <P>
+   To export such data:</P>
+  <UL>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P>
+     Get the taxon or biotope added to the centrally supported dictionary <SPAN STYLE="font-style : italic;">via</SPAN> 
+     an update (see <A HREF="How_to_get_taxabiotopes_added.htm">how to get 
+     taxa and biotopes added</A>).</P>
+    <LI CLASS="mvd-P">
+    <P>
+     Use the <A HREF="Merge_Data_Items.htm">Merge data</A> tool to 
+     transfer all items which rely on your addition to the centrally 
+     supported equivalent. At the end of this process, your addition will 
+     be deleted.</P>
+    <LI CLASS="mvd-P">
+    <P>
+     You can now export the items associated with the centrally supported entry.</P>
+    </UL>
+   </UL>
+  <P>
+   In the underlying database, this information is stored in field 
+   SYSTEM_SUPPLIED_DATA which is present in many tables. It is a boolean 
+   (Yes/No) field.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Dictionaries overview;Dictionaries_Overview.htm"><PARAM
+    NAME="Item2" VALUE="New Biotopes Overview;New_Biotopes_Overview.htm"><PARAM
+    NAME="Item3" VALUE="New Taxa Overview;Edit_Taxa_Overview.htm"><PARAM
+    NAME="Item4" VALUE="Term-list Overview;Term-list_Overview.htm"></OBJECT>
+ </BODY>
+</HTML>

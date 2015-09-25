@@ -1,0 +1,179 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Duplicate items</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Duplicate items</H1>
+  <P>
+   Duplicate items often arise when a <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   user exports data to another user on a regular basis. Consider a 
+   volunteer recorder who has their own copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   and uses it to contribute observations to their local record centre. 
+   Whenever a user exports a set of observations, the export file will 
+   contain all the data related to those observations, so it will 
+   contain the Surveys, Survey Events and Samples containing the 
+   observations, the Name &amp; Address entries related to them 
+   (e.g.entries for that volunteer and perhaps some other people who 
+   they working with or who have checked identifications), any Locations 
+   related to them and any user added term-list items related to them. 
+   When you import a file from them for the first time, all of this 
+   related data will be added to your copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>.
+    Next time the same volunteer sends you a set of observations, the 
+   export file is quite likely to contain many of the items that were in 
+   the previous import, as it will probably contain more observations 
+   observed in the same places and by the same people.</P>
+  <P>
+   The system of <A HREF="NBN_Globally_Unique_Identifiers.htm">Globally 
+   Unique Identifiers</A> developed for the National Biodiversity 
+   Network (<A HREF="javascript:BSSCPopup('../Glossary/NBN.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">NBN</A>)
+    allows the import process to detect when it already has a copy of an 
+   item that is present in the import file. So, for example, the 
+   volunteer contributor will have created an entry for their own Name 
+   &amp; Address which will have a unique identifier - say 
+   'VOL00001000000D7', and this will have been imported as part of the 
+   first import file. When the next import file is submitted, it will 
+   most likely contain the same Name &amp; Address entry again. <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   will detect that it already has a Name &amp; Address item in its 
+   database with this key and flag it as a Duplicate Item. <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   will not allow you to have duplicate items within your database, so 
+   it forces you to choose one of the two options available.</P>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: It is important to 
+   realise that detecting duplicates is entirely based on the <SPAN STYLE="font-weight : bold;">key</SPAN> 
+   (Globally Unique Identifier), <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   will not look at the content of the entry at all.</P>
+  <P>
+   The import process reports that it has two items with the same key - 
+   it does not check whether data elements are duplicated (i.e. a 
+   location already present with the same name and spatial reference 
+   will not be detected as a duplicate if it has a different key).</P>
+  <P>
+   The detection of duplicates allows you to replace an item with an 
+   edited or corrected version of it so that if the volunteer changes 
+   something, the change can be incorporated into your system. Perhaps 
+   an identification or a grid reference was entered incorrectly, and is 
+   then corrected after exporting the incorrect version to you. If the 
+   next export file contains the correction, the corrected items will be 
+   detected as Duplicates, because their keys are already present, but 
+   the data is actually different because of the correction it contains.</P>
+  <P>
+   To enable you to detect which is the latest of a pair of duplicates, 
+   nearly all rows that <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   stores in the database have a pair of date stamps called ENTRY_DATE 
+   and CHANGED_DATE:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    ENTRY_DATE is set to the (time and) date at which the row was created.<BR>
+    <LI CLASS="mvd-P">CHANGED_DATE is updated to the current (time and) 
+    date whenever a change is made to the row.</P>
+   </UL>
+  <P>
+   There are three things you can do with these incoming rows for which 
+   you already have copies:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Accept the imported item and allow it to over-write the item that is 
+    already present.<BR>
+    <LI CLASS="mvd-P">Reject the imported item and keep the item that is 
+    already present in the database.<BR>
+    <LI CLASS="mvd-P">Compare the date stamps on the two items and only 
+    overwrite the current copy if the incoming copy has a more recent 
+    date. That way you make sure you have the latest version.</P>
+   </UL>
+  <P>
+   So if the import process finds rows amongst the incoming data with 
+   keys that it already has in the database, then these are shown in the 
+   Duplicate Items tab and you must decide what to do with them:</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\screenshots\Import duplicate items.gif" WIDTH="905" HEIGHT="660" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <P>
+   The list of Duplicate Data is hierarchical with the table name at the 
+   top level and the keys at the next level down. If you select a key, 
+   the Imported Data and Original Data panels show the contents of the 
+   fields so that you can compare them and see the differences. The 
+   panels show the name of the table from which an item comes at the top 
+   level, followed by the column names and then the actual data. These 
+   display the raw data in a format that is not very user friendly, so 
+   you probably won't want to spend much time delving for the differences!</P>
+  <P>
+   Your options from this point are provided by the row of buttons which 
+   allow you to choose between the various ways of dealing with 
+   Duplicate Items:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    [Accept Import] or [Reject Import] work on one row at a time and 
+    allow you to make a decision about the currently selected row. You 
+    can of course examine the date stamps in the Imported Data and 
+    Original Data panels if you want to know which is the most recent 
+    copy. The selected item will disappear from the Duplicate Data panel 
+    after clicking one of these buttons.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The [All Imported], [All Original] and [All Latest] buttons allow you 
+    to make a single decision for the whole batch of data: to overwrite 
+    everything with the incoming data ([All Imported]), to ignore the 
+    imported rows and keep the copies you already have ([All Original]), 
+    or to compare date stamps and import rows only if they are more 
+    recently changed ([All Latest]).</P>
+   </UL>
+  <P>
+   You can combine these two strategies and deal with some rows one at a 
+   time with the [Accept Import] or [Reject Import] and then use one of 
+   the 'All ...' buttons to deal with the remainder.</P>
+  <P>
+   If you are uncertain about which option to choose, it is recommended 
+   you use the [All Latest] button to import updated rows. You will 
+   often find that you get a message saying that a decision cannot be 
+   made about all items because some don't have both date stamps (e.g. 
+   Sample_recorders), so press [All Imported] or [All Original] to mop 
+   up the remainder. Which of these you choose probably depends upon how 
+   much you trust the source of the import!</P>
+  <P>
+   Once you have made a decision about all the Duplicate Items, the [Do 
+   Import] button will become active. Press this button to complete the 
+   import and copy the imported rows into your database. See <A HREF="Import_Analysis.htm">Analysis
+    and Import</A> for more information.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Analysis and Import;Import_Analysis.htm"><PARAM
+    NAME="Item2" VALUE="Duplication resulting from import;Duplication_Resulting_From_Import.htm"><PARAM
+    NAME="Item3" VALUE="Invalid Items;Invalid_Items.htm"><PARAM
+    NAME="Item4" VALUE="Merge Data Items;Merge_Data_Items.htm"></OBJECT></P>
+  <P>
+   <!-- $MVD$:spaceretainer() -->&nbsp;
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

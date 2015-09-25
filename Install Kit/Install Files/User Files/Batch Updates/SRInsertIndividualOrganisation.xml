@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+
+<!-- Inserts an individual or organisation for names where it is missing
+            
+     XML Batch Update by Sally Rankin, JNCC Recorder Approved Expert
+     Version 1, March 13 2011
+     Designed for use when names have no individual or organisation, probably due to system crashes, power cuts or bugs in earlier versions of the system. The front end should not allow this situation to arise.
+--> 
+ 
+<batchupdate menupath="System Supplied\Problem Correction" title="Insert individual or organisation" description="Inserts an individual or organisation for names in the custody of the database on which the batch update is run when none are present. The name inserted will be the name key which should be changed in Recorder 6 later.">
+
+<SQL>
+
+<Where keytype="Default">
+
+DECLARE
+@Name_Key char(16),
+@Entered_By char(16),
+@Entry_Date datetime,
+@Changed_By char(16),
+@Changed_Date datetime,
+@Custodian char(8)
+
+SET @Changed_By = (SELECT Name_key FROM Name WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID" operator="equal"/>)
+SET @Changed_Date = GETDATE()
+SET @Custodian = (SELECT Data FROM Setting WHERE Name = 'SITEID')
+
+CREATE TABLE #IndivTemp (Name_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+Entered_By char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, 
+Entry_Date datetime)
+INSERT INTO #IndivTemp (Name_Key, Entered_By, Entry_Date)
+SELECT N.Name_Key, N.Entered_By, N.Entry_Date 
+FROM Name N 
+WHERE NOT EXISTS (SELECT * FROM Individual I
+WHERE I.Name_key = N.Name_Key) and N.Organisation = 0 and N.Custodian = @Custodian
+
+DECLARE IndivTemp_Cursor CURSOR FOR 
+(SELECT Name_Key, Entered_By, Entry_Date FROM #IndivTemp)
+OPEN IndivTemp_Cursor
+FETCH NEXT FROM IndivTemp_Cursor
+INTO @Name_Key,@Entered_By, @Entry_Date 
+WHILE @@FETCH_STATUS = 0
+BEGIN
+
+INSERT INTO Individual (Name_Key, Title, Forename, Initials, Honorifics, Surname, Comment, Born_Vague_Date_Start, Born_Vague_Date_End, Born_Vague_Date_Type, Died_Vague_Date_Start, Died_Vague_Date_End, Died_Vague_Date_Type, Person_Floreat,
+Entered_By, Entry_Date, Changed_By, Changed_Date, System_Supplied_Data, Organisation_Department_Key)
+VALUES (@Name_Key, NULL, NULL, NULL, NULL, @Name_Key, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+@Entered_By, @Entry_Date, @Changed_By, @Changed_Date, 0, NULL) 
+
+FETCH NEXT FROM IndivTemp_Cursor
+INTO @Name_Key,@Entered_By, @Entry_Date 
+END
+
+CLOSE IndivTemp_Cursor
+DEALLOCATE IndivTemp_Cursor
+DROP TABLE #IndivTemp
+
+CREATE TABLE #OrgTemp (Name_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+Entered_By char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, 
+Entry_Date datetime)
+INSERT INTO #OrgTemp (Name_Key, Entered_By, Entry_Date)
+SELECT N.Name_Key, N.Entered_By, N.Entry_Date 
+FROM Name N 
+WHERE NOT EXISTS (SELECT * FROM Organisation O
+WHERE O.Name_key = N.Name_Key) and N.Organisation = 1 and N.Custodian = @Custodian
+
+DECLARE OrgTemp_Cursor CURSOR FOR 
+(SELECT Name_Key, Entered_By, Entry_Date FROM #OrgTemp)
+OPEN OrgTemp_Cursor
+FETCH NEXT FROM OrgTemp_Cursor
+INTO @Name_Key,@Entered_By, @Entry_Date 
+WHILE @@FETCH_STATUS = 0
+BEGIN
+
+INSERT INTO Organisation (Name_Key, Full_Name, Acronym, Founded_Vague_Date_Start, Founded_Vague_Date_End, Founded_Vague_Date_Type, Ended_Vague_Date_Start, Ended_Vague_Date_End, Ended_Vague_Date_Type, Comment, 
+Organisation_Type_Key, Entered_By, Entry_Date, Changed_By, Changed_Date, System_Supplied_Data)
+VALUES (@Name_Key, @Name_Key, NULL, NULL, NULL, 'U', NULL, NULL, 'U', NULL, 'NBNSYS0000000001', 
+@Entered_By, @Entry_Date, @Changed_By, @Changed_Date, 0) 
+FETCH NEXT FROM OrgTemp_Cursor
+INTO @Name_Key,@Entered_By, @Entry_Date 
+END
+
+CLOSE OrgTemp_Cursor
+DEALLOCATE OrgTemp_Cursor
+DROP TABLE #OrgTemp
+</Where>
+</SQL>
+</batchupdate>

@@ -1,0 +1,159 @@
+<?xml version="1.0" ?> 
+<batchupdate menupath="System Supplied\Determination Updates" title="Det1 - creates new Determination for specified taxa." 
+description="Creates a new determination for a specified taxa using the Determination details from the original preferred Determination. Choose the Taxa to be changed and the taxa for the 
+new determination from the Dictionary. Works on both the chosen taxa and on all taxa share its preferred key. Does not generate a new determination if the old and new taxa are the same">
+<SQL>
+
+<Where keytype="Default">
+DECLARE @Count INT,
+ @Key CHAR(16),
+ @Original_Key CHAR(16),
+ @Indicator integer,
+ @OldTLI_Key CHAR(16),
+ @NewTLI_Key CHAR(16)
+ 
+ 
+CREATE TABLE #JNCC_NEWDATA (Original_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,New_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS,Indicator INT )
+
+
+
+
+SELECT @OldTLI_key = TLI.Taxon_List_Item_Key
+From Taxon_List_Item TLI
+WHERE
+
+
+
+
+<Condition field= "TLI.Taxon_List_Item_Key"  operator="Equal" type="Taxon"  name="Taxon to Change" />
+
+SELECT @NewTLI_key = TLI.Taxon_List_Item_Key
+From Taxon_List_Item TLI
+WHERE
+<Condition field= "TLI.Taxon_List_Item_Key"  operator="Equal" type="Taxon"  name="Taxon for New Determination" />
+
+
+Insert Into #JNCC_NEWDATA (Original_Key,Indicator)
+SELECT DISTINCT
+
+TDET.Taxon_Determination_Key, 1 
+FROM
+Taxon_Determination TDET
+INNER JOIN Taxon_List_item TLI
+ON TLI.Taxon_List_item = TDET.Taxon_List_item_Key
+INNER JOIN Taxon_Lit_Item TLI2
+ON TLI2.Preferred_name = TLI.Preferred_name 
+
+WHERE
+TDET.Preferred = 1
+
+AND
+
+TLI2.Taxon_List_Item_Key = @OldTLI_Key
+
+AND
+
+@New_TLI_Key &#60;&#62; TLI.Taxon_List_Item_Key
+
+
+SET @Count=@@ROWCOUNT
+
+   
+DECLARE csrEventOwner CURSOR
+           FOR
+           SELECT Original_Key, Indicator FROM
+           #JNCC_NewData 
+           OPEN csrEventOwner
+                      
+           FETCH NEXT FROM csrEventOwner INTO @Original_Key, @Indicator
+                     
+           WHILE @@FETCH_STATUS = 0
+           BEGIN     
+        	    EXEC spNextKey 'Taxon_Determination' , @Key OUTPUT
+			    UPDATE #JNCC_NewData
+				SET New_Key = @KEY
+				WHERE 
+				
+                Original_Key = @Original_Key 
+				AND 
+				Indicator = @Indicator
+                FETCH NEXT FROM csrEventOwner INTO @Original_Key, @Indicator
+		
+           END
+             
+       
+CLOSE csrEventOwner
+DEALLOCATE csrEventOwner
+
+
+
+InSERT INTO Taxon_Determination (Taxon_Determination_Key,Taxon_List_Item_Key,
+Taxon_Occurrence_Key,Vague_date_start,Vague_date_end,Vague_date_type,Preferred,
+Determiner,Determination_type_Key,Determiner_Role_Key,Entered_By)
+SELECT DISTINCT 
+J.New_Key,
+@NewTLI_Key,
+TDET.Taxon_Occurrence_Key,
+CAST(GETDATE() AS INT) + 1,
+CAST(GETDATE() AS INT) + 1,
+'D',
+1,
+TDET.Determiner,
+TDET.Determination_Type_Key,
+TDET.Determiner_role_Key,
+TDET.Entered_By
+FROM
+#JNCC_NEWDATA J
+
+INNER JOIN
+Taxon_Determination TDET 
+ON TDET.Taxon_Determination_Key = J.Original_Key 
+
+
+UPDATE TOCC SET TOCC.Verified =  DT.Verified 
+FROM Taxon_Occurrence TOCC 
+INNER JOIN Taxon_Determination TDET 
+ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN Determination_Type DT 
+ON DT.Determination_type_key = TDET.Determination_type_key 
+INNER JOIN #JNCC_NEWDATA J 
+ON J.New_key = TDET.Taxon_Determination_Key
+
+UPDATE Taxon_Determination
+SET Preferred = 0 
+FROM
+Taxon_Determination TDET 
+INNER JOIN #JNCC_NEWDATA J
+ON
+J.Original_key = TDET.Taxon_Determination_Key
+
+ 
+SELECT 'Taxon_Occurrence' AS [TABLE], 
+	TDET.Taxon_Occurrence_Key   AS [KEY],
+	'Changed Taxon Occurrences with  added determinations' AS DESCRIPTION
+FROM #JNCC_NEWDATA J
+INNER JOIN Taxon_Determination TDET
+ON J.Original_Key = TDET.Taxon_Determination_Key
+
+SELECT @Count AS COUNT
+
+
+
+
+
+</Where>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</SQL>
+</batchupdate>

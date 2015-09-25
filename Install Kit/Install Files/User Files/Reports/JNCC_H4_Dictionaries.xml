@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Lists the Dictionaries used in Records
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014    
+            
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Information"  title="H4 - Dictionaries Used" 
+description="List Dictionaries  used in Records. Note that the use of non preferred Dictionaries may affect reporting.
+
+" >
+
+<SQL>
+
+<Where keytype="Default">
+ SELECT TL.Item_name, TL.Preferred , Count(TD.Taxon_Determination_Key) as Determinations From 
+Taxon_Determination TD
+INNER JOIN Taxon_List_Item TLI ON
+TLI.Taxon_List_Item_Key = TD.Taxon_List_Item_key
+INNER JOIN Taxon_List_Version TLV
+ON TLV.Taxon_List_Version_Key = TLI.Taxon_List_Version_key
+INNER JOIN Taxon_List TL
+ON TL.Taxon_List_key = TLV.Taxon_List_Key
+GROUP BY
+TL.Item_name, TL.Preferred
+
+</Where>
+
+
+</SQL>
+<Columns>
+ <Column name="Item_Name" visible="true"  caption="Dictionary" position ="1" width="700"/>
+ <Column name="Preferred" visible="true"  Caption ="Preferred" width = "80" position ="2"/>
+ <Column name="Determinations" visible="true"  Caption ="Determinations " width = "100" position ="3"/>
+</Columns>
+</CustomReport>

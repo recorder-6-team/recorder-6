@@ -1,0 +1,222 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Import Wizard - column types selection</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Import Wizard - column selection</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   The column selection page of the import wizard enables you to specify 
+   the type of data in each column in the import file. To do this:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click on the drop-down arrow in the Type row for a column.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select the appropriate type for the data in the column. The most 
+    commonly used types are listed initially. If the type you require is 
+    not listed, click &lt;more options&gt; to see the full list of 
+    available column types - see the table of supported columns in <A HREF="Import_Wizard_data_format.htm">Data
+     Format</A> for details.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    If you don't want to import the data in a particular column, select 
+    &lt;skip this column&gt;.</P>
+   </UL>
+  <P>
+   If the first row of the data to be imported contains column names, 
+   tick the box next to that option. The Import Wizard will try to guess 
+   the types of columns from their names. You can still edit the types 
+   of any columns that the Wizard guesses incorrectly. The number of 
+   observations being imported is displayed in the bottom left corner.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: You need to select a 
+   Type for <SPAN STYLE="font-weight : bold;">all</SPAN> the columns to 
+   be imported. Any columns with a type of &lt;skip this column&gt; will 
+   be ignored.</P>
+  <P>
+   If you chose to use a template saved after a previous import, the 
+   column types that were saved will be re-applied provided that the 
+   column names are still the same.</P>
+  <P>
+   When you have completed specifying the type of data in each column 
+   click [Validate Columns]. If errors are found a count of them will 
+   appear at the top, the rows containing the errors will be shaded <FONT COLOR="FUCHSIA"><SPAN STYLE="font-weight : bold;">pink</SPAN></FONT> 
+   and the invalid data will be shaded <FONT COLOR="RED"><SPAN STYLE="font-weight : bold;">red</SPAN></FONT>.
+    You won't be able to proceed, i.e. the [Next] button won't become 
+   active, until all the errors are cleared. If you float the cursor 
+   over a <FONT COLOR="RED"><SPAN STYLE="font-weight : bold;">red</SPAN></FONT> 
+   box, a message will appear giving some information about the error.</P>
+  <P>
+   In the grid you can:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Edit the invalid data by clicking in a particular cell and typing a 
+    new value. Once you move away from that cell, the change will be 
+    saved. Until that point, pressing &lt;Esc&gt; will restore the cell 
+    to its original value.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select a single row by clicking the row number in the left most column.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Remove selected rows using the [Remove Selected Rows] button at the top.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Filter on selected rows by ticking the &quot;Show selected rows&quot; 
+    box at the top.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Filter on rows containing errors by ticking the &quot;Show rows with 
+    errors&quot; box at the top. When this filter is on a row will 
+    disappear from the grid when all the errors in it are cleared.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Sort by the values in a particular column by clicking the header, 
+    i.e. by clicking in one of the shaded boxes in the row below the Type 
+    row. Clicking once sorts them into ascending sequence, clicking again 
+    sorts them into descending sequence and clicking in the box below 
+    &quot;Type&quot; returns them to their original sequence, row number sequence.</P>
+   </UL>
+  <P>
+   To select multiple consecutive rows, select the first one then hold 
+   down the &lt;Shift&gt; key and select the last one.<BR>
+   To select multiple rows that aren't consecutive, select the first one 
+   then hold down the &lt;Ctrl&gt; key and select the others in turn.<BR>
+   </P>
+  <H2 STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Import Wizard column selection.gif" WIDTH="1082" HEIGHT="587" VSPACE="0" HSPACE="0" BORDER="0"></H2>
+  <H2>
+   Correcting Problems</H2>
+  <H3>
+   Column Types</H3>
+  <P>
+   The only mandatory column is Species Name but there are rules for 
+   certain other column types, e.g.</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    For <SPAN STYLE="font-weight : bold;">Observer(s)</SPAN>: &quot;If 
+    present, there must be a value for every observation and the wizard 
+    will ask you to match them to <A HREF="Individuals_and_Organisations.htm">individuals</A> 
+    in the Name and Address list. If not, the wizard assumes all 
+    observations are by the same observer and asks you to enter one on 
+    the page where you enter other required data that is not in the 
+    import file.&quot;</P>
+   <LI CLASS="mvd-P">
+   <P>
+    For <SPAN STYLE="font-weight : bold;">Specimen Numbe</SPAN>r: &quot;If
+     present, <SPAN STYLE="font-weight : bold;">Specimen Type </SPAN>must 
+    also be present.&quot;</P>
+   </UL>
+  <P>
+   See the table of supported columns in <A HREF="Import_Wizard_data_format.htm">Data
+    Format</A> for details.</P>
+  <P>
+   If the data being imported contravenes any of these rules, 
+   information to help you resolve the problem will appear at the end of 
+   the text on the left, along with other tips on what needs to be done 
+   before you can proceed. The [Next] button won't become active until 
+   all the issues are resolved.</P>
+  <H3>
+   Errors</H3>
+  <P>
+   When you click [Validate Columns] <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   validates the data in each column according to its type. All errors 
+   have to be cleared before you can proceed. As you clear the errors, 
+   the number at the top will decrease. The errors illustrated above are 
+   typical of the types of errors found at this stage of the wizard, i.e.</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Invalid dates:
+    <UL>
+     <LI CLASS="mvd-P">Pre 2006 is not a valid <SPAN STYLE="font-style : italic;">Recorder
+      </SPAN>date, i.e. it isn't a standard date or a date in any of the <A HREF="Vague_Dates.htm">vague
+      date</A> formats supported by <SPAN STYLE="font-style : italic;">Recorder</SPAN>.
+      It should be changed to &quot;-2005&quot;.<BR>
+     <LI CLASS="mvd-P">31/06/2006 and 1/17/2006 should perhaps be changed 
+     to 30/06/2006 and 1/11/2006 respectively.</P>
+    </UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Invalid grid references: GB grid references must be two letters 
+    followed by an even number of numeric digits. Irish grid references 
+    must be one letter followed by an even number of numeric digits.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    A location must be accompanied by a grid reference.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    A number of fields are a fixed number of characters in the <SPAN STYLE="font-style : italic;">Recorder
+     </SPAN>database, e.g. Location and Location Name - see the list of 
+    supported columns in <A HREF="Import_Wizard_data_format.htm">Import 
+    Wizard - data format</A> for details. When the data being imported 
+    exceeds the number of characters that can be stored in a field it 
+    will be flagged as an error so that the you can abbreviate it 
+    appropriately rather than have the system truncate it without 
+    warning. This doesn't apply to many of the comments as they are 
+    &quot;Memo&quot; fields which means they can contain large amounts of data.</P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: When you have cleared 
+   all the errors you will need to validate the data again using the 
+   [Validate Columns] button.</P>
+  <P>
+   Other types of errors will be detected during the <A HREF="Import_Analysis.htm">Analysis
+    phase</A>, e.g.</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Dates that are outside the date range allowed for the <A HREF="Surveys_General_Tab.htm">survey</A> 
+    to which the observations are to be imported.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Grid references that are outside the <A HREF="Surveys_Geography_Tab.htm">bounding
+     box</A> for the survey to which the observations are to be imported.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Grid references that are outside the <A HREF="Location_Grid_Squares_Tab.htm">grid
+     squares</A> for the locations to which the observations are to be linked.</P>
+   </UL>
+  <P>
+   You may like to check for these types of errors, particularly for 
+   dates being outside the range allowed for the survey, before 
+   attempting to import a file.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: Correcting errors and 
+   removing records in this screen does not make any changes to the 
+   original data file. The changes are only to the copy of that file 
+   taken at the beginning of the import process.</P>
+  <P>
+   Once all issues have been resolved, the [Next] button will become 
+   active. Click on the <A HREF="Import_Wizard_missing_data_selection.htm">[Next]</A> 
+   button to move to the next screen.
+ </BODY>
+</HTML>

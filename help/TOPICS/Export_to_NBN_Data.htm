@@ -1,0 +1,84 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Export to NBN data</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Export in NBN Data format</H1>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   <SPAN STYLE="font-weight : bold;"><A HREF="javascript:BSSCPopup('../Glossary/NBN.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">NBN</A> Data</SPAN> 
+   is a text format which uses an <A HREF="javascript:BSSCPopup('../Glossary/XML_glossary.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">XML</A> 
+   schema to encode the data and store it in a file with an extension of 
+   .xml. The advantage is that it is a generic format, not tied to any 
+   particular software. The disadvantage is that the files produced are 
+   enormous and take considerable amounts of time to process. The 
+   original idea was to promote a transfer format which could be used by 
+   any biological recording software. This has not proved popular 
+   because of the complexity of the XML syntax and because of the large 
+   processing overheads in parsing and loading the data. However, this 
+   format does have a potential role in securely archiving data for the 
+   long term. Data written to this format could be stored on a robust 
+   storage media such as CD and, because the file is plain text, will 
+   not require any special software to read it in future, i.e. it is not 
+   tied to some version of <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   that can understand a particular data format still being available. 
+   Also the XML tags provide a degree of self-documentation, i.e. the 
+   names of the tags go a long way towards identifying and documenting 
+   the data they contain.</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   Because of the size of these files, it is not the recommended format 
+   for exchanging data between copies of <SPAN STYLE="font-style : italic;">Recorder</SPAN><SPAN STYLE="font-style : normal;">,
+    with one exception. When</SPAN> exporting data from <SPAN STYLE="font-style : italic;">Recorder
+    6</SPAN> for importing into <SPAN STYLE="font-style : italic;">Recorder
+    2002</SPAN> it is necessary to use <SPAN STYLE="font-weight : bold;">NBN
+    Data</SPAN> because this copes with differences in database 
+   structure between the two systems whereas the <A HREF="Export_to_NBN_Access_Database.htm">NBN
+    Access Database (zipped)</A> format does not.</P>
+  <P STYLE="text-align : left;" CLASS="note" ALIGN=LEFT>
+   <SPAN STYLE="font-weight : bold;">TIP:</SPAN> <A HREF="XML.htm">XML</A> 
+   files are very verbose and quite large. If you are going to send them 
+   by e-mail, or on a low capacity medium, it is sensible to compress 
+   them first, using the compression facilities in Windows XP or one of 
+   the many compression tools, such as <SPAN STYLE="font-style : italic;"><A HREF="javascript:BSSCPopup('../Glossary/Winzip.htm');" onMouseOver="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" class="BSSCPopup">WinZip</A></SPAN>,
+    which are readily available. XML files compress very well, typically 
+   98% or more.</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Export;Export.htm"><PARAM
+    NAME="Item2" VALUE="Export to NBN Access Database;Export_to_NBN_Access_Database.htm"><PARAM
+    NAME="Item3" VALUE="First NBN export;First_XML_export.htm"><PARAM
+    NAME="Item4" VALUE="NBN Transfer Format;NBN_Transfer_Format.htm"><PARAM
+    NAME="Item5" VALUE="Report Wizard Filter Result;Report_Wizard_Filter_Result.htm"><PARAM
+    NAME="Item6" VALUE="XML;XML.htm"></OBJECT>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

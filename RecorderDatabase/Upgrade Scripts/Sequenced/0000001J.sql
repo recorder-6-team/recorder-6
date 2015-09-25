@@ -1,0 +1,2 @@
+ALTER TABLE Report_Attribute
+	ALTER COLUMN Item_Group VARCHAR(255)

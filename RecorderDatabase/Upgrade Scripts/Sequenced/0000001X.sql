@@ -1,0 +1,2 @@
+ALTER TABLE Taxon_Occurrence_Data
+ALTER COLUMN Data VARCHAR(20) COLLATE SQL_Latin1_General_CP1_CI_AS

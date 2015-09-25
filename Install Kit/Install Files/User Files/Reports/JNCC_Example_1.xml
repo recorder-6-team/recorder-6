@@ -1,0 +1,29 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC  Example Report
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014   
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="Ex1" menupath="System Supplied\XML examples"  
+description="The very minimum required for an XML report " >
+
+
+<SQL>
+
+<Where keytype="Default">
+
+	SELECT * FROM INDIVIDUAL
+
+</Where>
+
+
+</SQL>
+
+</CustomReport>

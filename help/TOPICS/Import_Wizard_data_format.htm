@@ -1,0 +1,968 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Import Wizard - data format</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Import Wizard - data format</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   If you are using the Import Wizard to enter data into <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   it will be worth putting some effort into preparing the data for 
+   import. With a little practice you will quickly identify changes you 
+   can make to speed up the use of the wizard. For example, some <SPAN STYLE="font-weight : normal;">data
+    types</SPAN> must have a value for every observation hence adding 
+   any missing values before starting the wizard will save time.</P>
+  <P>
+   Alternatively, if people are sending you their observations in a 
+   spreadsheet, or other computer files, providing them with guidance on 
+   how to format the files can save a lot of time when you import their 
+   data. If you provide them with checklists of species names, location 
+   names and any other fields they want to use, and details of how to 
+   enter abundance data, you should find their data much faster to import.</P>
+  <P>
+   For a list of the <SPAN STYLE="font-weight : bold;">types of data </SPAN>you
+    can include in each row, <SPAN STYLE="font-weight : bold;">see the 
+   table of supported columns below</SPAN>.</P>
+  <P>
+   The simplest format of data to be imported, and the easiest to deal 
+   with, is to use one row in the file for each observation and to 
+   divide it into a series of columns for the fields that need to be 
+   recorded: species name, location, spatial reference, observer, date, 
+   abundance, etc. Each row will become a Taxon Occurrence in the <A HREF="Observations.htm">Observations</A> hierarchy.</P>
+  <H3>
+   Spreadsheets naturally lend themselves to this format with:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Each row representing one observation<BR>
+    <LI CLASS="mvd-P">Each column containing one data type</P>
+   </UL>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   <FONT COLOR="BLACK">Data that will import easily via the Import Wizard:</FONT></P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="70%" CELLPADDING="2" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">species</SPAN></TD>
+      <TD WIDTH="29%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">spatial reference</SPAN></TD>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">observer</SPAN></TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">date</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Lutra lutra</TD>
+      <TD WIDTH="29%" VALIGN=TOP>
+       <P>
+        TG422050</TD>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        Alice Jones</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        12/9/2005</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Lutra lutra</TD>
+      <TD WIDTH="29%" VALIGN=TOP>
+       <P>
+        TM457911</TD>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        Alice Jones</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        25/9/2005</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Lutra lutra</TD>
+      <TD WIDTH="29%" VALIGN=TOP>
+       <P>
+        TG465057</TD>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        Alice Jones</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        30/9/2005</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Mustela putorius</TD>
+      <TD WIDTH="29%" VALIGN=TOP>
+       <P>
+        SU120450</TD>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        John Smith</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        12/9/2005</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="28%" VALIGN=TOP>
+       <P>
+        Mustela putorius</TD>
+      <TD WIDTH="29%" VALIGN=TOP>
+       <P>
+        SU123456</TD>
+      <TD WIDTH="23%" VALIGN=TOP>
+       <P>
+        John Smith</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        17/9/2005</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   <FONT COLOR="BLACK">Data that will need to be </FONT><FONT COLOR="RED">reformatted</FONT><FONT COLOR="BLACK"> 
+   before it can be imported via the Import Wizard:</FONT></P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="60%" CELLPADDING="2" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">spatial reference</SPAN></TD>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : normal;">date</SPAN></TD>
+     </TR>
+     <TR>
+      <TD COLSPAN="2" WIDTH="59%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Lutra lutra records by Alice Jones</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        TG422050</TD>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        12/9/2005</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        TM457911</TD>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        25/9/2005</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        TG465057</TD>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        30/9/2005</TD>
+     </TR>
+     <TR>
+      <TD COLSPAN="2" WIDTH="59%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Mustela putorius records by John Smith</SPAN></TD>
+     </TR>
+     <TR>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        SU120450</TD>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        12/9/2005</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="59%" VALIGN=TOP>
+       <P>
+        SU123456</TD>
+      <TD WIDTH="41%" VALIGN=TOP>
+       <P>
+        17/9/2005</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <H3>
+   Comma separated text files (.csv, .txt) are amongst the alternatives with:</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Each line of the file representing a single observation<BR>
+    <LI CLASS="mvd-P">The fields of the observation separated by a 
+    special character (delimiter). A comma or a tab (ASCII 9) is often 
+    used, but you can use any character<BR>
+    <LI CLASS="mvd-P">Any data fields that contain a delimiter character 
+    MUST be enclosed in quotes. It is not uncommon to enclose all fields 
+    in quotes, or at least all the text fields.</P>
+   </UL>
+  <P>
+   Example:</P>
+  <BLOCKQUOTE>
+   <P>
+    &quot;Syritta pipiens&quot;,&quot;West Wood, Close 
+    House&quot;,&quot;NZ1265&quot;,&quot;John Smith&quot;,&quot;12/08/2006&quot;<BR>
+    &quot;Syrphus ribesii&quot;, &quot;Thornley Wood&quot;, NZ173604, 
+    &quot;John Smith&quot;, &quot;May 2005&quot;</P>
+   </BLOCKQUOTE>
+  <P>
+   This data has five columns - species name, location, grid reference, 
+   observer and date. Note that the delimiter between the fields is a 
+   comma, but that the location field in the first row contains a comma. 
+   This is OK, because this whole field is enclosed in quotes.</P>
+  <H3>
+   General Information</H3>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   <FONT COLOR="BLACK"><SPAN STYLE="font-weight : bold;">Column headings:</SPAN> </FONT>it
+    is useful to put column names in the first row of data. This will 
+   help you remember what type of data the different columns contain and 
+   the Import Wizard may be able to use them to guess the type of data 
+   in each column from its name.</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   <SPAN STYLE="font-weight : bold;">Ignoring columns:</SPAN> if the 
+   import file contains columns that you don't want to import you will 
+   be able select &lt;skip this column&gt; to ignore them.</P>
+  <P STYLE="text-align : left;" ALIGN=LEFT>
+   <SPAN STYLE="font-weight : bold;">Concatenating columns:</SPAN> if 
+   the import file contains more than one taxon occurrence comment 
+   column they could be concatenated so that they can be imported using 
+   a single comment column. In Excel, '&amp;' can be used used to 
+   combine fields into one, e.g.</P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="3%" VALIGN=TOP></TD>
+      <TD WIDTH="8%" VALIGN=TOP>
+       <P>
+        A</TD>
+      <TD WIDTH="8%" VALIGN=TOP>
+       <P>
+        B</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        C</TD>
+      <TD WIDTH="40%" VALIGN=TOP>
+       <P>
+        D</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="3%" VALIGN=TOP>
+       <P>
+        1</TD>
+      <TD WIDTH="8%" VALIGN=TOP>
+       <P>
+        Comment 1</TD>
+      <TD WIDTH="8%" VALIGN=TOP>
+       <P>
+        Comment 2</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Concatenating cells</TD>
+      <TD WIDTH="40%" VALIGN=TOP>
+       <P>
+        Concatenating cells with text</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="3%" VALIGN=TOP>
+       <P>
+        2</TD>
+      <TD WIDTH="8%" VALIGN=TOP>
+       <P>
+        In hedge</TD>
+      <TD WIDTH="8%" VALIGN=TOP>
+       <P>
+        white</TD>
+      <TD WIDTH="20%" VALIGN=TOP>
+       <P>
+        Excel formula: =A2&amp;B2 results in:<BR>
+        In hedgewhite</TD>
+      <TD WIDTH="40%" VALIGN=TOP>
+       <P>
+        Alternative formula: =&quot;Comment 1: &quot;&amp;A2&amp;&quot;, 
+        Comment 2: &quot;&amp;B2 results in:<BR>
+        Comment 1: In hedge, Comment 2: white</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <H1>
+   Supported columns</H1>
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="4" CELLSPACING="1" BORDER="1">
+    <TR>
+     <TD COLSPAN="2" HEIGHT="40" WIDTH="18%" VALIGN=CENTER>
+      <H3>
+       Preliminary Options</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Location</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Locations in this column will be matched to locations in your <A HREF="Location_Overview.htm">Location
+        hierarchy</A>. For any that don't match automatically you will be 
+       given a number of options on the <A HREF="Import_Wizard_matching_data.htm">location
+        matching page</A> of the import wizard. When a location is matched 
+       to a location in your location hierarchy, its name from the location 
+       hierarchy will be stored in (Survey) Event Location and Sample 
+       Location and the imported data will be stored in Event Location Name 
+       and Sample Location Name, if there is no <SPAN STYLE="font-weight : bold;">Location
+        Name</SPAN> for the observation in the import file. If <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+       and <SPAN STYLE="font-weight : bold;">Location Name</SPAN> are 
+       present for an observation and <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+       remains unmatched the two will be concatenated and stored in Event 
+       Location Name and Sample Location Name. If <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+       is present and <SPAN STYLE="font-weight : bold;">Location Name</SPAN> 
+       is not present, and <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+       remains unmatched the <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+       will be stored in Event Location Name and Sample Location Name.</P>
+      <P>
+       If there is no location information in the import file, i.e. no <SPAN STYLE="font-weight : bold;">Location</SPAN>,
+        <SPAN STYLE="font-weight : bold;">Location Name</SPAN> or <SPAN STYLE="font-style : normal;font-weight : bold;">Grid
+        Reference</SPAN> columns, the wizard assumes all observations are 
+       for the same location and asks you to enter location data, as in <A HREF="Species_Card.htm">Data
+        Entry - Enter a species record</A>, on the page where you enter 
+       other <A HREF="Import_Wizard_missing_data_selection.htm">required data</A> 
+       that is not in the import file.</P>
+      <P>
+       If present, and <SPAN STYLE="font-weight : bold;">Location Name</SPAN> 
+       is not present, a <SPAN STYLE="font-weight : bold;">Grid Reference</SPAN> 
+       column must also be present and both must contain values for every observation.</P>
+      <P>
+       See <A HREF="Location_vs_Location_Name.htm">Location and Location Name</A> 
+       for more information on the distinction between the two.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Location Name</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Any text up to 100 characters long which supplements the information 
+       in <SPAN STYLE="font-weight : bold;">Location </SPAN>or <SPAN STYLE="font-weight : bold;">Grid
+        Reference</SPAN>, if either of these two fields are present, but can 
+       be used on its own when further information is not available, e.g. 
+       for some historic data. If present on its own, i.e. without <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+       and <SPAN STYLE="font-weight : bold;">Grid Reference</SPAN>, there 
+       must be a value for every observation. If present with <SPAN STYLE="font-weight : bold;">Grid
+        Reference</SPAN> but not <SPAN STYLE="font-weight : bold;">Location</SPAN>,
+        there must be a <SPAN STYLE="font-weight : bold;">Grid Reference</SPAN> 
+       for every observation but <SPAN STYLE="font-weight : bold;">Location Name</SPAN> 
+       is optional.</P>
+      <P>
+       It is stored in (Survey) Event Location Name and Sample Location 
+       Name. See <SPAN STYLE="font-weight : bold;">Location</SPAN> and <SPAN STYLE="font-weight : bold;">Grid
+        Reference</SPAN> for further details.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Grid Reference</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Can be in any of the formats supported by <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+       including <A HREF="Spatial_References_Overview.htm">OS - GB, OS - 
+       Ireland, Lat/Long or UTM</A>. This goes in (Survey) Event Spatial 
+       Ref. and/or Sample Spatial Ref. See <SPAN STYLE="font-weight : bold;">Location</SPAN>,
+        <SPAN STYLE="font-weight : bold;">Location Name</SPAN> and <SPAN STYLE="font-weight : bold;">Vice-County
+        Number</SPAN> for further details. In most circumstances, if 
+       present, there must be a value for every observation.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Date</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Can be in any of the formats supported by <SPAN STYLE="font-style : italic;">Recorder,
+        </SPAN>i.e. a standard date or any of the <A HREF="Vague_Dates.htm">vague
+        date</A> formats. The delimiter and order of elements in a date 
+       typed in all numeric format (e.g. 25/12/06) should follow the 
+       settings in your Windows configuration, although it can be altered 
+       via the formatting options on the <A HREF="Import_Wizard_template_selection.htm">template
+        selection</A> page of the wizard. If present, there must be a value 
+       for every observation. If not, the wizard assumes all observations 
+       are for the same date and asks you to enter a date on the page where 
+       you enter other <A HREF="Import_Wizard_missing_data_selection.htm">required
+        data</A> that is not in the import file. This goes in (Survey) Event 
+       Date, Sample Date and Taxon Determination Date.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Species Name</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Mandatory. Typically the scientific binomial, but it can optionally 
+       include the authority name. Alternatively, the common name can be 
+       used. The wizard will ask you to match these to names in the <A HREF="Dictionaries_Overview.htm">Taxon
+        Dictionary</A>.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Observer(s)</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Text listing one or more observers (recorders) separated by , ; / \ 
+       &quot;and&quot; &amp; +. If present, there must be a value for every 
+       observation and the wizard will ask you to match them to <A HREF="Individuals_and_Organisations.htm">individuals</A> 
+       in the Name and Address list. If not, the wizard assumes all 
+       observations are by the same observer and asks you to enter one on 
+       the page where you enter other <A HREF="Import_Wizard_missing_data_selection.htm">required
+        data</A> that is not in the import file. These go in (Survey) Event 
+       Recorder(s) and Sample Recorder(s). The first observer becomes the 
+       determiner on the Taxon Determination if there is no determiner. <A HREF="Import_Wizard_observers.htm">Examples</A>.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Determiner Name</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Text containing a single determiner. If present, the wizard will ask 
+       you to match them to <A HREF="Individuals_and_Organisations.htm">individuals</A> 
+       in the Name and Address list. If not present, the determiner on the 
+       Taxon Determination is set to the first observer.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Abundance Data</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       A number of comma or semicolon (;) separated fields, e.g. 1 male, 2 
+       females, 3 juveniles. If present, these go into the 'Data' and 
+       'Qualifier' columns of the Measurements for the Taxon Occurrence. The 
+       wizard will ask you to match the qualifiers to Measurement Qualifiers 
+       from the Measurement Type <A HREF="Term-list_Overview.htm">term list</A> 
+       items that are available on Taxon Occurrences. Can be used in 
+       combination with <SPAN STYLE="font-weight : bold;">Taxon Occurrence Data</SPAN><SPAN STYLE="font-weight : normal;">.
+        </SPAN><FONT COLOR="BLACK"><A HREF="Import_Wizard_abundance.htm">Examples</A>.</FONT></TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Taxon Occurrence Comment</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Any text. If present, this goes in the comment on the Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD COLSPAN="2" HEIGHT="40" WIDTH="18%" VALIGN=CENTER>
+      <H3>
+       &lt;<SPAN STYLE="font-style : italic;">more options</SPAN>&gt;</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Abundance Accuracy</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Text up to 20 characters long although the values on offer when 
+       entering data by other means are &lt;None&gt;, Exact, +/- 5% and 
+       Estimate. If present, there must also be a value in <SPAN STYLE="font-weight : bold;">Abundance
+        Data</SPAN> and it goes into the 'Accuracy' column of the 
+       Measurements for the Taxon Occurrence. If there is more than one set 
+       of Abundance data for an observation the value in this column will be 
+       applied to all of them.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Altitude</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       A valid number (positive or negative) with or without a suffix of 'm' 
+       representing altitude in metres. Values such as 10-20, &gt;50 and 
+       &lt;10 are also valid. If present, this goes in the Measurements for 
+       the Sample.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Associated Species</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : normal;">Species name for an associated 
+       species. If present, </SPAN>the wizard will ask you to match these to 
+       names in the <A HREF="Dictionaries_Overview.htm">Taxon Dictionary</A>,
+        <SPAN STYLE="font-weight : normal;">and an association type is required</SPAN>.
+        A<SPAN STYLE="font-weight : normal;">n associated species</SPAN> 
+       will appear as a <A HREF="Taxon_Occurence_Related_Occs_Tab.htm">Related
+        Occurrence</A> for the Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Association Type</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       If present, there must be a value for each associated species, and 
+       the wizard will ask you to match these to the Relationship Type <A HREF="Term-list_Overview.htm">term
+        list</A>. If not, the wizard assumes all observations with an 
+       associated species have the same association type and asks you to 
+       select one.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">BRC Source</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Allows the record type to be specified using a standard BRC source 
+       value. If present, <SPAN STYLE="font-weight : bold;">Record Type</SPAN> 
+       cannot be used, there must be a value for every observation and it 
+       must be one of the BRC source codes: FLD = field, in which case 
+       Record type will be set to 'field record'; MUS = museum or herbarium 
+       - Record type will be set to 'Collection'; LIT = Literature - Record 
+       type will be set to 'Reference'.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Biotope</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Biotope code or description. If present, the wizard will ask you to 
+       match these to biotopes in the <A HREF="Dictionaries_Overview.htm">Biotope
+        Dictionary</A>. This will be used to create a Biotope Occurrence in 
+       the same Sample as the Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Confidential</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       If present, then it can be 1, -1, Yes, True or Y for YES, <SPAN STYLE="font-weight : bold;">or</SPAN> 
+       0, No, False or N for NO. If YES then the Confidential flag will be 
+       ticked on the Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Determination Reference</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Text to be used to identify a reference. If present, the wizard will 
+       ask you to match these to documents in the <A HREF="Documents_Overview.htm">Document
+        list</A> and the matched document goes in the Work field on the 
+       Taxon Determination.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Determination Type</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       If present, the wizard will ask you to match them to the <SPAN STYLE="font-weight : normal;">Determination</SPAN> 
+       Type <A HREF="Term-list_Overview.htm">term list</A>. If not, it will 
+       be set to &quot;Unconfirmed&quot;. This goes in the Type field on the 
+       Taxon Determination.<BR>
+       Note that some determination types are hidden in some circumstances - 
+       see <A HREF="Determination_verification.htm">Determination Verification</A> 
+       for details - but they are still available for matching in the import wizard.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Determiner Role</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       If present, the wizard will ask you to match them to the <SPAN STYLE="font-weight : normal;">Determiner</SPAN> 
+       Role <A HREF="Term-list_Overview.htm">term list</A>. If not, it will 
+       be set to &quot;Original Recorder&quot;. This goes in the Role field 
+       on the Taxon Determination.<BR>
+       Note that some determiner roles are hidden in some circumstances but 
+       they are still available for matching in the import wizard.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">MapMate Key</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       A globally unique key exported from the 'MapMate' biological 
+       recording software package. This consists of a string of 7 to 9 
+       digits and lower-case letters. The last three characters identify the 
+       copy of MapMate from which the observations came (referred to by 
+       MapMate as the Centre Unique Key (cuk)). This will be translated to 
+       an NBN style, 16-character key in which the cuk becomes the Site ID, 
+       and will used as the key for the Taxon Occurrence. If present, <SPAN STYLE="font-weight : bold;">Record
+        ID</SPAN> and <SPAN STYLE="font-weight : bold;">Site ID</SPAN> 
+       cannot be used.<BR>
+       I<SPAN STYLE="font-weight : normal;">ncluding this field will ensure 
+       that if the same observation is imported again, </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder</SPAN><SPAN STYLE="font-weight : normal;"> 
+       will flag it as a duplicate, and allow you to accept or reject it as 
+       specified in <A HREF="Duplicate_Items.htm">Duplicate Items</A>, in 
+       the same way as for imports from other copies of </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder.</SPAN></TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Provenance</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Text up to 16 characters long describing the provenance of the 
+       species, e.g. Alien, Native, Naturalised or Vagrant.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Publication Reference</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Text to be used to identify a reference. If present, the wizard will 
+       ask you to match these to documents in the <A HREF="Documents_Overview.htm">Document
+        list</A> and the matched document goes on the Sources tab on the 
+       Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Record ID</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       An identifier for the observation supplied by the source system. This 
+       allows data to be imported more than once, e.g. if it is amended, 
+       without creating duplicate observations.<BR>
+       If present, <SPAN STYLE="font-weight : bold;">Site ID</SPAN> must 
+       also be present and the <SPAN STYLE="font-weight : bold;">MapMate Key</SPAN> 
+       must not be present.<BR>
+       The values must not exceed 6 characters in length and there must be a 
+       unique one for every observation.<BR>
+       When present, the primary key of observations created during the 
+       import process is constructed as follows:<BR>
+       Site ID + unique index + padding + Record ID.<BR>
+       The padding is a list of repeating zeros, bringing the total length 
+       of the key to 16 characters. The unique index is a 2 character ID 
+       which increments from 00 upwards in NBN fashion for each observation 
+       generated in a particular table using that combination of Record ID 
+       and Site ID. For example, if an imported observation creates 3 taxon 
+       occurrence data records, using Record ID 77 and Site ID TEST1234, 
+       then the keys used are:<BR>
+       1. TEST1234<SPAN STYLE="font-weight : bold;">00</SPAN>000077<BR>
+       2. TEST1234<SPAN STYLE="font-weight : bold;">01</SPAN>000077<BR>
+       3. TEST1234<SPAN STYLE="font-weight : bold;">02</SPAN>000077</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Record Type</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       If present, <SPAN STYLE="font-weight : bold;">BRC Source</SPAN> 
+       cannot be used, there must be a value for every observation and the 
+       wizard will ask you to match them to the Record Type <A HREF="Term-list_Overview.htm">term
+        list</A>. If not, the wizard assumes all observations have the same 
+       record type and asks you to enter one. This will appear as the record 
+       type of the Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Sample Comment</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Any text. If present, this goes in the comment on the Sample.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Sample Duration</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Free text up to 20 characters long. Period over which sample was made 
+       e.g. 30 mins.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Sample Start Time</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       The time at which sampling commenced. This should be given using 24hr clock.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Sampling Method</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       If present, there must be a value for every observation and the 
+       wizard will ask you to match them to the Sample Type <A HREF="Term-list_Overview.htm">term
+        list</A>. If not, the wizard assumes all observations have the same 
+       sampling method and asks you to enter one. This goes in the Type 
+       field in the Sample.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Site ID</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       An 8-character NBN globally unique identifier for the system from 
+       which the observations originated. This allows the source to specify 
+       the Site ID to use as the custodian for all observations created by 
+       the import process, excluding those created using the Make New Entry 
+       option. This is also used to combine with the Record ID to create a 
+       valid key for the <SPAN STYLE="font-style : italic;">Recorder</SPAN> database.<BR>
+       If present, <SPAN STYLE="font-weight : bold;">Record ID</SPAN> must 
+       also be present, the <SPAN STYLE="font-weight : bold;">MapMate Key</SPAN> 
+       must not be present, and there must be one for every observation.</P>
+      <P CLASS="warning">
+       <SPAN STYLE="font-weight : bold;">Note: It is important that Site IDs 
+       identifying different systems remain unique.</SPAN> If they don't 
+       there is a danger that data from one system will overwrite data from 
+       another when imported into <SPAN STYLE="font-style : italic;">Recorder</SPAN>.
+        Please use this field with caution and check with <A HREF="javascript:BSSCPopup('../Glossary/JNCC.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">JNCC</A> 
+       (e-mail: <SPAN STYLE="font-weight : bold;">Recorder@JNCC.gov.uk</SPAN>)
+        that the Site ID you plan to use is unique.</P>
+      <P CLASS="warning">
+       <SPAN STYLE="font-weight : bold;">Note</SPAN>: <SPAN STYLE="font-weight : bold;">Site
+        ID</SPAN><SPAN STYLE="font-weight : normal;"> and </SPAN><SPAN STYLE="font-weight : bold;">Record
+        ID</SPAN><SPAN STYLE="font-weight : normal;"> must </SPAN>ONLY be 
+       used for data coming from systems other than <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+       and MapMate<SPAN STYLE="font-weight : normal;">. They must NOT be 
+       used to import data from another </SPAN><SPAN STYLE="font-style : italic;font-weight : normal;">Recorder</SPAN><SPAN STYLE="font-weight : normal;"> 
+       system because of the potential for corruption as explained below.</SPAN></TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Spatial Reference System</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       A code up to 4 characters long for the <SPAN STYLE="font-weight : bold;">Spatial
+        Reference System</SPAN> of the <SPAN STYLE="font-weight : bold;">Grid
+        Reference</SPAN>. In a standard copy of <SPAN STYLE="font-style : italic;">Recorder
+        </SPAN>these will be:<BR>
+       OSGB: Ordnance Survey - GB Grid<BR>
+       OSNI: Ordnance Survey - Irish Grid<BR>
+       LTLN: Latitude and Longitude<BR>
+       UTM: UTM (Universal Transverse Mercator co-ordinates)<BR>
+       Others will be available if add-ins have been installed to make them available.<BR>
+       The system currently in use is the one ticked on <SPAN STYLE="font-weight : bold;">Tools
+        - Options - </SPAN><A HREF="Options_Spatial_References.htm">Spatial References</A>.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Specimen Comment</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Any text. If present, <SPAN STYLE="font-weight : bold;">Specimen Number</SPAN> 
+       and <SPAN STYLE="font-weight : bold;">Specimen Type</SPAN> must also 
+       be present. This goes on the Specimens tab on the Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Specimen Number</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       An identifier up to 30 characters long which could be an accession or 
+       registration number. If present, <SPAN STYLE="font-weight : bold;">Specimen
+        Type </SPAN>must also be present. This goes on the Specimens tab on 
+       the Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Specimen Type</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       If present, <SPAN STYLE="font-weight : bold;">Specimen Number</SPAN> 
+       must also be present and the wizard will ask you to match them to the 
+       Specimen Type <A HREF="Term-list_Overview.htm">term list</A>. This 
+       goes on the Specimens tab on the Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Substrate</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       If present, the wizard will ask you to match them to the Substrate <A HREF="Term-list_Overview.htm">term
+        list</A>.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Survey Event Comment</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Any text. If present, this goes in the comment on the Survey Event.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Survey Event Weather</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Any text up to 200 characters long. If present, this goes in Weather 
+       on the Survey Event.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Surveyor's Ref</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Any text up to 30 characters long. If present, this goes in the 
+       Surveyor's Ref field of the Taxon Occurrence.</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Taxon Determination Comment</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       Any text. If present, this goes in the comment on the Taxon <SPAN STYLE="font-weight : normal;">Determination.</SPAN></TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Taxon Occurrence Data</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       When this column type is selected, you will be able to select any 
+       number of column types from every possible combination of Measurement 
+       Qualifier and Measurement Unit from the Measurement Type <A HREF="Term-list_Overview.htm">term
+        list</A>, provided they are available on taxon occurrences. If 
+       present, these go into the Measurements for the Taxon Occurrence 
+       where the 'Qualifier' is determined by the column type and the 'Data' 
+       is the contents of the column in the import file. Can be used in 
+       combination with <SPAN STYLE="font-weight : bold;">Abundance Data</SPAN><SPAN STYLE="font-weight : normal;">.
+        <FONT COLOR="BLACK"><A HREF="Import_Wizard_abundance.htm">Example</A>.</FONT></SPAN></TD>
+    </TR>
+    <TR>
+     <TD WIDTH="18%" BGCOLOR="#FFCC99" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-weight : bold;">Vice-County Number</SPAN></TD>
+     <TD WIDTH="82%" VALIGN=TOP>
+      <P>
+       A valid Watsonian vice-county <SPAN STYLE="font-weight : bold;">number</SPAN>,
+        or an Irish vice-county <SPAN STYLE="font-weight : bold;">number</SPAN> 
+       prefixed by 'H' - e.g. H6, Waterford. If present, and <SPAN STYLE="font-weight : bold;">Location</SPAN> 
+       is not matched to locations in the location hierarchy, the 
+       observations will be linked to the vice-counties which are sub-sites 
+       of 'Irish Vice-counties' or 'Vice-counties' in the Location 
+       hierarchy. When present, <SPAN STYLE="font-weight : bold;">Grid Reference</SPAN> 
+       must also be present in the input data and both must have a value for 
+       every observation.</TD>
+    </TR>
+   </TABLE></P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note</SPAN>: The supported columns 
+   above are available in <SPAN STYLE="font-style : italic;">Recorder 6</SPAN> 
+   up to and including version 6.16. However, the Import Wizard has been 
+   designed in such a way as to make it comparatively easy to modify it 
+   to import additional fields so subsequent versions may support 
+   additional column types. Check what is currently available by 
+   selecting &lt;more options&gt; in the drop down box for <A HREF="Import_Wizard_column_types_selection.htm">selecting
+    column types</A>.<BR>
+   <BR>
+   For advice on your specific importing requirements, please contact 
+   the supplier of your copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    or any of the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   suppliers who are listed on the <SPAN STYLE="font-style : normal;">Recorder
+    </SPAN>Software web site <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A>.
+    To consult other users about whether your requirements are likely to 
+   be of more general use, please make use of the Recorder Forum, part 
+   of the NBN Forum, which can also be accessed from this web-site.</P>
+  <H3>
+   <SPAN STYLE="font-weight : bold;">Site ID</SPAN><SPAN STYLE="font-weight : normal;"> 
+   and </SPAN><SPAN STYLE="font-weight : bold;">Record ID</SPAN></H3>
+  <P>
+   When users have received <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   data in an Excel file rather than as a <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   export, some of them have contemplated importing it using the Site ID 
+   and Record ID column types in the import wizard, the idea being to 
+   split the taxon occurrence key into Site ID and Record ID. The Site 
+   ID and Record ID were provided to allow data to be imported from 
+   other databases using identifiers from the system concerned so that 
+   if corrections to existing observations are imported they will 
+   overwrite the original version rather than create new versions.</P>
+  <P CLASS="warning">
+   Site ID and Record ID must NOT be used for data from another copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN> (<SPAN STYLE="font-style : italic;">Recorder
+    2000/2002</SPAN> or <SPAN STYLE="font-style : italic;">Recorder 6</SPAN>)
+    because of the potential for corruption.</P>
+  <P>
+   If you use the import wizard to import a record with say, Site ID 
+   SR000247 and Record ID 004444, the survey event, sample and taxon 
+   occurrence will all have keys of SR00024700004444, unless there is 
+   already a suitable survey event and sample. The problem is that the 
+   survey event SR00024700004444 may exist in the original system but 
+   will probably be linked to different observations due to the way keys 
+   are created when data is entered via the standard means. Likewise 
+   with the sample. Hence, if this data was imported into a system 
+   containing the survey event/sample SR00024700004444 created by 
+   standard Recorder data entry one version would overwrite the other 
+   probably leaving some taxon occurrences linked to the wrong samples.</P>
+  <P>
+   The correct way to handle this situation is to go back to the holder 
+   of the data and get them to do a standard <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   export in <A HREF="Export_to_NBN_Data.htm">NBN Data</A> (.xml) or, 
+   preferably, <A HREF="Export_to_NBN_Access_Database.htm">NBN Access Database</A> 
+   (zipped) format and import that. If you don&#146;t know who the owner 
+   is JNCC will be able to tell you who it is, provided the Site ID has 
+   been registered. If it hasn&#146;t, they will, at least, be able to 
+   tell you who the reseller was, and they should be able to tell you 
+   who the owner is, subject to data protection issues.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="MS Sans Serif,8,0,,"><PARAM
+    NAME="Item1" VALUE="Import Wizard;Import_Wizard.htm"><PARAM
+    NAME="Item2" VALUE="Import Wizard abundance;Import_Wizard_abundance.htm"></OBJECT>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

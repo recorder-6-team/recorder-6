@@ -1,0 +1,107 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Simple report layout - step 7</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Simple report layout - step 7</H1>
+  <H3>
+   The Summary and Page footers.</H3>
+  <P>
+   We wanted the Summary band, which prints just once at the end of the 
+   report, to show how many observations the report includes and to 
+   contain a paragraph of text giving information about the copyright 
+   and use of the report.</P>
+  <H3>
+   Displaying the number of observations:</H3>
+  <P>
+   The number of times the detailed band is printed in the report is one 
+   of the items available via a system field, so:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click &quot;add new system field&quot; button <IMG SRC="Sys button.gif" WIDTH="31" HEIGHT="32" VSPACE="0" HSPACE="0" BORDER="0"> 
+    and then click in the Summary band. You will see the following dialog:</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="System field.gif" WIDTH="488" HEIGHT="245" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <UL>
+    <LI CLASS="mvd-P">
+    <P STYLE="text-align : left;" ALIGN=LEFT>
+     Select the Type of system information you want (in this case 
+     &quot;Detail count&quot;)</P>
+    <LI CLASS="mvd-P">
+    <P STYLE="text-align : left;" ALIGN=LEFT>
+     Type the Text you want to appear with this information. Don't forget 
+     to leave a space on the end of your text so that the system supplied 
+     data (the number) is separated from your text.</P>
+    <LI CLASS="mvd-P">
+    <P STYLE="text-align : left;" ALIGN=LEFT>
+     You may also want to set the font, perhaps to show this comment in 
+     italics. When you are happy, click [OK].</P>
+    </UL>
+   </UL>
+  <H3>
+   Copyright and usage statement:</H3>
+  <P>
+   If you want to add a paragraph of text, add a <A HREF="javascript:BSSCPopup('Text_buttons.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">memo</A> <IMG SRC="Memo button.gif" WIDTH="18" HEIGHT="20" VSPACE="0" HSPACE="0" BORDER="0"> 
+   or <A HREF="javascript:BSSCPopup('Text_buttons.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">RTF
+    memo</A> <IMG SRC="RTF memo button.gif" WIDTH="22" HEIGHT="21" VSPACE="0" HSPACE="0" BORDER="0"> 
+   field. The difference is that all the text in a memo has the same 
+   font whilst an RTF memo can contain text in a variety of fonts (e.g. 
+   if you wanted to have some words italicised within your paragraph, 
+   you would choose an RTF memo).</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the &quot;add new memo&quot; button and then click in the 
+    Summary band. The Memo dialog will open:</P>
+   </UL>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="Memo dialog.gif" WIDTH="505" HEIGHT="410" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P STYLE="text-align : left;" ALIGN=LEFT>
+    Type your text and set any other options you want (e.g. set the font) 
+    and then click [OK].</P>
+   </UL>
+  <H3>
+   Setting up the Page footer</H3>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    The page footer will contain the report date and the page number. 
+    These are both available via system fields so add two system fields 
+    of Type &quot;Date&quot; and &quot;Page number&quot; as above.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    You might want this band to have a line at its top edge to separate 
+    it from the rest of the page. Use the <A HREF="javascript:BSSCPopup('Frame.htm');" ONMOUSEOVER="if (parseInt(navigator.appVersion) >= 4) BSPSPopupOnMouseOver(event)" CLASS="BSSCPopup">Frame</A> 
+    tool as in <A HREF="Simple_report_layout_-_step_6.htm">step 6</A>.</P>
+   </UL>
+  <P>
+   <A HREF="Simple_report_layout_-_step_6.htm">Previous</A> | <A HREF="Simple_report_layout_-_step_8.htm">Next</A>
+ <script>
+<!--
+BSSCCreatePopupDiv();
+//-->
+ </script></BODY>
+</HTML>

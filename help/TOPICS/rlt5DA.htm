@@ -1,0 +1,143 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Report Wizard Taxa Selection</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Taxa Selection</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   You will see this screen if you have chosen the option to report on 
+   selected taxa.</P>
+  <P STYLE="text-align : center;" ALIGN=CENTER>
+   <IMG SRC="..\ScreenShots\Wizard Taxa Selection.gif" WIDTH="422" HEIGHT="367" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <CENTER>
+   <P STYLE="text-align : center;" ALIGN=CENTER>
+    <TABLE WIDTH="90%" CELLPADDING="7" CELLSPACING="1" BORDER="1">
+     <TR>
+      <TD WIDTH="14%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Check List</SPAN></TD>
+      <TD WIDTH="86%" VALIGN=TOP>
+       <P>
+        Select a checklist from those available in the Taxon dictionary. If a 
+        rucksack is open when the Report Wizard is started there will be two 
+        additional options at the end of the drop down list: &quot;Current 
+        Rucksack&quot; and &quot;Current Rucksack (Expanded)&quot;. Selecting 
+        one of these will allow you to select items from the taxon list in 
+        the open rucksack.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="14%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Find Taxon</SPAN></TD>
+      <TD WIDTH="86%" VALIGN=TOP>
+       <P>
+        This works like the <SPAN STYLE="font-weight : bold;">Find </SPAN>dialog.
+         Type a name, or part of a name here, and all matching names will be 
+        shown in the &quot;Available&quot; list. If you type part of a name 
+        (e.g. &quot;hel&quot;), then the &quot;Available&quot; list will 
+        contain all names in the selected checklist or rucksack <SPAN STYLE="font-weight : bold;">starting
+         with</SPAN> what you typed. If you prefix it with &quot;*&quot; 
+        (e.g. &quot;*hel&quot;), then all names <SPAN STYLE="font-weight : bold;">containing</SPAN> 
+        this string will be included. You can use <A HREF="Abbreviated_species_names.htm">5-letter
+         abbreviations</A> for species names but they need to be preceded by 
+        &quot;*&quot;. <SPAN STYLE="font-weight : normal;"><A HREF="Abbreviated_species_names.htm">Partial
+         name searching for taxa</A> can also be used.</SPAN></P>
+       <P CLASS="note">
+        <SPAN STYLE="font-weight : bold;">Tip:</SPAN> if &quot;Current 
+        Rucksack&quot; or &quot;Current Rucksack (Expanded)&quot; have been 
+        selected as the checklist, all the items from the rucksack will be 
+        added to the Available list.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="14%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Include All Taxa</SPAN></TD>
+      <TD WIDTH="86%" VALIGN=TOP>
+       <P>
+        If this option is selected then all taxa are included in the final 
+        report, in which case, the other controls for selecting particular 
+        taxa are disabled. It is for use with other selection criteria, e.g. 
+        when <A HREF="Report_Wizard_Select_Report_Style.htm">restricting a report</A> 
+        to observations by one or more recorders, or to a bounding box.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="14%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">All Taxa from list</SPAN></TD>
+      <TD WIDTH="86%" VALIGN=TOP>
+       <P>
+        If this option is selected then all taxa from the selected list will 
+        be included in the report, in which case, the Find Taxon control is disabled.</TD>
+     </TR>
+     <TR>
+      <TD WIDTH="14%" VALIGN=TOP>
+       <P>
+        <SPAN STYLE="font-weight : bold;">Expand Taxonomic Groups</SPAN></TD>
+      <TD WIDTH="86%" VALIGN=TOP>
+       <P>
+        If you include any higher-taxa in the &quot;Selected&quot; List, e.g. 
+        a class, order, family, genus, etc., this gives you the option of 
+        whether or not to include all the taxa within that group in the 
+        query. For example, if you include the classes Amphibia and Reptilia 
+        in the &quot;Selected list&quot; then if this option is ticked, all 
+        observations of amphibians and reptiles will be included in the 
+        report. If this option is not ticked, the report will only include 
+        observations for which &quot;Amphibia&quot; or &quot;Reptilia&quot; 
+        was specifically given as the preferred determination.</TD>
+     </TR>
+    </TABLE></P>
+   </CENTER>
+  <P>
+   Move the taxa whose associated observations you want in the report 
+   into the &quot;Selected&quot; list - see <A HREF="Report_Wizard_Add_Items.htm">Add</A> 
+   and <A HREF="Report_Wizard_Remove_Items.htm">Remove</A> items from 
+   Selected list.</P>
+  <P>
+   You can add one or more names to the &quot;Selected&quot; list, and 
+   then make changes in the Check List and/or Find Taxon part of the 
+   screen. This will result in a different &quot;Available&quot; list 
+   from which you can make additional selections.</P>
+  <P CLASS="note">
+   Note: Users working on taxa for which lots of name changes have 
+   occurred may like to know more about the dictionary translates 
+   between different names on different checklists.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Report Wizard Select Report Style;Report_Wizard_Select_Report_Style.htm"><PARAM
+    NAME="Item2" VALUE="Reporting Overview;Reporting_Overview.htm"></OBJECT>
+ </BODY>
+</HTML>

@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<!-- VIEW DESIGNATION DETAILS - XML Report by Charles Roper of the Sussex Biodiversity Record Centre
+     http://www.sxbrc.org.uk/
+      Version 5 - 28 November 2014 - 
+
+     NOTE: Requires the HtmlToPlainText function included in Recorder 6 from version 6.10.4 onwards.
+-->
+<CustomReport title="View designation details" description="View information about the designations and statuses that exist within Recorder."
+menupath="System Supplied\Information">
+<SQL>
+  SELECT    KIND, SHORT_NAME, LONG_NAME,
+            replace(dbo.ufn_HtmlToPlainText(replace(dbo.ufn_HtmlToPlainText(DESCRIPTION), char(13), '')), char(10), '') AS DESCRIPTION
+  FROM      TAXON_DESIGNATION_TYPE
+  
+  <Where keytype="default">
+  </Where>
+
+<OutputTableOrderby name="by Default" SQL="Order By KIND, SHORT_NAME"/>
+
+</SQL>
+
+<Columns>
+  <Column name="KIND" caption="Abbrev." position="1" />
+  <Column name="SHORT_NAME" caption="Designation" position="2" />
+  <Column name="LONG_NAME" caption="Full designation" position="3" width="240" />
+  <Column name="DESCRIPTION" caption="Description" position="4" width="1000" />
+</Columns>
+
+</CustomReport>

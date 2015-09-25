@@ -1,0 +1,289 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC  First Last and Months Recorded for a taxa
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 November 2014
+   
+     QUICK REPORT ONLY - From Taxon Dictionary
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Unchedked - By parameter
+     Invalid = By parameter	
+   
+ --> 
+
+
+<CustomReport menupath="System Supplied\Taxon restricted reports\Taxon"  title="T3 - First/Last Date + Months by Year" 
+description="Reports on the first and last date that a species was recorded in each year.
+Includes the  total number of records for the year and the number for each month.
+Note that records with dates of Period, Month range, Year, Century, Unknown dates or with vague date end unknown are 
+excluded. As a result the exact count of records for a year may be slightly higher than shown (as month range and year have been excluded). 
+Dates are based on the Vague_date_end of the sample. 
+Always excludes Zero abundance and Not Validated Records. " >
+
+
+<SQL>
+<Where keytype="Default">
+
+CREATE TABLE #Taxa (TLI_Key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS, RecTLI_Key  char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS)
+INSERT INTO #Taxa (TLI_KEY,RecTLI_Key)
+SELECT DISTINCT ITN2.Taxon_List_item_Key,ITN2.Recommended_Taxon_List_Item_Key
+FROM Index_Taxon_name ITN1
+INNER JOIN Index_Taxon_Name ITN2
+ON ITN1.Recommended_Taxon_List_Item_Key = ITN2.Recommended_taxon_List_item_key
+INNER JOIN Taxon_determination TDET 
+ON TDET.Taxon_List_Item_Key = ITN2.Taxon_List_Item_Key
+WHERE
+<Condition field= " ITN1.aCTUAL_NAME" operator="like" type="Text"  name="Taxon Name (Like) " />
+
+
+CREATE TABLE #Main (Pref_TLI_Key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS, cyear char(4)  COLLATE SQL_Latin1_General_CP1_CI_AS, cMYear char(7)  COLLATE SQL_Latin1_General_CP1_CI_AS, minvd  int, maxvd int, mMin int,mMonth 
+varchar(8),dCount  int)
+
+INSERT INTO #Main (pref_TLI_key,cMYear, dCount)
+SELECT #Taxa.RecTLI_Key,
+dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'N'),Count(TOCC.Taxon_Occurrence_Key)
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+INNER JOIN Survey_Event SE 
+ON SE.Survey_Event_key = S.Survey_Event_Key 
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+WHERE
+USR.Name_Key IS NULL
+AND
+
+
+TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified &#60;&#62; 1
+AND S.vague_Date_Type in ('D','DD','O') 
+GROUP BY   #Taxa.RecTLI_Key, dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'N')
+
+
+
+UPDATE #MAIN set cyear = right(M.cmyear,4)
+
+FROM #Main M
+
+UPDATE #MAIN set mmonth = left(m.cmyear,2)
+FROM #Main M
+
+UPDATE #Main set minvd = (SELECT min(s.vague_date_end)
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified &#60;&#62; 1
+AND S.vague_Date_Type in ('D','DD','O')  
+AND #Main.Pref_TLI_Key = #Taxa.RecTLI_key AND #Main.Cyear = dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'Y')
+GROUP BY   #Taxa.RecTLI_Key,dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'Y'))
+
+UPDATE #Main set maxvd = (SELECT max(s.vague_date_end)
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified &#60;&#62; 1
+AND S.vague_Date_Type in ('D','DD','O')
+AND #Main.Pref_TLI_Key = #Taxa.RecTLI_key AND #Main.Cyear = dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'Y')
+GROUP BY   #Taxa.RecTLI_Key,dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'Y'))
+
+
+
+  
+SELECT PREF_TLI_KEY,cyear ,
+
+SUM(QTY ) AS [YearTotal],
+minvd,
+maxvd,
+SUM(CASE WHEN MMonth =01 THEN QTY END) AS [Jan],
+SUM(CASE WHEN Mmonth=02 THEN QTY END) AS [Feb],
+SUM(CASE WHEN MMonth =03 THEN QTY END) AS [Mar],
+SUM(CASE WHEN Mmonth=04 THEN QTY END) AS [Apr],
+SUM(CASE WHEN MMonth =05 THEN QTY END) AS [May],
+SUM(CASE WHEN Mmonth=06 THEN QTY END) AS [Jun],
+SUM(CASE WHEN MMonth =07 THEN QTY END) AS [Jul],
+SUM(CASE WHEN Mmonth=08 THEN QTY END) AS [Aug],
+SUM(CASE WHEN MMonth =09 THEN QTY END) AS [Sep],
+SUM(CASE WHEN Mmonth=10 THEN QTY END) AS [Oct],
+SUM(CASE WHEN MMonth =11 THEN QTY END) AS [Nov],
+SUM(CASE WHEN Mmonth=12 THEN QTY END) AS [Dec]
+
+
+INTO #MAIN2
+FROM (SELECT pref_tli_key, Cyear, MMonth,minvd,maxvd, dcount as qty From
+#main) as D
+Group by pref_tli_key,cYear,minvd,maxvd
+
+
+SELECT ITN2.actual_name, ITN2.Authority, ITN2.Common_name, TG.Taxon_Group_name,M2.Cyear,
+m2.YearTotal,dbo.LCReturnDate(m2.minvd,'D','F') as Earliest,dbo.LCReturnDate(m2.maxvd,'D','F') as Latest,Jan,Feb,Mar,Apr,
+May,Jun,JUl,Aug,Sep,Oct,Nov,Dec
+
+
+FROM #Main2 M2
+INNER JOIN index_taxon_name ITN ON ITN.Taxon_List_item_key = m2.pref_TLI_Key
+INNER JOIN index_taxon_name ITN2 ON ITN2.taxon_list_item_key = ITN.Recommended_taxon_list_Item_Key
+INNER JOIN taxon_list_item TLI ON TLI.taxon_list_item_key = ITN.taxon_List_item_key
+INNER JOIN taxon_version TV ON TV.Taxon_Version_key = TLI.Taxon_Version_Key
+INNER JOIN taxon_group TG ON TV.output_group_key = TG.Taxon_Group_Key
+WHERE
+ITN2.System_Supplied_Data = 1
+AND ITN.System_Supplied_Data = 1
+
+DROP Table #Taxa
+DROP TABLE #Main
+
+</Where>
+
+<Where keytype="Taxon">
+CREATE TABLE #Taxa (TLI_Key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS, RecTLI_Key  char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS)
+INSERT INTO #Taxa (TLI_KEY,RecTLI_Key)
+SELECT DISTINCT ITN2.Taxon_List_item_Key,ITN2.Recommended_Taxon_List_Item_Key
+FROM Index_Taxon_name ITN1
+INNER JOIN Index_Taxon_Name ITN2
+ON ITN1.Recommended_Taxon_List_Item_Key = ITN2.Recommended_taxon_List_item_key
+WHERE ITN1.Taxon_List_Item_Key = '%s'
+
+
+
+CREATE TABLE #Main (Pref_TLI_Key char(16)  COLLATE SQL_Latin1_General_CP1_CI_AS, cyear char(4)  COLLATE SQL_Latin1_General_CP1_CI_AS, cMYear char(7)  COLLATE SQL_Latin1_General_CP1_CI_AS, minvd  int, maxvd int, mMin int,mMonth 
+varchar(8),dCount  int)
+
+INSERT INTO #Main (pref_TLI_key,cMYear, dCount)
+SELECT #Taxa.RecTLI_Key,
+dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'N'),Count(TOCC.Taxon_Occurrence_Key)
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+INNER JOIN Survey_Event SE 
+ON SE.Survey_Event_key = S.Survey_Event_Key 
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+WHERE
+USR.Name_Key IS NULL
+
+AND
+TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified &#60;&#62; 1
+AND S.vague_Date_Type in ('D','DD','O') 
+GROUP BY   #Taxa.RecTLI_Key, dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'N')
+
+
+
+UPDATE #MAIN set cyear = right(M.cmyear,4)
+
+FROM #Main M
+
+UPDATE #MAIN set mmonth = left(m.cmyear,2)
+FROM #Main M
+
+UPDATE #Main set minvd = (SELECT min(s.vague_date_end)
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified &#60;&#62; 1
+AND S.vague_Date_Type in ('D','DD','O') 
+AND #Main.Pref_TLI_Key = #Taxa.RecTLI_key AND #Main.Cyear = dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'Y')
+GROUP BY   #Taxa.RecTLI_Key,dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'Y'))
+
+UPDATE #Main set maxvd = (SELECT max(s.vague_date_end)
+FROM Sample S
+INNER JOIN  Taxon_occurrence TOCC ON TOCC.Sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN #Taxa on TDET.Taxon_List_Item_Key = #Taxa.TLI_Key
+where TDET.PREFERRED = 1 and TOCC.Zero_Abundance = 0 and TOCC.Verified &#60;&#62; 1
+AND S.vague_Date_Type in ('D','DD','O')
+AND #Main.Pref_TLI_Key = #Taxa.RecTLI_key AND #Main.Cyear = dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'Y')
+GROUP BY   #Taxa.RecTLI_Key,dbo.LCReturnDate(s.Vague_Date_end, s.Vague_Date_Type,'Y'))
+
+
+
+  
+SELECT PREF_TLI_KEY,cyear ,
+
+SUM(QTY ) AS [YearTotal],
+minvd,
+maxvd,
+SUM(CASE WHEN MMonth =01 THEN QTY END) AS [Jan],
+SUM(CASE WHEN Mmonth=02 THEN QTY END) AS [Feb],
+SUM(CASE WHEN MMonth =03 THEN QTY END) AS [Mar],
+SUM(CASE WHEN Mmonth=04 THEN QTY END) AS [Apr],
+SUM(CASE WHEN MMonth =05 THEN QTY END) AS [May],
+SUM(CASE WHEN Mmonth=06 THEN QTY END) AS [Jun],
+SUM(CASE WHEN MMonth =07 THEN QTY END) AS [Jul],
+SUM(CASE WHEN Mmonth=08 THEN QTY END) AS [Aug],
+SUM(CASE WHEN MMonth =09 THEN QTY END) AS [Sep],
+SUM(CASE WHEN Mmonth=10 THEN QTY END) AS [Oct],
+SUM(CASE WHEN MMonth =11 THEN QTY END) AS [Nov],
+SUM(CASE WHEN Mmonth=12 THEN QTY END) AS [Dec]
+
+
+INTO #MAIN2
+FROM (SELECT pref_tli_key, Cyear, MMonth,minvd,maxvd, dcount as qty From
+#main) as D
+Group by pref_tli_key,cYear,minvd,maxvd
+
+
+SELECT ITN2.actual_name, ITN2.Authority, ITN2.Common_name, TG.Taxon_Group_name,M2.Cyear,
+m2.YearTotal,dbo.LCReturnDate(m2.minvd,'D','F') as Earliest,dbo.LCReturnDate(m2.maxvd,'D','F') as Latest,Jan,Feb,Mar,Apr,
+May,Jun,JUl,Aug,Sep,Oct,Nov,Dec
+
+
+FROM #Main2 M2
+INNER JOIN index_taxon_name ITN ON ITN.Taxon_List_item_key = m2.pref_TLI_Key
+INNER JOIN index_taxon_name ITN2 ON ITN2.taxon_list_item_key = ITN.Recommended_taxon_list_Item_Key
+INNER JOIN taxon_list_item TLI ON TLI.taxon_list_item_key = ITN.taxon_List_item_key
+INNER JOIN taxon_version TV ON TV.Taxon_Version_key = TLI.Taxon_Version_Key
+INNER JOIN taxon_group TG ON TV.output_group_key = TG.Taxon_Group_Key
+WHERE
+ITN2.System_Supplied_Data = 1
+AND ITN.System_Supplied_Data = 1
+
+DROP Table #Taxa
+DROP TABLE #Main
+
+
+</Where>
+
+
+</SQL>
+<Columns>
+
+  <Column name="Actual_Name" width="200" position="1" caption="Scientific Name" /> 
+  <Column name="Authority" width="200" position="2" caption="Authority" /> 
+  <Column name="Common_Name" width="200" position="3" caption="Common Name" /> 
+  <Column name="Taxon_Group_name" width="100" position="4" caption="Taxon Group" /> 
+  <Column name="Cyear" width="60" position="5" caption="Year" /> 
+  <Column name="YearTotal" width="100" position="6" caption="Year Total" /> 
+  <Column name="Earliest" width="80" position="7" caption="Earliest Date" /> 
+  <Column name="Latest" width="80" position="8" caption="Latest Date" /> 
+ 
+  <Column name="Jan" width="100" position="9" caption="Records in Jan" /> 
+  <Column name="Feb" width="100" position="10" caption="Records in Feb" /> 
+  <Column name="Mar" width="100" position="11" caption="Records in Mar" /> 
+  <Column name="Apr" width="100" position="12" caption="Records in Apr" /> 
+  <Column name="May" width="100" position="13" caption="Records in May" /> 
+  <Column name="Jun" width="100" position="14" caption="Records in Jun" /> 
+  <Column name="Jul" width="100" position="15" caption="Records in Jul" /> 
+  <Column name="Aug" width="100" position="16" caption="Records in Aug" /> 
+  <Column name="Sep" width="100" position="17" caption="Records in Sep" /> 
+  <Column name="Oct" width="100" position="18" caption="Records in Oct" /> 
+  <Column name="Nov" width="100" position="19" caption="Records in Nov" /> 
+  <Column name="Dec" width="100" position="20" caption="Records in Dec" /> 
+ 
+ 
+
+
+
+  
+  
+
+</Columns>
+</CustomReport>

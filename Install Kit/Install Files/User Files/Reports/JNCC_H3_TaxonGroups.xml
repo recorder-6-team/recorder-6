@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Lists the Taxon Groups Recorded
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014    
+            
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Information"  title="H3 - Taxon Groups Used" 
+description="Lists Taxon Groups Recorded.
+" >
+
+<SQL>
+
+<Where keytype="Default">
+SELECT DISTINCT TAXON_GROUP_NAME From 
+Taxon_Determination TD
+INNER JOIN Taxon_List_Item TLI ON
+TLI.Taxon_List_Item_Key = TD.Taxon_List_Item_key
+INNER JOIN Taxon_Version TV
+ON TV.Taxon_Version_Key = TLI.Taxon_Version_key
+INNER JOIN Taxon_Group TG
+ON TG.Taxon_Group_Key = TV.Output_Group_Key
+
+
+
+
+</Where>
+
+
+</SQL>
+<Columns>
+ 
+ 
+</Columns>
+</CustomReport>

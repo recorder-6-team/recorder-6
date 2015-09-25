@@ -1,0 +1,254 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Identifies Records whch may be duplicates. Output as a report 
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 Nov 2014 
+   
+     QUICK REPORT - Works on Observation hierarchy for a Survey
+       
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Information"  title="H2 - Duplicate Records" 
+description="Identifies Records which may be duplicates for further investigation.
+As a general report works across all Surveys.
+As a quick report on the Survey selected and only comparing records within the chosen Survey, 
+Duplicates are based on Date/Grid Ref/Sample Location/
+Location Name,Recorders (Full name),Recommended Taxa Abundance and Preferred Determination. 
+
+" >
+
+<SQL>
+
+
+<Where keytype="Default">
+
+
+
+Create Table #Dups (Taxon_Occurrence_key varchar(16) COLLATE SQL_Latin1_General_CP1_CI_AS,Data varchar(1500) COLLATE SQL_Latin1_General_CP1_CI_AS,dup bit)
+
+
+INSERT INTO #Dups (Taxon_Occurrence_key,DATA)
+
+SELECT TOCC.Taxon_Occurrence_Key,
+
+CAST(ISNULL(S.Spatial_ref,'*') as char(30)) +
+
+CAST(S.Vague_Date_start as char(10))  +
+
+CAST(S.Vague_Date_end as char(10))  +
+
+CAST(isnull(S.Location_Name,'*')  as char(100))  +
+
+CAST(ISNULL(LN.ITEM_NAME,'*') as char(100))  +
+
+CAST(dbo.formateventRecorders (S.Sample_Key) as char(500))  +
+
+CAST(isnull(dbo.LCFormatAbundanceData(TOCC.Taxon_Occurrence_Key),'*') as Char(500)) +
+
+CAST(TDET.Preferred as char(1)) +
+
+ITN.Recommended_Taxon_List_Item_Key 
+
+From Sample S
+LEFT JOIN Location_Name  LN ON S.Location_Key = LN.Location_Key
+INNER JOIN TAXON_OCCURRENCE TOCC ON
+TOCC.Sample_Key = S.SAMPLE_KEY
+INNER JOIN Taxon_Determination TDET ON
+TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN Index_Taxon_Name ITN ON
+ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN SURVEY_EVENT SV
+ON SV.SURVEY_EVENT_KEY = S.SURVEY_EVENT_KEY
+
+WHERE TDET.Preferred = 1 
+
+AND
+ITN.system_supplied_data = 1
+
+AND
+
+(LN.Preferred = 1 or LN.Preferred is null)
+
+
+
+Create Table #Dup2 (ToccCount int,Data varchar(1500) COLLATE SQL_Latin1_General_CP1_CI_AS)
+Insert Into  #Dup2 (ToccCount,Data) 
+Select count(Taxon_Occurrence_Key),data from #Dups 
+Group by Data having  count(Taxon_Occurrence_Key) &#62; 1
+
+UPDATE #DUPs
+SET dup = 1
+FROM #DUPS INNER JOIN #Dup2
+ON #DUP2.DATA = #DUPs.DATA  
+
+
+Select #DUps.Taxon_Occurrence_key,S.Sample_Key,SE.Survey_Event_key,
+S.Spatial_Ref, dbo.lcReturnvaguedateshort(SE.Vague_Date_Start,sE.Vague_Date_End,SE.Vague_Date_Type) as SEDate,
+dbo.lcReturnvaguedateshort(S.Vague_Date_Start,s.Vague_Date_End,S.Vague_Date_Type) as SampDate,
+S.Location_Name,LN.Item_Name,ITN.Actual_name,dbo.formateventRecorders (S.Sample_Key) as Recorders,
+dbo.LCFormatAbundanceData(TOCC.Taxon_Occurrence_Key) as Abundance,
+SE.Vague_date_start as Sort1, #dups.data as Sort2
+FROM #Dups
+INNER JOIN TAXON_OCCURRENCE TOCC
+ON TOCC.TAXON_OCCURRENCE_KEY = #Dups.TAXON_OCCURRENCE_KEY
+INNER JOIN SAMPLE S
+ON S.SAMPLE_Key = TOCC.SAMPLE_KEY
+INNER JOIN SURVEY_EVENT SE
+ON SE.SURVEY_EVENT_KEY  = S.SURVEY_EVENT_KEY
+INNER JOIN
+TAXON_DETERMINATION TDET 
+ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN INDEX_TAXON_NAME ITN
+ON ITN.taxon_List_Item_key = TDET.Taxon_List_Item_Key
+LEFT JOIN Location_Name  LN ON S.Location_Key = LN.Location_Key
+
+
+where dup = 1 
+AND
+
+(LN.Preferred = 1 or LN.Preferred is null)
+
+AND
+
+TDET.PREFERRED = 1
+
+
+
+Order by SE.Vague_date_start, #dups.data
+
+
+
+drop table #dup2
+drop table #dups
+
+
+</Where>
+
+<Where keytype="Survey">
+
+Create Table #Dups (Taxon_Occurrence_key varchar(16) COLLATE SQL_Latin1_General_CP1_CI_AS,Data varchar(1500) COLLATE SQL_Latin1_General_CP1_CI_AS,dup bit)
+
+
+INSERT INTO #Dups (Taxon_Occurrence_key,DATA)
+
+SELECT TOCC.Taxon_Occurrence_Key,
+
+CAST(ISNULL(S.Spatial_ref,'*') as char(30)) +
+
+CAST(S.Vague_Date_start as char(10))  +
+
+CAST(S.Vague_Date_end as char(10))  +
+
+CAST(isnull(S.Location_Name,'*')  as char(100))  +
+
+CAST(ISNULL(LN.ITEM_NAME,'*') as char(100))  +
+
+CAST(dbo.formateventRecorders (S.Sample_Key) as char(500))  +
+
+CAST(isnull(dbo.LCFormatAbundanceData(TOCC.Taxon_Occurrence_Key),'*') as Char(500)) +
+
+CAST(TDET.Preferred as char(1)) +
+
+ITN.Recommended_Taxon_List_Item_Key 
+
+From Sample S
+LEFT JOIN Location_Name  LN ON S.Location_Key = LN.Location_Key
+INNER JOIN TAXON_OCCURRENCE TOCC ON
+TOCC.Sample_Key = S.SAMPLE_KEY
+INNER JOIN Taxon_Determination TDET ON
+TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN Index_Taxon_Name ITN ON
+ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN SURVEY_EVENT SV
+ON SV.SURVEY_EVENT_KEY = S.SURVEY_EVENT_KEY
+
+WHERE TDET.Preferred = 1 
+
+AND
+ITN.system_supplied_data = 1
+
+AND
+
+(LN.Preferred = 1 or LN.Preferred is null)
+
+AND
+
+SV.SURVEY_KEY = '%s'
+
+Create Table #Dup2 (ToccCount int,Data varchar(1500) COLLATE SQL_Latin1_General_CP1_CI_AS)
+Insert Into  #Dup2 (ToccCount,Data) 
+Select count(Taxon_Occurrence_Key),data from #Dups 
+Group by Data having  count(Taxon_Occurrence_Key) &#62; 1
+
+UPDATE #DUPs
+SET dup = 1
+FROM #DUPS INNER JOIN #Dup2
+ON #DUP2.DATA = #DUPs.DATA  
+
+Select #DUps.Taxon_Occurrence_key,S.Sample_Key,SE.Survey_Event_key,
+S.Spatial_Ref, dbo.lcReturnvaguedateshort(SE.Vague_Date_Start,sE.Vague_Date_End,SE.Vague_Date_Type) as SEDate,
+dbo.lcReturnvaguedateshort(S.Vague_Date_Start,s.Vague_Date_End,S.Vague_Date_Type) as SampDate,
+S.Location_Name,LN.Item_Name,ITN.Actual_name,dbo.formateventRecorders (S.Sample_Key) as Recorders,
+dbo.LCFormatAbundanceData(TOCC.Taxon_Occurrence_Key) as Abundance,
+SE.Vague_date_start as Sort1, #dups.data as Sort2
+FROM #Dups
+INNER JOIN TAXON_OCCURRENCE TOCC
+ON TOCC.TAXON_OCCURRENCE_KEY = #Dups.TAXON_OCCURRENCE_KEY
+INNER JOIN SAMPLE S
+ON S.SAMPLE_Key = TOCC.SAMPLE_KEY
+INNER JOIN SURVEY_EVENT SE
+ON SE.SURVEY_EVENT_KEY  = S.SURVEY_EVENT_KEY
+INNER JOIN
+TAXON_DETERMINATION TDET 
+ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key
+INNER JOIN INDEX_TAXON_NAME ITN
+ON ITN.taxon_List_Item_key = TDET.Taxon_List_Item_Key
+LEFT JOIN Location_Name  LN ON S.Location_Key = LN.Location_Key
+
+
+where dup = 1 
+AND
+
+(LN.Preferred = 1 or LN.Preferred is null)
+
+AND
+
+TDET.PREFERRED = 1
+
+Order by SE.Vague_date_start,#Dups.data
+
+
+
+
+</Where>
+
+OutputTableOrderby name="Default" SQL="Sort1, Sort2"/>
+
+   
+</SQL>
+<Columns>
+ 
+<Column name="Taxon_Occurrence_key" visible="true" Caption="Taxon Occurrence_Key" position = "1" width ="150" tablename="Taxon_Occurrence" keycolumn="Taxon_Occurrence_key"  />
+   <Column name="Sample_key" visible="true" Caption="Sample Key" position = "2" width ="150" tablename ="Sample" keycolumn="Sample_Key" />
+   <Column name="Survey_Event_key" visible="true" Caption="Survey Event Key" position = "3" width ="150"  />
+   <Column name="Spatial_ref" width="120" position="4" caption="Spatial Ref" />  
+   <Column name="SEDate" width="100" position="5" caption="Event Date" /> 
+   <Column name="SampDate" width="100" position="6" caption="Sample Date" /> 
+   <Column name="Location_name" width="200" position="7" caption="Sample Location Name" /> 
+   <Column name="Item_name" width="200" position="8" caption="Location (linked to sample)" /> 
+   <Column name="Recorders" width="200" position="9" caption="Recorders" /> 
+   <Column name="Actual_Name" width="200" position="10" caption="Actual_Name" /> 
+    <Column name="Abundance" width="200" position="11" caption="Abundance " /> 
+    <Column name="Sort1" visible =  "false" /> 
+    <Column name="Sort2" visible =  "false" /> 
+
+
+   
+
+ 
+</Columns>
+</CustomReport>

@@ -1,0 +1,126 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Merge data items</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+</SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Merge data items</H1>
+  <P>
+   See <A HREF="Duplication_Resulting_From_Import.htm">duplication 
+   resulting from import</A> for a discussion of the nature of the 
+   problem and its solution.</P>
+  <P>
+   To merge data items:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Ensure you have the window open that contains the duplicates you wish 
+    to deal with.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Select <SPAN STYLE="font-weight : bold;">Tools &#150; Database tools 
+    &#150; Duplicate data items</SPAN> from the Main menu.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    The <SPAN STYLE="font-weight : bold;">Merge data items</SPAN> window 
+    will be displayed.</P>
+   </UL>
+  <P>
+   <IMG SRC="..\ScreenShots\Merge Data.gif" WIDTH="740" HEIGHT="411" VSPACE="0" HSPACE="0" BORDER="0"></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Drag the item you wish to REMOVE into the Source Item box.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Drag the item you wish to RETAIN into the Destination Item box. The 
+    source and destination items must come from the same table.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Make very sure you have selected the correct items!</P>
+   <UL TYPE="disc">
+    <LI CLASS="mvd-P">
+    <P>
+     The raw data from the selected items are shown in a hierarchical 
+     tree. At the top of the tree is the name of the table from which the 
+     items come, identified by a table icon <IMG SRC="..\buttonimages\table.gif" WIDTH="15" HEIGHT="16" VSPACE="0" HSPACE="0" BORDER="0">.
+      Below this are shown the names of the columns in that table, 
+     identified by column icons <IMG SRC="..\buttonimages\column.gif" WIDTH="16" HEIGHT="14" VSPACE="0" HSPACE="0" BORDER="0">,
+      and below these are the actual data values for each column in the 
+     selected row, identified by a cell icon <IMG SRC="..\buttonimages\cell.gif" WIDTH="13" HEIGHT="14" VSPACE="0" HSPACE="0" BORDER="0">.</P>
+    <LI CLASS="mvd-P">
+    <P>
+     If the value in a cell is a foreign key to another table, you can 
+     expand the tree further, to show this table, its columns and cells, 
+     and explore the related data.</P>
+    </UL>
+   <LI CLASS="mvd-P">
+   <P>
+    When you are sure you have selected the correct items selected, close 
+    the window from which the items that will be merged came. Then choose 
+    the [Merge] button.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    You will be asked to confirm that you want to proceed:</P>
+   </UL>
+  <BLOCKQUOTE>
+   <P>
+    <IMG SRC="..\screenshots\Merge confirm.gif" WIDTH="582" HEIGHT="122" VSPACE="0" HSPACE="0" BORDER="0"></P>
+   </BLOCKQUOTE>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    If you click the [Yes] button, or press &lt;Enter&gt;, the merge 
+    process will be carried out. It does not usually take more than a few 
+    seconds, unless very large numbers of items are related to the 'source'.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Click the [Clear] button on the <SPAN STYLE="font-weight : bold;">Merge
+     Data Items</SPAN> window to empty the Source and Destination boxes 
+    ready for the next merge.</P>
+   </UL>
+  <P CLASS="warning">
+   <SPAN STYLE="font-weight : bold;">NOTE:</SPAN></P>
+  <UL>
+   <LI CLASS="mvd-P-warning">
+   <P CLASS="warning">
+    This is a powerful tool which has the potential to damage your data 
+    and should be used with great care.<BR>
+    <LI CLASS="mvd-P-warning">It is designed for technically competent 
+    users, and is available to System managers only.<BR>
+    <LI CLASS="mvd-P-warning">You must have sufficient rights to delete 
+    the 'source' item. For example, you won't be allowed to proceed if 
+    the source is 'system-supplied' &#150; because these data cannot be deleted.</P>
+   </UL>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="Arial,8,,,BOLD"><PARAM
+    NAME="Item1" VALUE="Duplicate Items;Duplicate_Items.htm"><PARAM
+    NAME="Item2" VALUE="Duplication Resulting From Import;Duplication_Resulting_From_Import.htm"><PARAM NAME="item3" VALUE="Invalid Items;Invalid_Items.htm"></OBJECT>
+ </BODY>
+</HTML>

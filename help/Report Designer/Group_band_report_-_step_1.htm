@@ -1,0 +1,271 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Group band report - step 1</TITLE>
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css">
+ <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <H1>
+   Group band report</H1>
+  <H3>
+   What are group bands?</H3>
+  <P>
+   So far we have seen a simple columnar report. It is possible to 
+   produce far more complex reports using Group Bands. A Group band has 
+   a special field (or expression) assigned to it and the band ONLY 
+   PRINTS WHEN THE VALUE OF THAT FIELD OR EXPRESSION CHANGES.</P>
+  <H3>
+   Example</H3>
+  <P>
+   Consider a small subset of data.</P>
+  <P>
+   <TABLE WIDTH="80%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="37%" VALIGN=TOP>
+      <P>
+       Aberithon Turbary station 1</TD>
+     <TD WIDTH="26%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-style : italic;">Anasimyia lineata</SPAN></TD>
+     <TD WIDTH="20%" VALIGN=TOP>
+      <P>
+       17/07/1989</TD>
+     <TD WIDTH="17%" VALIGN=TOP>
+      <P>
+       Dave Reid</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="37%" VALIGN=TOP>
+      <P>
+       Aberithon Turbary station 1</TD>
+     <TD WIDTH="26%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-style : italic;">Helophilus pendulus</SPAN></TD>
+     <TD WIDTH="20%" VALIGN=TOP>
+      <P>
+       17/07/1989</TD>
+     <TD WIDTH="17%" VALIGN=TOP>
+      <P>
+       Dave Reid</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="37%" VALIGN=TOP>
+      <P>
+       Aberithon Turbary station 1</TD>
+     <TD WIDTH="26%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-style : italic;">Helophilus pendulus</SPAN></TD>
+     <TD WIDTH="20%" VALIGN=TOP>
+      <P>
+       10/10/1989</TD>
+     <TD WIDTH="17%" VALIGN=TOP>
+      <P>
+       Dave Reid</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="37%" VALIGN=TOP>
+      <P>
+       Aberithon Turbary station 1</TD>
+     <TD WIDTH="26%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-style : italic;">Neoascia tenur</SPAN></TD>
+     <TD WIDTH="20%" VALIGN=TOP>
+      <P>
+       17/07/1989</TD>
+     <TD WIDTH="17%" VALIGN=TOP>
+      <P>
+       Dave Reid</TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   As all observations are from the same sampling station, there is no 
+   need to keep repeating the locality. It would be better to lay this 
+   out so that the locality appears just once at the top.</P>
+  <P>
+   <TABLE WIDTH="60%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="60%" VALIGN=TOP>
+      <P>
+       Aberithon Turbary station 1</TD>
+     <TD WIDTH="40%" VALIGN=TOP>
+      <P STYLE="text-align : right;" ALIGN=RIGHT>
+       <SPAN STYLE="font-weight : bold;"><FONT COLOR="SILVER">Group band</FONT></SPAN></TD>
+    </TR>
+   </TABLE>
+   <TABLE WIDTH="60%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="14%" VALIGN=TOP>
+      <P>
+       <FONT COLOR="SILVER">Detail</FONT></TD>
+     <TD WIDTH="35%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-style : italic;">Anasimyia lineata</SPAN></TD>
+     <TD WIDTH="21%" VALIGN=TOP>
+      <P>
+       17/07/1989</TD>
+     <TD WIDTH="29%" VALIGN=TOP>
+      <P>
+       Dave Reid</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="14%" VALIGN=TOP>
+      <P>
+       <FONT COLOR="SILVER">Detail</FONT></TD>
+     <TD WIDTH="35%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-style : italic;">Helophilus pendulus</SPAN></TD>
+     <TD WIDTH="21%" VALIGN=TOP>
+      <P>
+       17/07/1989</TD>
+     <TD WIDTH="29%" VALIGN=TOP>
+      <P>
+       Dave Reid</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="14%" VALIGN=TOP>
+      <P>
+       <FONT COLOR="SILVER">Detail</FONT></TD>
+     <TD WIDTH="35%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-style : italic;">Helophilus pendulus</SPAN></TD>
+     <TD WIDTH="21%" VALIGN=TOP>
+      <P>
+       10/10/1989</TD>
+     <TD WIDTH="29%" VALIGN=TOP>
+      <P>
+       Dave Reid</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="14%" VALIGN=TOP>
+      <P>
+       <FONT COLOR="SILVER">Detail</FONT></TD>
+     <TD WIDTH="35%" VALIGN=TOP>
+      <P>
+       <SPAN STYLE="font-style : italic;">Neoascia tenur</SPAN></TD>
+     <TD WIDTH="21%" VALIGN=TOP>
+      <P>
+       17/07/1989</TD>
+     <TD WIDTH="29%" VALIGN=TOP>
+      <P>
+       Dave Reid</TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   By putting the location name on a Group band, which is only printed 
+   when the locality changes, we could achieve this. Note that we still 
+   have a detail band, containing the species name, date and the 
+   determiner's name, which prints for each row of data.</P>
+  <P>
+   Similarly you may wish to group the information by sampling date for 
+   that sampling station like this:</P>
+  <P>
+   <TABLE WIDTH="60%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="100%" VALIGN=TOP>
+      <P>
+       Aberithon Turbary station 1</TD>
+    </TR>
+    <TR>
+     <TD WIDTH="100%" VALIGN=TOP>
+      <P>
+       <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+        <TR>
+         <TD WIDTH="10%" VALIGN=TOP></TD>
+         <TD WIDTH="90%" VALIGN=TOP>
+          <P>
+           17/07/1989</TD>
+        </TR>
+        <TR>
+         <TD WIDTH="10%" VALIGN=TOP></TD>
+         <TD WIDTH="90%" VALIGN=TOP>
+          <P>
+           <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+            <TR>
+             <TD WIDTH="10%" VALIGN=TOP></TD>
+             <TD WIDTH="45%" VALIGN=TOP>
+              <P>
+               <SPAN STYLE="font-style : italic;">Anasimyia lineata</SPAN></TD>
+             <TD WIDTH="45%" VALIGN=TOP>
+              <P>
+               Dave Reid</TD>
+            </TR>
+            <TR>
+             <TD WIDTH="10%" VALIGN=TOP></TD>
+             <TD WIDTH="45%" VALIGN=TOP>
+              <P>
+               <SPAN STYLE="font-style : italic;">Helophilus pendulus</SPAN></TD>
+             <TD WIDTH="45%" VALIGN=TOP>
+              <P>
+               Dave Reid</TD>
+            </TR>
+            <TR>
+             <TD WIDTH="10%" VALIGN=TOP></TD>
+             <TD WIDTH="45%" VALIGN=TOP>
+              <P>
+               <SPAN STYLE="font-style : italic;">Neoascia tenur</SPAN></TD>
+             <TD WIDTH="45%" VALIGN=TOP>
+              <P>
+               Dave Reid</TD>
+            </TR>
+           </TABLE></TD>
+        </TR>
+        <TR>
+         <TD WIDTH="10%" VALIGN=TOP></TD>
+         <TD WIDTH="90%" VALIGN=TOP>
+          <P>
+           10/10/1989</TD>
+        </TR>
+        <TR>
+         <TD WIDTH="10%" VALIGN=TOP></TD>
+         <TD WIDTH="90%" VALIGN=TOP>
+          <P>
+           <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+            <TR>
+             <TD WIDTH="10%" VALIGN=TOP></TD>
+             <TD WIDTH="45%" VALIGN=TOP>
+              <P>
+               <SPAN STYLE="font-style : italic;">Helophilus pendulus</SPAN></TD>
+             <TD WIDTH="45%" VALIGN=TOP>
+              <P>
+               Dave Reid</TD>
+            </TR>
+           </TABLE></TD>
+        </TR>
+       </TABLE></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   This needs two Group bands, the first to print when the location 
+   changes and the second when the date changes. In both cases. Now, the 
+   detail band only contains species name and the determiner's name.</P>
+  <P>
+   Group bands can be shown either as &quot;Group headers&quot; which 
+   print a sub-heading at the beginning of a group (as above) or 
+   &quot;Group footers. Footers are particularly useful for printing 
+   sub-totals and other statistical data. Groups can be nested to an 
+   unlimited number of levels, making very complex layouts possible.</P>
+  <P CLASS="warning">
+   Note that the way in which the report is sorted is absolutely 
+   critical when you use group bands. To work properly in this case the 
+   rows MUST be sorted by location and then by date. Group bands print 
+   whenever their controlling expression changes, so if the rows are not 
+   sorted so as to group rows correctly, the report will not print as intended.</P>
+  <P>
+   <A HREF="Group_band_report_-_step_2.htm">Next</A>
+ </BODY>
+</HTML>

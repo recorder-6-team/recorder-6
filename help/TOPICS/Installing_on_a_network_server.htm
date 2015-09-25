@@ -1,0 +1,174 @@
+<HTML>
+ <HEAD>
+  <!-- $MVD$:app("RoboHELP HTML Edition by Blue Sky Software, portions by MicroVision Dev. Inc.","769") -->
+  <!-- $MVD$:template("","0","0") -->
+  <!-- $MVD$:color("18","deefef","Custom #1","0") -->
+  <!-- $MVD$:color("19","f2fefe","Custom #2","0") -->
+  <!-- $MVD$:color("20","cc33ff","Custom #3","0") -->
+  <!-- $MVD$:color("21","dddddd","Custom #4","0") -->
+  <!-- $MVD$:color("22","99ccff","Custom #5","0") -->
+  <!-- $MVD$:color("23","d8fcfb","Custom #6","0") -->
+  <!-- $MVD$:color("24","993399","Custom #7","0") -->
+  <!-- $MVD$:color("25","ffffc1","Custom #8","0") -->
+  <!-- $MVD$:color("26","d00000","Custom #9","0") -->
+  <!-- $MVD$:fontset("Arial","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 3","Verdana","Arial") -->
+  <!-- $MVD$:fontset("Untitled Font Set 4","Verdana","Arial","Times New 12") -->
+  <TITLE>Installing on a network server</TITLE>
+  <META NAME="generator" CONTENT="RoboHELP by Blue Sky Software www.blue-sky.com HTML Edition">
+  <SCRIPT LANGUAGE="javascript" TITLE="BSSC Special Effects" SRC="..\BSSCDHTM.js">
+ </SCRIPT><LINK
+  REL="StyleSheet" HREF="..\StyleSheet.css"></HEAD>
+  <BODY ONLOAD="BSSCOnLoad();" ONCLICK="BSSCOnClick();" ONUNLOAD="BSSCOnUnload();">
+  <P>
+   <TABLE WIDTH="100%" CELLPADDING="2" CELLSPACING="0" BORDER="0">
+    <TR>
+     <TD WIDTH="50%" VALIGN=TOP>
+      <H1>
+       Installing on a network server</TD>
+     <TD WIDTH="50%" VALIGN=TOP></TD>
+    </TR>
+   </TABLE></P>
+  <P>
+   <SPAN STYLE="font-style : italic;">Recorder 6</SPAN> is a Microsoft 
+   SQL Server system so users need a version of SQL Server to run it. It 
+   is supported when used with:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    SQL Server 2000, or its free run-time version, MSDE, Microsoft SQL 
+    Server 2000 Desktop Engine.<BR>
+    <LI CLASS="mvd-P">SQL Server 2005, or its free run-time version, SQL 
+    Server 2005 Express.<BR>
+    <LI CLASS="mvd-P">SQL Server 2008, or its free run-time version, SQL 
+    Server 2008 Express.</P>
+   </UL>
+  <P>
+   If you already have SQL Server installed, you will be able to install <SPAN STYLE="font-style : italic;">Recorder
+    6</SPAN> using your existing SQL Server instance. If not, you will 
+   be able to download and install SQL Server Express from a Microsoft 
+   web-site then install <SPAN STYLE="font-style : italic;">Recorder 6</SPAN>.
+    Alternatively, you may wish to buy SQL Server so that you can take 
+   advantage of more of the functionality available. If you are in any 
+   doubt about which version to use, please request advice from the 
+   supplier of your copy of <SPAN STYLE="font-style : italic;">Recorder, </SPAN><SPAN STYLE="font-style : normal;">or</SPAN><SPAN STYLE="font-style : italic;"> </SPAN>via
+    the <SPAN STYLE="font-style : italic;">Recorder </SPAN>Forum, part 
+   of the <A HREF="http://forums.nbn.org.uk/index.php">NBN Forum</A>, as 
+   to which version is most appropriate for you. Prior to version 6.14 
+   the installation CDs had MSDE on them. The version 6.14 and 6.15 
+   disks had SQL Server 2005 Express on them but later versions do not 
+   contain SQL Server because different versions are available for 
+   32-bit and 64-bit computers and because Microsoft upgrades may 
+   necessitate using the latest version of SQL Server for installing <SPAN STYLE="font-style : italic;">Recorder
+    6</SPAN>.</P>
+  <P>
+   There are standalone and network installation guides in the 
+   Documentation folder on all the <SPAN STYLE="font-style : italic;">Recorder
+    6</SPAN> installation DVDs and in the <A HREF="http://jncc.defra.gov.uk/page-4912">Resources</A> 
+   section of the <SPAN STYLE="font-style : italic;">Recorder</SPAN> web 
+   site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A>.
+    They have not been updated for some time but they still contain much 
+   useful information. Please refer to these for more information about 
+   SQL Server, the system requirements and installing <SPAN STYLE="font-style : italic;">Recorder
+    6</SPAN>, or request updated information via the <A HREF="http://forums.nbn.org.uk/index.php">NBN
+    Forum</A>.</P>
+  <P>
+   Installing on a network is a much more involved process than a 
+   standalone installation and should only be attempted by someone who 
+   knows the network in question and is knowledgeable about such 
+   procedures. The network installation guide should provide the 
+   information they will require but, in summary, the steps are:</P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    Creating an instance of SQL Server Express - only required if an 
+    existing instance of SQL Server is not already available for <SPAN STYLE="font-style : italic;">Recorder
+     6</SPAN> to use. Note that this stage must be performed directly on 
+    the database server - not via a workstation.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Creating the <SPAN STYLE="font-style : italic;">Recorder 6</SPAN> 
+    database (NBNData_Data.MDF) and attaching it to the instance of SQL 
+    Server. Note that this stage must be performed directly on the 
+    database server - not via a workstation.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Installing the <SPAN STYLE="font-style : italic;">Recorder 6</SPAN> 
+    files on the file server. This stage may be performed via a workstation.</P>
+   <LI CLASS="mvd-P">
+   <P>
+    Performing workstation installations. Prior to installation ensure 
+    that the workstation has a drive mapping to the file server. The 
+    mappings from each of the workstations should be identical. Do not 
+    install using the DVD. Navigate to WorkstationSetup.exe in the <SPAN STYLE="font-style : italic;">Recorder
+     6</SPAN> server folder and double click on it to install <SPAN STYLE="font-style : italic;">Recorder
+     6</SPAN> on a workstation. This needs to be done on each workstation.</P>
+   </UL>
+  <P>
+   The second and third steps are performed by inserting the 
+   installation DVD, selecting 'Install Recorder 6 on your network' then 
+   selecting the appropriate option. For more details see the example 
+   network installation in the network installation guide.</P>
+  <P>
+   If you are installing <SPAN STYLE="font-style : italic;">Recorder 6</SPAN> 
+   on the same computer as your <SPAN STYLE="font-style : italic;">Recorder
+    2002</SPAN> system, the installation process will pick up your Site 
+   ID from <SPAN STYLE="font-style : italic;">Recorder 2002</SPAN>. 
+   Otherwise, you will be asked to enter your Site ID and verification 
+   key. You will find these on the licence agreement you received with 
+   the installation DVD.</P>
+  <P>
+   <FONT COLOR="BLACK">The network installation guide also contains 
+   information on:</FONT></P>
+  <UL>
+   <LI CLASS="mvd-P">
+   <P>
+    <FONT COLOR="BLACK">Transferring data from </FONT><SPAN STYLE="font-style : italic;"><FONT COLOR="BLACK">Recorder
+     2002</FONT></SPAN><FONT COLOR="BLACK"> to </FONT><SPAN STYLE="font-style : italic;"><FONT COLOR="BLACK">Recorder
+     6,</FONT></SPAN><FONT COLOR="BLACK"> although more detailed 
+    information is available </FONT>in the<FONT COLOR="BLACK"> <A HREF="http://jncc.defra.gov.uk/page-4986">Recorder
+     2002 Resources</A> section of </FONT>the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+    web site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A><BR>
+    <LI CLASS="mvd-P"><FONT COLOR="BLACK">SQL Server permissions, 
+    security and login options</FONT><BR>
+    <LI CLASS="mvd-P"><FONT COLOR="BLACK">Comparisons of the different 
+    versions of SQL Server</FONT><BR>
+    <LI CLASS="mvd-P"><FONT COLOR="BLACK">Migrating from MSDE to SQL Server</FONT><BR>
+    <LI CLASS="mvd-P"><FONT COLOR="BLACK">Backing up the database</FONT><BR>
+    <LI CLASS="mvd-P"><FONT COLOR="BLACK">Uninstalling </FONT><SPAN STYLE="font-style : italic;"><FONT COLOR="BLACK">Recorder
+     6</FONT></SPAN><BR>
+    <LI CLASS="mvd-P"><FONT COLOR="BLACK">The installation folders</FONT><BR>
+    <LI CLASS="mvd-P"><FONT COLOR="BLACK">The registry settings.</FONT></P>
+   </UL>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note:</SPAN> The network 
+   installation DVD can be used to install <SPAN STYLE="font-style : italic;">Recorder
+    6</SPAN> on a network or on a standalone computer, although there is 
+   a separate DVD for <A HREF="Installing_on_a_single_machine.htm">standalone
+    installations</A>.</P>
+  <P CLASS="note">
+   <SPAN STYLE="font-weight : bold;">Note:</SPAN> <SPAN STYLE="font-style : italic;">Recorder
+    6</SPAN> version 6.17 is officially supported for use with <SPAN STYLE="font-weight : bold;">Microsoft
+    Vista</SPAN> and <SPAN STYLE="font-weight : bold;">Windows 7</SPAN> 
+   but the installation guides have not yet been updated. Until they are<A HREF="http://www.jncc.gov.uk/recorder">,</A> 
+   for more information, please consult the <SPAN STYLE="font-style : italic;">Recorder
+    </SPAN>Forum, part of the <A HREF="http://forums.nbn.org.uk/index.php">NBN
+    Forum</A>, or contact the supplier of your copy of <SPAN STYLE="font-style : italic;">Recorder</SPAN>,
+    or any of the <SPAN STYLE="font-style : italic;">Recorder</SPAN> 
+   suppliers who are listed on the <SPAN STYLE="font-style : italic;">Recorder</SPAN><SPAN STYLE="font-style : normal;"> </SPAN>web
+    site, <A HREF="http://www.jncc.gov.uk/recorder">www.jncc.gov.uk/recorder</A>.</P>
+  <P>
+   <OBJECT
+    CLASSID="clsid:ADB880A6-D8FF-11CF-9377-00AA003B7A11"
+    ID="RelatedTopics"
+    ALIGN=BOTTOM
+    BORDER="0"
+    VSPACE="0"
+    HSPACE="0"><PARAM
+    NAME="Command" VALUE="Related Topics,MENU"><PARAM
+    NAME="Button" VALUE="Text:Related Topics"><PARAM
+    NAME="Font" VALUE="MS Sans Serif,8,0,,"><PARAM
+    NAME="Item1" VALUE="Installing on a single machine;Installing_on_a_single_machine.htm"><PARAM
+    NAME="Item2" VALUE="Location of files on a networked installation;Location_of_files_on_a_networked_installation.htm"></OBJECT>
+ </BODY>
+</HTML>

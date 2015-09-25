@@ -1,0 +1,94 @@
+version 6.17.0.9 of 17/12/2012
+
+- fix a bug in the SQL Server function to write date to the output file. This caused leap years to be handled
+  incorrectly.
+
+- Truncate Recorder and Determiner names(s) to 140 characters (the size of the fiesl used by the NBN Gateway
+  database). The maximum length of 255 for these fields, shown below, was an incorrectly specified by NBN!
+
+version 6.15 release 1 12/07/2010
+
+- fixed a bug where "-Y" type dates where output as "yyyy -"
+
+- changed the options screen so that sample type, comment and measurements are not selected by default. The user has
+  to explicitly set these options if they want them. With theses items selected by default, the NBN Data Officers felt that 
+  they needed to contact users each time one of these columns appeared in submitted datasets to make sure they really meant
+  to export this data.
+
+- date type "P" (Season year) is not supported by NBN Gateway. They can equally be interpreted as a month range (i.e.
+  type "OO" - in which case "Spring 2010" will be interpreted as "March - May 2010"). So the nbn_exchange_basic_update
+  stored procedure now changes DateType "P" to "OO" in the temporary tablebefore output is written.
+
+- date types "S" (season without a year) and "M" (month without a year) are not supported by the NBN Gateway. So the 
+  nbn_exchange_basic_update stored procedure now drops rows with these date types from the temporary table before output 
+  is written.
+
+- the East and North fields are removed if they are unused. The grid ref is output if the SPATIAL_REF_SYSTEM is "OSGB" or
+  "OSNI", otherwise the LAT and LONG values are output to the East and North fields. In most cases, terrestrial and
+  freshwater data from the UK will not have any rows where the East and North fields are used. Therefore these rows are dropped
+  from the temp table if they are empty after spatial refs have all been processed. Effects the nbn_exchange_basic_update
+  stored procedure.
+
+- The NBN Gateway allows a maximum of 255 characters for Recorder and Determiner names and Attribute names and a max of 80
+  characters for the SiteName. The output from these fields is therefore truncated (at the nearest word boundary) to honour
+  these limitations.
+
+- Early versions of this addin populated the SiteName field with a concatenation of the SAMPLE.LOCATION_NAME and the preferred
+  ITEM_NAME of the LOCATION. But this often produced a string that was too long for the 80 character limit on the NBN Gateway's
+  SiteName field. So 6.13 was changed so that the SAMPLE.LOCATION_NAME was used  and then, in cases where the result was empty,
+  the LOCATION ITEM_NAME was used. However, this is not always what users want. So this version has an option by which the user
+  can choose to populate SiteName with either SAMPLE.LOCATION_NAME first or LOCATION ITEM_NAME first and then use the other field 
+  to fill blanks. This required changes in the options screen and aslo changes to the nbn_exchange_basic_update stored 
+  procedure so that it can be passed a parameter indicating the user's choice.
+
+version 6.13 release 2 21/01/2009
+
+- Fixed so that SAMPLE.LOCATION_NAME is returned in the SiteName field if no LOCATION is specified in a record.
+  This change affects the Stored Procedure nbn_exchange_basic_update
+  "OR LEN(SiteName)=0" added to the WHERE clause so that the it happens whether the SiteName field is either NULL or empty
+
+- Strip RTF codes from comments
+  This change affects Stored Procedure nbn_exchange_add_comment
+  Comments are passed through the Rec6 user defined function ufn_RtfToPlaintext. Note that this is SLOW!
+
+- Strip Return and Linefeed characters from comments
+  This change affects Stored Procedure nbn_exchange_add_comment
+  A new user defined function nbn_exchange_strip_LFCR is added to do this
+
+These two changes have quite a performance hit. To minimise this, the Stored procedure works as follows:
+  - queries the records to be exported for cases WHERE comments start "{\rtf" and passes them through ufn_RtfToPlaintext
+  - queries records to be exported where the export comment field is still null and WHERE comments contains CR or LF
+    and passes them through nbn_exchange_strip_LFCR
+  - simply copies in the comment for any remaining records where the output comment field is still null
+
+- Fix for problems where the addin fails to export anything.
+
+  It seems that the Recorder interface function IExportFilter6.ExportFileWithFilteredInvalids is not reporting the 
+  LastExportError from the addin if it returns False (as IExportFilter.ExportFile does). 
+  Consequently exceptions in the addin are "silent". If the addin encountered an error, it just terminated without
+  Recorder reporting any error message.
+  Fixed to show its own error message if an exception occurs internally.
+
+  One reason this happened was due to an unusaul condition where nbn_exchange_date_to_string attempted to convert a NULL date 
+  to a string and got stuck in an infinite loop. This (eventually) caused a time-out exception. The user defined function
+  nbn_exchange_date_to_string has been modified to break out of this loop. The way dates are handled by Stored Procedure 
+  nbn_exchange_basic_update has been modified to ensure NULL dates are exported as expected.
+
+  Another reason (Craig Slawson's problem) was that one of his measurement fields was called "Substrate" - which duplicates
+  an existing field name. This caused an SQL error when trying to add the duplicate column name to the temporary table. 
+  Such duplicated names are now suffixed with a digit - starting at 2. So in this case, the measurement will be 
+  labeled "Substrate2" in the export file.
+
+
+- Fixed problems reported by Charles Roper and Les Hill where the exporter times out during large exports.
+  The routine to call the Stored Procedures now sets the CommandTimeout parameter to zero (it was previously
+  using the default setting of 30 secs). Zero means "never timeout". With big datasets, this could be caused
+  by the SQL which finds which MEASUREMENT_QUALIFIERs are used. This can be made a lot faster by putting an index
+  on MEASUREMENT_QUALIFIER_KET in TAXON_OCCURRENCE_DATA.
+
+- Records attached to user-added species were being exported. This causes problems when attempting to import
+  at the NBN Gateway end because the TAXON_VERSION_KEY is not in the NBN Taxon Dictionary. 
+  Fixed so that rows where the TAXON_VERSION entry is not system supplied are no longer exported. 
+
+- Using the [Cancel] button in the options dialog was not actually cancelling the export and produced an error
+  message. Fixed.

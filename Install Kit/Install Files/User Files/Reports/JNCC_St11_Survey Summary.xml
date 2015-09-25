@@ -1,0 +1,78 @@
+<?xml version="1.0" ?> 
+<CustomReport menupath="System Supplied\Statistics" title="St11 Survey Summary Report" description="Lists summary information for all surveys in the database which the user can access"> 
+<SQL>
+<Where keytype="default">
+SELECT 
+	S.Survey_Key,
+	S.Item_Name, 
+	dbo.ufn_GetFormattedName(S.Run_By) AS Run_By,
+	S.From_Vague_Date_Start,
+	S.From_Vague_Date_End,
+	S.From_Vague_Date_Type,
+	S.To_Vague_Date_Start,
+	S.To_Vague_Date_End,
+	S.To_Vague_Date_Type,
+	S.Op_From_Vague_Date_Start,
+	S.Op_From_Vague_Date_End,
+	S.Op_From_Vague_Date_Type,
+	S.Op_To_Vague_Date_Start,
+	S.Op_To_Vague_Date_End,
+	S.Op_To_Vague_Date_Type,
+	S.Description,
+	SS.Short_Name AS Survey_Status,
+	S.Geographic_Coverage,
+	S.SW_Spatial_Ref,
+	S.SW_Lat, 
+	S.SW_Long, 
+	S.Spatial_Ref_System,
+	S.NE_Spatial_Ref,
+	S.NE_Lat, 
+	S.NE_Long
+INTO #TempFields
+FROM Survey S
+INNER JOIN Survey_Status SS ON SS.Survey_Status_Key=S.Survey_Status_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = S.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+WHERE
+USR.Name_Key IS NULL
+
+
+
+SELECT S.Survey_Key, Count(XO.Taxon_Occurrence_Key) AS Records
+INTO #TempCount
+FROM Survey S
+JOIN Survey_Event SE ON SE.Survey_Key=S.Survey_Key
+JOIN Sample SM ON SM.Survey_Event_Key=SE.Survey_Event_Key
+JOIN Taxon_Occurrence XO ON XO.Sample_Key=SM.Sample_Key
+GROUP BY S.Survey_Key
+
+SELECT TF.*, TC.Records
+FROM #TempFields TF
+JOIN #TempCount TC ON TC.Survey_Key=TF.Survey_Key
+ORDER BY TF.Item_Name
+
+
+DROP TABLE #TempFields
+DROP TABLE #TempCount
+
+
+</Where>
+</SQL>
+<Columns>
+<Column name="Survey_Key" visible="false" tablename="Survey" />
+<Column name="Spatial_Ref_System" visible="false"/>
+<Column name="Item_Name" caption="Survey Name" width="300" position="1" />
+<Column name="Run_By" caption="Run By" width="300" position="2" />
+<Column name="From_Vague_Date_Start" caption="Records allowed from" width="140" position="3" />
+<Column name="to_Vague_Date_Start" caption="Records allowed to" width="140" position="4" />
+<Column name="Op_From_Vague_Date_Start" caption="Survey operating from" width="140" position="5" />
+<Column name="Op_To_Vague_Date_Start" caption="Survey operating to" width="140" position="6" />
+<Column name="Description" width="300" position="7" />
+<Column name="Survey_Status" caption="Survey Status" width="160" position="8" />
+<Column name="Geographic_coverage" caption="Geographic coverage" width="250" position="9" />
+<Column name="SW_Spatial_Ref" caption="Bounding Box - SW Spatial Ref" width="180" position="10"/>
+<Column name="NE_Spatial_Ref" caption="Bounding Box - NE Spatial Ref" width="180" position="11"/>
+<Column name="Records" caption="Number of Records" width="160" position="12" />
+</Columns>
+</CustomReport>

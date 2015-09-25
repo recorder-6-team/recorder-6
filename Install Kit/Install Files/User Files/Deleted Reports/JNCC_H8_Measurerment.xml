@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Lists the Measurement Qualifier used on records
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 1 - April 17 2009
+
+   
+            
+ --> 
+
+
+ 
+<CustomReport menupath="Redundant Reports"  title="H8 - Measurement Qualifier used on records" 
+description="Please delete file 'JNCC_H8_Measurerment.xml' from your Recorder user\reports folder
+It has been replaced by a report of the same name in System Reports/Information.
+" >
+
+<SQL>
+
+<Where keytype="Default">
+Select Distinct 'Please delete this report' as Message From setting
+
+
+</Where>
+
+
+</SQL>
+<Columns>
+ 
+ 
+</Columns>
+</CustomReport>

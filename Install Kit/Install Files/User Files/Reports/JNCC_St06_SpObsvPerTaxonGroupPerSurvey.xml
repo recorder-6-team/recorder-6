@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+
+<!-- JNCC Statistics 6: Number of species observations per taxon group per survey
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert, for JNCC
+     Version 5 - 28 November 2014
+        modified for user_survey_restrictions
+--> 
+
+<CustomReport menupath="System Supplied\Statistics" title="St06 Number of species observations per taxon group per survey" description="Lists all surveys that contain species observations, and for each one, each taxon group that has species observations along with the number of observations.">
+
+<SQL>
+<Where Keytype="Default">
+SELECT 
+Sv.Survey_Key, Sv.Item_Name, 
+TV.Output_Group_Key, TG.Taxon_Group_Name, TG.Sort_Order,  
+Count(TOcc.Taxon_Occurrence_Key) AS CountOfTOccKey
+
+FROM Survey Sv 
+INNER JOIN Survey_Event SE ON Sv.Survey_Key = SE.Survey_Key 
+INNER JOIN Sample S ON SE.Survey_Event_Key = S.Survey_Event_Key 
+INNER JOIN Taxon_Occurrence TOcc ON S.Sample_Key = TOcc.Sample_Key 
+INNER JOIN Taxon_Determination TDet ON TOcc.Taxon_Occurrence_Key = TDet.Taxon_Occurrence_Key 
+INNER JOIN Taxon_List_Item TLI ON TDet.Taxon_List_Item_Key = TLI.Taxon_List_Item_Key 
+INNER JOIN  Taxon_Version TV ON TLI.Taxon_Version_Key = TV.Taxon_Version_Key 
+LEFT JOIN Taxon_Group TG ON TV.Output_Group_Key = TG.Taxon_Group_Key
+
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SV.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+WHERE
+USR.Name_Key IS NULL
+
+
+GROUP BY Sv.Survey_Key, Sv.Item_Name, TV.Output_Group_Key, TG.Taxon_Group_Name, TG.Sort_Order, TDet.Preferred
+
+Having TDet.Preferred=1
+
+
+
+ORDER BY Sv.Item_Name, TG.Sort_Order
+
+</Where>
+
+</SQL>
+
+<Columns>
+<Column name="Survey_Key" caption="Survey key" width="120" position="1"/>
+<Column name="Item_Name" caption="Survey name" width="280" position="2"/>
+<Column name="Output_Group_Key" caption="Group key" width="120" position="3"/>
+<Column name="Sort_Order" caption="Sort order" width="80" position="4"/>
+<Column name="Taxon_Group_Name" caption="Taxon group" width="200" position="5"/>
+<Column name="CountOfTOccKey" caption="No sp obsv" width="80" position="6"/>
+</Columns>
+
+</CustomReport>

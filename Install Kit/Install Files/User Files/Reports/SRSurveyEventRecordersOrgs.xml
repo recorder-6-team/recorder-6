@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+
+<!-- Lists the survey events with recorders that are Organisations not Individuals
+            
+     XML Report by Sally Rankin, JNCC Recorder Approved Expert
+     Version 1, March 14 2011
+--> 
+
+<CustomReport menupath="System Supplied\Problem Identification" title="Survey event recorders that are Organisations" description="Lists the survey events with recorders that are Organisations not Individuals">
+
+<SQL>
+
+<Where Keytype="Default">
+
+SELECT SER.Survey_Event_Key, SER.Name_Key, O.Full_Name
+FROM Survey_Event_Recorder SER 
+INNER JOIN NAME N ON SER.Name_Key = N.Name_Key 
+INNER JOIN Organisation O ON N.Name_Key = O.Name_Key
+
+</Where>
+
+</SQL>
+
+</CustomReport>
+

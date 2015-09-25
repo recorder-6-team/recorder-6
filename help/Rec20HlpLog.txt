@@ -1,0 +1,716 @@
+Microsoft HTML Help Compiler 4.73.8198
+
+Compiling c:\Documents and Settings\Sally\My Documents\Rec6 2011\R6 Help 110105\RecHelp version 6\Rec20Hlp.chm-temp
+
+Topics\Finding_Documents.htm
+Topics\Finding_Names_and_Addresses.htm
+Topics\Finding_Biotopes.htm
+Topics\Finding_taxa.htm
+Topics\Finding_Locations.htm
+Topics\Finding_Things.htm
+Topics\Getting_Help.htm
+Topics\Overview.htm
+Topics\Return_Data.htm
+Topics\Data_Transfer.htm
+Topics\Spatial_References_Overview.htm
+Topics\Vague_Dates.htm
+Topics\Sorting.htm
+Topics\Add.htm
+Topics\Related_Data.htm
+Topics\Finding_Samples.htm
+Topics\Finding_Survey_Events.htm
+Topics\Edit_Menu.htm
+Topics\Sources.htm
+Topics\Measurements.htm
+Topics\Extensibility_and_Customisation.htm
+Topics\Import.htm
+Topics\Export.htm
+Topics\Bounding_Boxes.htm
+Topics\Grid_References_and_Spurious_Accuracy.htm
+Topics\Date_Validation.htm
+Topics\Help_Menu.htm
+Topics\Tools_Menu.htm
+Topics\Map_Menu.htm
+Topics\Dictionaries_Menu.htm
+Topics\Data_Entry_Menu.htm
+Topics\Duplicate_Items.htm
+Topics\Options_Spatial_References.htm
+Topics\Options_File_Locations.htm
+Topics\Options_Appearance.htm
+Topics\Options_Main_Toolbar.htm
+Topics\Login_Screen.htm
+Topics\Options_General.htm
+Topics\Changing_Your_Password.htm
+Topics\User_Configuration.htm
+Topics\User_Access_Levels.htm
+Topics\Welcome_Screen.htm
+Topics\Install_Addin.htm
+Topics\Writing_Addins.htm
+Topics\DMAP_Export.htm
+Topics\Invalid_Items.htm
+Topics\Rucksack.htm
+Topics\Location_Other_Info_Tab.htm
+Topics\Documents_General_Tab.htm
+Topics\Documents_Overview.htm
+Topics\Location_Approach_Tab.htm
+Topics\Location_Tenure_Tab.htm
+Topics\Location_Uses_Tab.htm
+Topics\Location_Relations_Tab.htm
+Topics\Location_Boundaries_Tab.htm
+Topics\Location_Land_Parcel_Tab.htm
+Topics\Location_Administrative_Areas_Tab.htm
+Topics\Geographical_Information.htm
+Topics\Location_Designations_Tab.htm
+Topics\Location_General_Tab.htm
+Topics\Location_Overview.htm
+Topics\Options_Default_Settings.htm
+Topics\Location_Grid_Squares_Tab.htm
+Topics\Documents_Details_Tab.htm
+Topics\Features_Overview.htm
+Topics\Names_and_Addresses_Addresses_Tab.htm
+Topics\Documents_Other_Tab.htm
+Topics\Names_and_Addresses_Contact_Nos_Tab.htm
+Topics\Special_Considerations.htm
+Topics\Names_and_Addresses_Organisation_Tab.htm
+Topics\Names_and_Addresses_Individual_Tab.htm
+Topics\Individuals_and_Organisations.htm
+Topics\Names_and_Addresses_Overview.htm
+Topics\Features_Damage_Occs_Tab.htm
+Topics\Features_Pot_Threats_Tab.htm
+Topics\Features_Management_Aims_Tab.htm
+Topics\Features_General_Tab.htm
+Topics\Names_and_Addresses_Comms_Tab.htm
+Topics\Sample_General_Tab.htm
+Topics\Sample_Overview.htm
+Topics\Survey_Events_General_Tab.htm
+Topics\Survey_Events_Overview.htm
+Topics\Surveys_Geography_Tab.htm
+Topics\Surveys_General_Tab.htm
+Topics\Surveys_Overview.htm
+Topics\Names_and_Addresses_Biography_Tab.htm
+Topics\Names_and_Addresses_Assocs_Tab.htm
+Topics\Sample_Related_Samples_Tab.htm
+Topics\Sample_Recorder(s)_Tab.htm
+Topics\Taxon_Determinations.htm
+Topics\Biotope_Occurrence_Overview.htm
+Topics\Taxon_Occurrence_Overview.htm
+Topics\Term-list_Overview.htm
+Topics\Sharing_Record_Cards_with_Others.htm
+Topics\New_Recording_Card.htm
+Topics\System_Supplied_vs_User_Added.htm
+Topics\Merge_Data_Items.htm
+Topics\Biotope_Occurrence_General_Tab.htm
+Topics\Taxon_Occurrence_Specimens_Tab.htm
+Topics\Taxon_Occurence_Related_Occs_Tab.htm
+Topics\Taxon_Occurrence_General_Tab.htm
+Topics\Determination_verification.htm
+Topics\Quick_Record_Entry_Overview.htm
+Topics\Biotope_Dictionary_Browser.htm
+Topics\Taxon_Dictionary_Browser.htm
+Topics\How_to_get_taxabiotopes_added.htm
+Topics\Dictionary_Upgrades.htm
+Topics\Dictionaries_Overview.htm
+Topics\Admin_Area_Dictionary_Browser.htm
+Topics\Supply_of_Maps.htm
+Topics\Background_vs_Polygons.htm
+Topics\Maps_Overview.htm
+Topics\New_Biotopes_Facts_Tab.htm
+Topics\New_Biotopes_General_Tab.htm
+Topics\Edit_Taxa_Facts_Tab.htm
+Topics\Edit_Taxa_Statuses_Tab.htm
+Topics\Edit_Taxa_General_Tab.htm
+Topics\Report_Wizard_Sort_Attributes.htm
+Topics\Report_Wizard_Select_Attributes.htm
+Topics\The_Map_Browser.htm
+Topics\Report_Wizard_Layout_Selection.htm
+Topics\Report_Wizard_Select_Report_Style.htm
+Topics\Running_Reports.htm
+Topics\Reporting_Overview.htm
+Topics\Getting_Grid_References_or_Locations_from_Maps.htm
+Topics\Entering_records_by_placing_sample_icons.htm
+Topics\Linking_Polygons_to_Locations.htm
+Topics\Drawing_Polygons.htm
+Topics\Importing_Polygons.htm
+Topics\Selection_by_Bounding_Box.htm
+Topics\Main_Windows.htm
+Topics\Selection_by_Name.htm
+Topics\Additional_Filters_Contraints.htm
+Topics\Additional_Filters_Conditions.htm
+Topics\Filter_by_Bounding_Box.htm
+Topics\Filter_by_Admin_Area.htm
+Topics\Filter_by_Source.htm
+Topics\Report_Wizard_Filter_Result.htm
+Topics\Report_Wizard_Summary.htm
+Topics\Modes.htm
+Topics\Report_Wizard_Taxa_Selection.htm
+Topics\Vector_Raster_maps.htm
+Topics\Drag_and_Drop.htm
+Topics\Copy_and_Paste.htm
+Topics\Find_Dialog.htm
+Topics\Two_Digit_Years.htm
+Topics\Standard_Dates.htm
+Topics\Vague_Dates_Stored.htm
+Topics\Arranging_Windows.htm
+Topics\Delete.htm
+Topics\Map_Browser_Pointer.htm
+Topics\MapServer.htm
+Topics\Base_Map.htm
+Topics\Removing_Symbols.htm
+Topics\Cut-In_and_Cut-Out_Scales.htm
+Topics\Removing_Map_Layers.htm
+Topics\Adding_Map_Layers.htm
+Topics\Map_Settings.htm
+Topics\Map_Layers.htm
+Topics\Grid_Overlay.htm
+Topics\Symbol_Size.htm
+Topics\Distribution_Maps.htm
+Topics\Deleting_Polygons.htm
+Topics\Adding_Site_Boundaries.htm
+Topics\Map_Browser_Pan.htm
+Topics\Map_Browser_Full_Zoom.htm
+Topics\Map_Browser_Un-Zoom.htm
+Topics\Map_Browser_Zoom_In.htm
+Topics\Printing_Maps.htm
+Topics\Report_Wizard_Add_Items.htm
+Topics\Entering_Data_Using_a_Recording_Card.htm
+Topics\Saving_a_Record_Card.htm
+Topics\Source_Selection.htm
+Topics\Options_Overview.htm
+Topics\Observations.htm
+Topics\Menus.htm
+Topics\Cut-off_Year.htm
+Topics\Accessing_the_Database_from_Other_Software.htm
+Topics\UTM_Co-ordinates.htm
+Topics\Latitude_and_Longitude.htm
+Topics\OS_National_Grid_for_Ireland.htm
+Topics\How_Spatial_References_are_Stored.htm
+Topics\Using_Items.htm
+Topics\Adding_or_Deleting_Items.htm
+Topics\Saving_and_Loading_Rucksacks.htm
+Topics\Report_about_a_place.htm
+Topics\Report_Wizard_Biotope_Selection.htm
+Topics\Report_Wizard_Remove_Items.htm
+Topics\OS_National_Grid_for_GB.htm
+Topics\Location_Hierarchies.htm
+Topics\Report_Wizard_Print_Preview.htm
+Topics\Additional_Filters_Overview.htm
+Topics\New_Biotopes_Overview.htm
+Topics\Edit_Taxa_Overview.htm
+Topics\Authors_and_Editors.htm
+Topics\Taxon_Occurence_Measurements.htm
+Topics\Observation_Window.htm
+Topics\Editing_an_Item.htm
+Topics\Confidential_Observations.htm
+Topics\Biotope_Occurrence_Measurements_Tab.htm
+Topics\NBN_Globally_Unique_Identifiers.htm
+Topics\Taxon_Browser_Detail.htm
+Topics\Taxon_Browser_List.htm
+Topics\Export_to_NBN_Data.htm
+Topics\XML.htm
+Topics\NBN_Transfer_Format.htm
+Topics\Negative_Records.htm
+Topics\Checking_Occurrence_Records.htm
+Topics\Taxon_Browser_Hierarchy.htm
+Topics\Update_Last_Key.htm
+Topics\RTF_Memos.htm
+Topics\Species_Card.htm
+Topics\Simple_filter.htm
+Topics\Duplication_Resulting_From_Import.htm
+Topics\Linked_Lists.htm
+Topics\Adding_a_Term_to_a_List.htm
+Topics\Map_formats.htm
+Topics\Window_Menu.htm
+Topics\Reports_Menu.htm
+Topics\File_Menu.htm
+Topics\Org_indiviuals.htm
+Topics\Finding_Admin_Areas.htm
+Topics\Report_Wizard_Printing_a_report.htm
+Topics\Finding_related_taxon_occurrences.htm
+Topics\Abbreviated_species_names.htm
+Topics\Finding_Surveys.htm
+Topics\Saving_a_query.htm
+Topics\Information_to_track_changes_to_items.htm
+Glossary\Meta-data.htm
+Glossary\COM.htm
+Glossary\Taxon.htm
+Glossary\Biotope.htm
+Topics\Standard_reports.htm
+Topics\Selecting_a_base_map.htm
+Topics\First_XML_export.htm
+Topics\Related_site_types.htm
+Topics\Page_tabs.htm
+Glossary\NBN.htm
+Topics\View_Menu.htm
+Topics\Installing_on_a_single_machine.htm
+Glossary\HTML.htm
+Glossary\Winzip.htm
+Glossary\DISTINCT.htm
+Glossary\XML_glossary.htm
+Glossary\GIS.htm
+Glossary\TIFF.htm
+Topics\Uninstalling.htm
+Topics\Installing_on_a_network_server.htm
+Glossary\DTD.htm
+Topics\Conventions.htm
+Topics\Backups.htm
+Topics\Sample_type_term_list.htm
+Topics\Problems.htm
+Topics\Hiding_or_Showing_dictionary_details.htm
+Glossary\Raster.htm
+Glossary\Run.htm
+Glossary\Run1.htm
+Glossary\System Registry.htm
+Glossary\Vector.htm
+Glossary\Comma delimited text.htm
+Topics\Info.htm
+Topics\Map_Options_-_Base_Map.htm
+Topics\Map_Options_Map_layers.htm
+Topics\Map_order.htm
+Topics\Map_Options.htm
+Topics\Map_Options_-_Distribution_Symbols.htm
+Topics\Adding_Taxon_or_Biotope_facts.htm
+Report Designer\Font_colour.htm
+Report Designer\Justification.htm
+Report Designer\Designing_a_report_3.htm
+Report Designer\Cut_and_paste.htm
+Report Designer\Element_priority.htm
+Report Designer\Alignment.htm
+Report Designer\Designing_a_report_1.htm
+Topics\Upgrading.htm
+Topics\Finding_a_Location_on_the_map.htm
+Topics\Finding_observations_from_a_distribution_map.htm
+Report Designer\Designing_a_report_2.htm
+Report Designer\System_information.htm
+Report Designer\Database_fields.htm
+Report Designer\Text_buttons.htm
+Report Designer\Simple_report_layout_-_step_1.htm
+Report Designer\Simple_report_layout_-_step_3.htm
+Report Designer\Simple_report_layout_-_step_4.htm
+Report Designer\Graphics_buttons.htm
+Report Designer\Simple_report_layout_-_step_6.htm
+Report Designer\Simple_report_layout_-_step_2.htm
+Report Designer\grab_handles.htm
+Report Designer\Frame.htm
+Report Designer\Data_fields.htm
+Report Designer\Design_area.htm
+Report Designer\Selector.htm
+Report Designer\Band_selection_buttons.htm
+Report Designer\Simple_report_layout_-_step_5.htm
+Topics\Measurements_term_list.htm
+Topics\submit_to_a_scheme.htm
+Glossary\MAPI.htm
+Topics\Report_Wizard_Polygon_Selection.htm
+Topics\Map_registration.htm
+Topics\Save_map.htm
+Topics\Export_rucksack.htm
+Topics\Edit_Taxon_Name_Tab.htm
+Report Designer\Group_band_report_-_step_2.htm
+Report Designer\Group_band_report_-_step_3.htm
+Report Designer\Group_band_report_-_step_4.htm
+Report Designer\Simple_report_layout_-_step_8.htm
+Report Designer\Group_band_report_-_step_1.htm
+Report Designer\Simple_report_layout_-_step_7.htm
+Topics\Polygon_settings.htm
+Topics\Location_report.htm
+Topics\Export_to_NBN_Access_Database.htm
+Topics\Menu_styles.htm
+Topics\Moving_polygons_between_layers.htm
+Topics\Common_names.htm
+Topics\Map_tiles_for_NBN_use.htm
+Topics\Recording_Card_Columns.htm
+Topics\Edit_Taxon_Group.htm
+Topics\Display_Unchecked.htm
+Topics\Taxon_Group_Index.htm
+Topics\Navigating_in_the_Recording_Card.htm
+Topics\Location_of_files_on_a_networked_installation.htm
+Topics\Transfer_of_ownership.htm
+Topics\Export_filters.htm
+Topics\Export_management.htm
+Topics\Transfer_ownership_of_database.htm
+Topics\Import_Wizard_template_selection.htm
+Topics\Import_Wizard_column_types_selection.htm
+Topics\Import_Wizard_missing_data_selection.htm
+Topics\Import_Wizard.htm
+Topics\Import_Analysis.htm
+Topics\Translating_taxa.htm
+Topics\Import_Wizard_data_format.htm
+Topics\Reporting-The_snapshot_tool.htm
+Topics\Import_Wizard_matching_data.htm
+Topics\XML_reports.htm
+Topics\Using_the_report_wizard.htm
+Topics\Determiner_role.htm
+Topics\Loading_filters.htm
+Topics\Validating_data.htm
+Topics\Biotope_Determinations.htm
+Topics\Determination_type.htm
+Topics\Surveys_Tags_Tab.htm
+Glossary\JNCC.htm
+Topics\Map_Navigator_Tool.htm
+Topics\Survey_Events_Ownership_Tab.htm
+Topics\Predecessors_to_Recorder_6.htm
+Topics\Import_Wizard_abundance.htm
+Topics\Short-cut_Keys.htm
+Topics\Documents_Keywords_Tab.htm
+Topics\Enhanced_Term_Lists.htm
+Topics\Exporting_polygon_layers.htm
+Topics\Report_Wizard_Designation_Selection.htm
+Topics\Reporting_Bugs.htm
+Topics\Unhandled_Errors.htm
+Topics\Import_Wizard_observers.htm
+Topics\XML_reports_supplied_with_Recorder.htm
+Topics\Location_vs_Location_Name.htm
+Topics\Sample_Administrative_Areas_Tab.htm
+BSSCDHTM.js
+logo_faded.jpg
+#BSSC
+Rec20Hlp.brs
+Rec20Hlp.hhc
+Rec20Hlp.hhk
+buttonimages\binoculars.gif
+screenshots\Find document.gif
+buttonimages\find.gif
+ScreenShots\Find biotope.gif
+Find taxon.gif
+ScreenShots\Find location.gif
+buttonimages\return.gif
+buttonimages\plus.gif
+ButtonImages\Help.gif
+ScreenShots\HelpSS.gif
+ScreenShots\Help show button.gif
+ScreenShots\Help with controls.gif
+ButtonImages\InfoHot.gif
+buttonimages\sort16.gif
+ScreenShots\No Related Data.gif
+ScreenShots\Find sample.gif
+ScreenShots\Find related sample.gif
+ScreenShots\Find survey event.gif
+ScreenShots\Source tab.gif
+buttonimages\minus.gif
+buttonimages\ellipses.gif
+ScreenShots\Measurement tab.gif
+screenshots\Import.gif
+screenshots\ExportNBN.gif
+screenshots\ExportNBN2.gif
+screenshots\Bounding box validation.gif
+ScreenShots\Bounding box from map.gif
+screenshots\Bounding box tool message.gif
+ButtonImages\Pointer.gif
+screenshots\Bounding box pointer message.gif
+screenshots\gbmap.gif
+screenshots\Import duplicate items.gif
+ScreenShots\Options appearance.gif
+ScreenShots\ToolTip.gif
+screenshots\Configure toolbar.gif
+buttonimages\dualscreenin.gif
+buttonimages\dualscreenout.gif
+buttonimages\dualscreenallout.gif
+buttonimages\up.gif
+buttonimages\down.gif
+ScreenShots\Login First Run.gif
+screenshots\Login.gif
+ScreenShots\Options general.gif
+ScreenShots\Extra Location Search Columns.gif
+screenshots\change password.gif
+screenshots\User Configuration.gif
+screenshots\welcome.gif
+ScreenShots\Install add on.gif
+ScreenShots\Addin install message.gif
+ScreenShots\Addin already in use message.gif
+screenshots\DMAP.gif
+ScreenShots\Dmap_quantities.gif
+Import invalid items.gif
+screenshots\documents general.gif
+ScreenShots\location tenure.gif
+buttonimages\editaccept.gif
+buttonimages\edit2.gif
+ScreenShots\Location use.gif
+ScreenShots\Location related.gif
+buttonimages\editreject.gif
+ScreenShots\Location Boundary.gif
+Boundary Field Select.gif
+screenshots\location land parcel.gif
+screenshots\Location Admin Area.gif
+ScreenShots\location designation.gif
+screenshots\locations general.gif
+buttonimages\Extract grid squares.gif
+screenshots\Location grid square.gif
+BaseMapIcon.gif
+CursorImages\PointerCursor.gif
+Extract Grid Squares.gif
+screenshots\Documents detail.gif
+screenshots\features window.gif
+screenshots\names individual address.gif
+screenshots\documents other.gif
+screenshots\names individual contact nos.gif
+screenshots\names organisation.gif
+screenshots\names individual general.gif
+ScreenShots\features damage.gif
+screenshots\Features pot threat.gif
+ScreenShots\Features management aim.gif
+ScreenShots\Features general.gif
+screenshots\names individual comms.gif
+buttonimages\copy.gif
+buttonimages\paste.gif
+ScreenShots\sample general.gif
+ScreenShots\Survey event general.gif
+screenshots\survey geography.gif
+cursorimages\drawpolygoncursor.gif
+ScreenShots\Survey General tab.gif
+screenshots\names individual biography.gif
+screenshots\names individual assoc.gif
+ScreenShots\Sample related.gif
+ScreenShots\Sample recorders.gif
+Taxon determination.gif
+screenshots\NewRecordingCard.gif
+ScreenShots\Merge Data.gif
+buttonimages\table.gif
+buttonimages\column.gif
+buttonimages\cell.gif
+screenshots\Merge confirm.gif
+Biotope occurrence general.gif
+screenshots\taxon occurrence specimens.gif
+ScreenShots\taxon occurrence related.gif
+Taxon occurrence general.gif
+ScreenShots\Dictionary Upgrade Kit.gif
+buttonimages\admin.gif
+ScreenShots\Admin browser.gif
+screenshots\BackgroundLayerIcon.gif
+screenshots\PolygonLayerIcon.gif
+ScreenShots\biotope occurrence general.gif
+screenshots\new taxon facts.gif
+screenshots\new taxon statuses.gif
+screenshots\new taxon general.gif
+ScreenShots\Wizard Sort Attributes.gif
+buttonimages\TreePlus.gif
+ButtonImages\SortAscending.gif
+ButtonImages\SortDescending.gif
+ButtonImages\DeleteSort.gif
+Wizard Select Attributes.gif
+Wizard Select Attributes Taxon.gif
+screenshots\mapbrowser.gif
+screenshots\mapactivetoolbar.gif
+ScreenShots\Wizard layout.gif
+Wizard report wizard.gif
+screenshots\Reports Quick Report.gif
+screenshots\Reports Run.gif
+ButtonImages\TreeMinus.gif
+ButtonImages\SpList16.gif
+ButtonImages\AssocPolygon.gif
+ScreenShots\Attach_polygon_to_Location.gif
+ScreenShots\Link boundary to admin area.gif
+buttonimages\DrawPolygon.gif
+ScreenShots\MenuSelectArrow.gif
+Polygon import no match.gif
+Polygon import manual matching.gif
+ScreenShots\Wizard Bounding Boxes.gif
+screenshots\inboundingbox.gif
+screenshots\locations.gif
+ScreenShots\Wizard Locations.gif
+Wizard additional filter constraints.gif
+Screenshots\Wizard additional filters.gif
+ScreenShots\Wizard set additional filter.gif
+screenshots\Wizard additional filters - edit conditions.gif
+ScreenShots\Filter by bounding box.gif
+ScreenShots\Wizard Admin Areas.gif
+Wizard Sources.gif
+ScreenShots\Wizard Filter Results.gif
+ScreenShots\Wizard Filter Results Output.gif
+ButtonImages\Report16.gif
+ScreenShots\Wizard summary.gif
+screenshots\locations edit mode.gif
+ScreenShots\Wizard Taxa Selection.gif
+CursorImages\DragCursor.gif
+CursorImages\CannotDropCursor.gif
+screenshots\FindLocation.gif
+CursorImages\HourGlass.gif
+screenshots\FindLocation containing.gif
+screenshots\dragsplitter.gif
+buttonimages\maximise.gif
+ButtonImages\Trash2.gif
+ButtonImages\Grid.gif
+ButtonImages\SymSize.gif
+ButtonImages\DeletePolygon.gif
+ButtonImages\Pan.gif
+CursorImages\PanCursor.gif
+ButtonImages\ClearZoom.gif
+ButtonImages\UnZoom.gif
+CursorImages\UnZoomCursor.gif
+ButtonImages\Zoom.gif
+CursorImages\ZoomCursor.gif
+ButtonImages\print.gif
+buttonimages\dualscreenallin.gif
+screenshots\RecordingCard.gif
+ScreenShots\Wizard Source Selection.gif
+ScreenShots\Wizard Places.gif
+ScreenShots\Wizard biotopes.gif
+screenshots\print preview.gif
+screenshots\preview toolbar.gif
+buttonimages\Zoomtofit.gif
+buttonimages\zoom100.gif
+buttonimages\zoomtowidth.gif
+buttonimages\firstpage.gif
+buttonimages\previouspage.gif
+buttonimages\nextpage.gif
+buttonimages\lastpage.gif
+buttonimages\export.gif
+screenshots\Author list.gif
+screenshots\author.gif
+buttonimages\surveyor16.gif
+screenshots\obstree.gif
+screenshots\browser detail.gif
+screenshots\browser details other checklist.gif
+screenshots\browser facts.gif
+screenshots\browser list.gif
+screenshots\browser hierarchy.gif
+buttonimages\bold.gif
+buttonimages\italic.gif
+buttonimages\underline.gif
+ScreenShots\Species Card.gif
+ButtonImages\Filter16.gif
+ScreenShots\Simple filter.gif
+ScreenShots\Duplicate name.gif
+ScreenShots\Feature grading term list.gif
+screenshots\Term list Journals.gif
+buttonimages\individual.gif
+buttonimages\organisation.gif
+ScreenShots\Find admin area.gif
+ScreenShots\Find related taxon occurrence.gif
+screenshots\find survey.gif
+screenshots\Save query without template message.gif
+ScreenShots\Locations_for_Occurrences_standard_report.gif
+ScreenShots\Occurrences_for_Location_standard_report.gif
+ScreenShots\Export_dataset_info.gif
+ButtonImages\Grid_Indicator.gif
+ButtonImages\Close.gif
+ScreenShots\Within.gif
+ScreenShots\Contiguous.gif
+ScreenShots\Adjoining.gif
+ScreenShots\Overlapping.gif
+ScreenShots\Adjacent.gif
+ScreenShots\tabs.gif
+ScreenShots\Tabs_SELECTED.gif
+CursorImages\Hand.gif
+ButtonImages\BackHelp.gif
+ScreenShots\Sample_type.gif
+ButtonImages\Hide.gif
+ButtonImages\Show.gif
+MetaData.gif
+ScreenShots\MetaData Taxon.gif
+screenshots\Map Options background maps.gif
+screenshots\Map Options Polygons.gif
+Report Designer\Send to back button.gif
+Report Designer\Bring to front button.gif
+Report Designer\center horizontally.gif
+Report Designer\center vertically.gif
+Report Designer\Align left edges.gif
+Report Designer\align right edges.gif
+Report Designer\align top edges.gif
+Report Designer\align bottom edges.gif
+Report Designer\align horizontal centers.gif
+Report Designer\align vertical centers.gif
+Report Designer\space equally horizontally.gif
+Report Designer\space equally vertically.gif
+Report Designer\Filter result and menu.gif
+ButtonImages\SelectSymbol.gif
+CursorImages\SelectSymbolCursor.gif
+ScreenShots\SelectSymbolsMultipleObservations.gif
+screenshots\updated.gif
+Report Designer\Designe screen.gif
+Report Designer\Sys button.gif
+Report Designer\Label button.gif
+Report Designer\Memo button.gif
+Report Designer\RTF memo button.gif
+Report Designer\Report Options.gif
+Report Designer\Picture button.gif
+Report Designer\Image.gif
+Report Designer\Elipses button.gif
+Report Designer\Label dialog.gif
+Report Designer\Shape button.gif
+Report Designer\Frame button.gif
+Report Designer\Column headers band.gif
+Report Designer\Band button.gif
+Report Designer\Band 1.gif
+Report Designer\New band.gif
+Report Designer\grab handles.gif
+Report Designer\grab handle with vertical cursor.gif
+Report Designer\grab handles with horizontal cursor.gif
+Report Designer\grab handles with sloping cursor.gif
+Report Designer\Frame.gif
+Report Designer\Group band button.gif
+Report Designer\position details.gif
+Report Designer\position all selected.gif
+Report Designer\position details fiished.gif
+Measurement type.gif
+Measurement unit.gif
+screenshots\Recording scheme manager.gif
+Report Wizard Polygon Selection.gif
+ScreenShots\MapRegistration.gif
+screenshots\Edit taxon name.gif
+Report Designer\Band 4.gif
+Report Designer\Expression Wizard.gif
+Report Designer\Expresssion wizard select database field.gif
+Report Designer\Group band 1 layout.gif
+Report Designer\Group band print 1.gif
+Report Designer\Band 5.gif
+Report Designer\Group band layout 2.gif
+Report Designer\Group band print 2.gif
+Report Designer\completed layout.gif
+Report Designer\System field.gif
+Report Designer\Memo dialog.gif
+ScreenShots\Polygon_set_colours.gif
+ScreenShots\Location species list.gif
+ScreenShots\menu standard.gif
+ScreenShots\Menu icons.gif
+ScreenShots\Menu graduated.gif
+ButtonImages\MoveLayer.gif
+ScreenShots\OSTiles_MapBrowser.gif
+ScreenShots\Recording card measurments.gif
+ScreenShots\Species grid.gif
+ScreenShots\Measurements.gif
+ScreenShots\Edit taxon_taxon groups.gif
+ScreenShots\Unchecked.gif
+Filter Manager.gif
+screenshots\Export_filter.gif
+screenshots\Import Wizard template selection.gif
+ScreenShots\Import Wizard column selection.gif
+ScreenShots\Import Wizard missing data selection.gif
+screenshots\Import Analysis.gif
+Import Complete.gif
+ScreenShots\Import Wizard matching names.gif
+ScreenShots\Import Wizard matching species.gif
+ScreenShots\Import Wizard matching locations.gif
+Determiner role.gif
+Cascade event changes.gif
+Biotope determination.gif
+Determination type.gif
+screenshots\Survey tag.gif
+screenshots\Survey tag tab.gif
+screenshots\Map Navigator Tool.gif
+screenshots\Survey events ownership.gif
+screenshots\Import Wizard abundance 1m 2f 3j.gif
+screenshots\Import Wizard abundance 2.gif
+screenshots\Import Wizard abundance female.gif
+screenshots\Import Wizard abundance female present.gif
+screenshots\Import Wizard abundance dead adult.gif
+screenshots\Import Wizard abundance mole hill.gif
+screenshots\Import Wizard abundance molehill.gif
+screenshots\Import Wizard abundance taxon occ data.gif
+screenshots\Import Wizard abundance plus columns.gif
+screenshots\Documents keywords.gif
+screenshots\Enhanced term lists.gif
+Wizard Designation Selection.gif
+ScreenShots\Unhandled Error.gif
+ScreenShots\Sample General Location.gif
+ScreenShots\Sample Admin Areas.gif
+StyleSheet.css
+PopUpStyleSheet.css
+
+Compile time: 0 minutes, 6 seconds
+361	Topics
+6,623	Local links
+80	Internet links
+336	Graphics
+
+
+Created c:\Documents and Settings\Sally\My Documents\Rec6 2011\R6 Help 110105\RecHelp version 6\Rec20Hlp.chm-temp, 3,161,552 bytes
+Compression decreased file by 3,057,530 bytes.

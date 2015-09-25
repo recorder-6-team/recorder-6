@@ -1,0 +1,207 @@
+<?xml version="1.0" ?>
+
+
+<!-- Records for specified polygon  
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 5 - 28 November 2014
+
+   
+     QUICK REPORT - From Polygon on Map
+     Confidential - By parameter 
+     Zero Abundance - By paramater
+     Validated - By parameter
+     Site centroid - By parameter 			
+     Invalid = By parameter	
+   
+ --> 
+
+
+ 
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Polygon Reports"  title="P4 Summary by Polygon. Includes partial overlaps." description="Displays records for a selected polygon. 
+Includes grid references which only partially overlap the polygon. Does not include designations. " >
+
+<SQL>
+
+SELECT 
+TOCC.Taxon_Occurrence_key,
+S.Spatial_ref,
+ITN.PREFERRED_NAME,
+ITN.Authority,
+ITN.COMMON_NAME,
+ITN2.Actual_name as Recommended_name,
+ITN2.Common_name as Recommended_Common,
+ITN2.sort_Order,
+TG.taxon_Group_Name,
+s.Location_name,
+s.vague_date_start,s.vague_date_end,
+s.vague_date_type,
+dbo.formateventRecorders(s.sample_key) as Recorders, 
+dbo.FormatIndividual (I.Title, I.Initials, I.Forename, I.Surname) as Determiner
+FROM
+Sample S 
+INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
+INNER JOIN Taxon_Determination TDET on TDET.Taxon_Occurrence_key = TOCC.Taxon_Occurrence_key
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_key = TDET.Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
+INNER JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_taxon_Name ITN2 ON ITN2.Taxon_List_Item_key = ITN.Recommended_Taxon_List_item_key
+INNER JOIN Individual I on I.name_key = TDET.Determiner  
+
+<Where keytype="Default">
+
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+WHERE 
+USR.Name_key IS NULL
+AND 
+
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+	<Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition> 
+AND        
+
+<Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" >
+	
+        <Option name="Include" value = "'Anything'" />
+        <Option name="Exclude" value = "'Site Centroid'" />
+</Condition>    
+  
+
+and 
+
+
+<Condition field= "S.Sample_key" operator="equal"  type="SamplesinPolygon"  name="Select Polygon" includepartialoverlap ="yes"/>
+
+
+AND 
+
+ITN2.System_Supplied_Data = 1
+
+AND 
+
+TDET.PREFERRED = 1
+
+
+</Where>
+
+
+<Where keytype="SamplesinPolygon" includepartialoverlap="yes">
+
+INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+LEFT JOIN User_Survey_Restriction USR
+ON  USR.Survey_Key = SE.Survey_Key AND 
+<Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+
+
+
+WHERE
+
+USR.Name_key IS NULL
+
+AND
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+	<Option name="Include" value = "3" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND 
+<Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition>
+AND
+
+<Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+	<Option name="Include" value = "-1" />
+        <Option name="Exclude" value = "0" />
+
+</Condition> 
+AND        
+<Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+	<Option name="Include" value = "2" />
+        <Option name="Exclude" value = "1" />
+
+</Condition> 
+AND        
+
+<Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" >
+	
+        <Option name="Include" value = "'Anything'" />
+        <Option name="Exclude" value = "'Site Centroid'" />
+</Condition>    
+  
+
+and 
+
+s.sample_key  IN(%s)
+ 	
+AND 
+
+TDET.Preferred = 1
+AND 
+
+ITN2.System_Supplied_Data = 1
+
+</Where>
+ 
+<OutputTableOrderby name="by Taxon Group/Scientific Name" SQL="Order By taxon_group_name, preferred_name"/>
+ 
+<OutputTableOrderby name="by Scientific Name" SQL="Order By preferred_name,vague_date_start"/>
+
+<OutputTableOrderby name="by Taxon Group/Recommended"  SQL="Order By taxon_group_name, ITN2.Recommended_name"/>
+
+<OutputTableOrderby name="by Preferred Name" SQL="Order By Preferred_name"/>
+
+<OutputTableOrderby name="Taxanomic sort order" SQL="Order By sort_Order"/>
+
+</SQL>
+<Columns>
+  
+   <Column name="Taxon_Occurrence_key" visible="false"  />
+   <Column name="Spatial_ref" width="60" position="2" caption="Spatial Ref" />   
+   <Column name="Location_name" width="200" position="3" caption="Sample Location Name" /> 
+   <Column name="Vague_date_start" width="100" position="4" caption="Date" /> 
+   <Column name="Recorders" width="200" position="5" caption="Recorders" /> 
+   <Column name="Determiner" width="120" position="6" caption="Determiner" /> 
+   <Column name="Taxon_Group_Name" width="200" position="7" caption="Taxon Group" />   
+   <Column name="Preferred_Name" width="200" position="8" caption="Scientific Name" /> 
+   <Column name="Authority" width="200" position="9" caption="Authority" /> 
+   <Column name="Common_Name" width="200" position="10" caption="Actual Common Name" /> 
+   <Column name="Recommended_name" width="200" position="11" caption="Recommended Name" /> 
+   <Column name="Recommended_Common" width="200" position="12" caption="Recommended Common Name" /> 
+   <Column name="Sort_order" visible="false" /> 
+  
+  
+
+ 
+</Columns>
+</CustomReport>

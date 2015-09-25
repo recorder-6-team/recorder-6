@@ -1,0 +1,182 @@
+[FileVersion]
+Version=7.0
+[Compiler]
+A=8
+B=0
+C=0
+D=0
+E=0
+F=0
+G=1
+H=1
+I=1
+J=1
+K=0
+L=0
+M=0
+N=1
+O=1
+P=1
+Q=0
+R=0
+S=0
+T=0
+U=0
+V=1
+W=0
+X=1
+Y=0
+Z=1
+ShowHints=1
+ShowWarnings=1
+UnitAliases=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+NamespacePrefix=
+SymbolDeprecated=0
+SymbolLibrary=0
+SymbolPlatform=0
+UnitLibrary=0
+UnitPlatform=0
+UnitDeprecated=0
+HResultCompat=1
+HidingMember=1
+HiddenVirtual=1
+Garbage=1
+BoundsError=1
+ZeroNilCompat=1
+StringConstTruncated=1
+ForLoopVarVarPar=1
+TypedConstVarPar=1
+AsgToTypedConst=1
+CaseLabelRange=1
+ForVariable=1
+ConstructingAbstract=1
+ComparisonFalse=1
+ComparisonTrue=1
+ComparingSignedUnsigned=1
+CombiningSignedUnsigned=1
+UnsupportedConstruct=1
+FileOpen=1
+FileOpenUnitSrc=1
+BadGlobalSymbol=1
+DuplicateConstructorDestructor=1
+InvalidDirective=1
+PackageNoLink=1
+PackageThreadVar=1
+ImplicitImport=1
+HPPEMITIgnored=1
+NoRetVal=1
+UseBeforeDef=1
+ForLoopVarUndef=1
+UnitNameMismatch=1
+NoCFGFileFound=1
+MessageDirective=1
+ImplicitVariants=1
+UnicodeToLocale=1
+LocaleToUnicode=1
+ImagebaseMultiple=1
+SuspiciousTypecast=1
+PrivatePropAccessor=1
+UnsafeType=0
+UnsafeCode=0
+UnsafeCast=0
+[Linker]
+MapFile=0
+OutputObjs=0
+ConsoleApp=1
+DebugInfo=0
+RemoteSymbols=0
+MinStackSize=16384
+MaxStackSize=1048576
+ImageBase=4194304
+ExeDescription=
+[Directories]
+OutputDir=C:\Temp\CD Image Network
+UnitOutputDir=
+PackageDLLOutputDir=
+PackageDCPOutputDir=
+SearchPath=
+Packages=Vcl40;vcljpg40;Vclx40;Vclmid40;Inet40;Inetdb40;Vcldb40;vcldbx40;VclSmp40;Trecold4;rapid;DBInHouse;UnitLib4;BSETITAN;inhouse;ACCTITAN;NMFast40;Jncc;JnccQrpt;madBasic_;madDisAsm_
+Conditionals=
+DebugSourceDirs=
+UsePackages=0
+[Parameters]
+RunParams=
+HostApplication=
+Launcher=
+UseLauncher=0
+DebugCWD=
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=0
+MajorVer=6
+MinorVer=14
+Release=1
+Build=185
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=2057
+CodePage=1252
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=6.14.1.185
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+[Excluded Packages]
+c:\program files\borland\delphi7\Bin\dclIntraweb_50_70.bpl=Intraweb 5.0 Design Package for Delphi 7
+c:\program files\borland\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
+c:\program files\borland\delphi7\Bin\dclwbm70.bpl=Borland InternetExpress Components
+c:\program files\borland\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
+c:\program files\borland\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
+[HistoryLists\hlConditionals]
+Count=3
+Item0=USE_TITAN;v2100
+Item1=USE_TITAN;
+Item2=USE_TITAN
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlSearchPath]
+Count=11
+Item0=C:\Eric\Development\Delphi\SourceSafe;R:\Projects\JNCC\Development\Build\V2 Source;M:\DssVcl32;R:\Projects\JNCC\Build\Components\Qrdsgn2;R:\Projects\JNCC\Build\Components\Standard;R:\Projects\JNCC\development\build\components;R:\Projects\JNCC\mapsvr\vcl\delphi 4.0;M:\Delphi 3rdParty\QRep305\quickrpt;M:\Delphi 3rdParty\Rapid Tree\Source;M:\Delphi 3rdParty\VCLZip;M:\Delphi 3rdParty\XPMenus;M:\DssVcl32\HTML Components\Delphi4
+Item1=C:\Eric\Development\Delphi\SourceSafe;M:\DssVcl32;R:\Projects\JNCC\Development\Build\V2 Source;R:\Projects\JNCC\Build\Components\Qrdsgn2;R:\Projects\JNCC\Build\Components\Standard;R:\Projects\JNCC\development\build\components;R:\Projects\JNCC\mapsvr\vcl\delphi 4.0;M:\Delphi 3rdParty\QRep305\quickrpt;M:\Delphi 3rdParty\Rapid Tree\Source;M:\Delphi 3rdParty\VCLZip;M:\Delphi 3rdParty\XPMenus;M:\DssVcl32\HTML Components\Delphi4
+Item2=M:\DssVcl;M:\DssVcl32;r:\projects\jncc\source safe\john vb;R:\Projects\JNCC\Development\Build\v2 Source;r:\Projects\Jncc\Build\Components\Standard;r:\Projects\Jncc\Build\Com\Recorder 2000 Type Library;S:\Projects\Jncc\Mapsvr\Vcl\Delphi 4.0;L:\32bit\Delphi4\QrDsgn2
+Item3=M:\DssVcl;M:\DssVcl32;r:\projects\jncc\source safe\john vb;r:\Projects\Jncc\Build\Source;r:\Projects\Jncc\Build\Components;r:\Projects\Jncc\Build\Components\Standard;r:\Projects\Jncc\Build\Com\Recorder 2000 Type Library;S:\Projects\Jncc\Mapsvr\Vcl\Delphi 4.0;L:\32bit\Delphi4\QrDsgn2
+Item4=M:\DssVcl;M:\DssVcl32;S:\Projects\Jncc\Build\Source;S:\Projects\Jncc\Build\Components;S:\Projects\Jncc\Build\Components\Standard;S:\Projects\Jncc\Build\Com\Recorder 2000 Type Library;S:\Projects\Jncc\Mapsvr\Vcl\Delphi 4.0;L:\32bit\Delphi4\QrDsgn2
+Item5=m:\dssvcl;m:\dssvcl32
+Item6=m:\dssvcl;m:\dssvcl32;s:\projects\jncc\build\components;s:\projects\jncc\build\components\standard;S:\Projects\Jncc\Build\Com\Recorder 2000 Type Library;S:\Projects\Jncc\Build\Source
+Item7=m:\dssvcl;m:\dssvcl32;s:\projects\jncc\build\components;s:\projects\jncc\build\components\standard;S:\Projects\Jncc\Build\Com\Recorder 2000 Type Library
+Item8=m:\dssvcl;m:\dssvcl32;s:\projects\jncc\build\components;s:\projects\jncc\build\components\standard
+Item9=s:\Projects\Jncc\Build\Source;m:\dssvcl;m:\dssvcl32;s:\projects\jncc\build\components;s:\projects\jncc\build\components\standard;s:\projects\jncc\build\com\recorder 2000 type library;S:\Projects\JNCC\mapsvr\VCL\Delphi 4.0
+Item10=m:\dssvcl32
+[HistoryLists\hlUnitOutputDirectory]
+Count=3
+Item0=c:\temp\dcu4
+Item1=c:\projects\jncc\output\
+Item2=c:\projects\output\
+[HistoryLists\hlOutputDirectorry]
+Count=6
+Item0=C:\Temp\CD Image Network
+Item1=R:\Projects\JNCC\Development\Install Kit\CD Image Server
+Item2=C:\CD Image Server
+Item3=R:\Projects\JNCC\Delivery\Installation Kit\CD Root\Upgrade\
+Item4=R:\Projects\JNCC\Delivery\Installation Kit\CD Root\Upgrade to 2.2\
+Item5=C:\Temp\R2K\Upgrader
+[HistoryLists\hlBPLOutput]
+Count=1
+Item0=s:\projects\johnson controls\build\activex
+[HistoryLists\hlDCPOutput]
+Count=1
+Item0=$(DELPHI)\Lib
