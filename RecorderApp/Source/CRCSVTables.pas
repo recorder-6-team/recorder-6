@@ -446,10 +446,9 @@ begin
       end;
       if lIdx <> 0 then Result := Result + ', ';
       if RequiresQuotes(LowerCase(FCSVFields.Items[lIdx].DataType)) then
-        Result := Result + '''';
-      Result := Result + FieldByName(FCSVFields.Items[lIdx].FieldName).Text;
-      if RequiresQuotes(LowerCase(FCSVFields.Items[lIdx].DataType)) then
-        Result := Result + '''';
+        Result := Result + QuotedStr(FieldByName(FCSVFields.Items[lIdx].FieldName).Text)
+      else
+        Result := Result + FieldByName(FCSVFields.Items[lIdx].FieldName).Text;
     end;
 end;  // TCSVTable.GetRowData
 
