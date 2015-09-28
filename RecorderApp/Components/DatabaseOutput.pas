@@ -1155,7 +1155,7 @@ begin
     tempSurveyKeys := '''' + StringReplace(keys.fields[0].Value, ',', ''',''', [rfReplaceAll]) + '''';
   end;
   //Michael Weideli   Mantis 466
-  if (FTablesUsed.IndexOf('SURVEY') = -1) OR (FTablesPopulated.count = 0) then
+  if (FTablesUsed.IndexOf('SURVEY') = 0) OR (FTablesPopulated.count = 0) then
     exit;
   qry := 'DELETE #%s FROM #Survey %s WHERE #Survey.Survey_Media_Key IN ('+tempSurveyKeys+')';
   RemoveTempSurveyDataRecurse(qry, 'SURVEY');
