@@ -446,15 +446,15 @@ begin
       end;
       if lIdx <> 0 then Result := Result + ', ';
       if RequiresQuotes(LowerCase(FCSVFields.Items[lIdx].DataType)) then
-        Result := Result + '''';
-      Result := Result + FieldByName(FCSVFields.Items[lIdx].FieldName).Text;
-      if RequiresQuotes(LowerCase(FCSVFields.Items[lIdx].DataType)) then
-        Result := Result + '''';
+        Result := Result + QuotedStr(FieldByName(FCSVFields.Items[lIdx].FieldName).Text)
+      else
+        Result := Result + FieldByName(FCSVFields.Items[lIdx].FieldName).Text;
+
     end;
 end;  // TCSVTable.GetRowData
 
 {-------------------------------------------------------------------------------
-  Initialise the FSMImportFromText object. 
+  Initialise the FSMImportFromText object.
 }
 procedure TCSVTable.Initialise;
 begin
@@ -464,17 +464,17 @@ begin
     RowFirst := 2;
     DataSet := FClientDataSet;
   end;
-end;  // TCSVTable.Initialise 
+end;  // TCSVTable.Initialise
 
 {-------------------------------------------------------------------------------
-  Insert data into the temporary table one row at a time. 
+  Insert data into the temporary table one row at a time.
 }
 procedure TCSVTable.InsertData;
 var
   lSQL, lColumnHeadings, lRowData: String;
 begin
   lColumnHeadings := GetColumnNames;
-  
+
   with FClientDataSet do begin
     if not (BOF and EOF) then
       First;
@@ -489,10 +489,10 @@ begin
       Next;
     end;
   end;
-end;  // TCSVTable.InsertData 
+end;  // TCSVTable.InsertData
 
 {-------------------------------------------------------------------------------
-  Load the CSV file. 
+  Load the CSV file.
 }
 procedure TCSVTable.LoadCSV;
 var
@@ -509,10 +509,10 @@ begin
   except on E:Exception do
     raise ECSVTableException.CreateNonCritical(Format(ResStr_CSVFileOpen, [lFilename]), E);
   end;
-end;  // TCSVTable.LoadCSV 
+end;  // TCSVTable.LoadCSV
 
 {-------------------------------------------------------------------------------
-  Reads the CSVTable XML node for the report file. 
+  Reads the CSVTable XML node for the report file.
 }
 procedure TCSVTable.ReadXML(ANode: IXMLNode);
 var
@@ -522,7 +522,7 @@ begin
     Validate(ANode);
     if HasAttribute(AT_FILENAME) then FFileName := Attributes[AT_FILENAME];
     if HasAttribute(AT_NAME) then FName := Attributes[AT_NAME];
-  
+
     for i := 0 to ChildNodes.Count - 1 do begin
       if ChildNodes.Nodes[i].NodeName = EL_CSVCOLUMN then
         AddColumns(ChildNodes.Nodes[i])
@@ -536,10 +536,10 @@ begin
   end;
   if FFileName='' then
     FInputParam := TInputParam.Create(dtCSVFile, FDescription, nil);
-end;  // TCSVTable.ReadXML 
+end;  // TCSVTable.ReadXML
 
 {-------------------------------------------------------------------------------
-  See if the given datatype requires quotes around it. 
+  See if the given datatype requires quotes around it.
 }
 function TCSVTable.RequiresQuotes(AType: string): Boolean;
 begin
