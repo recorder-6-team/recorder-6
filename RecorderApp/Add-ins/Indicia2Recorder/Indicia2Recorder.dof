@@ -91,7 +91,7 @@ ImageBase=4194304
 ExeDescription=
 [Directories]
 OutputDir=C:\Program Files (x86)\Recorder 6\Addins
-UnitOutputDir=c:\tmp\dcu
+UnitOutputDir=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=$(DELPHI)\Lib\Debug;C:\Localsource\recorder-6\Third Party\dec\Part_I
@@ -167,8 +167,9 @@ Item1=$(DELPHI)\Lib\Debug
 Item2=$(DELPHI)\Lib\Debug;C:\Localsource\Recorder\RecorderApp\trunk\Add-ins\Indicia2Recorder\dec\Part_I
 Item3=..\..\..\Third Party\Kevin Boylan\VCLZip
 [HistoryLists\hlUnitOutputDirectory]
-Count=1
-Item0=c:\tmp\dcu
+Count=2
+Item0=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU
+Item1=c:\tmp\dcu
 [HistoryLists\hlOutputDirectorry]
 Count=3
 Item0=C:\Program Files (x86)\Recorder 6\Addins
