@@ -762,19 +762,19 @@ begin
   shp := TShape.Create(self);
   with shp do begin
     Parent := panel;
-    Left := 75;
+    Left := 101;
     Top := 2;
     Height := 23;
-    Width := panel.width-102;
+    Width := panel.width-128;
     Anchors := [akLeft, akTop, akRight];
     Pen.Color := clRed;
   end;
   ctrlInput := TEdit.Create(self);
   with ctrlInput do begin
     Parent := panel;
-    Left := 76;
+    Left := 102;
     Top := 3;
-    Width := panel.width-104;
+    Width := panel.width-130;
     Anchors := [akLeft, akTop, akRight];
     // tag the index of this admin type control
     Tag := FAdminAreaKeys.Count;
