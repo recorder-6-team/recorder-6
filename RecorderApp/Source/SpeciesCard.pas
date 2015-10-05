@@ -571,6 +571,7 @@ var
   loadingCols, loadingCtrls: boolean;
   lastEdge: integer;
   pnlLabel: TLabel;
+  labelCaption: string;
 begin
   loadingCols := false;
   loadingCtrls := false;
@@ -660,10 +661,10 @@ begin
         end;
         ctrlPanel.align := alNone;
         if node.ChildNodes[i].HasAttribute('label_caption') then begin
-          caption := node.ChildNodes[i].Attributes['label_caption'];
+          labelCaption := node.ChildNodes[i].Attributes['label_caption'];
           for ctrl := 0 to ctrlPanel.ControlCount-1 do begin
             if ctrlPanel.Controls[ctrl] is TLabel then
-              TLabel(ctrlPanel.Controls[ctrl]).Caption := caption;
+              TLabel(ctrlPanel.Controls[ctrl]).Caption := labelCaption;
           end;
         end;
         ctrlPanel.parent := parentPanel;
