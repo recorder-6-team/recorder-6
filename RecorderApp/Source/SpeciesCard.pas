@@ -134,11 +134,6 @@ type
     pnlCtrlSpecimenLocation: TPanel;
     lblSpecimenLocation: TLabel;
     eSpecimenLocation: TEdit;
-    pnlCtrlAdminAreaSearch: TPanel;
-    Label2: TLabel;
-    shpAdminAreaSearch: TShape;
-    eAdminAreaSearch: TEdit;
-    bbAdminAreaFind: TImageListButton;
     procedure eReferenceKeyPressed(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -202,8 +197,8 @@ type
     FSERKeys : TStringList;
     FBiotopeOccKey : TKeyString;
     FBiotopeListItemKey : TKeyString;
-    FAdminAreaKey : TKeyString;
-    FAdminTypeKey : TKeyString;
+    FAdminAreaKeys: TStringList;
+    FAdminAreaTypes: TStringList;
     FBiotopeDetKey : TKeyString;
     FBiotopeOccDataKey : TKeyString;
     FNewSurveyEvent : boolean;
@@ -211,6 +206,7 @@ type
     FControlsUsed : TStringList;
     FMeasurementControls: TStringList;
     FSrefInSampleRef: string;
+    FSearchingForAdminTypeIndex: integer;
 
     procedure PositionCombo(parentGrid: TStringGrid; comboBox: TComboBox; targetColumn, targetRow: integer);
     procedure WMTransferDone(var Msg:TMessage); message WM_TRANSFER_DONE;
@@ -264,6 +260,7 @@ type
     procedure LoadCustomCard;
     procedure LoadPanel(node: IXMLNode; parentPanel: TPanel);
     function CreateMeasurementPanel(node: IXmlNode; const entity: string): TPanel;
+    function CreateAdminAreaSearchPanel(node: IXmlNode): TPanel;
     procedure SaveCustomMeasurements;
     function FindLabel(parentPanel: TWinControl): TLabel;
     procedure SetControlWidth(ctrl, parentPanel: TControl; ctrlWidth: string);
@@ -348,6 +345,8 @@ resourcestring
                           'or sample data in the system.';
 
   ResStr_CountGridCaptions = 'Count,"Count Of",Accuracy';
+  ResStr_AdminArea = 'Admin area';
+  ResStr_GetAdminArea = 'Get admin area';
 
 const
   NO_RESIZE = -1;
@@ -362,6 +361,8 @@ begin
   FCustomCard := false;
   FSrefInSampleRef := '';
   FMeasurementControls := TStringList.Create;
+  FAdminAreaKeys := TStringList.Create;
+  FAdminAreaTypes := TStringList.Create;
   LoadCustomCard;
 
   sgCount.Rows[0].CommaText := ResStr_CountGridCaptions;
@@ -462,12 +463,11 @@ begin
     Clear;
   end;
 
-  FSERKeys.Free;
-  FSERKeys := nil;
-  FdmPlaceCard.Free;
-  FdmPlaceCard := nil;
-  FdmTaxonOcc.Free;
-  FdmTaxonOcc:=nil;
+  FreeAndNil(FSERKeys);
+  FreeAndNil(FdmPlaceCard);
+  FreeAndNil(FdmTaxonOcc);
+  FreeAndNil(FAdminAreaKeys);
+  FreeAndNil(FAdminAreaTypes);
   if assigned(FControlsUsed) then
     FControlsUsed.Free;
   if assigned(FMeasurementControls) then
@@ -513,6 +513,10 @@ begin
       LoadPanel(node.ChildNodes.Nodes[i], rowPanel);
       lastBottom := rowPanel.Top + rowPanel.Height;
     end;
+  end;
+  for i:= 0 to FAdminAreaTypes.Count-1 do begin
+    RegisterDropComponent(TEdit(FAdminAreaTypes.Objects[i]), DropAdminArea, [TN_ADMIN_AREA], [CF_JNCCDATA, CF_TEXT]);
+    TEdit(FAdminAreaTypes.Objects[i]).Name := 'adminArea' + IntToStr(i);
   end;
   mandatoryControls := TStringList.Create;
   try
@@ -628,13 +632,8 @@ begin
         ctrlPanel := pnlCtrlBiotope
       else if node.ChildNodes.Nodes[i].NodeName = 'admin_areas' then
         ctrlPanel := pnlCtrlAdminAreas
-      else if node.ChildNodes.Nodes[i].NodeName = 'admin_area_search' then begin
-        ctrlPanel := pnlCtrlAdminAreaSearch;
-        if (node.ChildNodes.Nodes[i].HasAttribute('admin_type_key')) then
-          FAdminTypeKey := node.ChildNodes.Nodes[i].Attributes['admin_type_key']
-        else
-          raise ECustomCardError.CreateNonCritical('The card definition is invalid - admin_area elements need an admin_type_key attribute');
-      end
+      else if node.ChildNodes.Nodes[i].NodeName = 'admin_area_search' then
+        ctrlPanel := CreateAdminAreaSearchPanel(node.ChildNodes.Nodes[i])
       else if node.ChildNodes.Nodes[i].NodeName = 'provenance' then
         ctrlPanel := pnlCtrlProvenance
       else if node.ChildNodes.Nodes[i].NodeName = 'record_type' then
@@ -737,6 +736,71 @@ begin
       ':' + accuracy, ctrlInput);
 end;
 
+function TfrmSpeciesCard.CreateAdminAreaSearchPanel(node: IXmlNode): TPanel;
+var
+  panel: TPanel;
+  ctrlLabel: TLabel;
+  ctrlInput: TEdit;
+  shp: TShape;
+  btn: TImageListButton;
+begin
+  if not node.HasAttribute('admin_type_key') then
+    raise ECustomCardError.CreateNonCritical('The card definition is invalid - ' +
+        'admin_area_search elements require an admin_type_key');
+  panel := TPanel.Create(self);
+  panel.BevelOuter := bvNone;
+  panel.Align := alTop;
+  panel.Height := 26;
+  ctrlLabel := TLabel.Create(self);
+  with ctrlLabel do begin
+    Parent := panel;
+    Caption := ResStr_AdminArea;
+    Left := 6;
+    Top := 8;
+  end;
+  shp := TShape.Create(self);
+  with shp do begin
+    Parent := panel;
+    Left := 75;
+    Top := 2;
+    Height := 23;
+    Width := panel.width-102;
+    Anchors := [akLeft, akTop, akRight];
+    Pen.Color := clRed;
+  end;
+  ctrlInput := TEdit.Create(self);
+  with ctrlInput do begin
+    Parent := panel;
+    Left := 76;
+    Top := 3;
+    Width := panel.width-104;
+    Anchors := [akLeft, akTop, akRight];
+    // tag the index of this admin type control
+    Tag := FAdminAreaKeys.Count;
+    OnChange := ChangeEditState;
+    OnKeyPress := eAdminAreaSearchKeyPress;
+  end;
+  btn := TImageListButton.Create(self);
+  with btn do begin
+    Parent := panel;
+    Anchors := [akTop, akRight];
+    Height := 23;
+    Hint := ResStr_GetAdminArea;
+    ImageIndex := 5;
+    ImageList := dmFormActions.ilButtons;
+    Left := panel.Width - 27;
+    Top := 2;
+    Width := 21;
+    OnClick := bbAdminAreaFindClick;
+    // tag the index of this admin type control
+    Tag := FAdminAreaKeys.Count;
+  end;
+  result := panel;
+  // Create an entry in the lists of admin area keys and types for this control
+  FAdminAreaKeys.Add('');
+  FAdminAreaTypes.AddObject(node.Attributes['admin_type_key'], ctrlInput);
+end;
+
 {-------------------------------------------------------------------------------
   Add a new recorder to the recorders list box
 }
@@ -768,8 +832,6 @@ begin
                         [TN_NAME, TN_INDIVIDUAL], [CF_JNCCDATA]);
   RegisterDropComponent(eBiotope, DropBiotope,
                         [TN_BIOTOPE_LIST_ITEM], [CF_JNCCDATA, CF_TEXT]);
-  RegisterDropComponent(eAdminAreaSearch, DropAdminArea,
-                        [TN_ADMIN_AREA], [CF_JNCCDATA, CF_TEXT]);
   RegisterDropComponent(eDeterminer, DropDeterminer,
                         [TN_NAME, TN_INDIVIDUAL], [CF_JNCCDATA, CF_TEXT]);
 end;
@@ -793,9 +855,11 @@ begin
   if fraLocationInfo.eLocation.Text = '' then
     eAdminArea.Text := '';
   // If changing Biotope, blank ListItemKey, so that we can check it's a valid one
-  if Sender = eBiotope then FBiotopeListItemKey := '';
-  // If changing Admin area, blank AdminAreaKey, so that we can check it's a valid one
-  if Sender = eAdminAreaSearch then FAdminAreaKey := '';
+  if Sender = eBiotope then
+    FBiotopeListItemKey := '';
+  // If changing AdminArea, blank AdminAreadKey, so that we can check it's a valid one
+  if (Sender is TEdit) and (Copy(TEdit(Sender).Name, 1, 9) = 'adminArea') then
+    FAdminAreaKeys[TEdit(Sender).Tag] := '';
 end;  // ChangeEditState
 
 //==============================================================================
@@ -812,6 +876,9 @@ var
   lstDetCheckMsg     : string;
   lDetCheckComponent : TWinControl;
   lCursor            : TCursor;
+  i                  : integer;
+  adminAreaKey, adminTypeKey: TKeyString;
+  adminCheck         : Boolean;
   //----------------------------------------------------------------------------
   function CheckCount:boolean;
   var lRowIdx : integer;
@@ -867,7 +934,7 @@ begin
                   ResStr_DateOutsideRange,eDate);
   except
     on E : EValidationDataError do
-      Raise TExceptionPath.CreateNonCritical(E.MEssage);
+      Raise TExceptionPath.CreateNonCritical(E.Message);
   end;
   fraLocationInfo.Validate(cmbSurvey.KeyValue);
   ValidateValue(cmbSampleType.Text<>'',
@@ -875,9 +942,18 @@ begin
   ValidateValue((eBiotope.Text = '') or (FBiotopeListItemKey <> '') or
                 ((FBiotopeListItemKey = '') and FdmPlaceCard.CheckBiotope(FBiotopeListItemKey, eBiotope)),
                 ResStr_InvalidBiotopeSelect, eBiotope);
-  ValidateValue((eAdminAreaSearch.Text = '') or (FAdminAreaKey <> '') or
-                ((FAdminAreaKey = '') and FdmPlaceCard.CheckAdminArea(FAdminAreaKey, eAdminAreaSearch, FAdminTypeKey)),
-                ResStr_InvalidAdminAreaSelect, eAdminAreaSearch);
+  for i := 0 to FAdminAreaTypes.Count - 1 do begin
+    adminAreaKey := TKeyString(FAdminAreaKeys[i]);
+    adminTypeKey := TKeyString(FAdminAreaTypes[i]);
+    adminCheck := (TEdit(FAdminAreaTypes.Objects[i]).Text <> '') and (FAdminAreaKeys[i] = '')
+      and FdmPlaceCard.CheckAdminArea(
+        adminAreaKey,
+        TEdit(FAdminAreaTypes.Objects[i]),
+        adminTypeKey
+    );
+    ValidateValue((TEdit(FAdminAreaTypes.Objects[i]).Text = '') or (FAdminAreaKeys[i] <> '') or adminCheck,
+                ResStr_InvalidAdminAreaSelect, TEdit(FAdminAreaTypes.Objects[i]));
+  end;
   ValidateValue(CheckCount,ResStr_SetCountAndCountOf,sgCount);
   ValidateValue(CheckCountQualifier,ResStr_InvalidCountQualifier,sgCount);
   ltfDeterminerCheck := DeterminerComplete(lstDetCheckMsg, lDetCheckComponent);
@@ -902,7 +978,7 @@ begin
 
     FSampleKey := FdmPlaceCard.GetSampleKey(Trunc(eDate.VagueDate.StartDate),
                   Trunc(eDate.VagueDate.EndDate), eDate.VagueDate.DateTypeString,
-                  FSurveyEventKey, cmbSampleType.KeyValue, FAdminAreaKey,
+                  FSurveyEventKey, cmbSampleType.KeyValue,
                   fraLocationInfo.eLocationName.Text, fraLocationInfo.eSpatialRef,
                   FMeasurementControls);
     if FSampleKey = '' then
@@ -1236,10 +1312,14 @@ end;  // eBiotopeKeyPress
 
 //==============================================================================
 procedure TfrmSpeciesCard.eAdminAreaSearchKeyPress(Sender: TObject; var Key: Char);
+var
+  adminAreaKey, adminTypeKey: TKeyString;
 begin
   inherited;
-  if (Key = #13) and (FAdminAreaKey = '') then begin
-    FdmPlaceCard.CheckAdminArea(FAdminAreaKey, eAdminAreaSearch, FAdminTypeKey);
+  adminAreaKey := FAdminAreaKeys[TEdit(Sender).Tag];
+  adminTypeKey := FAdminAreaTypes[TEdit(Sender).Tag];
+  if (Key = #13) and (FAdminAreaKeys[TEdit(Sender).Tag] = '') then begin
+    FdmPlaceCard.CheckAdminArea(adminAreaKey, TEdit(Sender), adminTypeKey);
     Key := #0;
   end;
 end;  // eAdminAreaSearchKeyPress
@@ -1261,12 +1341,15 @@ end;  // DropBiotope
 procedure TfrmSpeciesCard.DropAdminArea(const Sender: TObject;
   const iFormat: integer; const iSourceData: TKeyList;
   const iTextStrings: TstringList; var ioHandled: boolean);
+var
+  edit: TEdit;
 begin
   if Assigned(iSourceData) then
     if iSourceData.Header.ItemCount > 0 then begin
+      edit := TEdit(TClipboardCapability(Sender).DropControl);
       // Set text first, because of OnChange event that clears the key!
-      eAdminAreaSearch.Text := dmGeneralData.GetAdminAreaName(iSourceData.Items[0].KeyField1);
-      FAdminAreaKey := iSourceData.Items[0].KeyField1;
+      edit.Text := dmGeneralData.GetAdminAreaName(iSourceData.Items[0].KeyField1);
+      FAdminAreaKeys[edit.Tag] := iSourceData.Items[0].KeyField1;
     end;
 end;  // DropAdminArea
 
@@ -1283,6 +1366,7 @@ procedure TfrmSpeciesCard.bbAdminAreaFindClick(Sender: TObject);
 begin
   inherited;
   dmFormActions.actAdminAreaDiction.Execute;
+  FSearchingForAdminTypeIndex := TImageListButton(Sender).Tag;
   SetupLink(TBaseForm(frmMain.ActiveMDIChild), Self, AdminAreaUpdate);
 end;  // bbAdminAreaFindClick
 
@@ -1308,8 +1392,8 @@ begin
     try
       if KeyList.Header.ItemCount > 0 then begin
         // Set text first, because of OnChange event that clears the key!
-        eAdminAreaSearch.Text:=dmGeneralData.GetAdminAreaName(KeyList.Items[0].KeyField1);
-        FAdminAreaKey:= KeyList.Items[0].KeyField1;
+        TEdit(FAdminAreaTypes.Objects[FSearchingForAdminTypeIndex]).Text:=dmGeneralData.GetAdminAreaName(KeyList.Items[0].KeyField1);
+        FAdminAreaKeys[FSearchingForAdminTypeIndex] := KeyList.Items[0].KeyField1;
       end;
     finally
       KeyList.Free;
@@ -1468,16 +1552,18 @@ begin
         end;
       end;
     end;  // if FReferenceKey<>''
-    // Save link to admin area if there is one
-    if FAdminAreaKey <> '' then begin
-      try
-        Connection.Execute ('INSERT INTO Sample_Admin_Areas(Sample_Admin_Areas_Key, Admin_Area_Key, ' +
-            'Sample_Key, Entered_By)' +
-            'VALUES (''' + dmGeneralData.GetNextKey('Sample_Admin_Areas', 'Sample_Admin_Areas_Key') +
-            ''', ''' + FAdminAreaKey + ''', ''' + FSampleKey + ''', ''' + AppSettings.UserID + ''')');
-      except
-        on E:Exception do begin
-          Raise EDatabaseWriteError.Create(ResStr_CreateFail + ' ' + E.Message + ' [Sample Sources]');
+    // Save link to admin area(s) if present
+    for liCount := 0 to FAdminAreaTypes.Count-1 do begin
+      if FAdminAreaKeys[liCount] <> '' then begin
+        try
+          Connection.Execute ('INSERT INTO Sample_Admin_Areas(Sample_Admin_Areas_Key, Admin_Area_Key, ' +
+              'Sample_Key, Entered_By)' +
+              'VALUES (''' + dmGeneralData.GetNextKey('Sample_Admin_Areas', 'Sample_Admin_Areas_Key') +
+              ''', ''' + FAdminAreaKeys[liCount] + ''', ''' + FSampleKey + ''', ''' + AppSettings.UserID + ''')');
+        except
+          on E:Exception do begin
+            Raise EDatabaseWriteError.Create(ResStr_CreateFail + ' ' + E.Message + ' [Sample Admin Areas]');
+          end;
         end;
       end;
     end;
@@ -1811,10 +1897,11 @@ end;  // cmbSubstrateChange
 
 //==============================================================================
 procedure TfrmSpeciesCard.ResetCard;
-var iRow: integer;
+var i: integer;
 begin
   with sgCount do begin
-    for iRow := 1 to RowCount - 1 do Rows[iRow].Clear;
+    for i := 1 to RowCount - 1 do
+      Rows[i].Clear;
     RowCount:=2;
   end;
 
@@ -1831,7 +1918,8 @@ begin
   eDeterminer.Text        := '';
   eDeterminationDate.Text := '';
   eBiotope.Text           := '';
-  eAdminAreaSearch.Text   := '';
+  for i := 0 to FAdminAreaTypes.Count-1 do
+    TEdit(FAdminAreaTypes.Objects[i]).Text   := '';
   reComments.Text         := '';
   eSpecimenNumber.Text    := '';
   cmbSpecimenType.ClearSelection;

@@ -538,9 +538,8 @@ inherited dmPlaceCard: TdmPlaceCard
         Value = Null
       end>
     SQL.Strings = (
-      'SELECT S.SAMPLE_KEY, AA.ADMIN_AREA_KEY'
+      'SELECT S.SAMPLE_KEY'
       'FROM SAMPLE S'
-      'LEFT JOIN SAMPLE_ADMIN_AREAS AA ON AA.SAMPLE_KEY=S.SAMPLE_KEY'
       'WHERE S.VAGUE_DATE_START = :Start AND S.VAGUE_DATE_END = :End'
       
         'AND S.VAGUE_DATE_TYPE = :DateType AND S.SURVEY_EVENT_KEY = :Surv' +

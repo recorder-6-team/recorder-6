@@ -146,7 +146,7 @@ inherited frmSpeciesCard: TfrmSpeciesCard
         end
         object pnlCtrlAdminAreas: TPanel
           Left = 0
-          Top = 167
+          Top = 139
           Width = 328
           Height = 25
           Align = alTop
@@ -233,7 +233,7 @@ inherited frmSpeciesCard: TfrmSpeciesCard
         end
         object pnlCtrlProvenance: TPanel
           Left = 0
-          Top = 192
+          Top = 164
           Width = 328
           Height = 26
           Align = alTop
@@ -272,7 +272,7 @@ inherited frmSpeciesCard: TfrmSpeciesCard
         end
         object pnlCtrlRecordType: TPanel
           Left = 0
-          Top = 218
+          Top = 190
           Width = 328
           Height = 26
           Align = alTop
@@ -309,7 +309,7 @@ inherited frmSpeciesCard: TfrmSpeciesCard
         end
         object pnlCtrlSubstrate: TPanel
           Left = 0
-          Top = 244
+          Top = 216
           Width = 328
           Height = 26
           Align = alTop
@@ -346,7 +346,7 @@ inherited frmSpeciesCard: TfrmSpeciesCard
         end
         object pnlCtrlDateOfDetermination: TPanel
           Left = 0
-          Top = 270
+          Top = 242
           Width = 328
           Height = 26
           Align = alTop
@@ -381,7 +381,7 @@ inherited frmSpeciesCard: TfrmSpeciesCard
         end
         object pnlCtrlSpecimenComment: TPanel
           Left = 0
-          Top = 296
+          Top = 268
           Width = 328
           Height = 88
           Align = alTop
@@ -409,57 +409,6 @@ inherited frmSpeciesCard: TfrmSpeciesCard
             OnChange = ChangeEditState
             OnEnter = reCommentsEnter
             OnExit = reCommentsExit
-          end
-        end
-        object pnlCtrlAdminAreaSearch: TPanel
-          Left = 0
-          Top = 139
-          Width = 328
-          Height = 28
-          Align = alTop
-          BevelOuter = bvNone
-          TabOrder = 9
-          Visible = False
-          DesignSize = (
-            328
-            28)
-          object Label2: TLabel
-            Left = 6
-            Top = 8
-            Width = 56
-            Height = 13
-            Caption = 'Admin area:'
-          end
-          object shpAdminAreaSearch: TShape
-            Tag = 2
-            Left = 75
-            Top = 2
-            Width = 226
-            Height = 23
-            Anchors = [akLeft, akTop, akRight]
-            Pen.Color = clRed
-          end
-          object eAdminAreaSearch: TEdit
-            Left = 76
-            Top = 3
-            Width = 224
-            Height = 21
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 0
-            OnChange = ChangeEditState
-            OnKeyPress = eAdminAreaSearchKeyPress
-          end
-          object bbAdminAreaFind: TImageListButton
-            Left = 301
-            Top = 2
-            Width = 21
-            Height = 23
-            Hint = 'Get admin area'
-            Anchors = [akTop, akRight]
-            TabOrder = 1
-            OnClick = bbAdminAreaFindClick
-            ImageList = dmFormActions.ilButtons
-            ImageIndex = 5
           end
         end
       end
