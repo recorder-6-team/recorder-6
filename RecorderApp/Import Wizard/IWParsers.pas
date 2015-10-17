@@ -648,10 +648,10 @@ var
   end;
 
   {-----------------------------------------------------------------------------
-    Indicates if the given term consists only of alphabetic characters,
-    and has a length of at least 2.
+    Indicates if the given term consists only of alphabetic characters, hyphens,
+    and apostrophes which could therefore be a name.
   }
-  function IsWord(ATerm: String): Boolean;
+  function IsName(ATerm: String): Boolean;
   var
     i : integer;
   begin
@@ -659,7 +659,7 @@ var
     Result := true;
     for i := 1 to Length(ATerm) do
     begin
-      if not (ATerm[i] in ['a'..'z', 'A'..'Z']) then
+      if not (ATerm[i] in ['a'..'z', 'A'..'Z','''','-']) then
       begin
         Result := false;
         break;
@@ -719,13 +719,13 @@ var
     try
       if lSubTerms.Count = 0 then Result := false
       // Is the term a single word of more than one letter?
-      else if (lSubTerms.Count = 1) and (IsWord(lSubTerms[0])) then Result := true
+      else if (lSubTerms.Count = 1) and (IsName(lSubTerms[0])) then Result := true
       else if lSubTerms.Count >= 2 then
       begin
         if IsTitle(lSubTerms[0]) then
         begin
           // Is the term a title followed by a single word of more than one letter?
-          if (lSubTerms.Count = 2) and IsWord(lSubTerms[1]) then Result := true
+          if (lSubTerms.Count = 2) and IsName(lSubTerms[1]) then Result := true
           // Is the term a title followed by one or more initials?
           else
           begin
@@ -816,7 +816,7 @@ begin
         lCurrentToken := lTerm2;
         if Trim(lCurrentToken) <> '' then DoCallback;
       end
-      else if IsWord(lTerm1) and (lSeparator = ',') then
+      else if IsName(lTerm1) and (lSeparator = ',') then
       begin
         lTerm2 := ReadTerm;
         lCurrentToken := lTerm2 + ' ' + lTerm1;
