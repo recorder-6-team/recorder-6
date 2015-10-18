@@ -70,8 +70,10 @@ type
     function PopulateListBox1: integer;
     function PopulateListBox2(itemindex : integer): integer;
     function PopulateListBox3: integer;
+
+    function Get_Current_Type_Key: string;
     function Get_Current_Set_Key: string;
-    function GetCurrentSetItemKey: string;
+
     function Get_Current_System_Supplied() : integer;
     function ClearListBox3: integer;
     function HideSHowButtons(SystemSupplied, AddClone :integer): integer;
@@ -449,7 +451,7 @@ end;
 
 function TManageDesignationSetsX.Get_Name: WideString;
 begin
-    result:='Manage Designation Sets V6.22';
+    result:='Manage Designation Sets V6.24';
 end;
 
 function TManageDesignationSetsX.Get_ParentMenu: WideString;
@@ -542,16 +544,17 @@ begin
    ClearListBox1;
    TaxonSetKey :=  Get_Current_Set_Key();
 
-   IResult := FConn.Execute ('SELECT Taxon_Designation_Set_Item.Taxon_Designation_Set_Item_Key, ' +
+   IResult := FConn.Execute ('SELECT TAXON_DESIGNATION_TYPE.TAXON_DESIGNATION_TYPE_KEY,  ' +
+              ' TAXON_DESIGNATION_TYPE.KIND, ' +
               ' TAXON_DESIGNATION_TYPE.SHORT_NAME ' +
               ' FROM Taxon_Designation_Set_Item ' +
               ' INNER JOIN TAXON_DESIGNATION_TYPE ON ' +
               ' Taxon_Designation_Set_Item.Taxon_Designation_Type_Key = TAXON_DESIGNATION_TYPE.TAXON_DESIGNATION_TYPE_KEY ' +
-              ' WHERE Taxon_Designation_Set_Key = ''' + TaxonSetKey + ''' ORDER BY TAXON_DESIGNATION_TYPE.SHORT_NAME ');
+              ' WHERE Taxon_Designation_Set_Key = ''' + TaxonSetKey + ''' ORDER BY TAXON_DESIGNATION_TYPE.KIND,TAXON_DESIGNATION_TYPE.SHORT_NAME ');
    WHILE IResult.eof = false DO
 
    BEGIN
-       ListBox1.items.add(vartostr(Iresult.Fields.Item[0].value) +  '        '  +  vartostr(Iresult.Fields.Item[1].value));
+       ListBox1.items.add(vartostr(Iresult.Fields.Item[0].value) +  '        '  +  vartostr(Iresult.Fields.Item[1].value) + '/' + vartostr(Iresult.Fields.Item[2].value));
        Iresult.MoveNext
    END;
 
@@ -564,21 +567,22 @@ var
 
   IResult: _Recordset;
   TaxonSetKey : string;
-  
+
 
 begin
    Screen.Cursor := crHourGlass;
    ClearListBox3;
    TaxonSetKey :=  Get_Current_Set_Key();
    IResult :=   FConn.Execute( 'SELECT DISTINCT TAXON_DESIGNATION_TYPE.TAXON_DESIGNATION_TYPE_KEY, ' +
+               ' TAXON_DESIGNATION_TYPE.KIND, ' +
                 ' TAXON_DESIGNATION_TYPE.SHORT_NAME FROM TAXON_DESIGNATION_TYPE  ' +
-               ' ORDER BY TAXON_DESIGNATION_TYPE.SHORT_NAME ');
+               ' ORDER BY TAXON_DESIGNATION_TYPE.KIND,TAXON_DESIGNATION_TYPE.SHORT_NAME ');
 
 
     WHILE IResult.eof = false DO
 
     BEGIN
-       ListBox3.items.add(vartostr(Iresult.Fields.Item[0].value) +  '        '  +  vartostr(Iresult.Fields.Item[1].value));
+       ListBox3.items.add(vartostr(Iresult.Fields.Item[0].value) +  '        '  + vartostr(Iresult.Fields.Item[1].value) + '/' + vartostr(Iresult.Fields.Item[2].value));
        Iresult.MoveNext
     END;
 
@@ -726,7 +730,8 @@ begin
 
     end;
 end;
- Function TManageDesignationSetsX.GetCurrentSetItemKey: string;
+
+Function TManageDesignationSetsX.Get_Current_Type_Key: string;
 var
  nitem :integer;
 begin
@@ -798,7 +803,6 @@ begin
         buttonselected := MessageDlg (CurrentMessage, MtInformation,[mbok,mbCancel],0);
         if buttonselected = 1 then
               begin
-
                  SQLString := 'Delete from Taxon_Designation_Set_Item WHERE Taxon_Designation_Set_key = ''' + CurrentSetKey + '''';
                  FConn.Execute (SQLString);
                  Clearlistbox1();
@@ -815,22 +819,24 @@ end;
 
 procedure TManageDesignationSetsX.Button3Click(Sender: TObject);
 var
-CurrentSetItemKey : string;
+CurrentSetKey : string;
+CurrentTypeKey : string;
 SqlString : string;
 CurrentMessage : string;
 begin
-    CurrentSetItemKey :=   GetCurrentSetItemKey;
-    If CurrentSetItemKey <> ''  then
-     Begin
-         SQLString := 'Delete from Taxon_Designation_Set_Item WHERE Taxon_Designation_Set_Item_key = ''' + CurrentSetItemKey + '''';
-         FConn.Execute (SQLString);
-         PopulateListBox1();
-     end
+  CurrentSetKey :=  Get_Current_Set_Key;
+  CurrentTypeKey :=  Get_Current_Type_Key;
+  If  CurrentTypeKey <> '' then
+    Begin
+      SQLString := 'Delete from Taxon_Designation_Set_Item WHERE Taxon_Designation_Type_Key = ''' + CurrentTypeKey  + ''' AND Taxon_Designation_Set_key = ''' + CurrentSetKey + '''';
+      FConn.Execute (SQLString);
+      PopulateListBox1();
+    end
     else
-     begin
-       CurrentMessage := ' Please select a type for deletion ' ;
-       MessageDlg (CurrentMessage, MtInformation,[mbok],0);
-     end;
+    begin
+      CurrentMessage := ' Please select a type for deletion ' ;
+      MessageDlg (CurrentMessage, MtInformation,[mbok],0);
+    end;
 
 
 end;
@@ -994,48 +1000,40 @@ function TManageDesignationSetsX.CloneNewSetItem(
  I : integer;
  begin
    if (Edit1.text = '') and (length(Edit1.text) > 10) AND (ListBox2.Count > 0) then
-      Begin
+     Begin
        MessageDlg ('Check that you have a set selected and that a name is entered for new set. Name must be between 10 and 100 characters in length ', MtInformation,[mbOk],0);
-      end
-      else
-      begin
-         if CheckTDSetNamevalid(Edit1.Text) = true   then
-          Begin
-
-               clearlistbox3;
-                IRecorder:=CreateOLEObject('Recorder2000.AutoApplicationSettings') as IRecorder2000;
-                NewSetKey := IRecorder.GetNextKey('Taxon_Designation_Set');
-                 SQLText := 'INSERT INTO Taxon_Designation_Set(Taxon_designation_Set_Key,' +
-                 ' Title,Entered_By, Entry_Date,System_supplied_data, Custodian) ' +
-                  ' VALUES (''' + NewSetKey + ''',''' + edit1.text + ''',''' + Fuserid  + ''', GetDate(),0, ''' + FSiteId + ''')';
-                 Execute_SQL(SQlText);
-
-                 For I := 0 to ListBox1.count -1 do
-                 Begin
-                     NewSetItemKey := IRecorder.GetNextKey('Taxon_Designation_Set_Item');
-                     TDTKey := ansileftstr(ListBox1.Items [I],16);
-                     SQLText := 'INSERT INTO Taxon_Designation_Set_Item(Taxon_Designation_Set_Item_key,Taxon_designation_Set_Key,' +
-                     ' Taxon_Designation_Type_Key,Entered_By, Entry_Date,System_supplied_data, Custodian) ' +
-                     ' VALUES (''' + NewSetItemKey + ''',''' + NewSetKey + ''', ''' + TDTKey + ''',''' + FuserId      + ''', GetDate(),0, ''' + FSiteId + ''')';
-
-                     Execute_SQL(SQlText);
-
-                 end;
-                 ClearListBox1();
-                 ClearListBox2();
-                  clearlistbox3;
-                 label7.Caption := inttostr(PopulateListBox2(FLastSetType));
-
-
-                MessageDlg ('New set created. ' + Edit1.Text , MtInformation,[mbOk],0);
-                Edit1.Text := '[Name of New Set]';
-
-
-          end
-          else
-          begin
-            MessageDlg ('Name already in use. Enter alternative ', MtInformation,[mbOk],0);
-          end;
+     end
+     else
+     begin
+       if CheckTDSetNamevalid(Edit1.Text) = true   then
+       Begin
+         clearlistbox3;
+         IRecorder:=CreateOLEObject('Recorder2000.AutoApplicationSettings') as IRecorder2000;
+         NewSetKey := IRecorder.GetNextKey('Taxon_Designation_Set');
+         SQLText := 'INSERT INTO Taxon_Designation_Set(Taxon_designation_Set_Key,' +
+         ' Title,Entered_By, Entry_Date,System_supplied_data, Custodian) ' +
+         ' VALUES (''' + NewSetKey + ''',''' + edit1.text + ''',''' + Fuserid  + ''', GetDate(),0, ''' + FSiteId + ''')';
+         Execute_SQL(SQlText);
+         For I := 0 to ListBox1.count -1 do
+           Begin
+             NewSetItemKey := IRecorder.GetNextKey('Taxon_Designation_Set_Item');
+             TDTKey := ansileftstr(ListBox1.Items [I],16);
+             SQLText := 'INSERT INTO Taxon_Designation_Set_Item(Taxon_Designation_Set_Item_key,Taxon_designation_Set_Key,' +
+             ' Taxon_Designation_Type_Key,Entered_By, Entry_Date,System_supplied_data, Custodian) ' +
+             ' VALUES (''' + NewSetItemKey + ''',''' + NewSetKey + ''', ''' + TDTKey + ''',''' + FuserId      + ''', GetDate(),0, ''' + FSiteId + ''')';
+              Execute_SQL(SQlText);
+           end;
+             ClearListBox1();
+             ClearListBox2();
+             clearlistbox3;
+             label7.Caption := inttostr(PopulateListBox2(FLastSetType));
+             MessageDlg ('New set created. ' + Edit1.Text , MtInformation,[mbOk],0);
+             Edit1.Text := '[Name of New Set]';
+         end
+         else
+         begin
+           MessageDlg ('Name already in use. Enter alternative ', MtInformation,[mbOk],0);
+         end;
       end;
       Result := true;
 end;

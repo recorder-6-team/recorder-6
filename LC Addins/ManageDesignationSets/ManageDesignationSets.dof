@@ -80,7 +80,7 @@ UnsafeType=0
 UnsafeCode=0
 UnsafeCast=0
 [Linker]
-MapFile=0
+MapFile=3
 OutputObjs=0
 ConsoleApp=1
 DebugInfo=0
@@ -90,8 +90,8 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=C:\Program Files\Recorder 6\Addins
-UnitOutputDir=C:\Program Files\Borland\Delphi7\Projects\ManageDesignationSets\OutPut
+OutputDir=C:\Program Files (x86)\Recorder 6\Addins
+UnitOutputDir=C:\localsource\recorder-6\LC Addins\ManageDesignationSets\DCU
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
@@ -156,8 +156,9 @@ OleSelfRegister=1
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlUnitOutputDirectory]
-Count=1
-Item0=C:\Program Files\Borland\Delphi7\Projects\ManageDesignationSets\OutPut
+Count=2
+Item0=C:\localsource\recorder-6\LC Addins\ManageDesignationSets\DCU
+Item1=C:\localsource\DCU-ManageDesignationSets
 [HistoryLists\hlOutputDirectorry]
 Count=1
-Item0=C:\Program Files\Recorder 6\Addins
+Item0=C:\Program Files (x86)\Recorder 6\Addins
