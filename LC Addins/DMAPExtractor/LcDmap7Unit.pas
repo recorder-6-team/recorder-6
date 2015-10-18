@@ -90,7 +90,7 @@ uses ComServ,Dialogs;
 //LC Constants
 
 const
-THISVERSION = 'v6.22.6';
+THISVERSION = 'v6.23';
 RTN = 'RECOMMENDED TAXON NAME';
 RTNANSG = 'RECOMMENDED TAXON NAME/ATTRIBUTE NO SUB GEN.';
 RTNA = 'RECOMMENDED TAXON NAME/ATTRIBUTE';
@@ -522,12 +522,12 @@ end;
 //====================================
 function TTLcDmap7.Get_Description: Widestring;
 begin
-  Result := 'DMAP File generator v 2.0'
+  Result := 'DMAP File generator v 6.23'
 end;
 //======================================
 function TTLcDmap7.Get_Name: Widestring;
 begin
-  Result := 'DMAP Extractor V6.22.6'
+  Result := 'DMAP Extractor V6.23.1'
 end;
 //======================================
 function TTLcDmap7.Get_ImageFilename: Widestring;
