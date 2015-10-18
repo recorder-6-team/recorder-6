@@ -12,16 +12,16 @@ unit GotoKey2_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 06/03/2014 19:45:28 from Type Library described below.
+// File generated on 29/09/2015 14:41:26 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\localsource\Recorder\LC Addins\GoToKey2\GotoKey2.tlb (1)
+// Type Lib: C:\localsource\recorder-6\LC Addins\GoToKey2\GotoKey2.tlb (1)
 // LIBID: {B92B3A65-DE7A-427B-BBEC-780A99BE0247}
 // LCID: 0
 // Helpfile: 
 // HelpString: GotoKey2 Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\Windows\SysWOW64\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
