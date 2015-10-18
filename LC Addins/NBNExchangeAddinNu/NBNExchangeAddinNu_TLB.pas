@@ -12,16 +12,16 @@ unit NBNExchangeAddinNu_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 11/11/2013 17:37:48 from Type Library described below.
+// File generated on 29/09/2015 14:44:28 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\Program Files\Borland\Delphi7\Projects\NBNExchangeAddinNu\NBNExchangeAddinNu.tlb (1)
+// Type Lib: C:\localsource\recorder-6\LC Addins\NBNExchangeAddinNu\NBNExchangeAddinNu.tlb (1)
 // LIBID: {5E3EF605-4561-4828-834A-3EE6AFCEA5D1}
 // LCID: 0
 // Helpfile: 
 // HelpString: NBNExchangeAddinNu Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\Windows\SysWOW64\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}

@@ -90,8 +90,8 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=C:\Program Files\Recorder 6\Addins
-UnitOutputDir=C:\Program Files\Borland\Delphi7\Projects\NBNExchangeAddinNu\OutPut
+OutputDir=C:\Program Files (x86)\Recorder 6\Addins
+UnitOutputDir=C:\localsource\recorder-6\LC Addins\NBNExchangeAddinNu\DCU
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
@@ -134,3 +134,13 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlUnitOutputDirectory]
+Count=2
+Item0=C:\localsource\recorder-6\LC Addins\NBNExchangeAddinNu\DCU
+Item1=C:\localsource\DCU-NBNExchangeAddinNu
+[HistoryLists\hlOutputDirectorry]
+Count=1
+Item0=C:\Program Files (x86)\Recorder 6\Addins
