@@ -12,16 +12,18 @@ unit ManageDesignationSets_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 01/11/2013 22:22:37 from Type Library described below.
+// File generated on 29/09/2015 14:42:42 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\Program Files\Borland\Delphi7\Projects\ManageDesignationSets\ManageDesignationSets.tlb (1)
+// Type Lib: C:\localsource\recorder-6\LC Addins\ManageDesignationSets\ManageDesignationSets.tlb (1)
 // LIBID: {85E1981E-C5A3-49E0-BCC8-EC21A5442ED0}
 // LCID: 0
 // Helpfile: 
 // HelpString: ManageDesignationSets Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\Windows\SysWOW64\stdole2.tlb)
+// Errors:
+//   Hint: TypeInfo 'ManageDesignationSets' changed to 'ManageDesignationSets_'
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}

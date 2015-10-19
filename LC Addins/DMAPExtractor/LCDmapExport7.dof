@@ -80,7 +80,7 @@ UnsafeType=0
 UnsafeCode=0
 UnsafeCast=0
 [Linker]
-MapFile=0
+MapFile=3
 OutputObjs=0
 ConsoleApp=1
 DebugInfo=0
@@ -90,8 +90,8 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=C:\Program Files\Recorder 6\Addins
-UnitOutputDir=C:\localsource\DCU
+OutputDir=C:\Program Files (x86)\Recorder 6\Addins
+UnitOutputDir=C:\localsource\recorder-6\LC Addins\DMAPExtractor\DCU
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
@@ -134,15 +134,21 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[Excluded Packages]
-C:\localsource\Recorder\Third Party\L David Baldwin\HTML Components\Package\FrameViewer7.bpl=ThtmlViewer, TFrameViewer, and TFrameBrowser
+[HistoryLists\hlConditionals]
+Count=1
+Item0=madExcept
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlUnitOutputDirectory]
-Count=2
-Item0=C:\localsource\DCU
-Item1=C:\Program Files\Borland\Delphi7\Projects\DMAPExtractor\Output
+Count=5
+Item0=C:\localsource\recorder-6\LC Addins\DMAPExtractor\DCU
+Item1=C:\localsource\DCU-DMAPExtractor
+Item2=C:\localsource\DCU-Addins
+Item3=C:\localsource\DCU
+Item4=C:\Program Files\Borland\Delphi7\Projects\DMAPExtractor\Output
 [HistoryLists\hlOutputDirectorry]
-Count=1
-Item0=C:\Program Files\Recorder 6\Addins
+Count=3
+Item0=C:\Program Files (x86)\Recorder 6\Addins
+Item1=C:\Recorder 6\Addins
+Item2=C:\Program Files\Recorder 6\Addins

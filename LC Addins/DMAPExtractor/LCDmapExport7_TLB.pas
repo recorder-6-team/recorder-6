@@ -12,16 +12,16 @@ unit LCDmapExport7_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 15/11/2014 08:30:23 from Type Library described below.
+// File generated on 29/09/2015 14:40:21 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\localsource\Recorder\LC Addins\DMAPExtractor\LCDmapExport7.tlb (1)
+// Type Lib: C:\localsource\recorder-6\LC Addins\DMAPExtractor\LCDmapExport7.tlb (1)
 // LIBID: {9296A9A8-CC14-4D48-97D7-CB59106D6807}
 // LCID: 0
 // Helpfile: 
 // HelpString: LCDmapExport7 Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\Windows\SysWOW64\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}

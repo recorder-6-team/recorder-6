@@ -12,16 +12,16 @@ unit ProjectRuck3_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 06/03/2014 18:20:06 from Type Library described below.
+// File generated on 29/09/2015 14:47:04 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\localsource\Recorder\LC Addins\RucksackManager\ProjectRuck3.tlb (1)
+// Type Lib: C:\localsource\recorder-6\LC Addins\RucksackManager\ProjectRuck3.tlb (1)
 // LIBID: {3C10966F-6C61-4E7E-A533-03E8CE3C612B}
 // LCID: 0
 // Helpfile: 
 // HelpString: ProjectRuck3 Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\Windows\SysWOW64\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -255,21 +255,6 @@ type
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
   published
     property Anchors;
-    property  ParentColor;
-    property  ParentFont;
-    property  Align;
-    property  DragCursor;
-    property  DragMode;
-    property  ParentShowHint;
-    property  PopupMenu;
-    property  ShowHint;
-    property  TabOrder;
-    property  OnDragDrop;
-    property  OnDragOver;
-    property  OnEndDrag;
-    property  OnEnter;
-    property  OnExit;
-    property  OnStartDrag;
     property AutoScroll: WordBool index 202 read GetWordBoolProp write SetWordBoolProp stored False;
     property AutoSize: WordBool index 203 read GetWordBoolProp write SetWordBoolProp stored False;
     property AxBorderStyle: TOleEnum index 204 read GetTOleEnumProp write SetTOleEnumProp stored False;
@@ -313,7 +298,7 @@ const
     EventIID: '{118966A1-9C10-4233-8993-B4E4D92DE10F}';
     EventCount: 8;
     EventDispIDs: @CEventDispIDs;
-    LicenseKey: nil (*HR:$00000000*);
+    LicenseKey: nil (*HR:$80040154*);
     Flags: $0000001D;
     Version: 401;
     FontCount: 1;

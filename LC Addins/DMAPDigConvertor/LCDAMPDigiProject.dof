@@ -90,8 +90,8 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=C:\Program Files\Recorder 6\Addins
-UnitOutputDir=C:\localsource\DCU
+OutputDir=C:\Program Files (x86)\Recorder 6\Addins
+UnitOutputDir=C:\localsource\recorder-6\LC Addins\DMAPDigConvertor\DCU
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
@@ -152,14 +152,16 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 OleSelfRegister=1
-[Excluded Packages]
-C:\localsource\Recorder\Third Party\L David Baldwin\HTML Components\Package\FrameViewer7.bpl=ThtmlViewer, TFrameViewer, and TFrameBrowser
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlUnitOutputDirectory]
-Count=1
-Item0=C:\localsource\DCU
+Count=4
+Item0=C:\localsource\recorder-6\LC Addins\DMAPDigConvertor\DCU
+Item1=C:\localsource\DCU-DMAPDigConvertor
+Item2=C:\localsource\DCU-Addins
+Item3=C:\localsource\DCU
 [HistoryLists\hlOutputDirectorry]
-Count=1
-Item0=C:\Program Files\Recorder 6\Addins
+Count=2
+Item0=C:\Program Files (x86)\Recorder 6\Addins
+Item1=C:\Program Files\Recorder 6\Addins

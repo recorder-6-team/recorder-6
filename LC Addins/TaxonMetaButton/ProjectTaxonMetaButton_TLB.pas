@@ -12,16 +12,16 @@ unit ProjectTaxonMetaButton_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 06/03/2014 18:40:18 from Type Library described below.
+// File generated on 29/09/2015 14:47:45 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\localsource\Recorder\LC Addins\TaxonMetaButton\ProjectTaxonMetaButton.tlb (1)
+// Type Lib: C:\localsource\recorder-6\LC Addins\TaxonMetaButton\ProjectTaxonMetaButton.tlb (1)
 // LIBID: {8ADE301C-EB60-4FD5-877C-3250D99C2C15}
 // LCID: 0
 // Helpfile: 
 // HelpString: ProjectTaxonMetaButton Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\Windows\SysWOW64\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -213,19 +213,6 @@ type
     property VisibleDockClientCount: Integer index 209 read GetIntegerProp;
   published
     property Anchors;
-    property  ParentFont;
-    property  TabStop;
-    property  Align;
-    property  ParentShowHint;
-    property  PopupMenu;
-    property  ShowHint;
-    property  TabOrder;
-    property  OnDragDrop;
-    property  OnDragOver;
-    property  OnEndDrag;
-    property  OnEnter;
-    property  OnExit;
-    property  OnStartDrag;
     property Cancel: WordBool index 201 read GetWordBoolProp write SetWordBoolProp stored False;
     property Caption: WideString index -518 read GetWideStringProp write SetWideStringProp stored False;
     property Default: WordBool index 202 read GetWordBoolProp write SetWordBoolProp stored False;
@@ -261,7 +248,7 @@ const
     EventIID: '{64DAF6ED-900A-4407-A721-B5303C015DEE}';
     EventCount: 2;
     EventDispIDs: @CEventDispIDs;
-    LicenseKey: nil (*HR:$00000000*);
+    LicenseKey: nil (*HR:$80040154*);
     Flags: $0000001C;
     Version: 401;
     FontCount: 1;

@@ -1150,27 +1150,24 @@ function TDownloadDialog.GetIndividual(indiciaId: string; name: string): string;
 var
   first, last: string;
 begin
-  if indiciaId='unknown' then
-    result := 'NBNSYS0000000004'
-  else begin
-    if Pos(',', name)>0 then begin
-      first := Trim(Copy(name, Pos(',', name)+1, 255));
-      last := Trim(Copy(name, 1, Pos(',', name)-1));
-    end else begin
-      first := Trim(Copy(name, 1, Pos(' ', name)-1));
-      last := Trim(Copy(name, Pos(' ', name)+1, 255));
-    end;
-    // even if Indicia is proposing an ID for this person, the knownPeople.txt file can provide overrides.
-    result := FKnownPeople.Values[last + ',' + first];
-    if result='' then begin
-      if indiciaId<>'' then begin
-        result := FRemoteSiteID + IdToKey(indiciaId);
-        CreateIndividual(result, name);
-      end
-      else
-        result := 'NBNSYS0000000004';
-    end;
+  if Pos(',', name)>0 then begin
+    first := Trim(Copy(name, Pos(',', name)+1, 255));
+    last := Trim(Copy(name, 1, Pos(',', name)-1));
+  end else begin
+    first := Trim(Copy(name, 1, Pos(' ', name)-1));
+    last := Trim(Copy(name, Pos(' ', name)+1, 255));
   end;
+  // even if Indicia is proposing an ID for this person, the knownPeople.txt file can provide overrides.
+  result := FKnownPeople.Values[last + ',' + first];
+  if result='' then begin
+    if (indiciaId<>'') and (indiciaId<>'unknown') then begin
+      result := FRemoteSiteID + IdToKey(indiciaId);
+      CreateIndividual(result, name);
+    end
+    else
+      result := 'NBNSYS0000000004';
+  end;
+
 end;
 
 procedure TDownloadDialog.CreateIndividual(indkey: string; name: string);

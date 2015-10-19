@@ -12,16 +12,16 @@ unit ProjectManageUserTaxa_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 28/02/2014 19:35:43 from Type Library described below.
+// File generated on 29/09/2015 14:43:36 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\Program Files\Borland\Delphi7\Projects\ManageUserAddedTaxa\ProjectManageUserTaxa.tlb (1)
+// Type Lib: C:\localsource\recorder-6\LC Addins\ManageUserAddedTaxa\ProjectManageUserTaxa.tlb (1)
 // LIBID: {D9779BD9-E687-4206-9987-B21BD12E07C9}
 // LCID: 0
 // Helpfile: 
 // HelpString: ProjectManageUserTaxa Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\Windows\SysWOW64\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -255,21 +255,6 @@ type
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
   published
     property Anchors;
-    property  ParentColor;
-    property  ParentFont;
-    property  Align;
-    property  DragCursor;
-    property  DragMode;
-    property  ParentShowHint;
-    property  PopupMenu;
-    property  ShowHint;
-    property  TabOrder;
-    property  OnDragDrop;
-    property  OnDragOver;
-    property  OnEndDrag;
-    property  OnEnter;
-    property  OnExit;
-    property  OnStartDrag;
     property AutoScroll: WordBool index 202 read GetWordBoolProp write SetWordBoolProp stored False;
     property AutoSize: WordBool index 203 read GetWordBoolProp write SetWordBoolProp stored False;
     property AxBorderStyle: TOleEnum index 204 read GetTOleEnumProp write SetTOleEnumProp stored False;
@@ -313,7 +298,7 @@ const
     EventIID: '{85D573ED-B700-4F57-BC0F-F62A6DD7DE91}';
     EventCount: 8;
     EventDispIDs: @CEventDispIDs;
-    LicenseKey: nil (*HR:$00000000*);
+    LicenseKey: nil (*HR:$80040154*);
     Flags: $0000001D;
     Version: 401;
     FontCount: 1;

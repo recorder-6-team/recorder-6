@@ -174,7 +174,7 @@ type
         TfraLocationInfo);
     function CheckTaxonDictionary(iTaxonKey: String): Boolean;
     function GetSampleKey(DateStart, DateEnd: Integer;
-      const DateType, SurveyKey, SampleType, AdminAreaKey, LocationName: string;
+      const DateType, SurveyKey, SampleType, LocationName: string;
       ASpatialRef: TSpatialRef; AMeasurementControls: TStringList): string;
     procedure SetColumnNames(standardColumns, measurementColumns: TStrings);
     function IndexOfMappedColumn(const originalName: String; standard: Boolean): Integer;
@@ -666,7 +666,7 @@ end;
 
 //==============================================================================
 function TdmPlaceCard.GetSampleKey(DateStart, DateEnd: Integer;
-  const DateType, SurveyKey, SampleType, AdminAreaKey, LocationName: string;
+  const DateType, SurveyKey, SampleType, LocationName: string;
   ASpatialRef: TSpatialRef; AMeasurementControls: TStringList): string;
 var
   lLatLong: TLatLong;
@@ -688,8 +688,7 @@ begin
     Open;
     while not Eof do
     begin
-      if (AdminAreaKey = FieldByName('Admin_Area_Key').AsString) and
-          HasSameSampleData(FieldByName('Sample_Key').AsString, AMeasurementControls) then
+      if HasSameSampleData(FieldByName('Sample_Key').AsString, AMeasurementControls) then
         Result := FieldByName('Sample_Key').AsString;
       Next;
     end;

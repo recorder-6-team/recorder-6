@@ -1,0 +1,1 @@
+Update Database_Relationship set Master_table = 'Thesaurus_Relation_Type' WHERE Relationship_key in ('SYSTEM000000002O','SYSTEM000000002P','SYSTEM000000002R','SYSTEM0000000030')
