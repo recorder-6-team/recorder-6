@@ -233,6 +233,7 @@ type
     procedure mnuToolsBatchUpdatesClick(Sender: TObject);
     procedure mnuToolsDatabaseRebuildDesignationIndexClick(
       Sender: TObject);
+    procedure mnuOnLineHelpClick(Sender: TObject);
   private
     FCurrentForm :TForm;
     FClosing: boolean;
@@ -280,6 +281,7 @@ type
               AReportIndex: TBaseReportIndex; const ADataTypes: TKeyTypes = [ktDefault];
               const AKey: string=''; AQuickReports: Boolean = False);
     procedure LoadCustomSpeciesCards;
+    function  GetOnLineHelpUrl : string;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -2147,5 +2149,18 @@ begin
 end;
 
 
+procedure TfrmMain.mnuOnLineHelpClick(Sender: TObject);
+begin
+  shellfile(GetOnLineHelpUrl);
+end;
+
+function TfrmMain.GetOnLineHelpUrl: string;
+var  rs : _Recordset;
+begin
+  Result := '';
+  rs := dmDatabase.ExecuteSQL('SELECT Data FROM [Setting] WHERE Name=''HelpUrl''', true);
+  if (rs.recordcount>0) then
+    Result := rs.Fields[0].Value;
+end;
 
 end.

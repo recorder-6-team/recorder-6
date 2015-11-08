@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 709
-  Top = 379
+  Left = 430
+  Top = 356
   Width = 655
   Height = 501
   Anchors = []
@@ -25,8 +25,8 @@ object frmMain: TfrmMain
   TextHeight = 13
   object Status: TStatusBar
     Left = 0
-    Top = 442
-    Width = 639
+    Top = 453
+    Width = 647
     Height = 21
     AutoHint = True
     Panels = <
@@ -45,7 +45,7 @@ object frmMain: TfrmMain
   object CoolBarMain: TCoolBar
     Left = 0
     Top = 0
-    Width = 639
+    Width = 647
     Height = 72
     AutoSize = True
     BandMaximize = bmDblClick
@@ -55,27 +55,27 @@ object frmMain: TfrmMain
         Control = pnlMenuContainer
         ImageIndex = -1
         MinHeight = 22
-        Width = 639
+        Width = 647
       end
       item
         Control = tbMainToolbar
         ImageIndex = -1
         MinHeight = 22
-        Width = 639
+        Width = 647
       end
       item
         Control = tbContext
         ImageIndex = -1
         MinHeight = 22
         Visible = False
-        Width = 639
+        Width = 647
       end>
     EdgeBorders = [ebBottom]
     PopupMenu = pmMainToolbar
     object tbMainToolbar: TXPToolbar
       Left = 9
       Top = 24
-      Width = 626
+      Width = 634
       Height = 22
       Align = alLeft
       AutoSize = True
@@ -93,7 +93,7 @@ object frmMain: TfrmMain
     object tbContext: TXPToolbar
       Left = 9
       Top = 48
-      Width = 626
+      Width = 634
       Height = 22
       Align = alLeft
       AutoSize = True
@@ -113,7 +113,7 @@ object frmMain: TfrmMain
     object pnlMenuContainer: TPanel
       Left = 9
       Top = 0
-      Width = 626
+      Width = 634
       Height = 22
       BevelOuter = bvNone
       PopupMenu = pmMainToolbar
@@ -220,7 +220,7 @@ object frmMain: TfrmMain
         end
       end
       object tbMDIButtons: TXPToolbar
-        Left = 557
+        Left = 565
         Top = 0
         Width = 69
         Height = 22
@@ -596,6 +596,10 @@ object frmMain: TfrmMain
         Caption = '&Context Sensitive'
         ShortCut = 112
         OnClick = mnuHelpContextClick
+      end
+      object mnuOnLineHelp: TMenuItem
+        Caption = '&On Line Help'
+        OnClick = mnuOnLineHelpClick
       end
       object mnuHelpSummary: TMenuItem
         Caption = '&Summary Info...'
