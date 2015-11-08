@@ -79,10 +79,11 @@ resourcestring
   ResStr_WrongPassword  = 'The password you entered is not correct.';
 
   ResStr_PasswordInstruct =
-      'Hint : This is the first time you have logged into Recorder.  Your password '
-      + 'is "password".  You can leave your password blank and press enter to login. '
-      + 'After logging in, select the Change Password option from the Tools menu to '
-      + 'update your password.';
+      'Hint : This is the first time you have logged into Recorder. '
+      + 'Unless you set up your password during installation then enter "pasword" '
+      + 'as your password or you can leave the password blank and press enter to login. '
+      + 'To change your password you must first login. You can then select the '
+      + 'Change Password option from the Tools menu to update your password.';
 
 {-------------------------------------------------------------------------------
 }
