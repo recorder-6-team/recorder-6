@@ -51,6 +51,7 @@ const
           'INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key ' +
           'WHERE TLV.Taxon_List_Version_Key IN (%s) ' +
           'AND (ITN.Actual_Name ' + ST_LIKE_PATTERN +
+          ' OR ITN.Common_Name ' + ST_LIKE_PATTERN  +
           ' OR ITN.Abbreviation ' + ST_LIKE_PATTERN +
           ' OR ITN.Authority ' + ST_LIKE_PATTERN + ')' +
           ' AND TLI.Taxon_List_Version_To IS NULL ' +
