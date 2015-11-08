@@ -170,6 +170,7 @@ type
     lblExportTemplates: TLabel;
     eExportTemplates: TEdit;
     btnExportTemplateBrowse: TButton;
+    cbUseOriginalicons: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure DrawListItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
@@ -402,6 +403,7 @@ begin
 
     cbNoDragDropFrame.Checked := DisableDragDropFrames;
     cbShowToolTips.Checked    := ShowToolTips;
+    cbUseOriginalicons.Checked := UseOriginalIcons;
 
     // Spatial Refs
     FSpatialRefSystem           := AppSettings.SpatialRefSystem;
@@ -895,6 +897,7 @@ begin
     chkOrganiseSurveysByTag.Checked    := DEFAULT_ORGANISE_SURVEYS_BY_TAG;
     chkUseOldImportWizard.Checked      := DEFAULT_USE_OLD_IMPORT_WIZARD;
     chkIgnoreRememberedMatches.Checked := DEFAULT_IGNORE_REMEMBERED_MATCHES;
+    cbUseOriginalicons.Checked                := DEFAULT_USE_ORIGINAL_ICONS;
   end else
   if pcOptionsPages.ActivePage=tsMainToolbar then
   begin
@@ -1153,6 +1156,7 @@ begin
       BackBitmapName        := IfThen(PlainBackground, '', eBackBitmap.Text);
       DisableDragDropFrames := cbNoDragDropFrame.Checked;
       ShowToolTips          := cbShowToolTips.Checked;
+      UseOriginalIcons      := cbUseOriginalicons.Checked;
 
       // Spatial Ref System
       SpatialRefSystem  := NewSpatialRefSystem;

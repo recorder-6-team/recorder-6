@@ -228,7 +228,7 @@ type
 
     FAvailableMaps: TAvailableMaps;
     FExportConfidentialOcc: Boolean;
-
+    FUseOriginalIcons: Boolean;
     FImportTemplatePath: String;
     FCRReportIndex: TCRReportIndex;
     FBatchUpdateIndex: TBUReportIndex;
@@ -328,6 +328,7 @@ type
     procedure CheckAccessDatasePath(AReg: TRegistry);
     procedure SetFileImportTypeIndex(const Value: integer);
     function GetExportConfidentialOccurrences: Boolean;
+    function GetUseOriginalIcons: Boolean;
     procedure SetSessionID(const Value: string);
     procedure CloseSession;
     procedure OpenSession;
@@ -401,6 +402,7 @@ type
     property DateCutYear: Integer read FDateCutYear write SetDateCutYear;
     property ExportConfidentialOccurrences: Boolean read
         GetExportConfidentialOccurrences write FExportConfidentialOcc;
+    property UseOriginalIcons: Boolean  read GetUseOriginalIcons write FUseOriginalIcons;
     property MapSingleDataset: Boolean read FtfMapSingleDataset write SetMapSingleDataset;
 
     property MandatoryColour: TColor read FMandatoryColour write SetMandatoryColour;
@@ -943,6 +945,7 @@ begin
         GraduatedMenus         := ReadBoolDefault(lReg, 'Graduated Menus', DEFAULT_GRADUATED_MENUS);
         ShowWelcomeAtStart     := ReadBoolDefault(lReg, 'ShowWelcomeAtStart', DEFAULT_SHOW_WELCOME_AT_START);
         ExportConfidentialOccurrences := ReadBoolDefault(lReg, 'Export Confidential Occurrences', DEFAULT_EXPORT_CONFIDENTIAL_OCC);
+        UseOriginalIcons := ReadBoolDefault(lreg, 'Original Icons', DEFAULT_USE_ORIGINAL_ICONS);
         FSearchForTaxonBy      := TTaxonSearchType(ReadBoolDefault(lReg, OPT_TAXA_SEARCHED_BY, Boolean(stName)));
         FSearchForReferenceBy  := TReferenceSearchType(ReadBoolDefault(lReg, OPT_REFERENCES_SEARCHED_BY, Boolean(stName)));
         PlainBackground        := ReadBoolDefault(lReg, 'Plain Background', True);
@@ -969,8 +972,7 @@ begin
         IncludeLocationSpatialRef := ReadBoolDefault(lReg, OPT_INCLUDE_LOCATION_SPATIAL_REF, DEFAULT_INCLUDE_LOCATION_SPATIAL_REF);
         IncludeLocationFileCode   := ReadBoolDefault(lReg, OPT_INCLUDE_LOCATION_FILE_CODE, DEFAULT_INCLUDE_LOCATION_FILE_CODE);
         OrganiseSurveysByTag      := ReadBoolDefault(lReg, OPT_ORGANISE_SURVEYS_BY_TAG, DEFAULT_ORGANISE_SURVEYS_BY_TAG);
-        UseOldImportWizard        := ReadBoolDefault(lReg,
-            OPT_USE_OLD_IMPORT_WIZARD, DEFAULT_USE_OLD_IMPORT_WIZARD);
+        UseOldImportWizard        := False;
         IgnoreRememberedMatches      := ReadBoolDefault(lReg,
             OPT_IGNORE_REMEMBERED_MATCHES, DEFAULT_IGNORE_REMEMBERED_MATCHES);
 
@@ -1153,6 +1155,7 @@ begin
         WriteBool('Drag And Drop',               DisableDragDropFrames);
         WriteInteger(OPT_FILE_IMPORT_TYPE_INDEX, FileImportTypeIndex);
         WriteBool('Tool Tips',                   ShowToolTips);
+        WriteBool('Original Icons',             UseOriginalIcons);
 
         // File Locations
         if RucksackPath <> '' then
@@ -3419,6 +3422,12 @@ end;
 function TApplicationSettings.GetExportConfidentialOccurrences: Boolean;
 begin
   Result := FExportConfidentialOcc and (UserAccessLevel = ualAdmin);
+end;
+
+//==============================================================================
+function TApplicationSettings.GetUseOriginalIcons: Boolean;
+begin
+  Result := FUseOriginalIcons;
 end;
 
 {-------------------------------------------------------------------------------
