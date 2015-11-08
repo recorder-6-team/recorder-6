@@ -408,7 +408,7 @@ begin
     // use generalData to get list version key for filter
     lSQL := Format(SQL_TAXON_FROM_QUERY_CURR_LIST,
                    [dmGeneralData.SetListVersionKeys(false, SourceParameter).LatestVersions,
-                    lText, lText, lText]);
+                    lText, lText, lText,ltext]);
   end else begin
     { Search a rucksack }
     FTaxonSearchType := stRucksack;

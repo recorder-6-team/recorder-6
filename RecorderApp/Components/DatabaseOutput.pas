@@ -198,7 +198,7 @@ type
     procedure ProcessTable(const ATableName, ALastTableName: string);
     procedure CreateTable(const ATableName: string);
     procedure DoDataEntryNames;
-    function DoExport: String;
+    function DoExport(const AExportPrivate: boolean) : String;
     procedure SetCancelled(const Value: boolean);
     procedure SetStatus(const AMessage: String);
     procedure SetProgress(const AProgress: Integer);
@@ -222,7 +222,7 @@ type
     procedure RemoveTempSurveyData;
     procedure RemoveTempSurveyDataRecurse(qry, table: string);
     //Michael Weideli  Mantis 450 Mantis 451
-    function GetFieldsToExport(const table: string): String;
+    function GetFieldsToExport(const table: string; const AExportprivate :boolean): String;
     //Mantis 343
     procedure CustodyToBeReassigned;
     procedure CreateCustodianTable(Const AStringList:TStringList);
@@ -237,8 +237,8 @@ type
     constructor Create(ADatabaseModule: TdmDatabase; const ADBName: String;
                   const ASetStatusEvent: TSetStatusEvent; const ASetProgressEvent: TSetProgressEvent); overload;
     destructor Destroy; override;
-    procedure Execute(AKeyList: TKeyList; AWantObservations: Boolean; AChangeCustodian :Boolean); overload;
-    procedure Execute(AKeyList, AInvalidKeys: TKeyList; AWantObservations: Boolean; AChangeCustodian :Boolean); overload;
+    procedure Execute(AKeyList: TKeyList; AWantObservations: Boolean; AChangeCustodian :Boolean; AExportPrivate :Boolean); overload;
+    procedure Execute(AKeyList, AInvalidKeys: TKeyList; AWantObservations: Boolean; AChangeCustodian :Boolean; AExportPrivate : Boolean); overload;
     property Cancelled: boolean read FCancelled write SetCancelled;
     property UserAccessLevel: Integer read GetUserAccessLevel write SetUserAccessLevel;
     property ExportConfidentialOccurrences: Boolean read FExportConfidentialOccurrences
@@ -281,8 +281,10 @@ const
    // Michael Weideli    Mantis 450 Mantis 451
    SQL_SAMPLE_FIELDS_REQUIRED =
       'SELECT DISTINCT name FROM syscolumns '+
-      'WHERE id=OBJECT_ID(''SAMPLE'') '+
+      'WHERE id=OBJECT_ID(''SAMPLE'') ';
+   SQL_SAMPLE_FIELDS_EXCLUDE_PRIVATE =
       'AND name NOT IN (''Private_Location'', ''Private_Code'')';
+
 
   FILTERS: array[0..2] of string = ('checked', 'confidential', 'verified');
 
@@ -612,14 +614,14 @@ end;    // TDatabaseOutput.InitialiseFields
 
 {-------------------------------------------------------------------------------
 }
-procedure TDatabaseOutput.Execute(AKeyList: TKeyList; AWantObservations: Boolean; AChangeCustodian: Boolean);
+procedure TDatabaseOutput.Execute(AKeyList: TKeyList; AWantObservations: Boolean; AChangeCustodian: Boolean; AExportPrivate:Boolean);
 begin
-  Execute(AKeyList, nil, AWantObservations,AChangeCustodian);
+  Execute(AKeyList, nil, AWantObservations,AChangeCustodian,AExportPrivate);
 end;
 
 {-------------------------------------------------------------------------------
 }
-procedure TDatabaseOutput.Execute(AKeyList, AInvalidKeys: TKeyList; AWantObservations: Boolean; AChangeCustodian: Boolean);
+procedure TDatabaseOutput.Execute(AKeyList, AInvalidKeys: TKeyList; AWantObservations: Boolean; AChangeCustodian: Boolean; AExportPrivate: boolean );
 var
   lIdx: integer;
   lPk : TPrimaryKey;
@@ -712,7 +714,7 @@ begin
     if AChangeCustodian then
        CustodyToBeReassigned;
     // Now that we have all the tables and keys, create the database and export
-    DoExport;
+    DoExport(AExportPrivate);
       // Compact the database before zipping it
     if not Cancelled then FDatabaseModule.CompactAccessDatabase(FDatabaseName, FSetStatus);
     // Zip the database
@@ -756,7 +758,7 @@ end;
 // Create the export Access database and export each table in turn. There are
 // no referential integrity constraints in the target database, so the tables
 // can be exported in whatever order.
-function TDatabaseOutput.DoExport: String;
+function TDatabaseOutput.DoExport(const AExportPrivate: boolean) : String;
 var liIdx        : Integer;
     lconnExportDB: TADOConnection;
     lQuery     : TADOQuery;
@@ -783,7 +785,7 @@ var liIdx        : Integer;
     lPk := FDatabaseModule.SplitPrimaryKey(ATableName);
     // Michael Weideli/JvB  Mantis 450 Mantis 451
     lstSQL := 'INSERT INTO [' + ATableName + '] ' +
-              'SELECT ' + GetFieldsToExport(ATableName) + ' FROM [SQL_' + ATableName + '] ' +
+              'SELECT ' + GetFieldsToExport(ATableName,AExportPrivate) + ' FROM [SQL_' + ATableName + '] ' +
               'WHERE [' + lPk.Key1 + '] IN (%s) ';
     lslKeys := TStringList.Create;
     if lPk.Key2 = '' then begin
@@ -1197,12 +1199,16 @@ end;
  * fields to export for a specific table. In most cases this can be just *, but some fields
  * are not exported.
  *)
-function TDatabaseOutput.GetFieldsToExport(const table: string): String;
-var   lFields :TstringList;
+function TDatabaseOutput.GetFieldsToExport(const table: string; const AExportprivate :boolean): String;
+var lFields :TstringList;
+    lqrySampleFields :string;
+
 begin
   if CompareText(table, 'SAMPLE')=0 then begin
     lFields := TStringList.Create;
-    with FDatabaseModule.ExecuteSQL(SQL_SAMPLE_FIELDS_REQUIRED, True) do
+    lqrySampleFields :=  SQL_SAMPLE_FIELDS_REQUIRED;
+    if not AExportprivate then lqrySampleFields := lqrySampleFields + SQL_SAMPLE_FIELDS_EXCLUDE_PRIVATE;
+    with FDatabaseModule.ExecuteSQL(lqrySampleFields, True) do
       while not EOF do begin
         lFields.Add('[' + Uppercase(Fields[0].Value) + ']');
         MoveNext;

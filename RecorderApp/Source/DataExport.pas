@@ -70,6 +70,7 @@ type
     cbReassignCustody: TCheckBox;
     bbExportTo: TButton;
     cbNoValidation: TCheckBox;
+    cbExportPrivate: TCheckBox;
     procedure bbCancelClick(Sender: TObject);
     procedure bbExportToClick(Sender: TObject);
     procedure bbOkClick(Sender: TObject);
@@ -498,7 +499,7 @@ begin
         eDestination.Text, frmMain.SetStatus, frmMain.ProgressBar,
         FKeyList, AInvalidKeys, DataOutputComplete,
         (cbIncludeObservations.State = cbChecked) and (not cbReassignCustody.Checked),
-        AFromExportFilter,cbReassignCustody.Checked);
+        AFromExportFilter,cbReassignCustody.Checked,cbExportPrivate.checked);
   end;
 end;  // DoNBNExport
 
@@ -570,6 +571,7 @@ begin
     Height                    := Height - 12;
   end;
   cbNoValidation.Top :=  cbReassignCustody.Top ;
+  cbExportPrivate.Top :=  cbReassignCustody.Top ;
 end;  // SetCheckBoxPositions
 
 //==============================================================================
@@ -579,6 +581,7 @@ begin
   if not cbReassignCustody.Visible then
      Height := Height - 20;
   cbNoValidation.height :=  cbReassignCustody.Height;
+  cbExportPrivate.height :=  cbReassignCustody.Height;
 end;
 
 //==============================================================================
@@ -822,6 +825,8 @@ begin
   cbReassignCustody.checked := false;
   cbNoValidation.enabled := EnableDisable;
   cbNoValidation.checked := false;
+  cbExportPrivate.Enabled := EnableDisable;
+  cbExportPrivate.checked := false;
 end;
 end.
 

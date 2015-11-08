@@ -317,7 +317,7 @@ begin
      lDBOutput.UsingExportFilter := true; // so we get unchecked, invalid etc.
      frmContributionProgress.DatabaseOutput := lDBOutput;
      // Mantis 343
-     lDBOutput.Execute(AKeyList, AKeyListFilter, True,False);
+     lDBOutput.Execute(AKeyList, AKeyListFilter, True,False,False);
      frmContributionProgress.DatabaseOutput := nil;
    finally
      lDBOutput.Free;
