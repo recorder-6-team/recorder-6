@@ -27,7 +27,7 @@ uses
   Observations, ActnList, OnlineHelp, Constants, exgrid, RapTree, GeneralFunctions,
   ImageListButton, Recorder2000_TLB, SQLConstants, AdoInt, MapServerLink, MapClasses,
   Variants, ADODb, CommCtrl, ADODB_TLB, OleTools, CRCommonClasses, Contnrs, ExternalFilter,
-  KeyboardRapidTree,ResourceStrings;
+  KeyboardRapidTree,ResourceStrings,HierarchyFunctions;
 
 resourcestring
   ResStr_InvalidSelectNodeType = 'Invalid data type parameter to SelectNode method - %s';
@@ -318,8 +318,10 @@ uses
   Find, ApplicationSettings, SpatialRefFuncs, References, IndOrg, DatabaseAccessADO;
 
 const
-  SITE_IMAGE_INDEX = 0;
-  FEATURE_IMAGE_INDEX = 1;
+  SITE_IMAGE_INDEX_0 = 0;
+  SITE_IMAGE_INDEX_1 = 1;
+  SITE_IMAGE_INDEX_2 = 2;
+  FEATURE_IMAGE_INDEX = 3;
 
   { Fields in the feature query to sort by }
   FEATURE_NAME = 'Item_Name';
@@ -331,6 +333,9 @@ const
   LOCATION_SPATIAL_REF_SORT = 'Spatial_Ref';
   FEATURE_NAME_SORT = 'F.' + FEATURE_NAME + ', FT.' + FEATURE_TYPE;
   FEATURE_TYPE_SORT = 'FT.' + FEATURE_TYPE + ', F.' + FEATURE_NAME;
+
+  // Setting Table
+  SETTING_NAME = 'PrefLocs';
 
 resourcestring
   ResStr_LocationLinked = 'The location has been linked to the selected boundary';
@@ -642,7 +647,7 @@ begin
   with tvLocations do begin
     tfOn:=ANotEditing and (Items.Count>0);
     if lSelectedNode<>nil then
-      tfSubSite:=(lSelectedNode.Level>0) and (lSelectedNode.ImageIndex=SITE_IMAGE_INDEX)
+      tfSubSite:=(lSelectedNode.Level>0) and (lSelectedNode.ImageIndex<FEATURE_IMAGE_INDEX)
     else
       tfSubSite := False;
   end;
@@ -655,7 +660,7 @@ begin
   bbDelete.Enabled     :=tfOn and DeleteButtonState(lData);
   // Apply FullEditAccess security
   if bbDelete.Enabled and Assigned(lSelectedNode) then begin
-    if lSelectedNode.ImageIndex=SITE_IMAGE_INDEX then
+    if lSelectedNode.ImageIndex<FEATURE_IMAGE_INDEX then
       bbDelete.Enabled := bbDelete.Enabled and
                       dmGeneralData.HasFullEditAccess(TN_LOCATION,
                       'LOCATION_KEY', lData.ItemKey)
@@ -684,7 +689,7 @@ begin
   mnuEditDelete.Enabled:=bbDelete.Enabled;
 
   actFilter.Enabled       := tfOn and (lSelectedNode <> nil) and
-                             (lSelectedNode.ImageIndex = SITE_IMAGE_INDEX);
+                             (lSelectedNode.ImageIndex < FEATURE_IMAGE_INDEX);
   actFindOnMap.Enabled    := actFilter.Enabled and (AppSettings.AvailableMaps.Count > 0);
   actFind.Enabled         := tfOn;
   actShowMetadata.Enabled := tfOn and (lSelectedNode <> nil);
@@ -712,11 +717,11 @@ var tfSite, tfSubSite,
 begin
   if iNode<>nil then
     with iNode do begin
-      tfSite    := ImageIndex = SITE_IMAGE_INDEX;
+      tfSite    := ImageIndex < FEATURE_IMAGE_INDEX;
       tfFeature := ImageIndex = FEATURE_IMAGE_INDEX;
-      tfSubSite := (ImageIndex = SITE_IMAGE_INDEX) and (Level > 0);
+      tfSubSite := (ImageIndex < FEATURE_IMAGE_INDEX) and (Level > 0);
       tfAddin   := Assigned(FNodeMan);
-      tfAddinExtra := tfAddin and not(ImageIndex in [SITE_IMAGE_INDEX, FEATURE_IMAGE_INDEX]);
+      tfAddinExtra := tfAddin and not(ImageIndex in [SITE_IMAGE_INDEX_0,SITE_IMAGE_INDEX_1,SITE_IMAGE_INDEX_2, FEATURE_IMAGE_INDEX]);
     end
   else begin
     tfSite    := True;  // so we can add a first site
@@ -784,7 +789,9 @@ begin
     ResetAddinDetailScreen;
     if CheckDeletedNode(emView) then
       case ANode.ImageIndex of
-        SITE_IMAGE_INDEX   : ShowLocationDetails(ANode.Text);
+        SITE_IMAGE_INDEX_0   : ShowLocationDetails(ANode.Text);
+        SITE_IMAGE_INDEX_1   : ShowLocationDetails(ANode.Text);
+        SITE_IMAGE_INDEX_2   : ShowLocationDetails(ANode.Text);
         FEATURE_IMAGE_INDEX: ShowFeatureDetails(ANode.Text);
       else
         // Further down the tree
@@ -914,7 +921,9 @@ begin
   if CheckDeletedNode(emEdit) then
     with SelectedItem do
       case ImageIndex of
-        SITE_IMAGE_INDEX    : TfrmLocationDetails(DetailForm).EditRecord;
+        SITE_IMAGE_INDEX_0    : TfrmLocationDetails(DetailForm).EditRecord;
+        SITE_IMAGE_INDEX_1    : TfrmLocationDetails(DetailForm).EditRecord;
+        SITE_IMAGE_INDEX_2    : TfrmLocationDetails(DetailForm).EditRecord;
         FEATURE_IMAGE_INDEX : TfrmFeatureDetails(DetailForm).EditRecord;
       else
         if Assigned(FDetailScreen) then
@@ -936,7 +945,7 @@ begin
     // Make sure the node to delete doesn't have any child node attached
     if not TNodeObject(Data).ChildrenPopulated then Expand(False);
     // If node has children, can't remove, and it can only be a site node
-    if (ImageIndex = SITE_IMAGE_INDEX) and HasChildren then begin
+    if (ImageIndex < FEATURE_IMAGE_INDEX) and HasChildren then begin
       tfMany := (Count > 1);
       if tfMany then stMsg := IntToStr(Count) + ResStr_SitesOrFeatures
                 else stMsg := ResStr_AnotherSite;
@@ -946,7 +955,9 @@ begin
       lKey := TNodeObject(Data).ItemKey;
       // See if anyone is editing the record, and if not, go on and delete it
       case ImageIndex of
-        SITE_IMAGE_INDEX   : stMsg := Format(ResStr_Site, [Text]);
+        SITE_IMAGE_INDEX_0   : stMsg := Format(ResStr_Site, [Text]);
+        SITE_IMAGE_INDEX_1   : stMsg := Format(ResStr_Site, [Text]);
+        SITE_IMAGE_INDEX_2   : stMsg := Format(ResStr_Site, [Text]);
         FEATURE_IMAGE_INDEX: stMsg := Format(ResStr_Feature, [Text]);
       else
         if Assigned(FNodeMan) then stMsg := Format(ResStr_Item, [Text]);
@@ -961,7 +972,9 @@ begin
           try
             DeleteOK := False;
             case ImageIndex of
-              SITE_IMAGE_INDEX   : DeleteOK := TfrmLocationDetails(DetailForm).DeleteRecord(lKey);
+              SITE_IMAGE_INDEX_0   : DeleteOK := TfrmLocationDetails(DetailForm).DeleteRecord(lKey);
+              SITE_IMAGE_INDEX_1   : DeleteOK := TfrmLocationDetails(DetailForm).DeleteRecord(lKey);
+              SITE_IMAGE_INDEX_2   : DeleteOK := TfrmLocationDetails(DetailForm).DeleteRecord(lKey);
               FEATURE_IMAGE_INDEX: DeleteOK := TfrmFeatureDetails(DetailForm).DeleteRecord(lKey);
             else
               if Assigned(FDetailScreen) then begin
@@ -1071,6 +1084,8 @@ var lNodeText : String;
   lFeatureNode : TFeatureNode;
   lResult : TFlyNode;
   lCursor : TCursor;
+  lPreferredCustodians : string;
+  lImageIndex : integer;
 begin
   lCursor:=HourglassCursor;
   LockWindowUpdate(Handle);
@@ -1119,9 +1134,20 @@ begin
                 end;
           end;
           if lResult <> nil then begin
-            lResult.ImageIndex := TNodeObject(lResult.Data).ImageIndex;
-            lResult.SelectedIndex := lResult.ImageIndex;
-          end;
+            // Here we change the images
+            lImageindex := TNodeObject(lResult.Data).ImageIndex;
+            If TNodeObject(lResult.Data).ImageIndex < FEATURE_IMAGE_INDEX then begin
+              lPreferredCustodians := GetPreferredCustodians(SETTING_NAME);
+              if (lPreferredCustodians <> '') then begin
+                if  (pos(Fields['Custodian'].Value,lPreferredCustodians) > 0)
+                  or (Fields['System_Supplied_Data'].Value = True) then lIMageIndex := 1
+                else
+                  lImageindex := 2;
+              end;
+             end;
+             lResult.ImageIndex := lImageindex;
+             lResult.SelectedIndex := lResult.ImageIndex;
+           end;  // end lResult if
           MoveNext;
         end;
       end; // if
@@ -1204,7 +1230,7 @@ procedure TfrmLocations.SetFormCaption;
 begin
   if SelectedItem <> nil then
     with SelectedItem do begin
-      if ImageIndex=SITE_IMAGE_INDEX then Self.Caption := ResStr_Location + ': ' + Text
+      if ImageIndex<FEATURE_IMAGE_INDEX then Self.Caption := ResStr_Location + ': ' + Text
       else
       if ImageIndex = FEATURE_IMAGE_INDEX then Self.Caption := ResStr_LBFeature + ': ' + Text
       else
@@ -1270,8 +1296,10 @@ begin
     SelectedItem.Parent.Expand(False);  // Make sure it's expanded, if adding first child node.
   end else
     FSelectedItem:=tvLocations.Items.AddObject(SelectedItem,'< ' + ResStr_NewLocation + ' >',lSiteNode);
-  SelectedItem.ImageIndex   :=SITE_IMAGE_INDEX;
-  SelectedItem.SelectedIndex:=SITE_IMAGE_INDEX;
+  // This is where we change the Image Index to 1 if needed                                                 if
+  if GetPreferredCustodians(SETTING_NAME)  <> '' then
+    SelectedItem.ImageIndex   :=SITE_IMAGE_INDEX_1;
+  SelectedItem.SelectedIndex:=SelectedItem.ImageIndex;
   tvLocations.Selected      :=FSelectedItem;   // Change to new item. Display the detail form too
   //Append record
   TfrmLocationDetails(DetailForm).AddRecord(lSiteNode.ItemKey);
@@ -1288,7 +1316,7 @@ begin
   lFeatureNode:= TFeatureNode.Create;
   lFeatureNode.ItemKey := dmGeneralData.GetNextKey('Location_Feature','Location_Feature_Key');
   lFeatureNode.ItemAdditional := TN_LOCATION_FEATURE;
-  if SelectedItem.ImageIndex = SITE_IMAGE_INDEX then begin //Add feature as child to location
+  if SelectedItem.ImageIndex < FEATURE_IMAGE_INDEX then begin //Add feature as child to location
     // Expand Site to next level, properly populating if needed.
     SelectedItem.Expand(False);
     FSelectedItem := tvLocations.Items.AddChildObject(SelectedItem, '< ' + ResStr_NewFeature + ' >', lFeatureNode);
@@ -1547,17 +1575,17 @@ begin
   inherited;
   // If trying to compare a site node with a feature node, just put the feature node
   // after the site node, regardless
-  if ((Node1.ImageIndex = SITE_IMAGE_INDEX) and (Node2.ImageIndex = FEATURE_IMAGE_INDEX))
+  if ((Node1.ImageIndex < FEATURE_IMAGE_INDEX) and (Node2.ImageIndex = FEATURE_IMAGE_INDEX))
      or
      (((FSortOrder = LOCATION_NAME_SORT) or (FSortOrder = LOCATION_FILE_CODE_SORT)
          or (FSortOrder = LOCATION_SPATIAL_REF_SORT)) and
       (Node1.ImageIndex = FEATURE_IMAGE_INDEX) and (Node2.ImageIndex = FEATURE_IMAGE_INDEX))
      or
      (((FSortOrder = FEATURE_NAME_SORT) or (FSortOrder = FEATURE_TYPE_SORT)) and
-      (Node1.ImageIndex = SITE_IMAGE_INDEX) and (Node2.ImageIndex = SITE_IMAGE_INDEX)) then
+      (Node1.ImageIndex < FEATURE_IMAGE_INDEX) and (Node2.ImageIndex < FEATURE_IMAGE_INDEX)) then
     Compare := -1
   else
-  if (Node1.ImageIndex = FEATURE_IMAGE_INDEX) and (Node2.ImageIndex = SITE_IMAGE_INDEX) then
+  if (Node1.ImageIndex = FEATURE_IMAGE_INDEX) and (Node2.ImageIndex < FEATURE_IMAGE_INDEX) then
     Compare := 1
   else if Node2.Text='-' then
     Compare := -1
@@ -1566,13 +1594,13 @@ begin
   else
     // Compare site with site, or feature with feature
     if (FSortOrder = LOCATION_NAME_SORT) and
-       (Node1.ImageIndex = SITE_IMAGE_INDEX) and (Node2.ImageIndex = SITE_IMAGE_INDEX) then
+       (Node1.ImageIndex < FEATURE_IMAGE_INDEX) and (Node2.ImageIndex < FEATURE_IMAGE_INDEX) then
       Compare := CompareText(Node1.Text, Node2.Text)
     else if (FSortOrder = LOCATION_FILE_CODE_SORT) and
-       (Node1.ImageIndex = SITE_IMAGE_INDEX) and (Node2.ImageIndex = SITE_IMAGE_INDEX) then
+       (Node1.ImageIndex < FEATURE_IMAGE_INDEX) and (Node2.ImageIndex < FEATURE_IMAGE_INDEX) then
       Compare := SuperCompareText(TSiteNode(Node1.Data).FileCode, TSiteNode(Node2.Data).FileCode)
     else if (FSortOrder = LOCATION_SPATIAL_REF_SORT) and
-       (Node1.ImageIndex = SITE_IMAGE_INDEX) and (Node2.ImageIndex = SITE_IMAGE_INDEX) then
+       (Node1.ImageIndex < FEATURE_IMAGE_INDEX) and (Node2.ImageIndex < FEATURE_IMAGE_INDEX) then
       Compare := CompareText(TSiteNode(Node1.Data).SpatialRef, TSiteNode(Node2.Data).SpatialRef)
     else
     if (Node1.ImageIndex = FEATURE_IMAGE_INDEX) and (Node2.ImageIndex = FEATURE_IMAGE_INDEX) then begin
@@ -1822,8 +1850,8 @@ var
   location: TCaptionAndKey;
 begin
   Result := False;
-
-  locationOnly := SelectedItem.ImageIndex = SITE_IMAGE_INDEX;
+  // Check This
+  locationOnly := SelectedItem.ImageIndex < FEATURE_IMAGE_INDEX;
   location := LookForLocation(locationOnly);
   if location.ItemKey <> '' then
     Result := LocateNode(location.Caption, location.ItemKey, locationOnly);
@@ -2003,7 +2031,7 @@ begin
   inherited;
   lSourceList:=TEditableKeyList.Create;
   try
-    if tvLocations.Selected.ImageIndex=SITE_IMAGE_INDEX then begin
+    if tvLocations.Selected.ImageIndex<FEATURE_IMAGE_INDEX then begin
       TfrmLocationDetails(DetailForm).Sources.GetInternalSources(lSourceList);
       stMsg:=ResStr_Location;
     end else begin
@@ -2359,7 +2387,7 @@ begin
   Result := TObjectList.Create(False);
   node := tvLocations.Items.GetFirstSelectedNode;
   while Assigned(node) do begin
-    if (node.ImageIndex = SITE_IMAGE_INDEX) or IncludeFeatures then
+    if (node.ImageIndex < FEATURE_IMAGE_INDEX) or IncludeFeatures then
       Result.Add(node);
     node := tvLocations.Items.GetNextSelectedNode(node);
   end;
@@ -2728,11 +2756,11 @@ begin
       // Get node under mouse and check it can accept the drop.
       lNode := GetNodeAt(lPos.X, lPos.Y);
       if Assigned(lNode) then
-        Accept := lNode.ImageIndex = SITE_IMAGE_INDEX
+        Accept := lNode.ImageIndex < FEATURE_IMAGE_INDEX
       else
       if Assigned(Selected) then
         // Always allow to drop SITE node on nothing, bring to top level, never FEATURE node!
-        Accept := Selected.ImageIndex = SITE_IMAGE_INDEX;
+        Accept := Selected.ImageIndex < FEATURE_IMAGE_INDEX;
     end;
 end;
 
@@ -2759,7 +2787,7 @@ begin
                            '@ParentKey', Null,
                            '@UserID', AppSettings.UserID]);
 
-  if AChildNode.ImageIndex = SITE_IMAGE_INDEX then
+  if AChildNode.ImageIndex < FEATURE_IMAGE_INDEX then
     dmDatabase.RunStoredProc('usp_Location_Update_ForDragDrop', lParams)
   else
   if AChildNode.ImageIndex = FEATURE_IMAGE_INDEX then
