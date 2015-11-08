@@ -1182,7 +1182,11 @@ begin
       with TLocationNameItem(Items.Objects[lIdx]) do
         bbLocNameEdit.Enabled := AppSettings.AllowEdit(EditMode) and
             (Added or dmGeneralData.HaveCustody(TN_LOCATION_NAME, 'LOCATION_NAME_KEY', ItemKey));
-      bbLocNameDel.Enabled :=bbLocNameEdit.Enabled;
+       with TLocationNameItem(Items.Objects[lIdx]) do
+        bbLocNameDel.Enabled := AppSettings.AllowEdit(EditMode) and
+       (Added or True);
+
+
     end;
 end;  // clbLocationNameClick
 

@@ -22,8 +22,8 @@ object frmLocationDetails: TfrmLocationDetails
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 377
-    Height = 357
+    Width = 385
+    Height = 368
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
