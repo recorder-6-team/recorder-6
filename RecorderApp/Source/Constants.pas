@@ -424,6 +424,8 @@ const
   DEFAULT_BACKGROUND_PICTURE      = '';
   DEFAULT_DISABLE_DRAG_DROP_FRAME = False;
   DEFAULT_SHOW_TOOL_TIPS          = True;
+  DEFAULT_USE_ORIGINAL_ICONS          = False;
+
 
   // Grid Ref default value
   DEFAULT_SPATIAL_REF_SYSTEM    = 'OSGB';

@@ -629,6 +629,7 @@ var iCount     : integer;
     lCurrentTab: TTabSheet;
     lCursor    : TCursor;
     lCustodian : String;
+    ZeroAbundance : Boolean;
 begin
   inherited;
   lCurrentTab:=pcTaxonOccurrence.ActivePage;
@@ -693,9 +694,10 @@ begin
     Measurements.KeyValue:=TaxonOccKey;
     Measurements.UpdateList;
     // Check for zero abundance
+    ZeroAbundance := dmGeneralData.CheckZeroAbundance(TaxonOccKey);
     FdmTaxonOcc.qryTaxonOcc.Last;
     FdmTaxonOcc.qryTaxonOcc.Edit;
-    FdmTaxonOcc.qryTaxonOcc.FieldByName('ZERO_ABUNDANCE').AsBoolean:=dmGeneralData.CheckZeroAbundance(TaxonOccKey);
+    FdmTaxonOcc.qryTaxonOcc.FieldByName('ZERO_ABUNDANCE').AsBoolean := ZeroAbundance;
     FdmTaxonOcc.qryTaxonOcc.Post;
     // Related Occurrences
     FRelOccList.OccKey:=TaxonOccKey;
@@ -722,8 +724,11 @@ begin
               ChangeChecked(dbcbChecked.Checked);
               FCheckedState:=dbcbChecked.Checked;
               if FCheckedState then TTaxonOccNode(SelectedItem.Data).StateImage:=STATE_CHECKED
-                               else TTaxonOccNode(SelectedItem.Data).StateImage:=STATE_UNCHECKED;
+                  else TTaxonOccNode(SelectedItem.Data).StateImage:=STATE_UNCHECKED;
             end;
+            if Not AppSettings.UseOriginalIcons then
+              TTaxonOccNode(SelectedItem.Data).ImageIndex :=  6 + (verified * 4) + ord(dbcbConfidential.Checked) + (2 *ord(ZeroAbundance));
+
             TTaxonOccNode(SelectedItem.Data).Confidential := dbcbConfidential.Checked;
             SetItemTextAndKey(lDataItem.ItemName,TaxonOccKey);
             tvObservations.Selected:=SelectedItem;
