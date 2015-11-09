@@ -87,6 +87,8 @@ object dlgImportComplete: TdlgImportComplete
     Caption = 
       'Save the list of imported records as a filter file so that you c' +
       'an review them later'
+    Checked = True
+    State = cbChecked
     TabOrder = 2
     WordWrap = True
   end
