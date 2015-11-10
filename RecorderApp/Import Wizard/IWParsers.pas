@@ -22,7 +22,7 @@
                      TRequiresTextParser
                      TSpatialRefSystemParser
                    TViceCountyNumberParser
-
+                   TDeterminerParser
   Description: Parsers used to handle data coming in through the Import Wizard.
 
   Model:
@@ -40,7 +40,8 @@ interface
 uses
   SysUtils, Windows, Messages, Classes, Graphics, Controls, Forms, Dialogs,
   StrUtils, Contnrs, ExceptionForm, FastStrings, FastStringFuncs, DateUtils,
-  DataClasses, VagueDate, IWConstants, ApplicationSettings, ValidationData;
+  DataClasses, VagueDate, IWConstants, ApplicationSettings, ValidationData,
+  IWNameParser;
 
 resourcestring
   ResStr_None = 'None';
@@ -66,6 +67,7 @@ resourcestring
   ResStr_RecordIDInvalid =
       'Record ID values must be 6 characters or less and cannot contain spaces.';
   ResStr_ObserverRequired = 'At least one observer must be specified.';
+  ResStr_DeterminerRequired = 'A determiner is required for every field.';
   ResStr_SiteIDInvalid =
       'Site ID values must be 8 characters in length and cannot contain spaces.';
   ResStr_SpatialRefInvalid = 'Value supplied is not recognised as a valid grid reference.';
@@ -173,6 +175,12 @@ type
   end;
   
   TObserverParser = class(TErrorParser)
+  public
+    constructor Create; override;
+    procedure ParseField(const Value: string; CallBack: TFieldParserEvent); override;
+  end;
+
+  TDeterminerParser = class(TErrorParser)
   public
     constructor Create; override;
     procedure ParseField(const Value: string; CallBack: TFieldParserEvent); override;
@@ -550,237 +558,24 @@ begin
   FFields.Add(TParsedField.Create(FLD_NAME, 'varchar(100)'));
 end;  // TObserverParser.Create
 
+
 {-------------------------------------------------------------------------------
 }
 procedure TObserverParser.ParseField(const Value: string; CallBack: TFieldParserEvent);
-const
-  SeparatorCharacters = [',', ';', '/', '\', '&', '+'];
 
 var
-  lPos: Integer;
+  i : integer;
   lCurrentToken: String;
   lTokenId: Integer;
-  lSeparatorPosition: Integer;
-  lSeparator, lTerm1, lTerm2: String;
-  
+  ParsedNames : TStringList;
   procedure DoCallback;
+
   begin
     // Return the token to the caller, and reset the token
     if Assigned(CallBack) then
       CallBack(Self, lTokenId, FLD_NAME, Trim(lCurrentToken));
     Inc(lTokenId);
     lCurrentToken := '';
-  end;
-
-  {-----------------------------------------------------------------------------
-    Finds the next set of alpha characters in the given string from the given
-    position.
-  }
-  function FindNextAlphaString(ATerm: String; APos: integer): string;
-  var
-    lAlphaPos: integer;
-  begin
-    Result := '';
-    lAlphaPos := APos;
-    while ATerm[lAlphaPos] in ['a'..'z', 'A'..'Z'] do begin
-      if not (ATerm[lAlphaPos] in [' ', '.']) then
-        Result := Result + ATerm[lAlphaPos];
-      Inc(lAlphaPos);
-      if lAlphaPos > Length(ATerm) then
-        Break; // from while
-    end;
-  end;
-  
-  {-----------------------------------------------------------------------------
-    Sets lSeparator as the current string from the given position,
-    and updates lSeparatorPosition
-  }
-  procedure GetNextSeparator;
-  var
-    lNextSeparatorPosition: Integer;
-  begin
-    lNextSeparatorPosition:= lPos;
-    while not (FWorking[lNextSeparatorPosition] in SeparatorCharacters) do
-    begin
-    lNextSeparatorPosition:= lNextSeparatorPosition + 1;
-      if lNextSeparatorPosition > Length(FWorking) then
-        Break; // from while
-    end;
-    lSeparatorPosition:= lNextSeparatorPosition;
-    if lSeparatorPosition <= Length(FWorking) then
-      lSeparator:= MidStr(FWorking, lSeparatorPosition, 1)
-    else
-      lSeparator:= '';
-  end;
-
-  {-----------------------------------------------------------------------------
-    Returns the next term in the current string from the current position,
-    and changes lPos to the position after this term.
-  }
-  function ReadTerm: String;
-  begin
-    GetNextSeparator;
-    Result:= Trim(MidStr(FWorking, lPos, lSeparatorPosition - lPos));
-    lPos:= lSeparatorPosition + 1;
-  end;
-
-  {-----------------------------------------------------------------------------
-    Indicates if the given term is a title, ignoring any differences in case
-    and trailing '.'
-  }
-  function IsTitle(ATerm: String): Boolean;
-  var
-    lTitleList : TStringList;
-  begin
-    if Length(ATerm) = 0 then Result := false
-    else
-    begin
-      lTitleList := TStringList.Create;
-      try
-        lTitleList.DelimitedText := LowerCase(Trim(ResStr_Titles));
-        ATerm:= LowerCase(Trim(ATerm));
-        if ATerm[Length(ATerm)] = '.' then ATerm:= LeftStr(ATerm, Length(ATerm) - 1);
-        Result := lTitleList.IndexOf(ATerm) <> -1;
-      finally
-        lTitleList.Free;
-      end;
-    end;
-  end;
-
-  {-----------------------------------------------------------------------------
-    Indicates if the given term consists only of alphabetic characters, hyphens,
-    and apostrophes which could therefore be a name.
-  }
-  function IsName(ATerm: String): Boolean;
-  var
-    i : integer;
-  begin
-    ATerm:= Trim(ATerm);
-    Result := true;
-    for i := 1 to Length(ATerm) do
-    begin
-      if not (ATerm[i] in ['a'..'z', 'A'..'Z','''','-']) then
-      begin
-        Result := false;
-        break;
-      end;
-    end;
-  end;
-
-  {-----------------------------------------------------------------------------
-    Indicates if the given term is a single letter.
-  }
-  function IsLetter(ATerm: String): Boolean;
-  begin
-    Result := (Length(ATerm) = 1) and (ATerm[1] in ['a'..'z', 'A'..'Z']);
-  end;
-
-  {---------------------------------------------------------------------------
-    Splits the given term into a StringList, delimited by ' ' and '.'.
-  }
-  function SplitTerm(ATerm: String): TStringList;
-  const
-    Delimeters = [' ', '.'];
-  var
-    i: integer;
-    lCurrentWord: String;
-  begin
-    Trim(ATerm);
-    lCurrentWord := '';
-    Result := TStringList.Create;
-    i := 1;
-    while i <= Length(ATerm) do
-    begin
-      if not (ATerm[i] in Delimeters) then
-        lCurrentWord := lCurrentWord + ATerm[i]
-      else
-      begin
-        Result.Add(lCurrentWord);
-        lCurrentWord := '';
-        if (ATerm[i] = '.') and (i < Length(ATerm)) and (ATerm[i + 1] = ' ') then
-          i := i + 1
-      end;
-      i := i + 1;
-    end;
-    if lCurrentWord <> '' then Result.Add(lCurrentWord);
-  end;
-
-  {-----------------------------------------------------------------------------
-    Indicates if the given term is not a complete name
-  }
-  function IsIncomplete(ATerm: String): Boolean;
-  var
-    lSubTerms: TStringList;
-    i: integer;
-
-  begin
-    Result:= false;
-    lSubTerms := SplitTerm(ATerm);
-    try
-      if lSubTerms.Count = 0 then Result := false
-      // Is the term a single word of more than one letter?
-      else if (lSubTerms.Count = 1) and (IsName(lSubTerms[0])) then Result := true
-      else if lSubTerms.Count >= 2 then
-      begin
-        if IsTitle(lSubTerms[0]) then
-        begin
-          // Is the term a title followed by a single word of more than one letter?
-          if (lSubTerms.Count = 2) and IsName(lSubTerms[1]) then Result := true
-          // Is the term a title followed by one or more initials?
-          else
-          begin
-            Result := true;
-            for i:= 1 to lSubTerms.Count - 1 do
-              if not IsLetter(lSubTerms[i]) then Result := false;
-          end;
-        end
-      end
-      // Is the term a set of one or more initials?
-      else
-      begin
-        Result := true;
-        for i:= 0 to lSubTerms.Count - 1 do
-          if not IsLetter(lSubTerms[i]) then Result := false;
-      end;
-    finally
-      lSubTerms.Free;
-    end; // try
-  end; // IsIncomplete
-
-  {-----------------------------------------------------------------------------
-    Returns a string of the given name with the title removed.
-  }
-  function RemoveTitle(ATerm: String): String;
-  var
-    lFirstAlphaString: String;
-  begin
-    Result := ATerm;
-    if Length(ATerm) > 0 then
-      begin
-      lFirstAlphaString := FindNextAlphaString(ATerm, 1);
-      if IsTitle(lFirstAlphaString) then
-      begin
-        Delete(Result, 1, Length(lFirstAlphaString));
-        if Result[1] = '.' then Delete(Result, 1, 1);
-      end;
-      Result := Trim(Result);
-    end;
-  end;
-
-  {-----------------------------------------------------------------------------
-    Returns the last word in the given term.
-  }
-  function GetLastWord(ATerm: String): String;
-  var
-    lWords: TStringList;
-  begin
-    Result := '';
-    lWords := SplitTerm(ATerm);
-    try
-      if lWords.Count > 0 then Result := lWords[lWords.Count - 1]
-    finally
-      lWords.Free;
-    end;
   end;
 
 begin
@@ -790,46 +585,59 @@ begin
   if FWorking='' then
     Fail(ResStr_ObserverRequired)
   else begin
-    // Convert 'and' or '+' to a single char (&) as it's easier to work with
-    FWorking := FastAnsiReplace(FWorking, ' ' + ResStr_And + ' ', ' & ', [rfReplaceAll]);
-    FWorking := FastAnsiReplace(FWorking, ' + ', ' & ', [rfReplaceAll]);
-
-    lPos := 1;
-    lCurrentToken := '';
+    ParsedNames := TStringList.Create;
+    ParseNameField (FWorking,ParsedNames);
     lTokenId := 0;
-    while lPos <= Length(FWorking) do
+    for i := 0 to ParsedNames.Count-1 do
     begin
-      lTerm1 := ReadTerm;
-      if IsTitle(lTerm1) and (lSeparator = '&') then
-      begin
-        lTerm2 := ReadTerm;
-        lCurrentToken := lTerm1 + ' ' + RemoveTitle(lTerm2);
-        if Trim(lCurrentToken) <> '' then DoCallback;
-        lCurrentToken := lTerm2;
-        if Trim(lCurrentToken) <> '' then DoCallback;
-      end
-      else if IsIncomplete(lTerm1) and (lSeparator = '&') then
-      begin
-        lTerm2 := ReadTerm;
-        lCurrentToken := lTerm1 + ' ' + GetLastWord(lTerm2);
-        if Trim(lCurrentToken) <> '' then DoCallback;
-        lCurrentToken := lTerm2;
-        if Trim(lCurrentToken) <> '' then DoCallback;
-      end
-      else if IsName(lTerm1) and (lSeparator = ',') then
-      begin
-        lTerm2 := ReadTerm;
-        lCurrentToken := lTerm2 + ' ' + lTerm1;
-        if Trim(lCurrentToken) <> '' then DoCallback;
-      end
-      else
-      begin
-        lCurrentToken := lTerm1;
-        if Trim(lCurrentToken) <> '' then DoCallback;
-      end;
+      lCurrentToken:= (ParsedNames[i]);
+      DoCallBack;
     end;
   end;
 end;  // TObserverParser.ParseField
+
+
+{-==============================================================================
+    TDeterminerParser
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+constructor TDeterminerParser.Create;
+begin
+  inherited Create;
+  FSingleRecord := True;
+  FFields.Add(TParsedField.Create(FLD_DATA, 'varchar(100)'));
+end;  // TDeterminerParser.Create
+
+procedure TDeterminerParser.ParseField(const Value: string; CallBack: TFieldParserEvent);
+var
+  lCurrentToken: String;
+  lTokenId: Integer;
+  ParsedNames : TStringList;
+  procedure DoCallback;
+
+  begin
+    // Return the token to the caller, and reset the token
+    if Assigned(CallBack) then
+      CallBack(Self, lTokenId, FLD_DATA, Trim(lCurrentToken));
+    Inc(lTokenId);
+    lCurrentToken := '';
+  end;
+
+begin
+  FWorking := Value;
+  TrimWhitespace;
+  FFailed := False;
+  lTokenId := 0;
+  if FWorking  <> ''  then begin
+    ParsedNames := TStringList.Create;
+    ParseNameField (FWorking,ParsedNames);
+    lCurrentToken:= (ParsedNames[0]);
+  end else
+    lCurrentToken:= (FWorking);
+
+  DoCallBack;
+end;
 
 {-==============================================================================
     TAltitudeParser
@@ -1643,6 +1451,7 @@ initialization
   RegisterClasses([TAbundanceDataParser,
                    TTextParser,
                    TObserverParser,
+                   TDeterminerParser,
                    TAltitudeParser,
                    TMapMateKeyParser,
                    TBooleanParser,
