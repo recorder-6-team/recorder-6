@@ -323,6 +323,7 @@ begin
     with Settings.ImportFile.ColumnMapping do
     begin
       pnlLocation.Visible   := (not IsMapped(ColumnTypeByKey(CT_KEY_GRID_REFERENCE)))
+          and   (not IsMapped(ColumnTypeByKey(CT_KEY_LOCATION)))
           and (not IsMapped(ColumnTypeByKey(CT_KEY_LOCATION_NAME)));
       pnlDate.Visible       := not IsMapped(ColumnTypeByKey(CT_KEY_DATE));
       pnlObserver.Visible   := not IsMapped(ColumnTypeByKey(CT_KEY_OBSERVER));

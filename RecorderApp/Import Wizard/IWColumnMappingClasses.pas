@@ -36,6 +36,8 @@ resourcestring
       'A value is specified in the %s column, so an associated value is required in the %s column.';
   ResStr_OneFieldRequired =
       'A value is required in the %s column or the %s column.';
+  ResStr_ValueRequired =
+      'A value is required in the %s column';
   ResStr_DeterminationDateBeforeSampleDate =
       'The determination date cannot be before the sample date.';
   ResStr_ClassNotParser = 'Class %s is does not implement IImportWizardParser.';
@@ -406,6 +408,7 @@ const
       'WHERE DEST.Import_Value IS NULL '+
       'AND SRC.[%s] IS NOT NULL '+
       'AND RTRIM(LTRIM(SRC.[%s])) <> ''''';
+
   SQL_DUPLICATES =
       'SELECT SRC.Record_No, DEST.Import_Value, DEST.Match_Key FROM ' +
       '[%s] AS SRC LEFT JOIN #%s AS DEST ON SRC.[%s]' +
@@ -414,6 +417,11 @@ const
   USP_MATCHRECOVERED_SPECIES   = 'usp_IWMatchRecovered_Species';
   USP_MATCHCLEAR_SPECIES       = 'usp_IWMatchClear_Species';
   USP_CHECKUNCONFIRMED_SPECIES = 'usp_IWCheckUnconfirmedMatches_Species';
+
+  SQL_MASTER_HAS_GRID_REF =
+      'SELECT * FROM tempdb.INFORMATION_SCHEMA.COLUMNS ' +
+      'WHERE OBJECT_ID(''tempdb..'' + table_name)=OBJECT_ID(''tempdb..#Master'')' +
+      'and COLUMN_NAME like ''System0100000001_Spatial_ref%''';
 
 {-==============================================================================
     TRelatedType
@@ -594,6 +602,7 @@ begin
     lTableName := '#Master';
     lFieldName := ColumnType.Key + '_' + AParseFieldName;
   end;
+
   dmDatabase.ExecuteSQL(Format(SQL_MATCHTABLE_INSERT,
                                [Name, lFieldName, lTableName, Name,
                                lFieldName, lFieldName, lFieldName]));
@@ -601,7 +610,8 @@ begin
     dmDatabase.ExecuteSQL(FImportedDataInsertSQL);
 
   FFields.Add(lTableName + '=' + lFieldName);
-end;  // TMatchRule.LoadImportedData 
+end;  // TMatchRule.LoadImportedData
+
 {-------------------------------------------------------------------------------
 }
 function TMatchRule.RemoveUnmatched : Integer;
@@ -625,14 +635,15 @@ begin
       else
         raise;
   end;
-end;  // TMatchRule.MakeNewEntry 
+end;  // TMatchRule.MakeNewEntry
 
 {-------------------------------------------------------------------------------
 }
 procedure TMatchRule.MatchRecords(ChecklistKey: string = '');
 begin
   If not AppSettings.IgnoreRememberedMatches then
-    ApplyRememberedMatches(ChecklistKey);
+     ApplyRememberedMatches(ChecklistKey);
+
   dmDatabase.RunStoredProc(FMatchProcedure, ['@ChecklistKey', ChecklistKey]);
 end;  // TMatchRule.MatchRecords
 
@@ -649,7 +660,7 @@ end;  // TMatchRule.PopulateChecklistCombo
 procedure TMatchRule.PopulateCombo(ACombo: TIDComboBox; const AProc: String);
 begin
   if AProc = '' then Exit; // or raise error?
-  
+
   with dmDatabase.GetRecordset(AProc, []) do
     try
       while not Eof do begin
@@ -1048,23 +1059,28 @@ var
   lClassname: string;
 begin
   lClassname := FParserClassname;
-  // Location Name is only required when no GR mapped. GR mapped ALWAYS imply Location column too.
-  if Key = CT_KEY_LOCATION_NAME then
-    if LocationNameMapped and not GridRefMapped then
-      FParserClassname := 'TRequiredTextParser'
-    else
-      FParserClassname := 'TTextParser';
-  // If all 3 column types are there, allow for either (GR/L and no LN), or (LN and no GR/L)
-  if Key = CT_KEY_GRID_REFERENCE then
-    if LocationNameMapped and GridRefMapped and LocationMapped then
+  // If GR column is not there or if it is there and both the Location and Location name
+  // are not there then it must containa  value.
+  // If the Location Name is there and the other wto columns are not then it
+  // must contain a value.
+  // If the Location is there, but the other two are not then it must containa value.
+   if Key = CT_KEY_GRID_REFERENCE then
+    if GridRefMapped and (LocationNameMapped or LocationMapped) then
       FParserClassname := 'TSpatialRefParser'
     else
       FParserClassname := 'TRequiredSpatialRefParser';
-  if Key = CT_KEY_LOCATION then
-    if LocationNameMapped and GridRefMapped and LocationMapped then
-      FParserClassname := 'TTextParser'
+
+   if Key = CT_KEY_LOCATION_NAME then
+    if LocationNameMapped and not LocationMapped and not GridRefMapped then
+      FParserClassname := 'TRequiredTextParser'
+   else
+      FParserClassname := 'TTextParser';
+
+   if Key = CT_KEY_LOCATION then
+    if LocationMapped and not GridRefMapped and not LocationNameMapped then
+      FParserClassname := 'TRequiredTextParser'
     else
-      FParserClassname := 'TRequiredTextParser';
+      FParserClassname := 'TTextParser';
 
   if not Assigned(FParser) and (FParserClassname<>'') then
   begin
@@ -1617,18 +1633,18 @@ end;  // TColumnMapping.UpdateLocationInfoColumns
   Check whether the mappings defined are valid, based on the
   required types and conflicting types for each mapped column
   type.
-  Updates ErrorCount and Errors. 
+  Updates ErrorCount and Errors.
 }
 procedure TColumnMapping.Validate;
 begin
   // TODO: perform validation
   IsDirty := False;
-end;  // TColumnMapping.Validate 
+end;  // TColumnMapping.Validate
 
 {-------------------------------------------------------------------------------
   Checks that if a column type relationship requires that a field has a matching value in
       another field, then the other value is populated.
-  Returns the name of the required column if failed. 
+  Returns the name of the required column if failed.
 }
 function TColumnMapping.ValidateFieldDependency(AType: TColumnType; ADataset: TDataset): String;
 var
@@ -1698,27 +1714,37 @@ begin
         if (lRelType.RelationshipType = rtOneRequired) then begin
           // It's all a bit weird with the location stuff, but they asked for it...
           // GridRef and LocationName work kinda together.
-          if (AType is TLocationInfoColumnType) then begin
-            with TLocationInfoColumnType(AType) do
-              // All mapped, GR/L required or LN required. Not mutually exclusive though.
-              // GR requiring L and vice versa still apply.
-              if GridRefMapped and LocationNameMapped and LocationMapped then
+          If (AType is TLocationInfoColumnType) then begin
+            with TLocationInfoColumnType(AType) do begin
+              if GridRefMapped and not LocationMapped and LocationNameMapped then begin
                 if (GetValue(CT_KEY_GRID_REFERENCE) = '') and
-                   (GetValue(CT_KEY_LOCATION) = '') and
-                   (GetValue(CT_KEY_LOCATION_NAME) = '') then
-                  Result := Format(
-                      ResStr_OneFieldRequired,
-                      [ColumnTypeByKey(CT_KEY_GRID_REFERENCE).Name,
-                       ColumnTypeByKey(CT_KEY_LOCATION_NAME).Name])
-                else
-                // Enforce if GR populate, L must be too and vice versa.
-                if (AType.Key = CT_KEY_GRID_REFERENCE) or (AType.Key = CT_KEY_LOCATION) then
-                  if (GetValue(CT_KEY_GRID_REFERENCE) = '') and (GetValue(CT_KEY_LOCATION) <> '') then
-                    Result := Format(
-                        ResStr_FieldRequired,
-                        [ColumnTypeByKey(CT_KEY_LOCATION).Name,
-                         ColumnTypeByKey(CT_KEY_GRID_REFERENCE).Name])
-          end else
+                  (GetValue(CT_KEY_LOCATION_NAME) = '') then
+                   Result := Format(ResStr_OneFieldRequired,
+                   [ColumnTypeByKey(CT_KEY_GRID_REFERENCE).Name,
+                   ColumnTypeByKey(CT_KEY_LOCATION_NAME).Name]);
+              end else
+              if not GridRefMapped and  LocationMapped and LocationNameMapped then begin
+                if (GetValue(CT_KEY_LOCATION_NAME) = '') and
+                   (GetValue(CT_KEY_LOCATION) = '') then
+                    Result := Format(ResStr_ValueRequired,
+                    [ColumnTypeByKey(CT_KEY_LOCATION).Name]);
+              end else
+              if GridRefMapped and LocationMapped and not LocationNameMapped then begin
+                if (GetValue(CT_KEY_GRID_REFERENCE) = '') and
+                   (GetValue(CT_KEY_LOCATION) = '') then
+                    Result := Format(ResStr_ValueRequired,
+                    [ColumnTypeByKey(CT_KEY_LOCATION_NAME).Name])
+              end else
+              if  GridRefMapped and LocationMapped and LocationNameMapped then begin
+               if  (GetValue(CT_KEY_GRID_REFERENCE)= '') and
+                   (GetValue(CT_KEY_LOCATION_NAME)= '') and
+                   (GetValue(CT_KEY_LOCATION)= '') then
+                    Result := Format(ResStr_ValueRequired,
+                    [ColumnTypeByKey(CT_KEY_GRID_REFERENCE).Name])
+          
+              end;
+            end; // end of with
+           end else
           // One or the other required.
           if (lValue = '') and  (lRelatedValue = '') then
             Result := Format(ResStr_OneFieldRequired, [AType.Name, lRelatedColumn.Name]);
@@ -1897,11 +1923,11 @@ begin
 end;  // TImportFile.ApplyTableRules
 
 {-------------------------------------------------------------------------------
-  Create temporary tables to hold parsed imported data prior to 
+  Create temporary tables to hold parsed imported data prior to
   matching.
-  
+
   The tables created are:
-  
+
       #master
           -- has a column 'Record_No INT'.
           -- has primary key (Record_No)
@@ -2188,7 +2214,7 @@ end;  // TImportFile.GenerateImportTable
 }
 function TImportFile.GetMasterColumn(AColumnType: TColumnType; AWithFieldType: Boolean): String;
 var
-  i: Integer;     
+  i: Integer;
   lColumn: String;
 begin
   Result := '';
@@ -2215,6 +2241,7 @@ begin
             lColumn := lColumn + ' ' + AColumnType.Parser.Fields[i].DataType;
         AddToCommaSeparatedList(Result, lColumn);
       end;
+
     end;
   end;
 end;  // TImportFile.GetMasterColumn
@@ -2239,6 +2266,7 @@ begin
       AddToCommaSeparatedList(Result, lColumn);
     end;
   end;
+
 end;  // TImportFile.GetMasterColumns
 
 {-------------------------------------------------------------------------------
@@ -2544,7 +2572,6 @@ begin
       lMappedType.ParseField(lValue, nil);
       lErrorFound := lMappedType.Parser.Failed;
     end;
-
     if not lErrorFound then
       // Check for a field level dependency
       lErrorFound := ColumnMapping.ValidateFieldDependency(lMappedType, FDatasource) <> '';
@@ -2754,6 +2781,7 @@ procedure TImportFile.UpdateProgress(Progress: Integer);
 begin
   if Assigned(OnProgress) then OnProgress(Progress, True);
 end;  // TImportFile.UpdateProgress
+
 
 initialization
   RegisterClasses([TColumnType, TTaxonOccurrenceDataColumnType, TLocationInfoColumnType]);

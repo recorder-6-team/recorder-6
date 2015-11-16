@@ -324,7 +324,6 @@ begin
       FValidationInfo.Delete(idx);
     end;
   end;
-
   // Add all necessary columns and tables.
   sql := '';
   for i := 0 to FValidationInfo.Count - 1 do
@@ -463,27 +462,38 @@ var
           if cvInfo.MappedType is TLocationInfoColumnType then
           begin
             with TLocationInfoColumnType(cvInfo.MappedType) do
-              // All mapped, GR/L required or LN required. Not mutually exclusive though.
-              // GR requiring L and vice versa still apply.
-              if GridRefMapped
-                 and LocationNameMapped
-                 and LocationMapped then
-                sql := sql + IfThen(sql = '', '', #10'OR     ')
-                    + Format(
-                        '(I."%s" = '''' AND I."%s" = '''' AND I."%s" = '''')',
-                        [ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_GRID_REFERENCE)),
-                         ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_LOCATION)),
-                         ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_LOCATION_NAME))])
-                else
-                // Enforce if GR populate, L must be too and vice versa.
-                if (cvInfo.MappedType.Key = CT_KEY_GRID_REFERENCE)
-                   or (cvInfo.MappedType.Key = CT_KEY_LOCATION) then
+            begin
+              if GridRefMapped and not LocationMapped and LocationNameMapped then
+                 sql := sql + IfThen(sql = '', '', #10'OR     ')
+                     + Format(
+                     '(I."%s" = '''' AND I."%s" = '''')',
+                     [ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_GRID_REFERENCE)),
+                     ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_LOCATION_NAME))])
+              else
+              if  Not GridRefMapped and LocationMapped and LocationNameMapped then
+                  sql := sql + IfThen(sql = '', '', #10'OR     ')
+                     + Format(
+                     '(I."%s" = '''' AND I."%s" = '''')',
+                     [ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_LOCATION)),
+                     ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_LOCATION_NAME))])
+              else
+              if  GridRefMapped and LocationMapped and not LocationNameMapped then
+                  sql := sql + IfThen(sql = '', '', #10'OR     ')
+                     + Format(
+                     '(I."%s" = '''' AND I."%s" = '''')',
+                     [ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_LOCATION)),
+                     ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_GRID_REFERENCE))])
+              else
+              if  GridRefMapped and LocationMapped and LocationNameMapped then
                   sql := sql + IfThen(sql = '', '', #10'OR     ')
                       + Format(
-                          '(I."%s" = '''' AND I."%s" <> '''')',
-                          [ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_GRID_REFERENCE)),
-                           ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_LOCATION))]);
-          end else
+                      '(I."%s" = '''' AND  I."%s" = '''' AND I."%s" = '''')',
+                      [ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_LOCATION_NAME)),
+                      ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_LOCATION)),
+                      ColumnMapping.MappedColumn(ColumnMapping.ColumnTypeByKey(CT_KEY_GRID_REFERENCE))])
+              end;
+          end
+          else
           // One or the other required.
             sql := sql + IfThen(sql = '', '', #10'OR     ')
                 + Format(
