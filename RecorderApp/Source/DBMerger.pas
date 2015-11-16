@@ -25,9 +25,9 @@ unit DBMerger;
 interface
 
 uses
-  Sysutils, Classes, Forms, ComCtrls, DataClasses, JnccDatasets, Constants,
+  Windows,Sysutils, Classes, Forms, ComCtrls, DataClasses, JnccDatasets, Constants,
   Db, ExceptionForm, TaskProgress, Relationships_ADO, TablePriorityList_ADO,
-  DatabaseUtilities, ComObj, ADODB, ADOInt, DatabaseAccessADO, Variants;
+  DatabaseUtilities, ComObj, ADODB, ADOInt, DatabaseAccessADO, Variants,dialogs;
 
 resourcestring
   ResStr_FailedToInsert = 'Failed to insert %s into %s';
@@ -85,6 +85,8 @@ type
     procedure SetInclusionMarks(const ATableName, APrimaryKey: string; AKeysIncluded: TStringList);
     function RoundToMinutes(ADateTime: TDateTime): TDateTime;
     procedure SetSiteID(const Value: string);
+    function GetErrorFilePath : string;
+
   protected
     function CopySingleRecord(const iPrimaryKey: TPrimaryKey): boolean; virtual;
     procedure CopyTableIntoMainDB(const iTableName: string); virtual;
@@ -109,7 +111,7 @@ type
 implementation
 
 uses
-  Genfuncs, GeneralFunctions, BaseADODataModule, DefaultPaths;
+  Genfuncs, GeneralFunctions, BaseADODataModule, DefaultPaths,registry;
 
 const
   BLOCK_SIZE = 2000;
@@ -235,7 +237,7 @@ var
   lFreeList: Boolean;
 begin
   WriteToLog(Format(ResStr_ItemsRejected, [Application.Title, TimeToStr(Now), DateToStr(Now)]) + ':', true);
-  AImportRejectsFile := DefaultOutputPath + IMPORT_REJECTS_FILE;
+  AImportRejectsFile := GetErrorFilePath + IMPORT_REJECTS_FILE;
   dmDatabase.RunStoredProc('usp_ImportInitialise', []);
   FRecordsProcessed := 0;
   FRecordsCopied := 0;
@@ -941,8 +943,7 @@ procedure TDBMerger.WriteToLog(const ALine: String; AClearFile: Boolean = false)
 var lFileName: String;
     lLogFile : TextFile;
 begin
-  ForceDirectories(DefaultOutputPath);
-  lFileName := DefaultOutputPath + IMPORT_REJECTS_FILE;
+  lFileName := GetErrorFilePath + IMPORT_REJECTS_FILE;
   AssignFile(lLogFile, lFileName);
   if AClearFile or not FileExists(lFileName) then Rewrite(lLogFile)
                                              else Append(lLogFile);
@@ -1018,4 +1019,22 @@ begin
   FSiteID := Value;
 end;
 
+function TDBMerger.GetErrorFilePath: string;
+
+begin
+  Result := ''; // default
+  with TRegistry.Create do
+    try
+      RootKey := HKEY_CURRENT_USER;
+      if OpenKeyReadOnly(REG_KEY_SETTINGS) then
+      begin
+        if ValueExists('Error Path') then
+          Result := ReadString('Error Path');
+        CloseKey;
+      end;
+    finally
+      Free;
+    end;
+end;
 end.
+

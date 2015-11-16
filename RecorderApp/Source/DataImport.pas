@@ -292,7 +292,7 @@ implementation
 
 uses
   Maintbar, ApplicationSettings, ComObj, FormActions, XMLTypes, GenFuncs,
-  Constants, DefaultPaths;
+  Constants, DefaultPaths,Registry;
 
 const
   NBN_DATA = 'NBN Data';
