@@ -173,6 +173,7 @@ type
     FUserID: TKeyString;
     FSiteID: String;
     FDictionaryVersion: String;
+    FDatabaseVersion: String; 
     FRecordingCards: TPopupMenu;
     FRecordingCardPath: String;
     FCustomSpeciesCardPath: string;
@@ -294,6 +295,7 @@ type
     function GetConvertor: THTMLRTFConversion;
     function GetSiteID: String;
     function GetDictionaryVersion: String;
+    function GetDatabaseVersion: String;
     procedure LoadSiteIDFromIni;
     procedure SetCanExportSystemSupplied(const Value: Boolean);
     procedure SetDisplayCommonNames(const Value: Boolean);
@@ -425,6 +427,7 @@ type
     property DictImagesPath: String read FDictImagesPath write FDictImagesPath;
     property SiteID: String read GetSiteID;
     property DictionaryVersion: String read GetDictionaryVersion;
+    property DatabaseVersion: String read GetDatabaseVersion;
     property UserID: TKeyString read FUserID write SetUserID;
     property UserAccessLevel: TUserAccessLevel read FUserAccessLevel write SetUserAccessLevel;
     property UserAccessLevelAsString: String read GetUserAccessLevelAsString;
@@ -1639,7 +1642,7 @@ begin
     finally
       Free;
     end;  // try .. finally
-end;  // GetSiteID  
+end;  // GetSiteID
 
 //==============================================================================
 { Accessor method for dictionary version.  }
@@ -1660,6 +1663,28 @@ begin
   end;
   Result := FDictionaryVersion;
 end;  // GetDictionaryVersion
+
+//==============================================================================
+{ Accessor method for Database version.  }
+function TApplicationSettings.GetDatabaseVersion: String;
+begin
+  if FDataBaseVersion = '' then begin
+    //Avoid using dmGeneral.GetRecordset as potentially it could infinitely loop
+    //by calling back to AppSettings.
+    with dmDatabase.ExecuteSQL(Format(SQL_SELECT_SETTING, ['DB Seq']), true) do begin
+      try
+        if (RecordCount>0) and (not (Fields['DATA'].Value = null)) then
+          FDatabaseVersion := Fields['DATA'].Value;
+      except on E:EDatabaseError do
+        raise EApplicationSettingsError.Create(ResStr_RecordMissing +
+            'DB Seq - No SETTING table', E);
+      end;
+    end;
+  end;
+  Result := FDataBaseVersion;
+end;  // GetDictionaryVersion
+
+
 
 //==============================================================================
 { After initial installation, the SiteID is placed in an ini file beside the

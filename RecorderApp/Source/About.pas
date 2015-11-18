@@ -118,6 +118,10 @@ type
     lblDictionaryVersionCaption: TLabel;
     lblDictionaryVersion: TLabel;
     lblDictionaryVersionCaption2: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
+    lblDatabaseVersion: TLabel;
+    StaticText2: TStaticText;
     procedure FormCreate(Sender: TObject);
   private
     function GetFileDate(Name: string): string;
@@ -180,6 +184,7 @@ begin
   Version.Caption     := GetFileVersion(Application.ExeName);
   lDate.Caption       := GetFileDate(Application.ExeName);
   lblDictionaryVersion.Caption := AppSettings.DictionaryVersion;
+  lblDatabaseVersion.Caption := AppSettings.DatabaseVersion;
   lblUsername.Caption := AppSettings.UserName;
 end;  // InitializeCaptions
 
