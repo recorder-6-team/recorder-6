@@ -23,6 +23,7 @@
                      TSpatialRefSystemParser
                    TViceCountyNumberParser
                    TDeterminerParser
+                   TSampleVCParser
   Description: Parsers used to handle data coming in through the Import Wizard.
 
   Model:
@@ -82,6 +83,7 @@ resourcestring
   ResStr_ValueToLong =
       'The value supplied is too long (%d).  A maximum of %d characters is allowed.';
   ResStr_ViceCountyInvalid = 'Value supplied is not recognised as a vice-county number.';
+  ResStr_SeaAreaInvalid = 'Value supplied is not recognised as a sea area.';
   ResStr_Yes = 'YES';
   ResStr_ValueNotAllowed =
       'The value supplied is not allowed. It must be one of the following:%s';
@@ -230,6 +232,16 @@ type
     destructor Destroy; override;
     procedure ParseField(const Value: string; CallBack: TFieldParserEvent); override;
   end;
+
+  TSampleVCParser = class(TErrorParser)
+  private
+    FCachedKeys: TStringList;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure ParseField(const Value: string; CallBack: TFieldParserEvent); override;
+  end;
+
 
   TNonRequiredDateParser = class(TErrorParser)
   private
@@ -929,6 +941,54 @@ begin
 end;  // TViceCountyNumberParser.ParseField
 
 {-==============================================================================
+    TViceCountyNumberParser
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+constructor TSampleVCParser.Create;
+begin
+  inherited;
+  FFields.Add(TParsedField.Create(FLD_KEY, 'char(16)'));
+end;  // TSampleVCParser.Create
+
+{-------------------------------------------------------------------------------
+}
+destructor TSampleVCParser.Destroy;
+begin
+  inherited;
+  FreeAndNil(FCachedKeys);
+end;  // TSampleVCParser.Destroy
+
+{-------------------------------------------------------------------------------
+}
+procedure TSampleVCParser.ParseField(const Value: string; CallBack: TFieldParserEvent);
+
+begin
+  FWorking := Value;
+  TrimWhitespace;
+  FFailed := False;
+  // Using cached version of parser, to speed up lookups.
+  if not Assigned(FCachedKeys) then begin
+    FCachedKeys := TStringList.Create;
+    with dmDatabase.GetRecordset('usp_Admin_Areas_Select_AllViceCounties', []) do
+    begin
+      while not Eof do begin
+        // Data returned is formatted as key/value pairs.
+        FCachedKeys.Add(Fields['Data'].Value);
+        MoveNext;
+      end;
+      Close;
+    end;
+    end;
+  if (FCachedKeys.Values[FWorking] = '') AND (FWorking <> '') then
+      Fail(ResStr_ViceCountyinvalid)
+  else
+  if Assigned(CallBack) then
+      Callback(Self, 0, FLD_KEY, FCachedKeys.Values[FWorking]);
+
+  end;  // TSampleVCParser.ParseField
+
+{-==============================================================================
     TDateParser
 ===============================================================================}
 {-------------------------------------------------------------------------------
@@ -1459,6 +1519,7 @@ initialization
                    TSiteIDParser,
                    TBRCSourceParser,
                    TViceCountyNumberParser,
+                   TSampleVCParser,
                    TDateParser,
                    TNonRequiredDateParser,
                    TDeterminationDateParser,
