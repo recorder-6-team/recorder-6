@@ -36,7 +36,7 @@ GO
           
 
 \*===========================================================================*/
-CREATE procedure [dbo].[nbn_exchange_basic_update]
+ALTER procedure [dbo].[nbn_exchange_basic_update]
 	@SampleLocationNameFirst int =1
 AS
 DECLARE @n as int
