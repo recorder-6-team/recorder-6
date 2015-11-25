@@ -21,6 +21,7 @@
 //==============================================================================
 unit SQLConstants;
 
+
 interface
 
 uses
@@ -32,7 +33,6 @@ const
 {$ELSE}
   ST_LIKE_PATTERN = 'LIKE ''%s%%''';
 {$ENDIF}
-
   SQL_TAXON_FROM_QUERY_CURR_LIST =
           'SELECT DISTINCT ITN.Taxon_List_Item_Key, ITN.Abbreviation, ' +
           '       ITN.Authority, '''' AS ListName, ' +
@@ -43,7 +43,9 @@ const
           '                                     ITN.Actual_Name_Italic, ' +
           '                                     ITN.Preferred_Name_Italic,  ' +
           '                                     ITN.Actual_Name_Attribute, ' +
-          '                                     TR.Short_Name) AS ItemName ' +
+          '                                     TR.Short_Name, ' +
+          '                                     ITN.Can_Expand, ' +
+          '''%s'') AS ItemName ' +
           'FROM (Taxon_List_Version TLV ' +
           'INNER JOIN Taxon_List_Version TLV2 ON TLV2.Taxon_List_Key = TLV.Taxon_List_Key) '+
           'INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Version_Key = TLV2.Taxon_List_Version_Key '+
@@ -71,7 +73,9 @@ const
           '                                     ITN.Actual_Name_Italic, ' +
           '                                     ITN.Preferred_Name_Italic,  ' +
           '                                     ITN.Actual_Name_Attribute, ' +
-          '                                     TR.Short_Name) AS ItemName ' +
+          '                                     TR.Short_Name, ' +
+          '                                     ITN.Can_Expand, ' +
+          '''%s'') AS ItemName ' +
           'FROM (Index_Taxon_Name ITN ' +
           'INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN.Taxon_List_Version_Key) ' +
           'INNER JOIN Taxon_List TL ON TL.Taxon_List_Key = TLV.Taxon_List_Key ' +
@@ -98,7 +102,9 @@ const
           '                                     ITN.Actual_Name_Italic, ' +
           '                                     ITN.Preferred_Name_Italic,  ' +
           '                                     ITN.Actual_Name_Attribute, ' +
-          '                                     TR.Short_Name) AS ItemName ' +
+          '                                     TR.Short_Name, ' +
+          '                                     ITN.Can_Expand, ' +
+          '''%s'') AS ItemName ' +
           'FROM (Index_Taxon_Name ITN ' +
           'INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN.Taxon_List_Version_Key) ' +
           'INNER JOIN Taxon_List TL ON TL.Taxon_List_Key = TLV.Taxon_List_Key ' +
@@ -127,7 +133,9 @@ const
           '                                     ITNCS.Actual_Name_Italic, ' +
           '                                     ITNCS.Preferred_Name_Italic,  ' +
           '                                     ITNCS.Actual_Name_Attribute, ' +
-          '                                     TR.Short_Name) AS ItemName ' +
+          '                                     TR.Short_Name, ' +
+          '                                     ITNCS.Can_Expand, ' +
+          '''%s'') AS ItemName ' +
           'FROM Index_Taxon_Name ITNP '+ //ITN Parent
           'INNER JOIN Index_Taxon_Group ITG ON ITG.Taxon_List_Item_Key = ITNP.Recommended_Taxon_List_Item_Key '+
           'INNER JOIN Index_Taxon_Name ITNC ON ITNC.Taxon_List_Item_Key = ITG.Contained_List_Item_Key '+ // ITN Child

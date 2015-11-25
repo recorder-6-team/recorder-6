@@ -337,6 +337,8 @@ resourcestring
   ResStr_SpatialRefFilterConditionNON =
       '"is &Equal to","is &Not equal to","&Starts with"';
 
+  // Used for Taxon Search Display
+  ResStr_Taxon_Can_Not_Expand = ' (can not expand) ';
 type
   TEditMode = (emView, emAdd, emEdit, emDelete, emNone);
 

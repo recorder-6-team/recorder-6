@@ -398,16 +398,16 @@ begin
 
   if iSearchRestriction = ResStr_Unrestricted then begin
     FTaxonSearchType := stUnrestricted;
-    lSQL := Format(SQL_TAXON_FROM_QUERY_ALL_LISTS, [lText, lText, lText]);
+    lSQL := Format(SQL_TAXON_FROM_QUERY_ALL_LISTS, [ResStr_Taxon_Can_Not_Expand,lText, lText, lText]);
   end else if iSearchRestriction = ResStr_PreferredLists then begin
     FTaxonSearchType := stPreferredLists;
     // use generalData to get list version key for filter
-    lSQL := Format(SQL_TAXON_FROM_QUERY_PREF_LISTS, [lText, lText, lText]);
+    lSQL := Format(SQL_TAXON_FROM_QUERY_PREF_LISTS, [ResStr_Taxon_Can_Not_Expand,lText, lText, lText]);
   end else if iSearchRestriction = ResStr_CurrentChecklist then begin
     FTaxonSearchType := stList;
     // use generalData to get list version key for filter
     lSQL := Format(SQL_TAXON_FROM_QUERY_CURR_LIST,
-                   [dmGeneralData.SetListVersionKeys(false, SourceParameter).LatestVersions,
+                   [ResStr_Taxon_Can_Not_Expand,dmGeneralData.SetListVersionKeys(false, SourceParameter).LatestVersions,
                     lText, lText, lText,ltext]);
   end else begin
     { Search a rucksack }
@@ -416,7 +416,7 @@ begin
     lRucksackName := Copy( iSearchRestriction, 1, Length(iSearchRestriction) - Length(ResStr_Rucksack));
     AppSettings.LastSearchedRucksack.RucksackName := lRucksackName;
     AppSettings.LastSearchedRucksack.BuildTemporaryTable;
-    lSQL := Format(SQL_TAXON_FROM_QUERY_RUCKSACK, [lText, lText, lText, lText, lText]);
+    lSQL := Format(SQL_TAXON_FROM_QUERY_RUCKSACK, [ResStr_Taxon_Can_Not_Expand,lText, lText, lText, lText, lText]);
   end;
 
   { Initiate the search }
