@@ -37,7 +37,8 @@ s.Location_name,
 s.vague_date_start,s.vague_date_end,
 s.vague_date_type,
 dbo.formateventRecorders(s.sample_key) as Recorders, 
-dbo.FormatIndividual (I.Title, I.Initials, I.Forename, I.Surname) as Determiner
+dbo.FormatIndividual (I.Title, I.Initials, I.Forename, I.Surname) as Determiner,
+ITN2.Sort_Order
 FROM
 Sample S 
 INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
@@ -47,7 +48,7 @@ INNER JOIN Taxon_Version TV ON TV.Taxon_version_Key = TLI.Taxon_Version_Key
 INNER JOIN Taxon_Group TG ON TV.Output_group_key = TG.Taxon_group_Key
 INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
 INNER JOIN Index_taxon_Name ITN2 ON ITN2.Taxon_List_Item_key = ITN.Recommended_Taxon_List_item_key
-INNER JOIN Individual I on I.name_key = TDET.Determiner, ITN2.Sort_Order 
+INNER JOIN Individual I on I.name_key = TDET.Determiner 
 
 <Where keytype="Default">
 
