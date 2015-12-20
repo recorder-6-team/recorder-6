@@ -86,6 +86,10 @@ type
     procedure HideComboboxes;
     procedure ApplyEditChanges;
     function InvalidRestrictedData(item: TMeasureItem): Boolean;
+    procedure cmbKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure cmbKeyPress(Sender: TObject; var Key: Char);
+    procedure MoveGridCell(const iToTheRight: Boolean);
   protected
     procedure SetEnabled(Value: boolean); override;
     procedure SetupMeasurementsGrid;
@@ -262,8 +266,82 @@ begin
     KeyField    := 'Measurement_Qualifier_Key';
     Listfield   := 'Short_Name';
     OnChange    := cmbMeasureQualifierChange;
+    OnKeyDown   := cmbKeyDown;
+    OnKeyPress  := cmbKeyPress;    
   end;
 end;
+
+procedure TMeasurements.cmbKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key in [#13, #10, #9] then begin// Return or shift return
+    MoveGridCell(Key<>#10);
+    Key := #0;
+  end;
+end;  // cmbKeyPress
+
+
+//==============================================================================
+{ MoveGridCell - navigates the current cell to the right or left in the grid.
+     If you hit the end, goes to the next/previous row where one is available }
+procedure TMeasurements.MoveGridCell(const iToTheRight: Boolean);
+begin
+  if iToTheRight then begin  // Return
+    FsgMeasurements.SetFocus;
+    with FsgMeasurements do
+      if Col < ColCount - 1 then
+        Col := Col + 1
+      else
+      if Row < RowCount - 1 then begin
+        Row := Row + 1;
+        Col := 2;
+      end;
+  end else begin  // Shift-Return
+    FsgMeasurements.SetFocus;
+    with FsgMeasurements do
+      if Col > 0 then
+        Col := Col - 1
+      else
+      if Row > FixedRows then begin // don't move into title row
+        Row := Row - 1;
+        Col := ColCount-1;
+      end;
+  end;
+end;  // MoveGridCell
+
+//==============================================================================
+{ Trap left and right arrow, return and ctrl-return, to provide navigation in
+    the combo boxes on the species grid }
+procedure TMeasurements.cmbKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+var
+  lCellMove: Integer;
+begin
+  inherited;
+  lCellMove := 0; // No movement by default
+  with TComboBox(Sender) do
+    case Key of
+      VK_RIGHT:
+        if (Style = csDropDownList) or        // Cannot edit, so always navigate within grid.
+           (SelStart = Length(Text)) or       // Editable, but caret at right limit of text.
+           (SelLength = Length(Text)) then    // Editable, all text selected.
+          lCellMove := 1; // Cell to the right.
+      VK_LEFT:
+        if (Style = csDropDownList) or        // Cannot edit, so always navigate within grid.
+           (SelStart = 0) or                  // Editable, but caret at left limit of text.
+           (SelLength = Length(Text)) then    // Editable, all text selected.
+          lCellMove := -1; // Cell to the left.
+      VK_DELETE, VK_BACK: begin
+        FsgMeasurements.Cells[FsgMeasurements.Col, FsgMeasurements.Row] := ''; // blank the cell
+        if (Style = csDropDownList) then
+          ItemIndex := -1; // blank the combo by clearing selection
+      end;
+    end;
+  if lCellMove <> 0 then begin
+    MoveGridCell(lCellMove = 1);
+    Key := 0; // no further action on this keypress
+  end; // if
+end;  // cmbKeyDown
 
 //==============================================================================
 procedure TMeasurements.SetupAccuracyComboBox;
