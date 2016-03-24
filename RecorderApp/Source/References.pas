@@ -1814,10 +1814,12 @@ procedure TfrmReferences.WMRefreshTermLists(var Msg: TMessage);
 var lKey:TKeyString;
 begin
   FdmReferences.qryJournal.Refresh;
-  lKey:=dblcJournal.KeyValue;
-  // Clear selection and reselect with the key to update the text
-  dblcJournal.KeyValue:='';
-  dblcJournal.KeyValue:=lKey;
+  if not VarIsNull(dblcJournal.KeyValue) then begin
+    lKey:=dblcJournal.KeyValue;
+    // Clear selection and reselect with the key to update the text
+    dblcJournal.KeyValue:='';
+    dblcJournal.KeyValue:=lKey;
+  end;
 end;  // WMRefreshTermLists
 
 //==============================================================================
