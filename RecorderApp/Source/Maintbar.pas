@@ -2150,12 +2150,18 @@ begin
   end;
 end;
 
-
+{-------------------------------------------------------------------------------
+  Click handler for the online help menu item. Shells to a web browser.
+}
 procedure TfrmMain.mnuOnLineHelpClick(Sender: TObject);
 begin
   shellfile(GetOnLineHelpUrl);
 end;
 
+{-------------------------------------------------------------------------------
+  Fetches the URL for online help from the settings table. Throws a non-critical
+  exception if not found.
+}
 function TfrmMain.GetOnLineHelpUrl: string;
 var  rs : _Recordset;
 begin
