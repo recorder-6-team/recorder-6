@@ -196,7 +196,7 @@ type
     procedure actFindExecute(Sender: TObject);
     procedure pnlReferenceDetailsResize(Sender: TObject);
     procedure sgNumbersClick(Sender: TObject);
-    procedure dbeVolumePartNumberChange(Sender: TObject);
+    procedure dbePartNumberChange(Sender: TObject);
     procedure mnuRelLocationsClick(Sender: TObject);
     procedure mnuRelSurveysClick(Sender: TObject);
     procedure mnuRelEventsClick(Sender: TObject);
@@ -1600,7 +1600,7 @@ begin
 end;  // pnlReferenceDetailsResize
 
 //==============================================================================
-procedure TfrmReferences.dbeVolumePartNumberChange(Sender: TObject);
+procedure TfrmReferences.dbePartNumberChange(Sender: TObject);
 var lVal,lErr:integer;
     stVal:string;
 begin

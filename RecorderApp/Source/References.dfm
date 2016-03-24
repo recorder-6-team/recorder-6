@@ -213,7 +213,7 @@ inherited frmReferences: TfrmReferences
         Top = 24
         Width = 333
         Height = 305
-        ActivePage = tsKeywords
+        ActivePage = tsDetails
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 0
         OnChange = pcReferenceDetailsChange
@@ -338,7 +338,7 @@ inherited frmReferences: TfrmReferences
             Height = 21
             Style = csDropDownList
             Anchors = [akLeft, akBottom]
-            ItemHeight = 0
+            ItemHeight = 13
             Sorted = True
             TabOrder = 5
             OnChange = cmbReferenceTypeChange
@@ -527,8 +527,8 @@ inherited frmReferences: TfrmReferences
             Anchors = [akLeft, akBottom]
             DataField = 'VOLUME'
             DataSource = dmReferences.dsReference
+            MaxLength = 10
             TabOrder = 2
-            OnChange = dbeVolumePartNumberChange
           end
           object dbePart: TDBEdit
             Left = 154
@@ -539,7 +539,7 @@ inherited frmReferences: TfrmReferences
             DataField = 'PART'
             DataSource = dmReferences.dsReference
             TabOrder = 3
-            OnChange = dbeVolumePartNumberChange
+            OnChange = dbePartNumberChange
           end
           object dbeNumber: TDBEdit
             Left = 264
@@ -550,7 +550,7 @@ inherited frmReferences: TfrmReferences
             DataField = 'NUMBER'
             DataSource = dmReferences.dsReference
             TabOrder = 4
-            OnChange = dbeVolumePartNumberChange
+            OnChange = dbePartNumberChange
           end
           object dbeSupplement: TDBEdit
             Left = 154
