@@ -25,9 +25,9 @@ unit DBMerger;
 interface
 
 uses
-  Windows,Sysutils, Classes, Forms, ComCtrls, DataClasses, JnccDatasets, Constants,
+  Windows, Sysutils, Classes, Forms, ComCtrls, DataClasses, JnccDatasets, Constants,
   Db, ExceptionForm, TaskProgress, Relationships_ADO, TablePriorityList_ADO,
-  DatabaseUtilities, ComObj, ADODB, ADOInt, DatabaseAccessADO, Variants,dialogs;
+  DatabaseUtilities, ComObj, ADODB, ADOInt, DatabaseAccessADO, Variants, Dialogs;
 
 resourcestring
   ResStr_FailedToInsert = 'Failed to insert %s into %s';
@@ -111,7 +111,7 @@ type
 implementation
 
 uses
-  Genfuncs, GeneralFunctions, BaseADODataModule, DefaultPaths,registry;
+  Genfuncs, GeneralFunctions, BaseADODataModule, DefaultPaths, Registry;
 
 const
   BLOCK_SIZE = 2000;
