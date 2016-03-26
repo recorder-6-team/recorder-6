@@ -726,8 +726,19 @@ begin
               if FCheckedState then TTaxonOccNode(SelectedItem.Data).StateImage:=STATE_CHECKED
                   else TTaxonOccNode(SelectedItem.Data).StateImage:=STATE_UNCHECKED;
             end;
+            // Images 0to5 are the existing images used where UseOriginalIcons is true
+            // New icons start at 6 and there are three blocks one for each of the verified indicators (0,1,2)
+            // Each block has 4 possible icon. Verified X 4 therefore gives start of each block of 4
+            // ord(dbcbConfidential.Checked) (values 0 or 1) identifies the confidential element in each block
+            // (2 *ord(ZeroAbundance) (2 x values 0 or 1) idenfifies the zero abundance element within the block
+            // For each verified indicator we have 4 possible icons eg.
+            // Verified Indicator of 0 not confidential or zero abundance = 6 +(0 *4) + 0 + (2 * 0) = 6
+            // Verified Indicator of 0  confidential but not zero abundance = 6 +(0 *4) + 1 + (2 * 0) = 7
+            // Verified Indicator of 0  not confidential but zero abundance = 6 +(0 *4) + 0 + (2 * 1) = 8
+            // Verified Indicator of 0  confidential and zero abundance = 6 +(0 *4) + 1 + (2 * 1) = 9
+            
             if Not AppSettings.UseOriginalIcons then
-              TTaxonOccNode(SelectedItem.Data).ImageIndex :=  6 + (verified * 4) + ord(dbcbConfidential.Checked) + (2 *ord(ZeroAbundance));
+            TTaxonOccNode(SelectedItem.Data).ImageIndex :=  6 + (verified * 4) + ord(dbcbConfidential.Checked) + (2 *ord(ZeroAbundance));
 
             TTaxonOccNode(SelectedItem.Data).Confidential := dbcbConfidential.Checked;
             SetItemTextAndKey(lDataItem.ItemName,TaxonOccKey);
