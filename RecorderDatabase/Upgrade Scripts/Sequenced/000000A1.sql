@@ -214,7 +214,6 @@ GO
 
 GRANT EXECUTE ON [dbo].[LCOSGTBENtoWSG84LL] TO PUBLIC
 
-USE [NBNData]
 GO
 
 /****** Object:  UserDefinedFunction [dbo].[LCOSGBLLtoWSG84LL]    Script Date: 10/25/2015 19:33:59 ******/

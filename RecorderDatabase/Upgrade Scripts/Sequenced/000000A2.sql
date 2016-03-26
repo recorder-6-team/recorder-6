@@ -132,18 +132,24 @@ WHERE Projection='OSNI';
 UPDATE ##nbn_exchange_obs 
 SET Projection = 'WGS84', 
 	GridReference = Null, 
-	East = [dbo].[LCOSGBLLtoWSG84LL](SAMPLE.[LAT], SAMPLE.[LONG],1), 
-	North = [dbo].[LCOSGBLLtoWSG84LL](SAMPLE.[LAT], SAMPLE.[LONG],0),
+	East = [dbo].[LCOSGBLLtoWSG84LL](SAMPLE.[LAT], SAMPLE.[LONG],0), 
+	North = [dbo].[LCOSGBLLtoWSG84LL](SAMPLE.[LAT], SAMPLE.[LONG],1),
 	[Precision] = 100
 FROM ##nbn_exchange_obs INNER JOIN SAMPLE 
 ON ##nbn_exchange_obs.SampleKey = SAMPLE.SAMPLE_KEY 
 WHERE not (Projection='OSNI' Or Projection='OSGB');
 
+-- Drop Lat/Longs Outside NBN Area
+
+Delete from ##nbn_exchange_obs where East < -14 OR
+EAST > 13 OR North < 48 OR North > 62
+ 
+
 -- Check whether there are rows, updated by the
 -- previous command, where East, North are used
 SELECT @n = COUNT(SampleKey)
 FROM   ##nbn_exchange_obs
-WHERE  (Projection = 'OSGB36')
+WHERE  (Projection = 'WGS84')
 
 -- If not, then remove these fields
 IF @n = 0
