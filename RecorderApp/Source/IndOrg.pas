@@ -925,7 +925,7 @@ begin
       BuildTreeView(tvOrganisations,'');
       FNeedOrgRefresh := False;
     end;
-    SelectedTree:=tvOrganisations; 
+    SelectedTree:=tvOrganisations;
     if EditMode=emView then begin
       LoadFilter(FILTER_ORGANISATION, False);
       if FOSelectedItem = nil then begin
@@ -1003,10 +1003,12 @@ var
   lCursor      : TCursor;
   lOrgOffset   : integer;
   tableName    : String;
+  lPreferredCustodians : string;
 begin
   //Set-up the query
   lCursor:=HourglassCursor;
   TreeView.Items.BeginUpdate; // for performance
+  lPreferredCustodians := GetPreferredCustodians(SETTING_NAME);
   try
     with FdmName.qryPopulate do
     begin
@@ -1054,7 +1056,7 @@ begin
         end;
         lNewObject.ChildrenPopulated:=false;
         lNewNode:= TreeView.Items.AddObject(nil, FieldByName('Full_Name').AsString, lNewObject);
-        if (pos (FieldByName('Custodian').value,GetPreferredCustodians(SETTING_NAME)) <> 0)
+        if (pos (FieldByName('Custodian').value,lPreferredCustodians) <> 0)
           or (FieldByName('System_Supplied_Data').AsBoolean)
           or (AppSettings.UseOriginalIcons) then
             lnewNode.ImageIndex := 0 + lOrgOffSet
