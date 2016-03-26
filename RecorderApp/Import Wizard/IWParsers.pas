@@ -83,7 +83,6 @@ resourcestring
   ResStr_ValueToLong =
       'The value supplied is too long (%d).  A maximum of %d characters is allowed.';
   ResStr_ViceCountyInvalid = 'Value supplied is not recognised as a vice-county number.';
-  ResStr_SeaAreaInvalid = 'Value supplied is not recognised as a sea area.';
   ResStr_Yes = 'YES';
   ResStr_ValueNotAllowed =
       'The value supplied is not allowed. It must be one of the following:%s';
