@@ -15,8 +15,8 @@ inherited frmMap: TfrmMap
   object pnlMapPanel: TPanel [0]
     Left = 219
     Top = 0
-    Width = 400
-    Height = 519
+    Width = 408
+    Height = 530
     Align = alClient
     ParentShowHint = False
     ShowHint = True
@@ -28,10 +28,10 @@ inherited frmMap: TfrmMap
     OnResize = pnlMapPanelResize
   end
   object pnlDockSiteRight: TPanel [1]
-    Left = 619
+    Left = 627
     Top = 0
     Width = 0
-    Height = 519
+    Height = 530
     Align = alRight
     AutoSize = True
     BevelOuter = bvNone
@@ -45,7 +45,7 @@ inherited frmMap: TfrmMap
     Left = 0
     Top = 0
     Width = 219
-    Height = 519
+    Height = 530
     Align = alLeft
     AutoSize = True
     BevelOuter = bvNone
@@ -58,7 +58,7 @@ inherited frmMap: TfrmMap
       Left = 0
       Top = 0
       Width = 219
-      Height = 519
+      Height = 530
       Align = alLeft
       TabOrder = 0
       object HorizontalSplitter: TSplitter
@@ -123,7 +123,7 @@ inherited frmMap: TfrmMap
       end
       object pnlSelectedPolySheet: TPanel
         Left = 1
-        Top = 477
+        Top = 488
         Width = 217
         Height = 41
         Align = alBottom
@@ -171,7 +171,7 @@ inherited frmMap: TfrmMap
         Left = 1
         Top = 244
         Width = 217
-        Height = 233
+        Height = 244
         Hint = 'List of layers for displayed map'
         Align = alClient
         ColCount = 3
@@ -226,8 +226,8 @@ inherited frmMap: TfrmMap
   end
   object pnlBottom: TPanel [3]
     Left = 0
-    Top = 519
-    Width = 619
+    Top = 530
+    Width = 627
     Height = 37
     Align = alBottom
     Ctl3D = True
@@ -237,7 +237,7 @@ inherited frmMap: TfrmMap
       Tag = 1
       Left = 1
       Top = 1
-      Width = 617
+      Width = 625
       Height = 35
       Align = alClient
       Brush.Style = bsClear

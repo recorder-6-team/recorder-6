@@ -5297,7 +5297,7 @@ begin
       TOOL_POINTER, TOOL_SUBTRACT_BOUNDARY:
           begin
             SelectedRegion := PolygonID(ObjectDetails.SheetID, ObjectDetails.ObjectID);
-            if dmFormActions.actTransferData.Enabled and (not CalledFromWizard) then
+            if dmFormActions.actTransferData.Enabled and (not CalledFromWizard) and (not CalledFromCustom) then
               // reshow the click point as the selected region removed it
               ShowClickPoint(lPosition);
             if (SelectedRegion.SheetID >= 0) and (SelectedRegion.ObjectID >= 0) then begin
