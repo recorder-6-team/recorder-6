@@ -80,11 +80,10 @@ resourcestring
 
   ResStr_PasswordInstruct =
       'Hint : This is the first time you have logged into Recorder. '
-      + 'Unless you set up your password during installation then enter "pasword" '
-      + 'as your password or you can leave the password blank and press enter to login. '
+      + 'If you set up your password during installation then use the password you gave. '
+      + 'Otherwise enter "password" as your password or you can leave the password blank and click OK to login. '
       + 'To change your password you must first login. You can then select the '
       + 'Change Password option from the Tools menu to update your password.';
-
 {-------------------------------------------------------------------------------
 }
 constructor TdlgLogin.Create;
