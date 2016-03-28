@@ -145,17 +145,6 @@ Delete from ##nbn_exchange_obs where East < -14 OR
 EAST > 13 OR North < 48 OR North > 62
  
 
--- Check whether there are rows, updated by the
--- previous command, where East, North are used
-SELECT @n = COUNT(SampleKey)
-FROM   ##nbn_exchange_obs
-WHERE  (Projection = 'WGS84')
-
--- If not, then remove these fields
-IF @n = 0
-BEGIN
-	ALTER TABLE ##nbn_exchange_obs DROP COLUMN East, North	
-END
 
 -- =======
 -- Dates
@@ -210,5 +199,17 @@ WHERE (DateType = 'P')
 -- **************************************************
 DELETE FROM ##nbn_exchange_obs
 WHERE (DateType IN ('S', 'M'))
+
+-- Check whether there are rows, updated by the
+-- previous command, where East, North are used
+SELECT @n = COUNT(SampleKey)
+FROM   ##nbn_exchange_obs
+WHERE  (Projection = 'WGS84')
+
+-- If not, then remove these fields
+IF @n = 0
+BEGIN
+	ALTER TABLE ##nbn_exchange_obs DROP COLUMN East, North	
+END
 
 GO
