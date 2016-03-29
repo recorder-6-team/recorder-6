@@ -3211,9 +3211,9 @@ begin
 
       // Update the trees only if necessary
       if FIndSQL<>'' then 
-        FIndSQL:='WHERE Name_Key IN ('+Copy(FIndSQL,2,Length(FIndSQL))+')';
+        FIndSQL:='WHERE N.Name_Key IN ('+Copy(FIndSQL,2,Length(FIndSQL))+')';
       if FOrgSQL<>'' then
-        FOrgSQL:='WHERE Name_Key IN ('+Copy(FOrgSQL,2,Length(FOrgSQL))+')';
+        FOrgSQL:='WHERE N.Name_Key IN ('+Copy(FOrgSQL,2,Length(FOrgSQL))+')';
       // As the trees were cleared, restore them taking filters into account
       ClearTrees(true, true);
       BuildTreeView(tvIndividuals, FIndSQL);  // Rebuild tree, with any filter already applied
