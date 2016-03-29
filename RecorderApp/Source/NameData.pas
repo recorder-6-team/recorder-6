@@ -341,8 +341,9 @@ begin
     tableName := TN_INDIVIDUAL;
 
   rs := dmDatabase.ExecuteSQL(Format(
-      'SELECT DISTINCT Name_Key_2 FROM %s JOIN Name_Relation ON Name_Key = Name_Key_1 %s',
-      [tableName, childKeys]), True);
+      'SELECT DISTINCT Name_Key_2 FROM %s JOIN Name_Relation ON %s.Name_Key = Name_Key_1 '
+      + ' JOIN Name N ON  N.Name_key = %s.Name_key %s',
+      [tableName,tablename,tablename, childKeys]), True);
 
   while not rs.Eof do begin
     if SameText(rs.Fields['Name_Key_2'].Value, parentKey) then begin
