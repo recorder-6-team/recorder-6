@@ -5,7 +5,7 @@ inherited frmAdminAreaDictBrowser: TfrmAdminAreaDictBrowser
   TextHeight = 13
   inherited DictSplitter: TSplitter
     Left = 295
-    Height = 329
+    Height = 337
   end
   inherited pnlSelection: TPanel
     Width = 490
@@ -23,11 +23,11 @@ inherited frmAdminAreaDictBrowser: TfrmAdminAreaDictBrowser
   end
   inherited pcBrowser: TPageControl
     Width = 295
-    Height = 329
+    Height = 337
     inherited tsTree: TTabSheet
       inherited tvDictionary: TKeyboardRapidTree
         Width = 285
-        Height = 317
+        Height = 325
         PopupMenu = pmHierarchy
         Data = {0400000000000000}
       end
@@ -35,12 +35,12 @@ inherited frmAdminAreaDictBrowser: TfrmAdminAreaDictBrowser
   end
   inherited pnlDetails: TPanel
     Left = 305
-    Height = 329
+    Height = 337
     object hvAdminAreaDetails: THTMLViewer
       Left = 0
       Top = 0
       Width = 185
-      Height = 329
+      Height = 337
       Cursor = 2
       OnHotSpotClick = hvAdminAreaDetailsHotSpotClick
       ViewImages = False
