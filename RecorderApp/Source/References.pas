@@ -196,7 +196,7 @@ type
     procedure actFindExecute(Sender: TObject);
     procedure pnlReferenceDetailsResize(Sender: TObject);
     procedure sgNumbersClick(Sender: TObject);
-    procedure dbeVolumePartNumberChange(Sender: TObject);
+    procedure dbePartNumberChange(Sender: TObject);
     procedure mnuRelLocationsClick(Sender: TObject);
     procedure mnuRelSurveysClick(Sender: TObject);
     procedure mnuRelEventsClick(Sender: TObject);
@@ -1600,7 +1600,7 @@ begin
 end;  // pnlReferenceDetailsResize
 
 //==============================================================================
-procedure TfrmReferences.dbeVolumePartNumberChange(Sender: TObject);
+procedure TfrmReferences.dbePartNumberChange(Sender: TObject);
 var lVal,lErr:integer;
     stVal:string;
 begin
@@ -1814,10 +1814,12 @@ procedure TfrmReferences.WMRefreshTermLists(var Msg: TMessage);
 var lKey:TKeyString;
 begin
   FdmReferences.qryJournal.Refresh;
-  lKey:=dblcJournal.KeyValue;
-  // Clear selection and reselect with the key to update the text
-  dblcJournal.KeyValue:='';
-  dblcJournal.KeyValue:=lKey;
+  if not VarIsNull(dblcJournal.KeyValue) then begin
+    lKey:=dblcJournal.KeyValue;
+    // Clear selection and reselect with the key to update the text
+    dblcJournal.KeyValue:='';
+    dblcJournal.KeyValue:=lKey;
+  end;
 end;  // WMRefreshTermLists
 
 //==============================================================================

@@ -497,7 +497,6 @@ resourcestring
   ResStr_NewSample            = 'New Sample';
   ResStr_NewTaxonOccurrence   = 'New Taxon Occurrence';
   ResStr_NewBiotopeOccurrence = 'New Biotope Occurrence';
-  ResStr_LocationUnknown      = 'Unknown location';
 
 //==============================================================================
 constructor TfrmObservations.Create(AOwner: TComponent);
@@ -2944,24 +2943,12 @@ end;
 }
 function TfrmObservations.GetLocationName(Recordset: ADODB._Recordset): String;
 var
-  Value: OleVariant;
+  location, sref, locationName: string;
 begin
-  Value := Recordset.Fields['Item_Name'].Value;
-  if not VarIsNull(Value) then
-    Result := Value
-  else
-  begin
-    Value := Recordset.Fields['Spatial_Ref'].Value;
-    if not VarIsNull(Value) and (Value <> '') then
-      if   VarToStr(Recordset.Fields['Location_Name'].Value) <> '' then
-        Result := VarToStr(Recordset.Fields['Location_Name'].Value) + ' - ' + LocaliseSpatialRef(Value)
-      else
-        Result := LocaliseSpatialRef(Value)
-    else
-      Result := VarToStr(Recordset.Fields['Location_Name'].Value);
-  end;
-  if Result='' then
-    Result := ResStr_LocationUnknown;
+  location := Trim(VarToStr(Recordset.Fields['Item_Name'].Value));
+  locationName := Trim(VarToStr(Recordset.Fields['Location_Name'].Value));
+  sref := Trim(VarToStr(Recordset.Fields['Spatial_Ref'].Value));
+  Result := GetLocalityLabelFromFields(location, locationName, sref);
 end;
 
 {Returns the name of the Sample}

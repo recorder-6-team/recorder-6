@@ -63,6 +63,8 @@ resourcestring
   ResStr_HaveUncommittedUpdates = 'There are pending updates as part of a batch update. ' +
                                   'Do you want to commit these updates before closing the application?';
   ResStr_SpatialReferenceSystemLabel = 'Spatial Reference System:';
+  ResStr_HelpUrlNotFound = 'The setting for the Online Help website is not available. Please check that your ' +
+      'Recorder 6 installation has been correctly upgraded.';
 type
   EMainFormError = class(TExceptionPath);
 
@@ -2148,19 +2150,26 @@ begin
   end;
 end;
 
-
+{-------------------------------------------------------------------------------
+  Click handler for the online help menu item. Shells to a web browser.
+}
 procedure TfrmMain.mnuOnLineHelpClick(Sender: TObject);
 begin
   shellfile(GetOnLineHelpUrl);
 end;
 
+{-------------------------------------------------------------------------------
+  Fetches the URL for online help from the settings table. Throws a non-critical
+  exception if not found.
+}
 function TfrmMain.GetOnLineHelpUrl: string;
 var  rs : _Recordset;
 begin
   Result := '';
   rs := dmDatabase.ExecuteSQL('SELECT Data FROM [Setting] WHERE Name=''HelpUrl''', true);
-  if (rs.recordcount>0) then
-    Result := rs.Fields[0].Value;
+  if rs.recordcount=0 then
+    raise TExceptionPath.CreateNonCritical(ResStr_HelpUrlNotFound);
+  Result := rs.Fields[0].Value
 end;
 
 end.
