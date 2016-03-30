@@ -31,7 +31,7 @@ ALTER FUNCTION [dbo].[ufn_FormattedSpeciesName]
   @Attribute			VARCHAR(100),
   @RankName				VARCHAR(100),
   @CanExpand			BIT,
-  @CanExpandChar        VARCHAR(50))
+  @CantExpandSuffix       VARCHAR(50))
 RETURNS varchar(200)
 AS
 
@@ -41,7 +41,7 @@ BEGIN
 	SET 	@FormattedName = ''
 
     IF @CanExpand = 1  SET
-       @CanExpandChar = NULL 	
+       @CantExpandSuffix = NULL 	
 	
 	IF @ActualItalic = 1
 		SET @FormattedName = '<i>' + @ActualName + '</i>'
@@ -59,7 +59,7 @@ BEGIN
 			SET @FormattedName = @FormattedName + ' (' + @PreferredName + ISNULL(' ' + @PreferredAuthority, '') + ')'
 	END	
    
-    SET @FormattedName = @FormattedName + ISNull(@CanExpandChar,'')
+    SET @FormattedName = @FormattedName + ISNull(@CantExpandSuffix,'')
 	
 	RETURN @FormattedName
 END

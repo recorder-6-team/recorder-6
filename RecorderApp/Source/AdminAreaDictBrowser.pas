@@ -123,7 +123,7 @@ resourcestring
   ResStr_DateOfEntry =  'Date of Entry';
   ResStr_AdministrativeAreas = 'administrative areas';
   ResStr_MetadataForAdminArea = 'Metadata for Admin Area: ';
-
+  RestStr_Key_Not_Found = 'Meta data not found';
 //==============================================================================
 procedure TfrmAdminAreaDictBrowser.FormActivate(Sender: TObject);
 begin
@@ -266,8 +266,8 @@ begin
       SQL.Text := 'SELECT * FROM Admin_Area WHERE Admin_Area_Key = ''' +
                    TTaxonDictionaryNode(tvDictionary.Selected.Data).ItemKey + ''';';
       Open;
-      If Eof then
-        MessageBeep(0)
+      if Eof then
+        MessageDlg ( RestStr_Key_Not_Found,mtWarning, [mbOk], 0)
       else begin
          lsHeader := ResStr_MetadataForAdminArea + FieldByName('Item_Name').AsString;
          lsBody := MetaDataPaneItem('Admin Area Key', FieldByName('Admin_Area_Key').AsString);
@@ -282,7 +282,7 @@ begin
                     ListKeyData.ItemKey + ''';';
         Open;
         if Eof then
-          MessageBeep(0)
+          MessageDlg ( RestStr_Key_Not_Found,mtWarning, [mbOk], 0)
         else begin
           lsHeader := ResStr_MetadataForAdminType + FieldByName('Long_Name').AsString;
 

@@ -789,9 +789,7 @@ begin
     ResetAddinDetailScreen;
     if CheckDeletedNode(emView) then
       case ANode.ImageIndex of
-        SITE_IMAGE_INDEX_0   : ShowLocationDetails(ANode.Text);
-        SITE_IMAGE_INDEX_1   : ShowLocationDetails(ANode.Text);
-        SITE_IMAGE_INDEX_2   : ShowLocationDetails(ANode.Text);
+        SITE_IMAGE_INDEX_0..SITE_IMAGE_INDEX_2 : ShowLocationDetails(ANode.Text);
         FEATURE_IMAGE_INDEX: ShowFeatureDetails(ANode.Text);
       else
         // Further down the tree
@@ -921,9 +919,7 @@ begin
   if CheckDeletedNode(emEdit) then
     with SelectedItem do
       case ImageIndex of
-        SITE_IMAGE_INDEX_0    : TfrmLocationDetails(DetailForm).EditRecord;
-        SITE_IMAGE_INDEX_1    : TfrmLocationDetails(DetailForm).EditRecord;
-        SITE_IMAGE_INDEX_2    : TfrmLocationDetails(DetailForm).EditRecord;
+        SITE_IMAGE_INDEX_0..SITE_IMAGE_INDEX_2 : TfrmLocationDetails(DetailForm).EditRecord;
         FEATURE_IMAGE_INDEX : TfrmFeatureDetails(DetailForm).EditRecord;
       else
         if Assigned(FDetailScreen) then
@@ -955,9 +951,7 @@ begin
       lKey := TNodeObject(Data).ItemKey;
       // See if anyone is editing the record, and if not, go on and delete it
       case ImageIndex of
-        SITE_IMAGE_INDEX_0   : stMsg := Format(ResStr_Site, [Text]);
-        SITE_IMAGE_INDEX_1   : stMsg := Format(ResStr_Site, [Text]);
-        SITE_IMAGE_INDEX_2   : stMsg := Format(ResStr_Site, [Text]);
+        SITE_IMAGE_INDEX_0..SITE_IMAGE_INDEX_2 : stMsg := Format(ResStr_Site, [Text]);
         FEATURE_IMAGE_INDEX: stMsg := Format(ResStr_Feature, [Text]);
       else
         if Assigned(FNodeMan) then stMsg := Format(ResStr_Item, [Text]);
@@ -972,9 +966,7 @@ begin
           try
             DeleteOK := False;
             case ImageIndex of
-              SITE_IMAGE_INDEX_0   : DeleteOK := TfrmLocationDetails(DetailForm).DeleteRecord(lKey);
-              SITE_IMAGE_INDEX_1   : DeleteOK := TfrmLocationDetails(DetailForm).DeleteRecord(lKey);
-              SITE_IMAGE_INDEX_2   : DeleteOK := TfrmLocationDetails(DetailForm).DeleteRecord(lKey);
+              SITE_IMAGE_INDEX_0..SITE_IMAGE_INDEX_2 : DeleteOK := TfrmLocationDetails(DetailForm).DeleteRecord(lKey);
               FEATURE_IMAGE_INDEX: DeleteOK := TfrmFeatureDetails(DetailForm).DeleteRecord(lKey);
             else
               if Assigned(FDetailScreen) then begin
@@ -1086,6 +1078,7 @@ var lNodeText : String;
   lCursor : TCursor;
   lPreferredCustodians : string;
   lImageIndex : integer;
+
 begin
   lCursor:=HourglassCursor;
   LockWindowUpdate(Handle);
@@ -1135,14 +1128,14 @@ begin
           end;
           if lResult <> nil then begin
             // Here we change the images
+            lPreferredCustodians := GetPreferredCustodians(SETTING_NAME);
             lImageindex := TNodeObject(lResult.Data).ImageIndex;
             If TNodeObject(lResult.Data).ImageIndex < FEATURE_IMAGE_INDEX then begin
-              lPreferredCustodians := GetPreferredCustodians(SETTING_NAME);
               if (lPreferredCustodians <> '') then begin
                 if  (pos(Fields['Custodian'].Value,lPreferredCustodians) > 0)
-                  or (Fields['System_Supplied_Data'].Value = True) then lIMageIndex := 1
+                  or (Fields['System_Supplied_Data'].Value = True) then lIMageIndex := SITE_IMAGE_INDEX_1
                 else
-                  lImageindex := 2;
+                  lImageindex := SITE_IMAGE_INDEX_2;
               end;
              end;
              lResult.ImageIndex := lImageindex;

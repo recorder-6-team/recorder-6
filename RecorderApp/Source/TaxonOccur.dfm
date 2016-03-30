@@ -618,6 +618,9 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             SourceCol = clBlack
             DestCol = clBlack
             TabOrder = 0
+            DesignSize = (
+              355
+              265)
           end
         end
         object tsRelatedOccurrences: TTabSheet
@@ -1059,6 +1062,9 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             SourceCol = clRed
             DestCol = clRed
             TabOrder = 0
+            DesignSize = (
+              355
+              265)
           end
         end
       end
