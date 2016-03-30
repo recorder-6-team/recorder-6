@@ -321,7 +321,6 @@ uses
   AddinSearchManager in '..\Third Party\Dorset Software Services\Recorder Addins\Source\AddinSearchManager.pas',
   DSSLocalizerUtils in '..\Third Party\Dorset Software Services\Recorder Addins\Source\DSSLocalizerUtils.pas',
   ExternalSourceDetails in 'Components\ExternalSourceDetails.pas' {dlgExternalSourceDetails},
-  IWNameParser in 'Import Wizard\IWNameParser.pas',
   HierarchyFunctions in 'Source\HierarchyFunctions.pas';
 
 {$R 'RecorderApp.manifest.res' 'RecorderApp.manifest.rc'}
