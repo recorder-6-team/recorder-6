@@ -228,6 +228,8 @@ begin
     KeyField    := 'Measurement_Type_Key';
     ListField   := 'Short_Name';
     OnChange    := cmbMeasureTypeChange;
+    OnKeyDown   := cmbKeyDown;
+    OnKeyPress  := cmbKeyPress;    
   end;
 end;  // SetupMeasureTypeComboBox
 
@@ -247,6 +249,8 @@ begin
     KeyField    := 'Measurement_Unit_Key';
     Listfield   := 'Short_Name';
     OnChange    := cmbMeasureUnitChange;
+    OnKeyDown   := cmbKeyDown;
+    OnKeyPress  := cmbKeyPress;
   end;
 end;  // SetupMeasureUnitComboBox
 
@@ -312,7 +316,7 @@ end;  // MoveGridCell
 
 //==============================================================================
 { Trap left and right arrow, return and ctrl-return, to provide navigation in
-    the combo boxes on the species grid }
+    the combo boxes on the measurements grid }
 procedure TMeasurements.cmbKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 var
   lCellMove: Integer;
