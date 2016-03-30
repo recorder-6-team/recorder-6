@@ -297,7 +297,7 @@ begin
           if FieldByName('Date_From').AsString = '' then
             if FieldByName('Date_To').AsString <> '' then
               lsBody := lsbody + '<P><STRONG>' + ResStr_DateTo + '</STRONG> ' +
-                                 DateToStr(FieldByName('Date_To').AsDateTime) + '</P'
+                                 DateToStr(FieldByName('Date_To').AsDateTime) + '</P>'
             else
           else begin
             lsBody := lsBody + '<P><STRONG>' + ResStr_DateFrom + '</STRONG> ' +
@@ -305,7 +305,7 @@ begin
             if FieldByName('Date_To').AsString <> '' then
               lsBody := lsbody + ' <STRONG>To:' + ResStr_To + '</STRONG> ' +
                                  DateToStr(FieldByName('Date_To').AsDateTime);
-            lsBody := lsBody + '</P';
+            lsBody := lsBody + '</P>';
           end;
 
           if FieldByName('Changed_Date').AsString <> '' then
