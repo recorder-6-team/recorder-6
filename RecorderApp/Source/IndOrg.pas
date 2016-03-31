@@ -591,7 +591,7 @@ const
   ORDER_BY_FULLNAME = 'ORDER BY O.Full_Name, O.Acronym';
   ORDER_BY_ACRONYM  = 'ORDER BY O.Acronym, O.Full_Name';
 
-  SETTING_NAME = 'PrefName';
+  SETTING_NAME = 'PrefNames';
 //==============================================================================
 constructor TfrmIndOrg.Create(AOwner:TComponent);
 begin
