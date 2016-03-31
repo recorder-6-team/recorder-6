@@ -178,7 +178,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*===========================================================================*\
-  Description:  Transfers the spatail ref from a Location where the spatial ref deso not have one
+  Description:  Transfers the spatail ref from a Location where the spatial ref does not have one
   Parameters:   None
 
   Created:      Nov 2015
@@ -212,7 +212,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 /*===========================================================================*\
-  Description:  Transfers the sptail ref from a Location where the spatial ref deso not have one
+  Description:  Transfers the spatial ref from a Location where the spatial ref does not have one
   Parameters:   None
 
   Created:      Nov 2015
@@ -461,4 +461,31 @@ GRANT EXECUTE ON [dbo].[usp_IW_Imported_Insert_Locations] TO PUBLIC
 	
 
 
+GO
 
+/****** Object:  StoredProcedure [dbo].[usp_IWMatch_Locations]    Script Date: 03/30/2016 20:15:17 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+/*===========================================================================*\
+  Description:	Populate import table with matched values for unique matched only.
+  if a Grid Ref column exists and is populated then uses  
+  [dbo].[usp_IWMatch_Locations_Grid_Ref]
+  otherwise uses [dbo].[usp_IWMatch_Locations_No_Grid_Ref]
+  Parameters:	<none>[
+
+  Updated Mrach 2016 for Mantis 447
+
+\*===========================================================================*/
+ALTER PROCEDURE [dbo].[usp_IWMatch_Locations]
+AS
+	
+	IF Exists(SELECT * FROM tempdb.INFORMATION_SCHEMA.COLUMNS 
+    WHERE OBJECT_ID('tempdb..' + table_name)=OBJECT_ID('tempdb..#Master')
+    and COLUMN_NAME like 'System0100000001_Spatial_ref%') 
+    EXEC [dbo].[usp_IWMatch_Locations_Grid_Ref]
+    ELSE 
+    EXEC [dbo].[usp_IWMatch_Locations_No_Grid_Ref]

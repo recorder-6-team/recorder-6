@@ -110,6 +110,9 @@ Insert Into IW_Table_Rule_Related_Field(IW_Table_Rule_Key,IW_Column_Type_Key,
 Relationship,Entered_By,Entry_Date,System_Supplied_Data)
 Values('SYSTEM0100000002','SYSTEM0100000010',1,'TESTDATA00000001',GETDATE(),1)
  
+Insert Into IW_Table_Rule_Related_Field(IW_Table_Rule_Key,IW_Column_Type_Key,
+Relationship,Entered_By,Entry_Date,System_Supplied_Data)
+Values('SYSTEM0100000010','SYSTEM0100000010',2,'TESTDATA00000001',GETDATE(),1)
 
 Insert Into IW_Table_Rule_Related_Table(IW_Table_Rule_Key,Table_Name,
 Relationship,Entered_By,Entry_Date,System_Supplied_Data)
