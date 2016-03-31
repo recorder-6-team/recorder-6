@@ -189,14 +189,8 @@ end;
   Return the location info as a string. Result depends on which controls are populated
 }
 function TfraLocationInfo.GetLocalityLabel: String;
-begin    
-  if eLocation.Text <> '' then
-    Result := eLocation.Text
-  else
-  if eSpatialRef.DisplayRef <> '' then
-    Result := LocaliseSpatialRef(eSpatialRef.DisplayRef)
-  else
-    Result := eLocationName.Text;
+begin
+  Result := GetLocalityLabelFromFields(trim(eLocation.Text), trim(eLocationName.Text), eSpatialRef.DisplayRef);
 end;
 
 {-------------------------------------------------------------------------------

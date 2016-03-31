@@ -154,14 +154,24 @@ object dlgDataExport: TdlgDataExport
     OnClick = bbExportToClick
   end
   object cbNoValidation: TCheckBox
-    Left = 184
+    Left = 160
     Top = 208
-    Width = 113
+    Width = 105
     Height = 17
     Anchors = [akLeft, akBottom]
     Caption = 'Do Not Validate'
     Enabled = False
     TabOrder = 10
+  end
+  object cbExportPrivate: TCheckBox
+    Left = 272
+    Top = 208
+    Width = 121
+    Height = 17
+    Anchors = [akLeft, akBottom]
+    Caption = 'Export Private Fields'
+    Enabled = False
+    TabOrder = 11
   end
   object dlgSave: TSaveDialog
     Left = 204

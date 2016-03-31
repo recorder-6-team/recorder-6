@@ -337,6 +337,8 @@ resourcestring
   ResStr_SpatialRefFilterConditionNON =
       '"is &Equal to","is &Not equal to","&Starts with"';
 
+  // Used for Taxon Search Display
+  ResStr_Taxon_Can_Not_Expand = ' (can not expand) ';
 type
   TEditMode = (emView, emAdd, emEdit, emDelete, emNone);
 
@@ -424,6 +426,8 @@ const
   DEFAULT_BACKGROUND_PICTURE      = '';
   DEFAULT_DISABLE_DRAG_DROP_FRAME = False;
   DEFAULT_SHOW_TOOL_TIPS          = True;
+  DEFAULT_USE_ORIGINAL_ICONS          = False;
+
 
   // Grid Ref default value
   DEFAULT_SPATIAL_REF_SYSTEM    = 'OSGB';

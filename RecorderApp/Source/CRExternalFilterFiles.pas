@@ -102,7 +102,7 @@ const
   EXTERNAL_FILTER_DATA_TEMPLATE = '''%s'',''%s'',%s';
   MAX_DESCRIPTION_LENGTH = 8000;
   COLUMN_NAMES = 'TableName, ItemKey, Description';
-  COLUMN_PARAMETERS = 'TableName sysname, ItemKey char(16), Description varchar(8000) COLLATE SQL_Latin1_General_CP1_CI_AS';
+  COLUMN_PARAMETERS = 'TableName sysname, ItemKey char(16) COLLATE SQL_Latin1_General_CP1_CI_AS, Description varchar(8000) COLLATE SQL_Latin1_General_CP1_CI_AS';
 
 {===============================================================================
     TExternalFilterTable

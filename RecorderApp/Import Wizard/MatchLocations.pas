@@ -183,21 +183,23 @@ begin
         if FieldByName(FN_MATCH_KEY).IsNull then
         begin
           lSpatialRef := tblMatch.FieldByName(FN_IMPORT_GRIDREF).AsString;
+          if length(lspatialref) > 1 then // only do if there is a  valid spatial ref
+          begin
+            // Check for multi-centroid and inform user at the end if necessary.
+            if (Pos(CRLF, lSpatialRef) <> 0) and not chkUseFirstCentroid.Checked then
+              lShowWarning := True
+            else begin
+              // Proceed if only one centroid, or user said to pick the first one.
+              if Pos(CRLF, lSpatialRef) = 0 then
+                SaveLocationCentroid(lSpatialRef)
+              else
+              if chkUseFirstCentroid.Checked then
+                SaveLocationCentroid(Copy(lSpatialRef, 1, Pos(CRLF, lSpatialRef) - 1));
 
-          // Check for multi-centroid and inform user at the end if necessary.
-          if (Pos(CRLF, lSpatialRef) <> 0) and not chkUseFirstCentroid.Checked then
-            lShowWarning := True
-          else begin
-            // Proceed if only one centroid, or user said to pick the first one.
-            if Pos(CRLF, lSpatialRef) = 0 then
-              SaveLocationCentroid(lSpatialRef)
-            else
-            if chkUseFirstCentroid.Checked then
-              SaveLocationCentroid(Copy(lSpatialRef, 1, Pos(CRLF, lSpatialRef) - 1));
-
-            MatchRule.MakeNewEntry(FieldByName(FN_IMPORT_VALUE).AsString);
-          end;
-        end;
+              MatchRule.MakeNewEntry(FieldByName(FN_IMPORT_VALUE).AsString);
+            end;
+           end;
+         end;
         Next;
       end;
     finally

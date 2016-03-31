@@ -70,6 +70,7 @@ type
     cbReassignCustody: TCheckBox;
     bbExportTo: TButton;
     cbNoValidation: TCheckBox;
+    cbExportPrivate: TCheckBox;
     procedure bbCancelClick(Sender: TObject);
     procedure bbExportToClick(Sender: TObject);
     procedure bbOkClick(Sender: TObject);
@@ -105,6 +106,7 @@ type
     procedure SetCheckBoxPositions;
     procedure SetCustodyCheckBox;
     procedure PickupSubsites;
+    procedure PickupSurveys;
     procedure ConstructorStuff;
     function FilterSetting : TFilterSetting;
     function FilterDate : TDateTime;
@@ -402,6 +404,8 @@ begin
     if not Assigned(FFilter) or NeedAFilter then begin
       // Add subsites, in case reassigning custody, we want them all now!
       PickupSubsites;
+      // Add Survey for Selected Survey tag (Concept)
+      PickupSurveys;
       // This is no longer run here
       //if cbReassignCustody.Checked then CustodyWantsReassigning;
       // Custody is reassigned in DataBaseExport
@@ -412,6 +416,31 @@ begin
     frmMain.SetStatus('');
   end;
 end;  // bbOKClick
+
+//==============================================================================
+{ If required, then find surveys for survey tags
+    and add the survey keys to the export list }
+procedure TdlgDataExport.PickupSurveys;
+  //----------------------------------------------------------------------------
+Var
+  i : integer;
+  Concept_rs : _Recordset;
+begin
+  for i := 0 to FKeyList.Header.ItemCount - 1 do begin
+    if SameText(FKeyList.ItemTable[i], TN_Concept) then begin
+      Concept_rs:= dmDatabase.ExecuteSQL('SELECT Survey_Key FROM Survey_Tag ' +
+        ' Where Concept_Key = ''' + FKeyList.items[i].KeyField1 + '''',true);
+      FKeyList.ConvertToMixedData;
+      if Concept_rs.RecordCount>0 then begin
+        Concept_rs.MoveFirst;
+        while not  Concept_rs.EOF do begin
+          FKeyList.AddItem(Concept_rs.Fields['Survey_Key'].Value,'SURVEY');
+          Concept_rs.MoveNext;
+        end;
+      end;
+    end;
+  end;
+end;  // PickupSurveys
 
 //==============================================================================
 { If required, then find subsites of each location in the key list and add them
@@ -498,7 +527,7 @@ begin
         eDestination.Text, frmMain.SetStatus, frmMain.ProgressBar,
         FKeyList, AInvalidKeys, DataOutputComplete,
         (cbIncludeObservations.State = cbChecked) and (not cbReassignCustody.Checked),
-        AFromExportFilter,cbReassignCustody.Checked);
+        AFromExportFilter,cbReassignCustody.Checked,cbExportPrivate.checked);
   end;
 end;  // DoNBNExport
 
@@ -570,6 +599,7 @@ begin
     Height                    := Height - 12;
   end;
   cbNoValidation.Top :=  cbReassignCustody.Top ;
+  cbExportPrivate.Top :=  cbReassignCustody.Top ;
 end;  // SetCheckBoxPositions
 
 //==============================================================================
@@ -579,6 +609,7 @@ begin
   if not cbReassignCustody.Visible then
      Height := Height - 20;
   cbNoValidation.height :=  cbReassignCustody.Height;
+  cbExportPrivate.height :=  cbReassignCustody.Height;
 end;
 
 //==============================================================================
@@ -822,6 +853,8 @@ begin
   cbReassignCustody.checked := false;
   cbNoValidation.enabled := EnableDisable;
   cbNoValidation.checked := false;
+  cbExportPrivate.Enabled := EnableDisable;
+  cbExportPrivate.checked := false;
 end;
 end.
 

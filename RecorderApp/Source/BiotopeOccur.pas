@@ -550,7 +550,6 @@ begin
     Sources.Post;
     // Additional Pages
     SaveAdditionalPages;
-
     if DrillForm<>nil then
       for iCount:=0 to FDeterminationList.Count-1 do begin
         lDataItem:=TDeterminationItem(FDeterminationList.Items[iCount]);
@@ -562,6 +561,9 @@ begin
               if FCheckedState then TBiotopeOccNode(SelectedItem.Data).StateImage:=STATE_CHECKED
                                else TBiotopeOccNode(SelectedItem.Data).StateImage:=STATE_UNCHECKED;
             end;
+            if Not AppSettings.UseOriginalIcons then
+              TBiotopeOccNode(SelectedItem.Data).ImageIndex :=  19 +  FVerified;
+
             SetItemTextAndKey(Copy(FBiotopeDesc,1,Pos('[',FBiotopeDesc)-1),BiotopeOccKey);
             tvObservations.Selected:=SelectedItem;
           end;

@@ -45,7 +45,8 @@ uses
   ValidationData, OnlineHelp, ActnList, Exgrid, RapTree, JNCCDatasets,
   GeneralFunctions, ImageListButton, DatabaseAccessADO, Variants, ComboListID,
   DataStringGrid, CRCommonClasses, SQLConstants, ControlStringGrid, ExternalFilter,
-  KeyboardRapidTree, AddinCompositeComponent, AddinLinkedControls,ResourceStrings;
+  KeyboardRapidTree, AddinCompositeComponent, AddinLinkedControls,ResourceStrings,
+  ImgList,HierarchyFunctions;
 
 resourcestring
   ResStr_DeleteFromDatabase = #13#13'It has been deleted from the database.';
@@ -334,6 +335,7 @@ type
     bbASDel: TImageListButton;
     bbASEdit: TImageListButton;
     bbASAdd: TImageListButton;
+    ilNames: TImageList;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbRelatedDataClick(Sender: TObject);
     procedure sbIndividualsClick(Sender: TObject);
@@ -589,6 +591,7 @@ const
   ORDER_BY_FULLNAME = 'ORDER BY O.Full_Name, O.Acronym';
   ORDER_BY_ACRONYM  = 'ORDER BY O.Acronym, O.Full_Name';
 
+  SETTING_NAME = 'PrefName';
 //==============================================================================
 constructor TfrmIndOrg.Create(AOwner:TComponent);
 begin
@@ -922,7 +925,7 @@ begin
       BuildTreeView(tvOrganisations,'');
       FNeedOrgRefresh := False;
     end;
-    SelectedTree:=tvOrganisations; 
+    SelectedTree:=tvOrganisations;
     if EditMode=emView then begin
       LoadFilter(FILTER_ORGANISATION, False);
       if FOSelectedItem = nil then begin
@@ -998,11 +1001,14 @@ var
   lNewObject   : TNameNode;
   lNewNode     : TFlyNode;
   lCursor      : TCursor;
+  lOrgOffset   : integer;
   tableName    : String;
+  lPreferredCustodians : string;
 begin
   //Set-up the query
   lCursor:=HourglassCursor;
   TreeView.Items.BeginUpdate; // for performance
+  lPreferredCustodians := GetPreferredCustodians(SETTING_NAME);
   try
     with FdmName.qryPopulate do
     begin
@@ -1010,11 +1016,13 @@ begin
       if TreeView = tvIndividuals then begin
         lslCurrentSQL := FdmName.CreateTopLevelSQL(IND_TYPE, iSQLWhere, FIndSortSQL);
         FNeedIndRefresh := False; // inds are populated
+        lOrgOffset := 0;
         tableName := TN_INDIVIDUAL;
       end
       else begin
         lslCurrentSQL := FdmName.CreateTopLevelSQL(ORG_TYPE, iSQLWhere, FOrgSortSQL);
         FNeedOrgRefresh := False; // orgs are populated
+        lOrgOffset := 2;
         tableName := TN_ORGANISATION;
       end;
       SQL.Clear;
@@ -1048,6 +1056,12 @@ begin
         end;
         lNewObject.ChildrenPopulated:=false;
         lNewNode:= TreeView.Items.AddObject(nil, FieldByName('Full_Name').AsString, lNewObject);
+        if (pos (FieldByName('Custodian').value,lPreferredCustodians) <> 0)
+          or (FieldByName('System_Supplied_Data').AsBoolean)
+          or (AppSettings.UseOriginalIcons) then
+            lnewNode.ImageIndex := 0 + lOrgOffSet
+        else   lnewNode.ImageIndex := 1 + lOrgOffset;
+        lnewnode.SelectedIndex := lnewNode.ImageIndex;
         // Add dummy child
         TreeView.Items.AddChild(lNewNode, '');
         Next;
@@ -1071,6 +1085,8 @@ var lslCurrentSQL: TStringList;
     lNewObject   : TNameNode;
     lCursor      : TCursor;
     tableName    : String;
+    lOrgOffset  : integer;
+    lNewNode     : TFlyNode;
 begin
   lCursor:=HourglassCursor;
   LockWindowUpdate(Handle);
@@ -1080,6 +1096,7 @@ begin
     begin
       ParseSQL := false;
       if SelectedTree = tvIndividuals then begin
+        lOrgOffset := 2;
         tableName := TN_ORGANISATION;
         if (FOrgSQL <> '') and
            FdmName.HasFilteredChildNodes(IND_TYPE, TNameNode(AParent.Data).ItemKey, FOrgSQL) then
@@ -1088,6 +1105,7 @@ begin
           lslCurrentSQL:= FdmName.CreateChildSQL(IND_TYPE, FOrgSortSQL);
       end else begin
         tableName := TN_INDIVIDUAL;
+        lOrgOffset := 0;
         if (FIndSQL <> '') and
            FdmName.HasFilteredChildNodes(ORG_TYPE, TNameNode(AParent.Data).ItemKey, FIndSQL) then
           lslCurrentSQL:= FdmName.CreateChildSQL(ORG_TYPE, FIndSortSQL, FIndSQL)
@@ -1126,7 +1144,13 @@ begin
           lNewObject.IsFiltered := True;
           lNewObject.Hint       := AppSettings.GetFilteredRecordHint(tableName, lNewObject.ItemKey);
         end;
-        SelectedTree.Items.AddChildObject(AParent, FieldByName('Full_Name').AsString, lNewObject);
+        lNewNode := SelectedTree.Items.AddChildObject(AParent, FieldByName('Full_Name').AsString, lNewObject);
+        if (pos (FieldByName('Custodian').value,GetPreferredCustodians(SETTING_NAME)) <> 0)
+          or (FieldByName('System_Supplied_Data').AsBoolean)
+          or (AppSettings.UseOriginalIcons) then
+          lNewNode.ImageIndex := 0 + lOrgOffSet
+        else   lnewNode.ImageIndex := 1 + lOrgOffset;
+        lnewnode.SelectedIndex := lnewNode.ImageIndex;
         Next;
       end;
       Close;
@@ -1187,7 +1211,7 @@ begin
 
   //        if Assigned(tvIndividuals.Selected) and
   //           Assigned(tvOrganisations.Selected) then begin//TODO - hack to get no items fixed
-
+          
           ChangeAdditionalPage(pcNameDetails); // Notify additional COM pages of newly selected node
           NotifyDataItemChange;                // Notify COM addins of data item change
 
@@ -3187,9 +3211,9 @@ begin
 
       // Update the trees only if necessary
       if FIndSQL<>'' then 
-        FIndSQL:='WHERE Name_Key IN ('+Copy(FIndSQL,2,Length(FIndSQL))+')';
+        FIndSQL:='WHERE N.Name_Key IN ('+Copy(FIndSQL,2,Length(FIndSQL))+')';
       if FOrgSQL<>'' then
-        FOrgSQL:='WHERE Name_Key IN ('+Copy(FOrgSQL,2,Length(FOrgSQL))+')';
+        FOrgSQL:='WHERE N.Name_Key IN ('+Copy(FOrgSQL,2,Length(FOrgSQL))+')';
       // As the trees were cleared, restore them taking filters into account
       ClearTrees(true, true);
       BuildTreeView(tvIndividuals, FIndSQL);  // Rebuild tree, with any filter already applied

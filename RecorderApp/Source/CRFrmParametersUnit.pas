@@ -2634,6 +2634,7 @@ begin
   if not Assigned(FMapWindow) then
   begin
     FMapWindow := dmFormActions.MapWindow(ABaseMapKey, True);
+    FMapWindow.CalledFromCustom := True;
     FMapWindow.actPointerExecute(nil);
   end else
     FMapAlreadyPresent := True;

@@ -456,10 +456,6 @@ begin
                 ResStr_OperatingToDateRequired,eSurveyOpTo);
   pcSurveyDetails.ActivePage:=tsGeography;
 
-  ValidateValue(not (((eNECorner.Text = '') or (eSWCorner.Text = ''))
-                 and (dbreGeoCoverage.Text = '')),
-                ResStr_GeoInfoRequired, eNECorner);
-
   { Validate Bounding Box }
   if (FValidEnteredSW + FValidEnteredNE) <> '' then
   begin

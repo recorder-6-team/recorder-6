@@ -93,7 +93,7 @@ inherited dmObservation: TdmObservation
       ''
       'ORDER BY Sample_Reference')
     ParseSQL = True
-    Left = 36
+    Left = 40
     Top = 64
   end
   object qryTaxonOcc: TJNCCQuery
@@ -119,7 +119,7 @@ inherited dmObservation: TdmObservation
       '       ITN.Common_Name_Italic,'
       '       ITN.Common_Name_Attribute,'
       '       TXO.Checked,'
-      '       TXO.Confidential'
+      '       TXO.Confidential, TXO.Zero_Abundance,TXO.Verified'
       'FROM Taxon_Occurrence TXO'
       
         'INNER JOIN Taxon_Determination TD ON TD.Taxon_Occurrence_Key = T' +
@@ -127,10 +127,10 @@ inherited dmObservation: TdmObservation
       
         'INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TD.' +
         'Taxon_List_Item_Key'
-      'WHERE TXO.Sample_Key = :SampleKey'
-      'AND   TD.Preferred = 1'
-      'AND ITN.SYSTEM_SUPPLIED_DATA=1'
       ''
+      'AND'
+      'TD.Preferred = 1'
+      'AND ITN.SYSTEM_SUPPLIED_DATA=1'
       'ORDER BY ITN.Preferred_Name')
     ParseSQL = True
     Left = 36
@@ -149,7 +149,7 @@ inherited dmObservation: TdmObservation
       
         '       CASE WHEN B.Original_Code IS NULL THEN B.Short_Term ELSE ' +
         'B.Original_Code+'#39', '#39'+B.Short_Term END AS Item_Name,'
-      '       BO.Checked'
+      '       BO.Checked, BO.Verified'
       'FROM Biotope_Occurrence AS BO INNER JOIN'
       '         ((Biotope AS B INNER JOIN'
       '             Biotope_List_Item AS BLI ON'

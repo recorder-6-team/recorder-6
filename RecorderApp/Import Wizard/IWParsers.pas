@@ -22,7 +22,8 @@
                      TRequiresTextParser
                      TSpatialRefSystemParser
                    TViceCountyNumberParser
-
+                   TDeterminerParser
+                   TSampleVCParser
   Description: Parsers used to handle data coming in through the Import Wizard.
 
   Model:
@@ -66,6 +67,7 @@ resourcestring
   ResStr_RecordIDInvalid =
       'Record ID values must be 6 characters or less and cannot contain spaces.';
   ResStr_ObserverRequired = 'At least one observer must be specified.';
+  ResStr_DeterminerRequired = 'A determiner is required for every field.';
   ResStr_SiteIDInvalid =
       'Site ID values must be 8 characters in length and cannot contain spaces.';
   ResStr_SpatialRefInvalid = 'Value supplied is not recognised as a valid grid reference.';
@@ -150,6 +152,11 @@ type
     procedure Fail(const AMessage: string); virtual;
   end;
 
+  TNameParser = class(TErrorParser)
+  protected
+    procedure ParseNameField(const Value: string;Parsednames:Tstringlist);
+  end;
+
   TAbundanceDataParser = class(TErrorParser)
   private
     FCallback: TFieldParserEvent;
@@ -172,7 +179,13 @@ type
     property MaximumLength: Integer read FMaximumLength write FMaximumLength;
   end;
   
-  TObserverParser = class(TErrorParser)
+  TObserverParser = class(TNameParser)
+  public
+    constructor Create; override;
+    procedure ParseField(const Value: string; CallBack: TFieldParserEvent); override;
+  end;
+
+  TDeterminerParser = class(TNameParser)
   public
     constructor Create; override;
     procedure ParseField(const Value: string; CallBack: TFieldParserEvent); override;
@@ -222,6 +235,16 @@ type
     destructor Destroy; override;
     procedure ParseField(const Value: string; CallBack: TFieldParserEvent); override;
   end;
+
+  TSampleVCParser = class(TErrorParser)
+  private
+    FCachedKeys: TStringList;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure ParseField(const Value: string; CallBack: TFieldParserEvent); override;
+  end;
+
 
   TNonRequiredDateParser = class(TErrorParser)
   private
@@ -536,42 +559,24 @@ procedure TErrorParser.Fail(const AMessage: string);
 begin
   FFailed := True;
   FLastErrorMessage := AMessage;
-end;  // TErrorParser.Fail 
+end;  // TErrorParser.Fail
 
 {-==============================================================================
-    TObserverParser
+    TNameParser
 ===============================================================================}
 {-------------------------------------------------------------------------------
+  Special handling for parsing of names, e.g. determiner or observer names
 }
-constructor TObserverParser.Create;
-begin
-  inherited Create;
-  FSingleRecord := False;
-  FFields.Add(TParsedField.Create(FLD_NAME, 'varchar(100)'));
-end;  // TObserverParser.Create
-
-{-------------------------------------------------------------------------------
-}
-procedure TObserverParser.ParseField(const Value: string; CallBack: TFieldParserEvent);
+procedure TNameParser.ParseNameField(const Value: string;Parsednames:Tstringlist);
 const
   SeparatorCharacters = [',', ';', '/', '\', '&', '+'];
 
 var
   lPos: Integer;
   lCurrentToken: String;
-  lTokenId: Integer;
   lSeparatorPosition: Integer;
   lSeparator, lTerm1, lTerm2: String;
-  
-  procedure DoCallback;
-  begin
-    // Return the token to the caller, and reset the token
-    if Assigned(CallBack) then
-      CallBack(Self, lTokenId, FLD_NAME, Trim(lCurrentToken));
-    Inc(lTokenId);
-    lCurrentToken := '';
-  end;
-
+  lWorking : String;
   {-----------------------------------------------------------------------------
     Finds the next set of alpha characters in the given string from the given
     position.
@@ -590,7 +595,7 @@ var
         Break; // from while
     end;
   end;
-  
+
   {-----------------------------------------------------------------------------
     Sets lSeparator as the current string from the given position,
     and updates lSeparatorPosition
@@ -600,15 +605,15 @@ var
     lNextSeparatorPosition: Integer;
   begin
     lNextSeparatorPosition:= lPos;
-    while not (FWorking[lNextSeparatorPosition] in SeparatorCharacters) do
+    while not (lWorking[lNextSeparatorPosition] in SeparatorCharacters) do
     begin
     lNextSeparatorPosition:= lNextSeparatorPosition + 1;
-      if lNextSeparatorPosition > Length(FWorking) then
+      if lNextSeparatorPosition > Length(lWorking) then
         Break; // from while
     end;
     lSeparatorPosition:= lNextSeparatorPosition;
-    if lSeparatorPosition <= Length(FWorking) then
-      lSeparator:= MidStr(FWorking, lSeparatorPosition, 1)
+    if lSeparatorPosition <= Length(lWorking) then
+      lSeparator:= MidStr(lWorking, lSeparatorPosition, 1)
     else
       lSeparator:= '';
   end;
@@ -620,7 +625,7 @@ var
   function ReadTerm: String;
   begin
     GetNextSeparator;
-    Result:= Trim(MidStr(FWorking, lPos, lSeparatorPosition - lPos));
+    Result:= Trim(MidStr(lWorking, lPos, lSeparatorPosition - lPos));
     lPos:= lSeparatorPosition + 1;
   end;
 
@@ -784,52 +789,140 @@ var
   end;
 
 begin
-  FWorking := Value;
-  TrimWhitespace;
-  FFailed := False;
-  if FWorking='' then
-    Fail(ResStr_ObserverRequired)
-  else begin
+  lWorking := Value;
+  if lWorking <> '' then begin
     // Convert 'and' or '+' to a single char (&) as it's easier to work with
-    FWorking := FastAnsiReplace(FWorking, ' ' + ResStr_And + ' ', ' & ', [rfReplaceAll]);
-    FWorking := FastAnsiReplace(FWorking, ' + ', ' & ', [rfReplaceAll]);
+    lWorking := FastAnsiReplace(lWorking, ' ' + ResStr_And + ' ', ' & ', [rfReplaceAll]);
+    lWorking := FastAnsiReplace(lWorking, ' + ', ' & ', [rfReplaceAll]);
 
     lPos := 1;
     lCurrentToken := '';
-    lTokenId := 0;
-    while lPos <= Length(FWorking) do
+    while lPos <= Length(lWorking) do
     begin
       lTerm1 := ReadTerm;
       if IsTitle(lTerm1) and (lSeparator = '&') then
       begin
         lTerm2 := ReadTerm;
         lCurrentToken := lTerm1 + ' ' + RemoveTitle(lTerm2);
-        if Trim(lCurrentToken) <> '' then DoCallback;
+        if Trim(lCurrentToken) <> '' then ParsedNames.Add(lCurrentToken);
         lCurrentToken := lTerm2;
-        if Trim(lCurrentToken) <> '' then DoCallback;
+        if Trim(lCurrentToken) <> '' then ParsedNames.Add(lCurrentToken);
       end
       else if IsIncomplete(lTerm1) and (lSeparator = '&') then
       begin
         lTerm2 := ReadTerm;
         lCurrentToken := lTerm1 + ' ' + GetLastWord(lTerm2);
-        if Trim(lCurrentToken) <> '' then DoCallback;
+        if Trim(lCurrentToken) <> '' then ParsedNames.Add(lCurrentToken);
         lCurrentToken := lTerm2;
-        if Trim(lCurrentToken) <> '' then DoCallback;
+        if Trim(lCurrentToken) <> '' then ParsedNames.Add(lCurrentToken);
       end
       else if IsName(lTerm1) and (lSeparator = ',') then
       begin
         lTerm2 := ReadTerm;
         lCurrentToken := lTerm2 + ' ' + lTerm1;
-        if Trim(lCurrentToken) <> '' then DoCallback;
+        if Trim(lCurrentToken) <> '' then ParsedNames.Add(lCurrentToken);
       end
       else
       begin
         lCurrentToken := lTerm1;
-        if Trim(lCurrentToken) <> '' then DoCallback;
+        if Trim(lCurrentToken) <> '' then ParsedNames.Add(lCurrentToken);
       end;
     end;
   end;
+end;
+
+{-==============================================================================
+    TObserverParser
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+constructor TObserverParser.Create;
+begin
+  inherited Create;
+  FSingleRecord := False;
+  FFields.Add(TParsedField.Create(FLD_NAME, 'varchar(100)'));
+end;  // TObserverParser.Create
+
+
+{-------------------------------------------------------------------------------
+}
+procedure TObserverParser.ParseField(const Value: string; CallBack: TFieldParserEvent);
+
+var
+  i : integer;
+  lCurrentToken: String;
+  lTokenId: Integer;
+  ParsedNames : TStringList;
+  procedure DoCallback;
+
+  begin
+    // Return the token to the caller, and reset the token
+    if Assigned(CallBack) then
+      CallBack(Self, lTokenId, FLD_NAME, Trim(lCurrentToken));
+    Inc(lTokenId);
+    lCurrentToken := '';
+  end;
+
+begin
+  FWorking := Value;
+  TrimWhitespace;
+  FFailed := False;
+  if FWorking='' then
+    Fail(ResStr_ObserverRequired)
+  else begin
+    ParsedNames := TStringList.Create;
+    ParseNameField (FWorking,ParsedNames);
+    lTokenId := 0;
+    for i := 0 to ParsedNames.Count-1 do
+    begin
+      lCurrentToken:= (ParsedNames[i]);
+      DoCallBack;
+    end;
+  end;
 end;  // TObserverParser.ParseField
+
+
+{-==============================================================================
+    TDeterminerParser
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+constructor TDeterminerParser.Create;
+begin
+  inherited Create;
+  FSingleRecord := True;
+  FFields.Add(TParsedField.Create(FLD_DATA, 'varchar(100)'));
+end;  // TDeterminerParser.Create
+
+procedure TDeterminerParser.ParseField(const Value: string; CallBack: TFieldParserEvent);
+var
+  lCurrentToken: String;
+  lTokenId: Integer;
+  ParsedNames : TStringList;
+  procedure DoCallback;
+
+  begin
+    // Return the token to the caller, and reset the token
+    if Assigned(CallBack) then
+      CallBack(Self, lTokenId, FLD_DATA, Trim(lCurrentToken));
+    Inc(lTokenId);
+    lCurrentToken := '';
+  end;
+
+begin
+  FWorking := Value;
+  TrimWhitespace;
+  FFailed := False;
+  lTokenId := 0;
+  if FWorking  <> ''  then begin
+    ParsedNames := TStringList.Create;
+    ParseNameField (FWorking,ParsedNames);
+    lCurrentToken:= (ParsedNames[0]);
+  end else
+    lCurrentToken:= (FWorking);
+
+  DoCallBack;
+end;
 
 {-==============================================================================
     TAltitudeParser
@@ -1119,6 +1212,54 @@ begin
       Callback(Self, 0, FLD_KEY, FCachedKeys.Values[FWorking]);
   end;
 end;  // TViceCountyNumberParser.ParseField
+
+{-==============================================================================
+    TViceCountyNumberParser
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+constructor TSampleVCParser.Create;
+begin
+  inherited;
+  FFields.Add(TParsedField.Create(FLD_KEY, 'char(16)'));
+end;  // TSampleVCParser.Create
+
+{-------------------------------------------------------------------------------
+}
+destructor TSampleVCParser.Destroy;
+begin
+  inherited;
+  FreeAndNil(FCachedKeys);
+end;  // TSampleVCParser.Destroy
+
+{-------------------------------------------------------------------------------
+}
+procedure TSampleVCParser.ParseField(const Value: string; CallBack: TFieldParserEvent);
+
+begin
+  FWorking := Value;
+  TrimWhitespace;
+  FFailed := False;
+  // Using cached version of parser, to speed up lookups.
+  if not Assigned(FCachedKeys) then begin
+    FCachedKeys := TStringList.Create;
+    with dmDatabase.GetRecordset('usp_Admin_Areas_Select_AllViceCounties', []) do
+    begin
+      while not Eof do begin
+        // Data returned is formatted as key/value pairs.
+        FCachedKeys.Add(Fields['Data'].Value);
+        MoveNext;
+      end;
+      Close;
+    end;
+    end;
+  if (FCachedKeys.Values[FWorking] = '') AND (FWorking <> '') then
+      Fail(ResStr_ViceCountyinvalid)
+  else
+  if Assigned(CallBack) then
+      Callback(Self, 0, FLD_KEY, FCachedKeys.Values[FWorking]);
+
+  end;  // TSampleVCParser.ParseField
 
 {-==============================================================================
     TDateParser
@@ -1643,6 +1784,7 @@ initialization
   RegisterClasses([TAbundanceDataParser,
                    TTextParser,
                    TObserverParser,
+                   TDeterminerParser,
                    TAltitudeParser,
                    TMapMateKeyParser,
                    TBooleanParser,
@@ -1650,6 +1792,7 @@ initialization
                    TSiteIDParser,
                    TBRCSourceParser,
                    TViceCountyNumberParser,
+                   TSampleVCParser,
                    TDateParser,
                    TNonRequiredDateParser,
                    TDeterminationDateParser,

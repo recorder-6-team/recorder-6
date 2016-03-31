@@ -320,7 +320,8 @@ uses
   AddinResourceStrings in '..\Third Party\Dorset Software Services\Recorder Addins\Source\AddinResourceStrings.pas',
   AddinSearchManager in '..\Third Party\Dorset Software Services\Recorder Addins\Source\AddinSearchManager.pas',
   DSSLocalizerUtils in '..\Third Party\Dorset Software Services\Recorder Addins\Source\DSSLocalizerUtils.pas',
-  ExternalSourceDetails in 'Components\ExternalSourceDetails.pas' {dlgExternalSourceDetails};
+  ExternalSourceDetails in 'Components\ExternalSourceDetails.pas' {dlgExternalSourceDetails},
+  HierarchyFunctions in 'Source\HierarchyFunctions.pas';
 
 {$R 'RecorderApp.manifest.res' 'RecorderApp.manifest.rc'}
 

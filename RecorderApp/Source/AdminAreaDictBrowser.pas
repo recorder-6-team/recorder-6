@@ -122,8 +122,8 @@ resourcestring
   ResStr_DateLastChanged =  'Date Last Changed';
   ResStr_DateOfEntry =  'Date of Entry';
   ResStr_AdministrativeAreas = 'administrative areas';
-
-
+  ResStr_MetadataForAdminArea = 'Metadata for Admin Area: ';
+  RestStr_Key_Not_Found = 'Meta data not found';
 //==============================================================================
 procedure TfrmAdminAreaDictBrowser.FormActivate(Sender: TObject);
 begin
@@ -259,48 +259,64 @@ begin
   inherited;
   lsHeader := '';
   lsBody := '';
-
-  with dmGeneralData.qryAllPurpose do begin
-    if Active then Close;
-    try
-      SQL.Text := 'SELECT * FROM Admin_Type WHERE Admin_Type_Key = ''' +
-                  ListKeyData.ItemKey + ''';';
+  if (ActiveControl <> cmbList) and Assigned(tvDictionary.Selected) then
+  begin
+    with dmGeneralData.qryAllPurpose do begin
+      if Active then Close;
+      SQL.Text := 'SELECT * FROM Admin_Area WHERE Admin_Area_Key = ''' +
+                   TTaxonDictionaryNode(tvDictionary.Selected.Data).ItemKey + ''';';
       Open;
       if Eof then
-        MessageBeep(0)
+        MessageDlg ( RestStr_Key_Not_Found,mtWarning, [mbOk], 0)
       else begin
-        lsHeader := ResStr_MetadataForAdminType + FieldByName('Long_Name').AsString;
-
-        if FieldByName('Authority').AsString <> '' then
-          lsBody := MetaDataPaneItem('Authority', FieldByName('Authority').AsString);
-
-        if FieldByName('Description').AsString <> '' then
-          lsBody := lsBody + MetaDataPaneItem('Description', FieldByName('Description').AsString);
-
-        if FieldByName('Date_From').AsString = '' then
-          if FieldByName('Date_To').AsString <> '' then
-            lsBody := lsbody + '<P><STRONG>' + ResStr_DateTo + '</STRONG> ' +
-                               DateToStr(FieldByName('Date_To').AsDateTime) + '</P'
-          else
-        else begin
-          lsBody := lsBody + '<P><STRONG>' + ResStr_DateFrom + '</STRONG> ' +
-                             DateToStr(FieldByName('Date_From').AsDateTime);
-          if FieldByName('Date_To').AsString <> '' then
-            lsBody := lsbody + ' <STRONG>To:' + ResStr_To + '</STRONG> ' +
-                               DateToStr(FieldByName('Date_To').AsDateTime);
-          lsBody := lsBody + '</P';
-        end;
-
-        if FieldByName('Changed_Date').AsString <> '' then
-          lsBody := lsBody + MetaDataPaneItem(ResStr_DateLastChanged, DateToStr(FieldByName('Changed_Date').AsDateTime))
-        else
-          lsBody := lsBody + MetaDataPaneItem(ResStr_DateOfEntry, DateToStr(FieldByName('Entry_Date').AsDateTime));
+         lsHeader := ResStr_MetadataForAdminArea + FieldByName('Item_Name').AsString;
+         lsBody := MetaDataPaneItem('Admin Area Key', FieldByName('Admin_Area_Key').AsString);
       end;
-    finally
-      Close;
-    end;
-  end;
+      close;
+    end; // end of with
+  end else
+    with dmGeneralData.qryAllPurpose do begin
+      if Active then Close;
+      try
+        SQL.Text := 'SELECT * FROM Admin_Type WHERE Admin_Type_Key = ''' +
+                    ListKeyData.ItemKey + ''';';
+        Open;
+        if Eof then
+          MessageDlg ( RestStr_Key_Not_Found,mtWarning, [mbOk], 0)
+        else begin
+          lsHeader := ResStr_MetadataForAdminType + FieldByName('Long_Name').AsString;
 
+          lsBody :=  MetaDataPaneItem('Admin Type Key', FieldByName('Admin_Type_Key').AsString);
+
+          if FieldByName('Authority').AsString <> '' then
+            lsBody := lsBody + MetaDataPaneItem('Authority', FieldByName('Authority').AsString);
+
+          if FieldByName('Description').AsString <> '' then
+            lsBody := lsBody + MetaDataPaneItem('Description', FieldByName('Description').AsString);
+
+          if FieldByName('Date_From').AsString = '' then
+            if FieldByName('Date_To').AsString <> '' then
+              lsBody := lsbody + '<P><STRONG>' + ResStr_DateTo + '</STRONG> ' +
+                                 DateToStr(FieldByName('Date_To').AsDateTime) + '</P>'
+            else
+          else begin
+            lsBody := lsBody + '<P><STRONG>' + ResStr_DateFrom + '</STRONG> ' +
+                                 DateToStr(FieldByName('Date_From').AsDateTime);
+            if FieldByName('Date_To').AsString <> '' then
+              lsBody := lsbody + ' <STRONG>To:' + ResStr_To + '</STRONG> ' +
+                                 DateToStr(FieldByName('Date_To').AsDateTime);
+            lsBody := lsBody + '</P>';
+          end;
+
+          if FieldByName('Changed_Date').AsString <> '' then
+            lsBody := lsBody + MetaDataPaneItem(ResStr_DateLastChanged, DateToStr(FieldByName('Changed_Date').AsDateTime))
+          else
+            lsBody := lsBody + MetaDataPaneItem(ResStr_DateOfEntry, DateToStr(FieldByName('Entry_Date').AsDateTime));
+        end;
+      finally
+        Close;
+      end;
+    end;
   if lsHeader <> '' then
     with TdlgMetaDataPopup.Create(nil) do
       try

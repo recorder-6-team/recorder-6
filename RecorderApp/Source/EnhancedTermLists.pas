@@ -45,6 +45,8 @@ resourcestring
   ResStr_CantDropNodeOntoSelf = 'You cannot drop a node onto itself.';
   ResStr_RequestedTermListNotFound =
       'The term list for %s cannot be found.';
+  ResStr_Invalid_Sort_Code =
+      'Invalid sort code - must be numeric';
 
 type
   EEnhancedTermLists = class(TExceptionPath);
@@ -111,6 +113,8 @@ type
     mnuTreeViewAddTerm: TMenuItem;
     Label5: TLabel;
     cmbConceptGroup: TIDComboBox;
+    Label6: TLabel;
+    eSortCode: TEdit;
     procedure pnlDetailsResize(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure tvTermsExpanding(Sender: TObject; Node: TFlyNode;
@@ -141,6 +145,8 @@ type
     procedure cmbConceptGroupChange(Sender: TObject);
     procedure cmbConceptGroupPopulate(Sender: TObject);
     procedure tvTermsExit(Sender: TObject);
+    procedure eSortCodeExit(Sender: TObject);
+    procedure eSortCodeKeyPress(Sender: TObject; var Key: Char);
   private
     FHierarchyRelationTypeKeys: TStringList;
     FTimestamp: TSQLSvrTimestamp;
@@ -442,6 +448,7 @@ begin
   actRename.Enabled := actEdit.Enabled and lCanEditNode;
   tvTerms.Enabled := AEditMode = emView;
   cmbConceptGroup.Enabled := AEditMode = emView;
+  eSortCode.Enabled :=  (AEditMode = emEdit) and lCanEditNode;
   btnSave.Enabled := AEditMode = emEdit;
   btnCancel.Enabled := AEditMode = emEdit;
   btnAddSynonym.Enabled := AEditMode = emEdit;
@@ -499,7 +506,7 @@ begin
                             '@Preferred', true,
                             '@ConceptRankKey', Null,
                             '@NameTypeConceptKey', CONCEPT_KEY_COMMON,
-                            '@SortCode', Null,
+                            '@SortCode', eSortCode.Text,
                             '@ListCode', Null,
                             '@Timestamp', FTimestamp,
                             '@SessionID', AppSettings.SessionID
@@ -511,7 +518,7 @@ begin
   try
     if lNewConcept then begin
       CurrentConceptKey := VarToStr(dmDatabase.RunInsertStoredProc('Concept',
-                   'usp_ConceptSimple_Insert', lParams, '@Key'));
+        'usp_ConceptSimple_Insert', lParams, '@Key'));
       // if a child, then insert the relationship
       if Assigned(tvTerms.Selected.Parent) then
         JoinNodeToParent;
@@ -527,6 +534,7 @@ begin
       // if rolling back a new concept, forget the key
       if lNewConcept then
         CurrentConceptKey := '';
+        eSortCode.Text := '0';
       if CompareText(E.Message, 'Record updated by another user') = 0 then
         raise EEnhancedTermLists.CreateNonCritical(ResStr_AnotherUserUpdated, E)
       else
@@ -688,6 +696,7 @@ procedure TfrmEnhancedTermLists.actAddTermExecute(Sender: TObject);
 begin
   AddTerm(Sender);
   SetEditMode(emEdit);
+  eSortCode.Text := '0';
 end;
 
 {-------------------------------------------------------------------------------
@@ -1077,7 +1086,8 @@ begin
           eTerm.Text := StripItalics(Fields['Item_Name'].Value);
           ANode.Caption := eTerm.Text;
           eTerm.Key := Fields['Item_Key'].Value;
-          FTimestamp    := Fields['Timestamp'].Value;
+          eSortCode.Text := VarToSTr(Fields['Sort_Code'].Value);
+          FTimestamp := Fields['Timestamp'].Value;
           cmbLanguage.ItemIndex := cmbLanguage.IdIndexOf(VarToStr(Fields['Language_Key'].Value));
         end; // with
       end;
@@ -1289,6 +1299,23 @@ begin
     FinishEditingNode;
     tvTerms.Options := tvTerms.Options - [ExGrid.goEditing];
   end;
+end;
+
+procedure TfrmEnhancedTermLists.eSortCodeExit(Sender: TObject);
+var
+  lVal,lErr: Integer;
+begin
+  if eSortCode.Text = '' then eSortCode.Text := '0';
+  Val(eSortCode.Text, lVal, lErr);
+  if (lErr <> 0) or (lVal < 0) then
+    raise TExceptionPath.CreateValidation(ResStr_Invalid_Sort_Code, eSortCode)
+end;
+
+procedure TfrmEnhancedTermLists.eSortCodeKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if not (Key in [#8, '0'..'9']) then Key := #0;
 end;
 
 end.

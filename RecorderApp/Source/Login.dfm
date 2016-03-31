@@ -6,7 +6,7 @@ object dlgLogin: TdlgLogin
   BorderIcons = []
   BorderStyle = bsDialog
   Caption = '%s - Login'
-  ClientHeight = 199
+  ClientHeight = 246
   ClientWidth = 265
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -44,7 +44,7 @@ object dlgLogin: TdlgLogin
     Left = 12
     Top = 120
     Width = 249
-    Height = 73
+    Height = 113
     AutoSize = False
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clHotLight

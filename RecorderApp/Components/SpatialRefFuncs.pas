@@ -105,6 +105,7 @@ resourcestring
             		              'Please enter a valid bounding box.';
 
   ResStr_AddinReduceNotImp = 'Addin Reduce Grid Precision support not implemented yet';
+  ResStr_LocationUnknown      = 'Unknown location';
 
 var
   { General Variables }
@@ -327,6 +328,7 @@ function LocaliseSpatialRef(const ASpatialRef: String): String;
 function DelocaliseSpatialRef(const ASpatialRef: String): String;
 { Delocalised formatting context for spatial references }
 procedure GetSpatialRefFormatSettings(var Settings: TFormatSettings);
+function GetLocalityLabelFromFields(location, locationName, sref: string): string;
 
 { Converts the given (delocalised) latitude to a floating-point number. }
 function LatitudeToFloat(const Latitude: string): Double;
@@ -3697,6 +3699,31 @@ begin
   Settings.ThousandSeparator := ',';
   Settings.DecimalSeparator := '.';
   Settings.ListSeparator := ',';
+end;
+
+{-------------------------------------------------------------------------------
+  Converts the 3 fields related to a site into the display label.
+}
+function GetLocalityLabelFromFields(location, locationName, sref: string): string;
+begin
+  if location<>'' then
+    // first choice - just the location
+    Result := location
+  else
+  begin
+    if (locationName<>'') and (sref<>'') then
+      // or location name + sref
+      Result := locationName + ' - ' + LocaliseSpatialRef(sref)
+    else if locationName<>'' then
+      // or just location name
+      Result := locationName
+    else if sref<>'' then
+      // or just sref
+      Result := LocaliseSpatialRef(sref)
+    else
+      // or unknown
+      Result := ResStr_LocationUnknown;
+  end;
 end;
 
 {-------------------------------------------------------------------------------

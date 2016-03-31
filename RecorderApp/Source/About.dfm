@@ -49,7 +49,7 @@ object dlgAbout: TdlgAbout
       object Label1: TLabel
         Left = 132
         Top = 8
-        Width = 52
+        Width = 51
         Height = 16
         Caption = 'Version:'
         Font.Charset = ANSI_CHARSET
@@ -62,7 +62,7 @@ object dlgAbout: TdlgAbout
       object Version: TLabel
         Left = 202
         Top = 8
-        Width = 48
+        Width = 47
         Height = 16
         Caption = 'Version'
         Font.Charset = ANSI_CHARSET
@@ -151,7 +151,7 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object Label6: TLabel
-        Left = 136
+        Left = 8
         Top = 87
         Width = 108
         Height = 14
@@ -164,8 +164,8 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object Label5: TLabel
-        Left = 136
-        Top = 119
+        Left = 8
+        Top = 63
         Width = 67
         Height = 14
         Caption = #169' JNCC, 2006'
@@ -179,8 +179,8 @@ object dlgAbout: TdlgAbout
       object Image: TImage
         Left = 8
         Top = 8
-        Width = 100
-        Height = 85
+        Width = 81
+        Height = 73
       end
       object Label7: TLabel
         Left = 8
@@ -263,7 +263,7 @@ object dlgAbout: TdlgAbout
       object lblDictionaryVersionCaption2: TLabel
         Left = 132
         Top = 64
-        Width = 52
+        Width = 51
         Height = 16
         Caption = 'Version:'
         Font.Charset = ANSI_CHARSET
@@ -273,12 +273,51 @@ object dlgAbout: TdlgAbout
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object Label9: TLabel
+        Left = 132
+        Top = 88
+        Width = 59
+        Height = 16
+        Caption = 'Database'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlue
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object Label10: TLabel
+        Left = 132
+        Top = 104
+        Width = 51
+        Height = 16
+        Caption = 'Version:'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlue
+        Font.Height = -13
+        Font.Name = 'Arial'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object lblDatabaseVersion: TLabel
+        Left = 202
+        Top = 89
+        Width = 113
+        Height = 16
+        Caption = 'WWWWWWWW'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
       object StaticText1: TStaticText
-        Left = 136
+        Left = 8
         Top = 102
-        Width = 167
+        Width = 100
         Height = 18
-        Caption = 'by Dorset Software Services Ltd.'
+        Caption = 'by Dorset Software'
         Font.Charset = ANSI_CHARSET
         Font.Color = clBlue
         Font.Height = -11
@@ -286,6 +325,20 @@ object dlgAbout: TdlgAbout
         Font.Style = []
         ParentFont = False
         TabOrder = 0
+      end
+      object StaticText2: TStaticText
+        Left = 8
+        Top = 118
+        Width = 68
+        Height = 18
+        Caption = 'Services Ltd.'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlue
+        Font.Height = -11
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 1
       end
     end
     object tsMoreInfo: TTabSheet

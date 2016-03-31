@@ -28,7 +28,7 @@ uses
   BaseData, Db, JNCCDatasets, ADODB, AdoInt;
 
 const
-  SQL_LOCATION_LEVEL = 'SELECT L.Location_Key, LN.Item_Name, L.Spatial_Ref, L.File_Code, System_Supplied_Data '+
+  SQL_LOCATION_LEVEL = 'SELECT L.Location_Key, LN.Item_Name, L.Spatial_Ref, L.File_Code, System_Supplied_Data,L.Custodian '+
                   'FROM Location AS L INNER JOIN Location_Name AS LN ON '+
                   'L.Location_Key = LN.Location_Key '+
                   'WHERE L.Parent_Key %s '+

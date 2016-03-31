@@ -497,7 +497,6 @@ resourcestring
   ResStr_NewSample            = 'New Sample';
   ResStr_NewTaxonOccurrence   = 'New Taxon Occurrence';
   ResStr_NewBiotopeOccurrence = 'New Biotope Occurrence';
-  ResStr_LocationUnknown      = 'Unknown location';
 
 //==============================================================================
 constructor TfrmObservations.Create(AOwner: TComponent);
@@ -1528,10 +1527,10 @@ begin
       lData.Checked := not lData.Checked;
 
       // Save changes to Biotope/Taxon occurrence table
-      if ImageIndex = 2 then begin // Biotope occurrence
+      if (ImageIndex >= 18) and (ImageIndex <= 21) then begin // Biotope occurrence
         TfrmBiotopeOccurrences(DetailForm).ChangeChecked(StateIndex = STATE_CHECKED);
         TfrmBiotopeOccurrences(DetailForm).DisplayRecord(TfrmBiotopeOccurrences(DetailForm).BiotopeOccKey);
-      end else if ImageIndex in [3, 4] then begin // Taxon occurrence
+      end else if (ImageIndex >= 5) and (ImageIndex <= 17) then begin // Taxon occurrence
         TfrmTaxonOccurrences(DetailForm).ChangeChecked(StateIndex = STATE_CHECKED);
         TfrmTaxonOccurrences(DetailForm).DisplayRecord(TfrmTaxonOccurrences(DetailForm).TaxonOccKey);
       end else begin
@@ -1850,6 +1849,8 @@ begin
             Checked        := Fields['Checked'].Value;
             HasLocation    := parentData.HasLocation;
             ChildrenPopulated := True;  // Can't go further down the tree
+            if not AppSettings.UseOriginalIcons then
+              imageindex :=   18 + 1 + Fields['Verified'].Value
           end;
           node := tvObservations.Items.AddChildObject(sampleNode, nodeText, nodeData);
           with node do begin
@@ -1878,7 +1879,6 @@ begin
   cursor := HourglassCursor;
   try
     parentData := TSampleNode(sampleNode.Data);
-
     with dmDatabase.ExecuteSQL(FdmObservation.qryTaxonOcc.SQL.Text, True) do
       if not Eof then begin
         MoveFirst;
@@ -1897,6 +1897,8 @@ begin
             IsFiltered     := AppSettings.IndexOfFilteredRecord(TN_TAXON_OCCURRENCE, ItemKey) > -1;
             Hint           := AppSettings.GetFilteredRecordHint(TN_TAXON_OCCURRENCE, ItemKey);
             Confidential   := Fields['Confidential'].Value;
+            ZeroAbundance  := Fields['Zero_Abundance'].Value;
+            Verified       := Fields['Verified'].Value;
             Checked        := Fields['Checked'].Value;
             HasLocation    := parentData.HasLocation;
             ChildrenPopulated := True;  // Can't go further down the tree
@@ -1914,6 +1916,9 @@ begin
             TaxonNameObject.ENAttribute := VarToStr(Fields['Actual_Name_Attribute'].Value);
             TaxonNameObject.TNAuthor := VarToStr(Fields['Preferred_Name_Authority'].Value);
             TaxonNameObject.ENAuthor := VarToStr(Fields['Authority'].Value);
+            // Change Image based on Verified/Confidential and ZeroAbundance
+            if Not AppSettings.UseOriginalIcons then
+              ImageIndex :=  6 + (Verified * 4) + ord(Confidential) + (ord(ZeroAbundance) * 2)
           end;
           node := tvObservations.Items.AddChildObject(sampleNode, nodeText, nodeData);
           with node do begin
@@ -1998,16 +2003,18 @@ begin
     if lNodeData is TSampleNode then begin
       // if sample node, find the taxon and then the biotope occurrences
       FdmObservation.OccurrenceSample := lNodeData.ItemKey;
-      if HasFilteredChildNodes(lNodeData, TN_TAXON_OCCURRENCE, FTaxonOccKeys, GetSampleKeysForTaxonOccurrences) then
+      if HasFilteredChildNodes(lNodeData, TN_TAXON_OCCURRENCE, FTaxonOccKeys, GetSampleKeysForTaxonOccurrences)
+      or HasFilteredChildNodes(lNodeData, TN_BIOTOPE_OCCURRENCE, FBioOccKeys, GetSampleKeysForBiotopeOccurrences)
+      then begin
         FdmObservation.qryTaxonOcc.SQL[QRYTAXOCC_REPLACE_ROW] := 'and TXO.Taxon_Occurrence_Key in (' +
-            '''' + StringReplace(FTaxonOccKeys.CommaText, ',', ''',''', [rfReplaceAll]) + ''')'
-      else
-        FdmObservation.qryTaxonOcc.SQL[QRYTAXOCC_REPLACE_ROW] := '';
-      if HasFilteredChildNodes(lNodeData, TN_BIOTOPE_OCCURRENCE, FBioOccKeys, GetSampleKeysForBiotopeOccurrences) then
+            '''' + StringReplace(FTaxonOccKeys.CommaText, ',', ''',''', [rfReplaceAll]) + ''')';
         FdmObservation.qryBiotopeOcc.SQL[QRYBIOOCC_REPLACE_ROW] := 'and BO.Biotope_Occurrence_Key in (' +
-            '''' + StringReplace(FBioOccKeys.CommaText, ',', ''',''', [rfReplaceAll]) + ''')'
-      else
+            '''' + StringReplace(FBioOccKeys.CommaText, ',', ''',''', [rfReplaceAll]) + ''')';
+      end
+      else begin
+        FdmObservation.qryTaxonOcc.SQL[QRYTAXOCC_REPLACE_ROW] := '';
         FdmObservation.qryBiotopeOcc.SQL[QRYBIOOCC_REPLACE_ROW] := '';
+      end;
       PopulateOccurrenceLevel(Node);
       if Node=SelectedItem then
         bbCheckAll.Enabled:=(Node.Count>0) and
@@ -2066,6 +2073,8 @@ begin
       end else
       if nodeData is TBiotopeOccNode then begin
         StateIndex   := nodeData.StateImage;
+        ImageIndex   := nodeData.ImageIndex;
+        SelectedIndex := ImageIndex;
         Self.Caption := ResStr_BiotopeOcc + ': ' + AString
       end else
       if nodeData is TTaxonOccNode then begin
@@ -2934,21 +2943,12 @@ end;
 }
 function TfrmObservations.GetLocationName(Recordset: ADODB._Recordset): String;
 var
-  Value: OleVariant;
+  location, sref, locationName: string;
 begin
-  Value := Recordset.Fields['Item_Name'].Value;
-  if not VarIsNull(Value) then
-    Result := Value
-  else
-  begin
-    Value := Recordset.Fields['Spatial_Ref'].Value;
-    if not VarIsNull(Value) and (Value <> '') then
-      Result := LocaliseSpatialRef(Value)
-    else
-      Result := VarToStr(Recordset.Fields['Location_Name'].Value);
-  end;
-  if Result='' then
-    Result := ResStr_LocationUnknown;
+  location := Trim(VarToStr(Recordset.Fields['Item_Name'].Value));
+  locationName := Trim(VarToStr(Recordset.Fields['Location_Name'].Value));
+  sref := Trim(VarToStr(Recordset.Fields['Spatial_Ref'].Value));
+  Result := GetLocalityLabelFromFields(location, locationName, sref);
 end;
 
 {Returns the name of the Sample}

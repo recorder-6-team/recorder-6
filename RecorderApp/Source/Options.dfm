@@ -58,7 +58,7 @@ object dlgOptions: TdlgOptions
     Top = 0
     Width = 545
     Height = 409
-    ActivePage = tsFileLocations
+    ActivePage = tsGeneral
     Align = alTop
     TabOrder = 1
     OnChange = pcOptionsPagesChange
@@ -126,15 +126,15 @@ object dlgOptions: TdlgOptions
         TabOrder = 5
         object lblCenturyCutOff: TLabel
           Left = 8
-          Top = 133
+          Top = 109
           Width = 127
           Height = 13
           Hint = 'Century cut-off Year (0-99)'
           Caption = 'Century cut-off Year (0-99):'
         end
         object lblCenturyCutOffInfo: TLabel
-          Left = 24
-          Top = 152
+          Left = 8
+          Top = 136
           Width = 217
           Height = 33
           Caption = 
@@ -151,7 +151,7 @@ object dlgOptions: TdlgOptions
         end
         object lblDelimiter: TLabel
           Left = 8
-          Top = 193
+          Top = 177
           Width = 101
           Height = 13
           Hint = 
@@ -175,7 +175,7 @@ object dlgOptions: TdlgOptions
         end
         object eDateCutYear: TEdit
           Left = 144
-          Top = 130
+          Top = 106
           Width = 33
           Height = 21
           Hint = 'Century cut-off Year (0-99)'
@@ -194,8 +194,8 @@ object dlgOptions: TdlgOptions
           TabOrder = 1
         end
         object eRapidEntryDelimiter: TEdit
-          Left = 144
-          Top = 190
+          Left = 136
+          Top = 174
           Width = 33
           Height = 21
           Hint = 
@@ -219,16 +219,17 @@ object dlgOptions: TdlgOptions
         end
         object chkUseOldImportWizard: TCheckBox
           Left = 8
-          Top = 84
+          Top = 204
           Width = 245
           Height = 17
           Alignment = taLeftJustify
           Caption = 'Use the v6.13 Import Wizard:'
           TabOrder = 3
+          Visible = False
         end
         object chkIgnoreRememberedMatches: TCheckBox
           Left = 8
-          Top = 108
+          Top = 84
           Width = 245
           Height = 17
           Alignment = taLeftJustify
@@ -824,6 +825,14 @@ object dlgOptions: TdlgOptions
         ReadOnly = True
         TabOrder = 11
         Text = 'Field you can transfer info from and to...'
+      end
+      object cbUseOriginalicons: TCheckBox
+        Left = 12
+        Top = 272
+        Width = 249
+        Height = 17
+        Caption = 'Use Original Icons'
+        TabOrder = 12
       end
     end
     object tsSpatialRef: TTabSheet

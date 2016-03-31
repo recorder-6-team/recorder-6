@@ -1,0 +1,1 @@
+ALTER TABLE Reference ALTER COLUMN Volume varchar(10)

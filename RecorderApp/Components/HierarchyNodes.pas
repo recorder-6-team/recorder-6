@@ -265,16 +265,23 @@ type
   TTaxonOccNode=class(TOccurrenceNode)
   private
     FConfidential : boolean;
+    FZeroAbundance :boolean;
+    FVerified :integer;
     FTaxonNameObject : TTaxonNames;
     procedure SetTaxonNameObject(const Value: TTaxonNames);
   protected
     procedure SetConfidential(const Value : boolean);
+    procedure SetZeroAbundance (const Value : boolean);
+    procedure SetVerified (const Value : integer);
+
   public
     constructor Create;
     destructor Destroy; override;
     function ReportKeyType: TKeyType; override;
     property TaxonNameObject : TTaxonNames  read FTaxonNameObject write SetTaxonNameObject;
     property Confidential : boolean read FConfidential write SetConfidential;
+    property ZeroAbundance :boolean read FZeroAbundance write SetZeroAbundance;
+    property Verified :integer read FVerified write SetVerified;
   end;
 
   //==============================================================================
@@ -469,7 +476,7 @@ const
   NO_STATE = 0;
 
   { TSurveyTagNode }
-  DEF_SURVEY_TAG_IMAGE = 5;
+  DEF_SURVEY_TAG_IMAGE = 3;
 
   { TSurveyNode }
   DEF_SURVEY_IMAGE = 0;
@@ -478,7 +485,7 @@ const
   DEF_EVENT_IMAGE = 1;
 
   { TSampleNode }
-  DEF_SAMPLE_IMAGE = 6;
+  DEF_SAMPLE_IMAGE = 22;
   SAMPLE_STATE_CARD_CHECKED = 3;  // sample state indexes
   SAMPLE_STATE_CARD_UNCHECKED = 4;
   SAMPLE_STATE_CARD_NONE = 5;
@@ -490,17 +497,19 @@ const
   OCC_STATE_UNCHECKED = 1;
 
   { TTaxonOccNode }
-  DEF_TAXONOCC_IMAGE = 3;
+  DEF_TAXONOCC_IMAGE = 5;
   DEF_CONFIDENTIAL = False;
+  DEF_ZEROABUNDANCE = False;
+  DEF_VERIFIED = 0;
 
   { TBiotopeOccNode }
-  DEF_BIOTOPEOCC_IMAGE = 2;
+  DEF_BIOTOPEOCC_IMAGE = 18;
 
   { TSiteNode }
   DEF_SITE_IMAGE = 0;
 
   { TFeatureNode }
-  DEF_FEATURE_IMAGE = 1;
+  DEF_FEATURE_IMAGE = 3;
 
   { TTaxonDictionaryNode }
   INT_CRITICAL_VALIDATION_LEVEL = 3;
@@ -770,6 +779,7 @@ begin
   inherited Create;
   ImageIndex := DEF_TAXONOCC_IMAGE;
   Confidential := DEF_CONFIDENTIAL;
+  ZeroAbundance := DEF_ZEROABUNDANCE;
   FTaxonNameObject := nil;
 end;
 
@@ -792,6 +802,17 @@ begin
   FConfidential := Value;
 end;
 
+//------------------------------------------------------------------------------
+procedure TTaxonOccNode.SetZeroAbundance (const Value: boolean);
+begin
+  FZeroAbundance := Value;
+end;
+
+//------------------------------------------------------------------------------
+procedure TTaxonOccNode.SetVerified (const Value: integer);
+begin
+  FVerified := Value;
+end;
 
 
 //==============================================================================

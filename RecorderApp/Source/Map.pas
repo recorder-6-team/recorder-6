@@ -376,7 +376,6 @@ type
     FSurveyList: TEditableKeyList;
     FTool: Byte;
     FVisibleExtents: MsExtent;
-
     FFileName: String;
     FImportObjectTotal: Integer;
     FCurrentWindowState: TWindowState;
@@ -385,6 +384,7 @@ type
     FDeleteTemporaryMapFile: Boolean;
     FLocationKeys: TStringList;
     FBoundaryLocationMatch: TdlgBoundaryLocationMatch;
+    FCalledFromCustom : boolean;
 
     procedure DrawBoundingBox;
     function GetPossibleBoundingBoxResizeDragElement(const MousePixel: TPoint): TRectangleElement;
@@ -632,6 +632,7 @@ type
         AIncludePartialOverlap: boolean);
     property BaseMapKey: TKeyString read FBaseMapKey;
     property CalledFromWizard: Boolean read FCalledFromWizard write FCalledFromWizard;
+    property CalledFromCustom: Boolean read FCalledFromCustom write FCalledFromCustom;
     property DatasetLegend: TDatasetLegend read FDatasetLegend;
     property DatasetSpatialSystem: String read FDatasetSpatialSystem;
     property FilterResultScreen: TForm read FFilterResultScreen write FFilterResultScreen;
@@ -887,9 +888,10 @@ begin
   FdmMap := TdmMap.Create(nil);
   FInitialisedToolbar := False;
   FCalledFromWizard   := False;
+  FCalledFromCustom   := False;
   FFilterResultScreen := nil;
 
-  FAddinTables       := TStringList.Create;  
+  FAddinTables       := TStringList.Create;
   FSurveyList        := TEditableKeyList.Create;
   FSampleTypeKeyList := TEditableKeyList.Create;
   FBaseMapKey := ABaseMapKey;
@@ -5284,7 +5286,7 @@ begin
     // give immediate visual feedback
     if Tool in [TOOL_POINTER, TOOL_SUBTRACT_BOUNDARY] then begin
       QuerySpatialReference(lPosition.MapPos);
-      if dmFormActions.actTransferData.Enabled and (not CalledFromWizard) then begin
+      if dmFormActions.actTransferData.Enabled and (not CalledFromWizard) and (not CalledFromCustom) then begin
         // draw a point or square to show where the user clicked to return data, if doing data entry
         ShowClickPoint(lPosition);
       end;
@@ -5295,7 +5297,7 @@ begin
       TOOL_POINTER, TOOL_SUBTRACT_BOUNDARY:
           begin
             SelectedRegion := PolygonID(ObjectDetails.SheetID, ObjectDetails.ObjectID);
-            if dmFormActions.actTransferData.Enabled and (not CalledFromWizard) then
+            if dmFormActions.actTransferData.Enabled and (not CalledFromWizard) and (not CalledFromCustom) then
               // reshow the click point as the selected region removed it
               ShowClickPoint(lPosition);
             if (SelectedRegion.SheetID >= 0) and (SelectedRegion.ObjectID >= 0) then begin

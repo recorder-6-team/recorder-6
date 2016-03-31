@@ -19,7 +19,7 @@ inherited fraMatchLocations: TfraMatchLocations
   object pnlLocation: TPanel [2]
     Left = 0
     Top = 73
-    Width = 603
+    Width = 904
     Height = 70
     Align = alTop
     BevelOuter = bvNone
@@ -27,7 +27,7 @@ inherited fraMatchLocations: TfraMatchLocations
     ParentColor = True
     TabOrder = 5
     DesignSize = (
-      603
+      904
       70)
     object shpLocation: TShape
       Left = 148
@@ -89,19 +89,17 @@ inherited fraMatchLocations: TfraMatchLocations
   end
   inherited pnlControls: TPanel [6]
     Top = 143
-    inherited btnSearch: TBitBtn
-      TabOrder = 1
-      Visible = False
-    end
-    inherited btnNew: TBitBtn
-      TabOrder = 0
+    inherited pnlBtnSearch: TPanel
+      inherited btnSearch: TBitBtn
+        Visible = False
+      end
     end
   end
   object sgSurrogateMatch: TStringGrid [7]
     Left = 0
-    Top = 187
-    Width = 603
-    Height = 161
+    Top = 191
+    Width = 904
+    Height = 157
     Align = alClient
     Ctl3D = False
     DefaultRowHeight = 19

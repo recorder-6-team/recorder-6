@@ -1,8 +1,8 @@
 inherited frmEnhancedTermLists: TfrmEnhancedTermLists
   Left = 234
   Top = 297
-  Width = 778
-  Height = 465
+  Width = 838
+  Height = 605
   Caption = 'Enhanced Term Lists'
   OldCreateOrder = True
   OnCloseQuery = FormCloseQuery
@@ -11,18 +11,18 @@ inherited frmEnhancedTermLists: TfrmEnhancedTermLists
   object Splitter1: TSplitter [0]
     Left = 321
     Top = 0
-    Height = 374
+    Height = 522
   end
   object pnlTerms: TPanel [1]
     Left = 0
     Top = 0
     Width = 321
-    Height = 374
+    Height = 522
     Align = alLeft
     TabOrder = 0
     DesignSize = (
       321
-      374)
+      522)
     object Label1: TLabel
       Left = 4
       Top = 48
@@ -41,7 +41,7 @@ inherited frmEnhancedTermLists: TfrmEnhancedTermLists
       Left = 2
       Top = 64
       Width = 315
-      Height = 310
+      Height = 450
       SmoothExpandCollapse = False
       FitColumnToClientWidth = True
       NodeSelectionStyle = tnsTextOnly
@@ -100,8 +100,8 @@ inherited frmEnhancedTermLists: TfrmEnhancedTermLists
   end
   object Panel2: TPanel [2]
     Left = 0
-    Top = 374
-    Width = 770
+    Top = 522
+    Width = 830
     Height = 37
     Align = alBottom
     TabOrder = 1
@@ -141,14 +141,14 @@ inherited frmEnhancedTermLists: TfrmEnhancedTermLists
   object pnlDetails: TPanel [3]
     Left = 324
     Top = 0
-    Width = 446
-    Height = 374
+    Width = 506
+    Height = 522
     Align = alClient
     TabOrder = 2
     OnResize = pnlDetailsResize
     DesignSize = (
-      446
-      374)
+      506
+      522)
     object Label2: TLabel
       Left = 12
       Top = 15
@@ -165,14 +165,21 @@ inherited frmEnhancedTermLists: TfrmEnhancedTermLists
     end
     object Label4: TLabel
       Left = 12
-      Top = 80
+      Top = 112
       Width = 51
       Height = 13
       Caption = 'Synonyms:'
     end
+    object Label6: TLabel
+      Left = 12
+      Top = 84
+      Width = 47
+      Height = 21
+      Caption = 'Sort Code:'
+    end
     object btnSave: TImageListButton
-      Left = 278
-      Top = 342
+      Left = 338
+      Top = 482
       Width = 75
       Height = 26
       Hint = 'Save term details'
@@ -185,8 +192,8 @@ inherited frmEnhancedTermLists: TfrmEnhancedTermLists
       ImageIndex = 0
     end
     object btnCancel: TImageListButton
-      Left = 362
-      Top = 342
+      Left = 422
+      Top = 482
       Width = 75
       Height = 26
       Hint = 'Cancel changes'
@@ -194,7 +201,7 @@ inherited frmEnhancedTermLists: TfrmEnhancedTermLists
       Cancel = True
       Caption = '&Cancel'
       Enabled = False
-      TabOrder = 6
+      TabOrder = 4
       OnClick = btnCancelClick
       ImageList = dmFormActions.ilButtons
       ImageIndex = 1
@@ -214,20 +221,20 @@ inherited frmEnhancedTermLists: TfrmEnhancedTermLists
     object cmbLanguage: TIDComboBox
       Left = 76
       Top = 44
-      Width = 361
+      Width = 421
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
       ItemHeight = 13
-      TabOrder = 1
+      TabOrder = 0
       OnChange = cmbLanguageChange
       OnPopulate = cmbLanguagePopulate
     end
     object sgSynonyms: TControlStringGrid
       Left = 76
-      Top = 76
-      Width = 336
-      Height = 257
+      Top = 112
+      Width = 396
+      Height = 361
       Anchors = [akLeft, akTop, akRight, akBottom]
       ColCount = 3
       Ctl3D = True
@@ -236,33 +243,43 @@ inherited frmEnhancedTermLists: TfrmEnhancedTermLists
       RowCount = 2
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing]
       ParentCtl3D = False
-      TabOrder = 2
+      TabOrder = 1
       ColWidths = (
         20
         114
         92)
     end
     object btnAddSynonym: TImageListButton
-      Left = 411
-      Top = 76
+      Left = 471
+      Top = 116
       Width = 23
       Height = 24
       Hint = 'Add a new synonym'
       Anchors = [akTop, akRight]
-      TabOrder = 3
+      TabOrder = 2
       ImageList = dmFormActions.ilButtons
       ImageIndex = 2
     end
     object btnRemoveSynonym: TImageListButton
-      Left = 411
-      Top = 99
+      Left = 471
+      Top = 147
       Width = 23
       Height = 24
       Hint = 'Delete the selected synonym'
       Anchors = [akTop, akRight]
-      TabOrder = 4
+      TabOrder = 3
       ImageList = dmFormActions.ilButtons
       ImageIndex = 4
+    end
+    object eSortCode: TEdit
+      Left = 76
+      Top = 80
+      Width = 80
+      Height = 21
+      MaxLength = 8
+      TabOrder = 6
+      OnExit = eSortCodeExit
+      OnKeyPress = eSortCodeKeyPress
     end
   end
   inherited mnuChildMerge: TMainMenu

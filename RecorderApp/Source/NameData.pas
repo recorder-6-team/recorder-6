@@ -316,6 +316,7 @@ const
   SQL_NAME_RELATION =
       'FROM Name_Relation NR '
       + 'JOIN Individual I ON I.Name_Key IN (NR.Name_Key_1, NR.Name_Key_2) '
+      + 'JOIN Name N ON N.Name_Key = I.Name_Key '
       + 'JOIN Organisation O ON O.Name_Key IN (NR.Name_Key_1, NR.Name_Key_2)';
 
 resourcestring
@@ -340,8 +341,9 @@ begin
     tableName := TN_INDIVIDUAL;
 
   rs := dmDatabase.ExecuteSQL(Format(
-      'SELECT DISTINCT Name_Key_2 FROM %s JOIN Name_Relation ON Name_Key = Name_Key_1 %s',
-      [tableName, childKeys]), True);
+      'SELECT DISTINCT Name_Key_2 FROM %s JOIN Name_Relation ON %s.Name_Key = Name_Key_1 '
+      + ' JOIN Name N ON  N.Name_key = %s.Name_key %s',
+      [tableName,tablename,tablename, childKeys]), True);
 
   while not rs.Eof do begin
     if SameText(rs.Fields['Name_Key_2'].Value, parentKey) then begin
@@ -363,7 +365,7 @@ begin
   with lSQL do begin
     Clear;
     if iType = IND_TYPE then begin
-      Add('SELECT DISTINCT O.Name_Key, O.System_Supplied_Data, '
+      Add('SELECT DISTINCT O.Name_Key, O.System_Supplied_Data,N.Custodian, '
           + SQL_ORGANISATION_NAME
           + StringReplace(iSort, 'ORDER BY', ', ', [rfIgnoreCase]));    // Because of DISTINCT
       Add(SQL_NAME_RELATION);
@@ -373,7 +375,7 @@ begin
         Add('WHERE I.Name_Key = :Parent ');
       Add(iSort);
     end else begin
-      Add('SELECT DISTINCT I.Name_Key, I.System_Supplied_Data, '
+      Add('SELECT DISTINCT I.Name_Key, I.System_Supplied_Data,N.Custodian, '
           + SQL_INDIVIDUAL_NAME
           + StringReplace(iSort, 'ORDER BY', ', ', [rfIgnoreCase]));  // Because of DISTINCT
       Add(SQL_NAME_RELATION);
@@ -414,13 +416,13 @@ begin
   with lSQL do begin
     Clear;
     if iType = ORG_TYPE then begin
-      Add('SELECT O.Name_Key, O.System_Supplied_Data, ' + SQL_ORGANISATION_NAME);
-      Add('FROM Organisation AS O');
+      Add('SELECT O.Name_Key, O.System_Supplied_Data,N.Custodian,O.System_Supplied_Data, ' + SQL_ORGANISATION_NAME);
+      Add('FROM Organisation AS O INNER Join Name N On N.Name_Key = O.Name_key');
       Add(iSQLWhere);
       Add(iSort);
     end else begin
-      Add('SELECT I.Name_Key, I.System_Supplied_Data, ' + SQL_INDIVIDUAL_NAME);
-      Add('FROM Individual AS I');
+      Add('SELECT I.Name_Key, I.System_Supplied_Data,N.Custodian,I.System_Supplied_Data, ' + SQL_INDIVIDUAL_NAME);
+      Add('FROM Individual AS I INNER Join Name N On N.Name_Key = I.Name_key');
       Add(iSQLWhere);
       Add(iSort);
     end;
