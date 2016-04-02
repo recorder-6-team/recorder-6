@@ -1,5 +1,3 @@
-USE [NBNData]
-GO
 /****** Object:  UserDefinedFunction [dbo].[ufn_GetFormattedSpeciesName]    Script Date: 03/30/2016 10:04:24 ******/
 SET ANSI_NULLS ON
 GO
