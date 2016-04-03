@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC Provides a List of Records with User Defined Taxa
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 1 - April 2016    
+             
+--> 
+
+
+ 
+<CustomReport menupath="System Supplied\Information"  title="H10 - User Defined Taxa" 
+description="Provides a list of all records which use User Defined Taxa." >
+
+<SQL>
+
+<Where keytype="Default">
+
+SELECT 
+TDET.Taxon_Determination_Key as TDET_Key,TDET.Preferred,TDET.Taxon_Occurrence_key as TOCC_Key, ITN.Actual_Name as Taxon_Name,
+S.sample_key
+
+FROM 
+Taxon_Determination TDET
+INNER JOIN Index_Taxon_Name ITN
+ON ITN.Taxon_List_Item_key = TDET.Taxon_List_Item_Key
+INNER JOIn Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key =
+ITN.Taxon_List_Item_Key 
+INNER JOiN Taxon_Occurrence TOCC ON TOCC.Taxon_Occurrence_key = TDET.Taxon_Occurrence_Key 
+INNER JOIN sample S ON S.Sample_key = TOCC.sample_key 
+WHERE TLI.System_Supplied_Data = 0
+
+ 
+</Where>
+
+<OutputTableOrderby name="Default" SQL="Order By Taxon_Name,TDet_Key"/>
+
+</SQL>
+<Columns>
+  <Column name="TDet_Key" width="150" position="1" caption="Taxon Determination Key" keycolumn="TOCC_key" tablename="Taxon_Occurrence"/> 
+  <Column name="TOcc_Key" width="150" position="2" caption="Taxon Occurrence Key" keycolumn="TOCC_key" tablename="Taxon_Occurrence" /> 
+  <Column name="Sample_Key" width="150" position="3" caption="Sample Key" keycolumn="Sample_key" tablename="Sample"/> 
+  
+  <Column name="Preferred" width="50" position="4" caption="Is preferred" /> 
+  <Column name="Taxon_Name" width="200" position="5" caption="Taxon Name" /> 
+  
+  
+   
+ 
+</Columns>
+</CustomReport>
