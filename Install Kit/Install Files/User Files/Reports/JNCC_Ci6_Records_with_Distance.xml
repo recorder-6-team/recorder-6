@@ -1,0 +1,145 @@
+<?xml version="1.0" ?>
+<!-- Records within a circle of defined radius and centre also includes the distance to SW corner
+  
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 1 April 2 2016
+   
+	
+ -->
+     		
+<CustomReport menupath="System Supplied\Geographic Area/Location Reports\Circle Reports" 
+title="Ci6 Records within circle with distance" 
+description="Reports on records within a Circle identified by the Grid Ref for the centre of the circle and the radius of the circle in metres. Includes abundance. Works for OSGB and OSNI spatial references. 
+Uses either the SW corner, centre, any corner, or all 4 corners of the Sample Grid Ref to determine whether or not to include the sample in the report.
+Includes distance from entered point to SW corner of the sample square.  
+Automatically determines if the centre of the circle is OSGB or OSNI.
+
+" 
+ >
+
+
+<SQL>
+
+Declare @GridRefCentre char (20)
+Declare @RadiusMetre char (10)
+Declare	@PointsToUse int
+
+
+<Where keytype="default">
+
+ Set @GridRefCentre  <Condition field =""  operator="equal" type="Text"  name="Grid Ref. Centre" entrycount="1"  />
+ Set @RadiusMetre  <Condition field =""  operator="equal" type="Text"  name="Radius Metres" entrycount="1"  />
+ SET @PointsToUse <Condition field="" operator="equal" type="OptionSet"  name="Sample Grid Ref point(s) to be used" >
+       <Option name="SW Corner " value = "0" />
+       <Option name="Centre point only" value = "1" />
+       <Option name="Any Corner" value = "2" />
+       <Option name="All 4 Corners" value = "3" />
+ </Condition>	
+                   
+ SELECT  TOcc.taxon_occurrence_key,S.Spatial_ref, LN.ITEM_NAME,  S.LOCATION_NAME,
+ s.vague_date_start,s.vague_date_end,s.vague_date_type, 
+ dbo.FormatEventRecorders(s.sample_key) as Recorders,dbo.FormatIndividual(I.title,I.Initials,I.Forename,I.Surname) as Determiner,
+ ITN.Preferred_name ,ITN.Authority,ITN.Common_Name,ITN2.Actual_Name, dbo.LCFormatAbundanceData(TOCC.Taxon_Occurrence_Key) as Abundance,TG.Taxon_group_name as TaxonGroup,
+ RT.Short_Name as RecordType, [dbo].[ufn_RtfToPlainText] (TOCC.Comment) as Comment, s.lat as lat,s.long as [long],s.spatial_ref_system as spatial_ref_system, 
+ ITN.Recommended_taxon_List_Item_Key as taxon_List_Item_Key,
+ dbo.LCReturnDistanceCircle(S.spatial_ref,s.spatial_ref_system, @GridRefCentre, @RadiusMetre, @PointsToUse ) as Distance
+ From sample S
+ LEFT JOIN LOCATION_NAME LN on  s.Location_key = LN.Location_Key AND LN.Preferred = 1
+ INNER JOIN  Taxon_Occurrence Tocc on Tocc.Sample_key = s.sample_key
+ INNER JOIN Record_Type RT ON RT.Record_type_key = TOCC.Record_type_Key 
+ INNER JOIN  TAXON_DETERMINATION TDET ON TDET.TAXON_OCCURRENCE_KEY = TOCC.TAXON_OCCURRENCE_KEY
+ INNER JOIN  INDEX_TAXON_NAME ITN ON ITN.TAXON_LIST_ITEM_KEY = TDET.TAXON_LIST_ITEM_KEY
+ INNER JOIN  TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = TDET.TAXON_LIST_ITEM_KEY 
+ INNER JOIN  INDEX_TAXON_NAME ITN2 ON ITN2.Taxon_List_item_Key = ITN.Recommended_Taxon_List_Item_key 
+ INNER JOIN  TAXON_VERSION TV ON TV.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+ INNER JOIN  TAXON_GROUP  TG ON TG.TAXON_GROUP_KEY = TV.OUTPUT_GROUP_KEY 
+ INNER JOIN  INDIVIDUAL I ON I.NAME_KEY = TDET.DETERMINER
+ INNER JOIN Survey_Event SE ON SE.Survey_Event_Key = S.Survey_Event_Key
+ LEFT JOIN User_Survey_Restriction USR
+ ON  USR.Survey_Key = SE.Survey_Key AND 
+ <Condition field="USR.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" />
+ where 
+ USR.NAME_Key IS NULL 
+
+ AND 
+ 
+ TDET.PREFERRED = 1  and  
+ 
+ dbo.LCReturnDistanceCircle(S.spatial_ref,s.spatial_ref_system, @GridRefCentre, @RadiusMetre, @PointsToUse ) &#60;&#62; -1
+
+ AND
+
+ <Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+   <Option name="Include" value = "3" />
+   <Option name="Exclude" value = "1" />
+ </Condition>
+
+ AND 
+ <Condition field= "TOCC.Confidential" operator="less than" type="OptionSet"  name="Confidential" >
+   <Option name="Include" value = "2" />
+   <Option name="Exclude" value = "1" />
+ </Condition>
+ 
+ AND
+
+ <Condition field= "TOCC.Checked" operator="greater than" type="OptionSet"  name="Unchecked Records" >
+   <Option name="Include" value = "-1" />
+   <Option name="Exclude" value = "0" />
+ </Condition> 
+
+AND        
+ <Condition field= "TOCC.Zero_Abundance" operator="less than" type="OptionSet"  name="Zero Abundance" >
+   <Option name="Include" value = "2" />
+   <Option name="Exclude" value = "1" />
+  </Condition>     
+AND        
+ <Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" >
+   <Option name="Include" value = "'Anything'" />
+   <Option name="Exclude" value = "'Site Centroid'" />
+ </Condition>    
+    
+</Where>
+
+
+<Orderby name="by Taxon Group" SQL="Order By tg.taxon_group_name, itn.preferred_name,s.vague_date_start "/>
+ 
+<Orderby name="by Scientific Name" SQL="Order By itn.preferred_name, s.vague_date_start "/>
+
+<Orderby name="Taxanomic Order" SQL="Order By itn2.Sort_Order, s.vague_date_start "/>
+
+
+</SQL>
+
+<Columns>
+   <Column name="Taxon_occurrence_key" visible= "false" tablename =  "Taxon_Occurrence" />
+  
+  <Column name="Spatial_ref" visible= "true" position = "1" caption = "Grid Ref" width = "80" keycolumn = "Taxon_Occurrence_key" />
+  <Column name="Item_name" visible= "true" position = "2" caption = "Location"  width = "200"/>
+  <Column name="Location_Name" visible= "true" position = "3" caption = "Location Name"  width = "200"/>
+  <Column name="Vague_date_start" visible= "true" position = "4" caption = "Date" width = "120" />
+  <Column name="Item_name" visible= "true" position = "5" caption = "Location"  width = "200"/>
+  <Column name="Recorders" visible= "true" position = "6" caption = "Recorders" width = "150" />
+  <Column name="Determiner" visible= "true" position = "7" caption = "Determiner" width = "150" />
+  <Column name="Taxongroup" visible= "true" position = "8" caption = "Group" width="150"  />
+  <Column name="Preferred_Name" visible= "true" position = "9" caption = "Scientific Name" width = "200" />
+  <Column name="Authority" visible= "true" position = "10" caption = "Authority" width ="100" />
+  <Column name="Common_Name" visible= "true" position = "11" caption = "Common Name" width="150"  />
+   <Column name="Actual_Name" visible= "true" position = "12" caption = "Recommended Name" width = "200" />
+ 
+
+  <Column name="Abundance" visible= "true" position = "13" caption = "Abundance" width="100"  />
+ <Column name="RecordType" visible= "true" position = "14" caption = "Record Type" width="100"  />
+ <Column name="Comment" visible= "true" position = "15" caption = "Comment" width="300"  />
+ <Column name="lat" visible= "false" position = "16"  />
+  <Column name="long" visible= "false" position = "17"  />
+
+ <Column name="spatial_ref_system" visible= "false" position = "18"  />
+
+ <Column name="Taxon_List_Item_key" visible= "false" position = "19"  />
+
+ <Column name="Distance" visible= "true" position = "20"  Caption="Distance" width = "50"  />
+ 
+</Columns>
+
+</CustomReport>
