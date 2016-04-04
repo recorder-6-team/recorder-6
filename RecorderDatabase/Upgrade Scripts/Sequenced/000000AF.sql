@@ -260,7 +260,7 @@ begin
    end    
 end 
 
-If @ReturnNumeric = 0 
+If @ReturnNumeric = 0 and @Radius <> 0 
   set @ReturnNumeric = -1
 else
   set @ReturnNumeric = @SWDistance
