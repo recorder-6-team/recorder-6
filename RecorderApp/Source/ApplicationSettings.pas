@@ -2205,7 +2205,6 @@ end;
 procedure TApplicationSettings.SetTaxonomicSearchRestriction(const Value: String);
 begin
   FTaxonomicSearchRestriction := Value;
-  FSessionTaxonomicSearchRestriction := Value;
 end;
 
 //==============================================================================

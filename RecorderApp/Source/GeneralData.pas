@@ -2344,7 +2344,7 @@ begin
     // select the current option
     ItemIndex := Items.IndexOf(AppSettings.SessionTaxonomicSearchRestriction);
     if ItemIndex = -1 then
-      ItemIndex := 0; // unrestricted by default
+      AppSettings.SessionTaxonomicSearchRestriction := ResStr_Unrestricted;
   end; // with icmbOptions
 end;
 
