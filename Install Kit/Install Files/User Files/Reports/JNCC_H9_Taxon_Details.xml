@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+
+
+<!-- JNCC provides details of a taxon
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 1 - April 2016    
+             
+--> 
+
+
+ 
+<CustomReport menupath="System Supplied\Information"  title="H9 - Find Taxon Names" 
+description="Finds a specfied taxon and shows details including the recommended name and the dictionaries.
+Ignores sub genus in search.
+Takes a wild card" >
+
+<SQL>
+
+<Where keytype="Default">
+
+SELECT DISTINCT 
+ITN.TAXON_LIST_ITEM_KEY as TLI_Key, ITN.Actual_Name as Taxon_Name, ITN.AUTHORITY as Taxon_Authority,
+ITN.ACTUAL_NAME_ATTRIBUTE as Taxon_Attribute, ITN.COMMON_NAME as Taxon_Common_Name,
+TLI.SYSTEM_SUPPLIED_DATA as Taxon_System_Supplied,
+TL.ITEM_NAME as Taxon_List, 
+ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY as Recommended_TLi_Key, ITN2.Actual_Name AS Recommended_Name, 
+ITN2.AUTHORITY as Recommended_Authority, ITN2.ACTUAL_NAME_ATTRIBUTE as Recommended_Attribute, 
+ITN2.COMMON_NAME as Recommended_Common_name, TL2.ITEM_NAME as Recommended_taxon_List,  
+TLI2.SYSTEM_SUPPLIED_DATA As Recommended_System_Supplied 
+FROM 
+Index_Taxon_Name ITN
+INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN.Taxon_List_Version_Key 
+INNER JOIN Taxon_List TL ON TL.Taxon_List_Key = TLV.Taxon_List_Key
+INNER JOIN Taxon_List_Item TLI on TLI.Taxon_List_Item_Key = ITN.taxon_List_Item_key
+INNER JOIN Index_Taxon_Name ITN2
+ON ITN2.Taxon_List_Item_Key = ITN.Recommended_Taxon_List_Item_Key 
+INNER JOIN Taxon_List_Version TLV2 ON TLV2.Taxon_List_Version_Key = ITN2.Taxon_List_Version_Key 
+INNER JOIN Taxon_List TL2 ON TL2.Taxon_List_Key = TLV2.Taxon_List_Key
+INNER JOIN Taxon_List_Item TLI2 on TLI2.Taxon_List_Item_Key = ITN2.taxon_List_Item_key
+
+WHERE 
+
+<Condition field="dbo.LCRemoveSubGenusText(ITN.ACtual_name)" operator="like" type="Text" name="Taxon Name" />
+ 
+</Where>
+
+<OutputTableOrderby name="Default" SQL="Order By Taxon_Name,Taxon_List"/>
+
+</SQL>
+<Columns>
+  <Column name="TLI_Key" width="150" position="1" caption="TLI Key" /> 
+  <Column name="Taxon_Name" width="200" position="2" caption="Taxon Name" /> 
+  <Column name="Taxon_Authority" width="150" position="3" caption="Taxon Authority" /> 
+  <Column name="Taxon_Attribute" width="150" position="4" caption="Taxon Attribute" /> 
+  <Column name="Taxon_Common_Name" width="200" position="5" caption="Taxon Common Name" /> 
+  <Column name="Taxon_System_Supplied" width="30" position="6" caption="Taxon System Supplied" /> 
+  <Column name="Taxon_List" width="200" position="7" caption="Taxon List" /> 
+  <Column name="Recommended_TLI_Key" width="150" position="8" caption="Recommended TLI_Key" /> 
+  <Column name="Recommended_Name" width="200" position="9" caption="Recommended Name" /> 
+  <Column name="Recommended_Authority" width="150" position="10" caption="Recommended Authority" /> 
+  <Column name="Recommended_Attribute" width="150" position="11" caption="Recommeded_Authority" /> 
+  <Column name="Recommended_Common_Name" width="200" position="12" caption="Recommended Common Name" /> 
+  <Column name="Recommended_System_Supplied" width="30" position="13" caption="Recommended System Supplied" /> 
+  <Column name="Recommended_Taxon_List" width="200" position="14" caption="Recommended Taxon List" /> 
+  
+   
+ 
+</Columns>
+</CustomReport>

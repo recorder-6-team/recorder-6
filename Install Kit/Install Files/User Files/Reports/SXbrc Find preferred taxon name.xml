@@ -3,7 +3,8 @@
      XML Report by Charles Roper of the Sussex Biodiversity Record Centre
      http://www.sxbrc.org.uk/
      Version 1.1 - 20/09/2006 -->
-<CustomReport menupath="System Supplied\Information" title="Find preferred &lt;taxon&gt; name and key V06-12" description="Finds the preferred name and TAXON_LIST_ITEM_KEY for the specified taxon.">
+<CustomReport menupath="System Supplied\Information" title="Find preferred &lt;taxon&gt; name and key V06-12" description="Finds the preferred name and TAXON_LIST_ITEM_KEY for the specified taxon.
+WARNING - This report will only find the exact taxon name as entered so if there is a sub genus it must be included">
 <SQL>
 SELECT      ITN2.TAXON_LIST_ITEM_KEY,
             ITN2.PREFERRED_NAME + ISNULL(' ' + ITN2.Authority, '') AS Latin,
