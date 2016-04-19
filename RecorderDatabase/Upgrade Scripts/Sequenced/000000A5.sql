@@ -169,8 +169,7 @@ AS
                 
 GO
 
-USE [NBNData]
-GO
+
 /****** Object:  StoredProcedure [dbo].[usp_IW_UpdateSampleGridRefsFromExistingLocations]    Script Date: 11/12/2015 18:46:34 ******/
 SET ANSI_NULLS ON
 GO
