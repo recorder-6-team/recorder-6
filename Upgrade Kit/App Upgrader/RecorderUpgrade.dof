@@ -94,7 +94,7 @@ OutputDir=C:\Localsource\Recorder disk images\Upgrade Kit (from 6.14)
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=..\..\..\Third Party\Kevin Boylan\VCLZip
+SearchPath=..\..\Third Party\Kevin Boylan\VCLZip
 Packages=vcl;rtl;vclx;indy;vclie;xmlrtl;inetdbbde;inet;inetdbxpress;dbrtl;soaprtl;dsnap;VclSmp;dbexpress;vcldb;dbxcds;inetdb;bdertl;vcldbx;adortl;teeui;teedb;tee;ibxpress;visualclx;visualdbclx;vclactnband;vclshlctrls;dclOfficeXP;madBasic_;madDisAsm_;UnitLib7;InHouseAPI7;InHouseDB7;InHouse7;RecorderAddin7;Qrpt7;rapid;Extended3rdParty7;Jncc7;Qrd7;localizer7;qrdBase_D7;qrdBDE_d7
 Conditionals=madExcept
 DebugSourceDirs=
@@ -143,8 +143,9 @@ Item0=madExcept
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=1
-Item0=..\..\..\Third Party\Kevin Boylan\VCLZip
+Count=2
+Item0=..\..\Third Party\Kevin Boylan\VCLZip
+Item1=..\..\..\Third Party\Kevin Boylan\VCLZip
 [HistoryLists\hlOutputDirectorry]
 Count=1
 Item0=C:\Localsource\Recorder disk images\Upgrade Kit (from 6.14)

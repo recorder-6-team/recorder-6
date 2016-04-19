@@ -1,4 +1,3 @@
-GO
 /****** Object:  StoredProcedure [dbo].[usp_Species_Select_ForSearch]    Script Date: 04/02/2016 19:40:19 ******/
 SET ANSI_NULLS ON
 GO
