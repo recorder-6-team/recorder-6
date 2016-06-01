@@ -196,13 +196,12 @@ begin
     ftTaxon :
         begin
           eSearchText.HandleDuplicate:=sfTaxon;
-          lTaxonSearchRestriction := ResStr_CurrentChecklist;
+          lTaxonSearchRestriction := AppSettings.TaxonomicSearchRestriction;
           if rgSearchAbbr.ItemIndex = 1 then SearchForTaxonBy:=stAbbreviation
                                         else SearchForTaxonBy:=stName;
           if pnlRestrict.Visible then begin
             if cmbTaxonRestriction.ItemIndex = -1 then
-              cmbTaxonRestriction.Items.IndexOf(ResStr_CurrentChecklist);
-            lTaxonSearchRestriction := cmbTaxonRestriction.Items[cmbTaxonRestriction.ItemIndex];
+              cmbTaxonRestriction.ItemIndex := cmbTaxonRestriction.Items.IndexOf(lTaxonSearchRestriction);
           end;
           if (frmMain.ActiveMDIChild is TBaseTaxonDict) then
             with TBaseTaxonDict(frmMain.ActiveMDIChild).cmbList do begin
