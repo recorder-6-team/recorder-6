@@ -1,0 +1,3 @@
+UPDATE REPORT_FIELD SET Field_Size = '36' WHERE Report_Field_Key = 'NBNSYS0000000095' 
+GO
+UPDATE SETTING SET DATA = 'http://www.recorder6.info/WebHelpR6V625/' WHERE NAME = 'HelpURL'

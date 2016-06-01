@@ -4,7 +4,7 @@
 <!-- JNCC  Records for selected Sample Location Name 
      XML Report by Mike Weideli of Littlefield Consultancy for JNCC
      http://www.lfield.co.uk
-     Version 6 - 28 Nov 2014 
+     Version 7 - May 2016 
     
    
      QUICK REPORT - Not implemented
@@ -27,7 +27,7 @@ Search will work on the start of the Sample Location Name. To search anywhere in
 SELECT TOCC.Taxon_Occurrence_key, S.Spatial_Ref,S.Location_name as Item_name,s.vague_date_start,s.vague_date_end,s.vague_date_type,dbo.formateventRecorders
 (s.sample_key) as Recorders, dbo.FormatIndividual (I.Title, I.Initials, I.Forename, I.Surname) as Determiner,
 ITN.Preferred_name, ITN.Authority,ITN.Common_name, ITN2.Actual_name as Recommended_name, ITN2.Common_Name as Recommended_Common,
-TG.Taxon_Group_Name.ITN2.Sort_Order
+TG.Taxon_Group_Name, ITN2.Sort_Order
 
 From  Sample S 
 INNER JOIN Taxon_Occurrence TOCC ON TOCC.Sample_key = S.Sample_key
@@ -93,7 +93,7 @@ ITN.System_Supplied_data = 1
 
 </Where>
 
-<OutputTableOrderby name="by Taxon Group/Preferred Name" SQL="taxon_group_name, preferred_name"/>
+<OutputTableOrderby name="by Taxon Group/Preferred Name" SQL="Order By taxon_group_name, preferred_name"/>
  
 <OutputTableOrderby name="by Scientific Name" SQL="Order By preferred_name,taxon_group_name"/>
 

@@ -4,7 +4,7 @@
 <!-- JNCC Identifies Records whch may be duplicates. Output as a report 
      XML Report by Mike Weideli of Littlefield Consultancy for JNCC
      http://www.lfield.co.uk
-     Version 5 - 28 Nov 2014 
+     Version 6 - May 2016 
    
      QUICK REPORT - Works on Observation hierarchy for a Survey
        
@@ -118,10 +118,6 @@ TDET.PREFERRED = 1
 
 
 
-Order by SE.Vague_date_start, #dups.data
-
-
-
 drop table #dup2
 drop table #dups
 
@@ -226,7 +222,7 @@ Order by SE.Vague_date_start,#Dups.data
 
 </Where>
 
-OutputTableOrderby name="Default" SQL="Sort1, Sort2"/>
+<OutputTableOrderby name="Default" SQL="Order By Sort1, Sort2"/>
 
    
 </SQL>

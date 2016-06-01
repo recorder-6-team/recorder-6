@@ -4,7 +4,7 @@
 <!-- JNCC Identifies Records whch may be duplicates. Output as a report 
      XML Report by Mike Weideli of Littlefield Consultancy for JNCC
      http://www.lfield.co.uk
-     Version 5 - 28 November 2014   
+     Version 6 - May 2016   
    
      QUICK REPORT - Works on Observation hierarchy for a Survey
        
@@ -86,8 +86,8 @@ ON #DUP2.DATA = #DUPs.DATA
 Select #DUps.Taxon_Occurrence_key,S.Sample_Key,SE.Survey_Event_key,
 S.Spatial_Ref, dbo.lcReturnvaguedateshort(SE.Vague_Date_Start,sE.Vague_Date_End,SE.Vague_Date_Type) as SEDate,
 dbo.lcReturnvaguedateshort(S.Vague_Date_Start,s.Vague_Date_End,S.Vague_Date_Type) as SampDate,
-S.Location_Name,LN.Item_Name,ITN.Actual_name,dbo.formateventRecorders (S.Sample_Key) as Recorders
-SE.Vague_date_Start as sort1, #Dup,Data as sort2
+S.Location_Name,LN.Item_Name,ITN.Actual_name,dbo.formateventRecorders (S.Sample_Key) as Recorders,
+SE.Vague_date_Start as sort1, #Dups.Data as sort2
 FROM #Dups
 INNER JOIN TAXON_OCCURRENCE TOCC
 ON TOCC.TAXON_OCCURRENCE_KEY = #Dups.TAXON_OCCURRENCE_KEY
@@ -211,7 +211,7 @@ TDET.PREFERRED = 1
 
 </Where>
 
-OutputTableOrderby name="Default" SQL="Sort1, Sort2"/>
+<OutputTableOrderby name="Default" SQL="Order By Sort1, Sort2"/>
 
    
 </SQL>
