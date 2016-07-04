@@ -203,6 +203,7 @@ begin
             if cmbTaxonRestriction.ItemIndex = -1 then
               cmbTaxonRestriction.ItemIndex := cmbTaxonRestriction.Items.IndexOf(lTaxonSearchRestriction);
           end;
+          lTaxonSearchRestriction := cmbTaxonRestriction.Items[cmbTaxonRestriction.ItemIndex];
           if (frmMain.ActiveMDIChild is TBaseTaxonDict) then
             with TBaseTaxonDict(frmMain.ActiveMDIChild).cmbList do begin
               dmSearch.SetDatabaseName( TKeyData(Items.Objects[ItemIndex]).ItemAdditional );
