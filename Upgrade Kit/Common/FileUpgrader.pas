@@ -39,12 +39,7 @@ resourcestring
       'or you have insufficient priveleges: '#13#10'%s'#13#10 +
       'The upgrade will continue, but you should resolve the problem and run it again.';
 
-  ResStr_FailedDeletingUserFiles =
-      'Not all the old users files could be deleted. This could either be because a file was in use ' +
-      'or you have insufficient priveleges: '#13#10'%s'#13#10 +
-      'The upgrade will continue, but you should resolve the problem and run it again.';
-
-      type
+  type
   TFileUpgrader = class (TObject)
   private
     FFolder: string;
@@ -55,11 +50,12 @@ resourcestring
     procedure MoveUserFiles(const AUserSubFolder: String);
     function MoveFilesFromFolder(const startdir, destDir: String): boolean;
     procedure DeleteUserFiles(const AUserSubFolder: String);
-    function DeleteFilesFromFolder(const startdir, destDir: String): boolean;
+    function DeleteFilesFromFolder(const Folder: String): boolean;
     procedure PreprocessZipFile;
     procedure SkippingFiles(Sender: TObject; Reason: TSkipReason; FName: string;
         FileIndex: Integer; var Retry: Boolean);
     procedure ZipTotalPercentDone(Sender: TObject; Percent: LongInt);
+    function DeleteFilesInDeletedFolder(const AUserSubFolder: String): boolean;
   public
     constructor Create(ASettings: TSettings);
     destructor Destroy; override;
@@ -155,10 +151,13 @@ begin
         PreprocessZipFile;
         UnZip;
       end;
+    // Delete the files which are listed in the delete folder from the actual folders
+    for i := 0 to High(User_Folders) do
+      DeleteFilesInDeletedFolder(User_Folders[i]);
     // Now copy user files to new location
     for i := 0 to High(User_Folders) do
       MoveUserFiles(User_Folders[i]);
-    // Now delete user files not required
+    // Now delete the files from thw 'Deleted' folders (eg. 'Deleted Reports')
     for i := 0 to High(User_Folders) do
       DeleteUserFiles(User_Folders[i]);
 
@@ -277,37 +276,35 @@ begin
 end;  // MoveFilesFromFolder
 
 {-------------------------------------------------------------------------------
-}
-// Mantis 336
+Clear the folders holding the deleted files}
+
 procedure TFileUpgrader.DeleteUserFiles(const AUserSubFolder: string);
 begin
-  if DirectoryExists(FuserFolder + AUserSubFolder) then
-    if not DeleteFilesFromFolder(FFolder + 'User Files\Deleted ' + AUserSubFolder, FUserFolder + AUserSubFolder) then
-       MessageDlg(ResStr_FailedDeletingUserFiles, mtInformation, [mbOk], 0);
+    if DirectoryExists(FuserFolder + 'Deleted ' + AUserSubFolder) then
+        DeleteFilesFromFolder(FUserFolder + 'Deleted ' + AUserSubFolder);
+    if DirectoryExists(FFolder + 'User Files\Deleted ' + AUserSubFolder) then
+        DeleteFilesFromFolder(FFolder + 'User Files\Deleted ' + AUserSubFolder);
     FProgress.Position := FProgress.Position + 1;
 end;  // TFileUpgrader.DeleteUserFiles
 
-//Mantis 336
 // Deletes files folder
 // -----------------------------------------------------------------------------
-function TFileUpgrader.DeleteFilesFromFolder(const startdir, destDir: String): boolean;
+function TFileUpgrader.DeleteFilesFromFolder(const Folder: String): boolean;
 var
   folderSearch : TSearchRec;
 begin
   Result:= true;
   try
-    FindFirst(startdir +'\*.*', faAnyFile,folderSearch);
+    FindFirst(folder +'\*.*', faAnyFile,folderSearch);
     if (foldersearch.name<>'.') and (foldersearch.name<>'..') then begin
-      DeleteFile(PChar(destdir +'\'+ folderSearch.name));
-      DeleteFile(PChar(startdir + '\' + folderSearch.name))
+      DeleteFile(PChar(Folder +'\'+ folderSearch.name));
     end;
    While FindNext(folderSearch)= 0 do
     begin
       If (folderSearch.attr<>faDirectory) and
         (foldersearch.name<>'.') and
         (foldersearch.name<>'..') then begin
-          DeleteFile(PChar(destdir +'\'+folderSearch.name));
-          DeleteFile(PChar(startdir + '\' + folderSearch.name))
+          DeleteFile(PChar(Folder + '\' + folderSearch.name))
       end;
     end;
   except
@@ -315,4 +312,35 @@ begin
   end; //try
 
 end;  // DeleteFilesFromFolder
+
+
+// Deletes files in deleted folder from the user file folder.
+// -----------------------------------------------------------------------------
+function TFileUpgrader.DeleteFilesInDeletedFolder(const AUserSubFolder: String): boolean;
+var
+  folderSearch : TSearchRec;
+  deletedfilepath : string;
+ 
+begin
+  Result:= true;
+  deletedfilepath:=  FFolder + 'User Files\Deleted ' + AUserSubFolder;
+  try
+    FindFirst(deletedfilepath  +'\*.*', faAnyFile,folderSearch);
+    if (foldersearch.name<>'.') and (foldersearch.name<>'..') then begin
+      DeleteFile(PChar(Fuserfolder + AUserSubFolder + '\' + folderSearch.name));
+    end;
+   While FindNext(folderSearch)= 0 do
+    begin
+      If (folderSearch.attr<>faDirectory) and
+        (foldersearch.name<>'.') and
+        (foldersearch.name<>'..') then begin
+          DeleteFile(PChar(Fuserfolder + AUserSubFolder + '\' + folderSearch.name));
+      end;
+    end;
+  except
+    Result := false;
+  end; //try
+
+end;  // DeleteFilesInDeletedFolder
 end.
+
