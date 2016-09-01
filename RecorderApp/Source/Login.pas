@@ -221,6 +221,7 @@ var
   rs: _Recordset;
   allDefaultPwd, isFirstRun: Boolean;
   defaultUser, otherUser: TKeyString;
+  AdminUsers: integer;
 begin
   defaultUser := '';
   isFirstRun  := False;
@@ -229,7 +230,9 @@ begin
   rs := dmDatabase.GetRecordset('usp_DefaultUser_Get_Key',[]);
   if not rs.Eof then
     defaultUser := rs.Fields['Name_Key'].Value;
-
+  // Get the users who are not default users and have a security level of 5
+  rs := dmDatabase.GetRecordset('usp_Users_Select_Admin', ['@default_User_key', DefaultUser ]);
+  AdminUsers := rs.RecordCount;
   // Check how many users there are.
   rs := dmDatabase.GetRecordset('usp_Users_Select', []);
   // No records, or Default User is the only record found. Show First Run screen.
@@ -262,6 +265,10 @@ begin
     end;
     FBypassLogin := allDefaultPwd;
   end;
+  // If only two records and one is the default, but there are no other admin users then
+  // We need to show the login screen
+  if (defaultUser <> '') and (rs.RecordCount = 2) and (adminusers = 0) then
+    FBypassLogin := false;
 
   if FBypassLogin then
   begin
