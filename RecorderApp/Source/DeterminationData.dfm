@@ -37,7 +37,7 @@ inherited dmDetermination: TdmDetermination
       '         TV.Taxon_Version_Key = TLI.Taxon_Version_Key) ON'
       '     T.Taxon_Key = TV.Taxon_Key'
       'WHERE TD.Taxon_Occurrence_Key = :KeyParameter'
-      'ORDER BY T.Item_Name;')
+      'ORDER BY TD.vague_date_End,TD.entry_date, T.Item_Name;')
     ParseSQL = True
     Left = 44
     Top = 8
