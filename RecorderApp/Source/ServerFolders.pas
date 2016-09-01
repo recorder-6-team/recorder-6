@@ -158,8 +158,8 @@ begin
   n := Node;
   path := Node.text;
   while assigned(n.Parent) do begin
-    path := n.Text + '\' + path;
     n := n.Parent;
+    path := n.Text + '\' + path;
   end;
   AddLevelToTree(path, Node);
 end;
