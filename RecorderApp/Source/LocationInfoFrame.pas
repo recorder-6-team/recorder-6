@@ -149,7 +149,7 @@ end;  // TfraLocationInfo.eLocationFindData
 procedure TfraLocationInfo.UpdateLocation(KeyList: TKeyList);
 begin
   try
-    if (KeyList <> nil) and (KeyList.Header.ItemCount > 0) then
+    if (KeyList <> nil) and (KeyList.Header.ItemCount > 0) and (KeyList.Items[0].KeyField2 = 'LOCATION') then
       SetLocationAndSpatialRef(KeyList.Items[0].KeyField1);
   finally
     KeyList.Free;
