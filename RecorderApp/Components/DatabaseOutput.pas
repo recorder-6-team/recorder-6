@@ -284,7 +284,12 @@ const
       'WHERE id=OBJECT_ID(''SAMPLE'') ';
    SQL_SAMPLE_FIELDS_EXCLUDE_PRIVATE =
       'AND name NOT IN (''Private_Location'', ''Private_Code'')';
-
+   // Mantis 624/626
+   SQL_SURVEY_FIELDS_REQUIRED =
+      'SELECT DISTINCT name FROM syscolumns '+
+      'WHERE id=OBJECT_ID(''SURVEY'') ';
+   SQL_SURVEY_FIELDS_EXCLUDE_PRIVATE =
+      'AND name NOT IN (''Private_Notes'' )';
 
   FILTERS: array[0..2] of string = ('checked', 'confidential', 'verified');
 
@@ -1201,20 +1206,31 @@ end;
  *)
 function TDatabaseOutput.GetFieldsToExport(const table: string; const AExportprivate :boolean): String;
 var lFields :TstringList;
-    lqrySampleFields :string;
-
+    lqryFields :string;
 begin
   if CompareText(table, 'SAMPLE')=0 then begin
     lFields := TStringList.Create;
-    lqrySampleFields :=  SQL_SAMPLE_FIELDS_REQUIRED;
-    if not AExportprivate then lqrySampleFields := lqrySampleFields + SQL_SAMPLE_FIELDS_EXCLUDE_PRIVATE;
-    with FDatabaseModule.ExecuteSQL(lqrySampleFields, True) do
+    lqryFields :=  SQL_SAMPLE_FIELDS_REQUIRED;
+    if not AExportprivate then lqryFields := lqryFields + SQL_SAMPLE_FIELDS_EXCLUDE_PRIVATE;
+    with FDatabaseModule.ExecuteSQL(lqryFields, True) do
       while not EOF do begin
         lFields.Add('[' + Uppercase(Fields[0].Value) + ']');
         MoveNext;
       end;
     Result := lFields.CommaText;
   end
+  else if
+    CompareText(table, 'SURVEY')=0 then begin
+    lFields := TStringList.Create;
+    lqryFields :=  SQL_SURVEY_FIELDS_REQUIRED;
+    if not AExportprivate then lqryFields := lqryFields + SQL_SURVEY_FIELDS_EXCLUDE_PRIVATE;
+    with FDatabaseModule.ExecuteSQL(lqryFields, True) do
+      while not EOF do begin
+        lFields.Add('[' + Uppercase(Fields[0].Value) + ']');
+        MoveNext;
+      end;
+    Result := lFields.CommaText;
+   end
   else
     Result := '*';
 end;

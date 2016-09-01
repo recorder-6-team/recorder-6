@@ -49,6 +49,8 @@ type
     qrySurveyTagsPlaintext: TWideStringField;
     qrySurveyTagsEntered_By: TStringField;
     qrySurveyTagsCustodian: TStringField;
+    qrySurveyLicence: TJNCCQuery;
+    dsSurveyLicence: TDataSource;
   public
     constructor Create(AOwner:TComponent); override;
     destructor Destroy; override;
@@ -70,6 +72,7 @@ begin
   qrySurveyType.Open;
   qrySurveyStatus.Open;
   qrySurveyMedia.Open;
+  qrySurveyLicence.Open;
 end;  // Create
 
 //==============================================================================
@@ -79,6 +82,7 @@ begin
   qrySurveyStatus.Close;
   qrySurveyMedia.Close;
   qrySurvey.Close;
+  qrySurveyLicence.Close;
  inherited Destroy;
 end;  // Destroy
 
@@ -96,4 +100,3 @@ begin
 end;  // DeleteRecord
 
 end.
- 

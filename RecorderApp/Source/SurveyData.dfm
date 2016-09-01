@@ -1,9 +1,9 @@
 inherited dmSurvey: TdmSurvey
   OldCreateOrder = True
-  Left = 702
-  Top = 157
-  Height = 320
-  Width = 213
+  Left = 858
+  Top = 239
+  Height = 392
+  Width = 246
   object qrySurveyType: TJNCCQuery
     CommandTimeout = 0
     Parameters = <>
@@ -130,5 +130,22 @@ inherited dmSurvey: TdmSurvey
       FixedChar = True
       Size = 8
     end
+  end
+  object qrySurveyLicence: TJNCCQuery
+    CommandTimeout = 0
+    Parameters = <>
+    SQL.Strings = (
+      'SELECT Licence_Key,  Long_Name'
+      'FROM Licences'
+      'ORDER BY Long_Name')
+    ParseSQL = True
+    Left = 40
+    Top = 296
+  end
+  object dsSurveyLicence: TDataSource
+    AutoEdit = False
+    DataSet = qrySurveyLicence
+    Left = 136
+    Top = 240
   end
 end

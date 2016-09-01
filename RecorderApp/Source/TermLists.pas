@@ -272,6 +272,7 @@ resourcestring
   ResStr_UnableToFindFile = 'Unable to locate file.';
   ResStr_CannotLocateRecord = 'Unable to locate record';
   ResStr_ShortNameRequired =  'A Short Name is required. Please enter a Short Name.';
+  ResStr_LongNameRequired =  'A Long Name is required. Please enter a Long Name.';
   ResStr_ValueRequired =  ' A value is required.';
 
   ResStr_CustodyChanged = 'The custody of this record has changed to another Site ID in the underlying database.'#13#10 +
@@ -1051,7 +1052,7 @@ begin
             (FieldByName('Custodian').AsString <> AppSettings.SiteID)) then begin
           eShortName.Readonly      := true;
           eLongName.Readonly       := true;
-          dbreDescription.Readonly := true;    
+          dbreDescription.Readonly := true;
         end;
       end; //add or edit?
     end; //with FdmTermLists.qryTermList
@@ -1097,6 +1098,11 @@ var lTermListItem: TTermListNode;
   end;  // CheckAddField
   //----------------------------------------------------------------------------
 begin
+
+  if FCurrTermList.Table = 'LICENCES'then
+  begin
+    ValidateValue(eLongName.Text <> '', ResStr_LongNameRequired, eLongName);
+  end;
   ValidateValue(eShortName.Text <> '', ResStr_ShortNameRequired, eShortName);
   ValidateValue(CheckAddField(dbeAddField1), lblTextField1.Caption + ResStr_ValueRequired, dbeAddField1);
   // Some extra conditions for DATA_TYPE field
@@ -1110,6 +1116,7 @@ begin
   ValidateValue(CheckAddField(dbeAddField3), lblTextField3.Caption + ResStr_ValueRequired, dbeAddField3);
 
   lTermListItem := TTermListNode(tvTermList.Selected.Data);
+
   lCustodian := CurrentCustodian(TKeyDataSysSupplied(tvTermList.Selected.Data).ItemKey);
   if (FMode in [emAddChild, emAddSibling]) or
      ((FMode = emEdit) and
@@ -1121,7 +1128,7 @@ begin
     tvTermList.Selected.Text  := eShortName.Text;
     with FdmTermLists.qryTermList do begin
       FieldByName('Short_Name').AsString := eShortName.Text;
-      FieldByName('Long_Name').AsString  := eLongName.Text;  
+      FieldByName('Long_Name').AsString  := eLongName.Text;
       FieldByName('System_Supplied_Data').AsBoolean  := False;
 
       lParentNode := tvTermList.Selected.Parent;

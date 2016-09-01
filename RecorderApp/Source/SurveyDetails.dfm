@@ -1,6 +1,6 @@
 inherited frmSurveyDetails: TfrmSurveyDetails
-  Left = 257
-  Top = 166
+  Left = 417
+  Top = 268
   Width = 393
   Height = 395
   Caption = 'Survey Details'
@@ -14,21 +14,21 @@ inherited frmSurveyDetails: TfrmSurveyDetails
     Left = 0
     Top = 0
     Width = 385
-    Height = 361
+    Height = 368
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
     OnResize = pnlDetailsResize
     object pnlInner: TPanel
-      Left = 0
-      Top = 0
+      Left = 8
+      Top = 8
       Width = 385
-      Height = 361
+      Height = 353
       BevelOuter = bvLowered
       TabOrder = 0
       DesignSize = (
         385
-        361)
+        353)
       object lblRunbyPrompt: TLabel
         Left = 176
         Top = 4
@@ -71,7 +71,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
       end
       object bbCancel: TImageListButton
         Left = 306
-        Top = 330
+        Top = 314
         Width = 75
         Height = 25
         Hint = 'Cancel changes'
@@ -86,7 +86,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
       end
       object bbSave: TImageListButton
         Left = 222
-        Top = 330
+        Top = 314
         Width = 75
         Height = 25
         Hint = 'Save survey details'
@@ -102,8 +102,8 @@ inherited frmSurveyDetails: TfrmSurveyDetails
         Left = 8
         Top = 24
         Width = 373
-        Height = 301
-        ActivePage = tsSurveyTags
+        Height = 281
+        ActivePage = Licence
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 2
         OnChange = pcSurveyDetailsChange
@@ -113,12 +113,12 @@ inherited frmSurveyDetails: TfrmSurveyDetails
           OnResize = tsGeneralResize
           DesignSize = (
             365
-            273)
+            253)
           object bvlGeneral: TBevel
             Left = 4
             Top = 4
             Width = 357
-            Height = 265
+            Height = 245
             Anchors = [akLeft, akTop, akRight, akBottom]
             Shape = bsFrame
           end
@@ -273,7 +273,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             Left = 76
             Top = 193
             Width = 277
-            Height = 68
+            Height = 48
             Anchors = [akLeft, akTop, akRight, akBottom]
             DataField = 'DESCRIPTION'
             DataSource = dmSurvey.dsSurvey
@@ -358,12 +358,12 @@ inherited frmSurveyDetails: TfrmSurveyDetails
           ImageIndex = 1
           DesignSize = (
             365
-            273)
+            253)
           object Bevel2: TBevel
             Left = 4
             Top = 4
             Width = 355
-            Height = 265
+            Height = 245
             Anchors = [akLeft, akTop, akRight, akBottom]
             Shape = bsFrame
           end
@@ -471,7 +471,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             Left = 12
             Top = 172
             Width = 341
-            Height = 89
+            Height = 69
             Anchors = [akLeft, akTop, akRight, akBottom]
             DataField = 'GEOGRAPHIC_COVERAGE'
             DataSource = dmSurvey.dsSurvey
@@ -488,13 +488,13 @@ inherited frmSurveyDetails: TfrmSurveyDetails
           OnShow = tsSurveyTagsShow
           DesignSize = (
             365
-            273)
+            253)
           object Shape2: TShape
             Tag = 2
             Left = 3
             Top = 3
             Width = 335
-            Height = 267
+            Height = 247
             Anchors = [akLeft, akTop, akRight, akBottom]
             Pen.Color = clRed
           end
@@ -526,7 +526,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             Left = 4
             Top = 4
             Width = 333
-            Height = 265
+            Height = 245
             Anchors = [akLeft, akTop, akRight, akBottom]
             ColCount = 1
             DefaultRowHeight = 19
@@ -549,6 +549,81 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             SourceCol = clBlue
             DestCol = clRed
             TabOrder = 0
+            DesignSize = (
+              357
+              265)
+          end
+        end
+        object Licence: TTabSheet
+          Caption = 'Licence'
+          ImageIndex = 4
+          DesignSize = (
+            365
+            253)
+          object lblLicence: TLabel
+            Left = 12
+            Top = 8
+            Width = 41
+            Height = 13
+            Caption = 'Licence:'
+          end
+          object lblAttribution: TLabel
+            Left = 12
+            Top = 49
+            Width = 50
+            Height = 13
+            Caption = 'Attribution:'
+          end
+          object lblNotes: TLabel
+            Left = 12
+            Top = 153
+            Width = 73
+            Height = 13
+            Caption = 'Notes (Private):'
+          end
+          object dbcmbLicence: TDBLookupComboBox
+            Left = 100
+            Top = 8
+            Width = 241
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            DataField = 'LICENCE_KEY'
+            DataSource = dmSurvey.dsSurvey
+            KeyField = 'Licence_Key'
+            ListField = 'Long_Name'
+            ListSource = dmSurvey.dsSurveyLicence
+            TabOrder = 0
+            OnClick = dbComboClick
+            OnKeyDown = dbComboKeyDown
+            OnKeyUp = dbComboKeyUp
+          end
+          object dbreAttribution: TDBRichEdit
+            Left = 100
+            Top = 49
+            Width = 261
+            Height = 88
+            Anchors = [akLeft, akTop, akRight]
+            DataField = 'ATTRIBUTION'
+            DataSource = dmSurvey.dsSurvey
+            PopupMenu = dmFormActions.pmRTF
+            ScrollBars = ssVertical
+            TabOrder = 1
+            OnEnter = EnterRTF
+            OnExit = ExitRTF
+          end
+          object dbreNotes: TDBRichEdit
+            Left = 100
+            Top = 153
+            Width = 261
+            Height = 76
+            Anchors = [akLeft, akTop, akRight, akBottom]
+            DataField = 'PRIVATE_NOTES'
+            DataSource = dmSurvey.dsSurvey
+            PopupMenu = dmFormActions.pmRTF
+            ScrollBars = ssVertical
+            TabOrder = 2
+            OnEnter = EnterRTF
+            OnExit = ExitRTF
           end
         end
       end

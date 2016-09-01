@@ -87,6 +87,13 @@ type
     lblRunbyPrompt: TLabel;
     lblRunbyDisp: TLabel;
     lblSurveyNameDisp: TLabel;
+    Licence: TTabSheet;
+    dbcmbLicence: TDBLookupComboBox;
+    lblLicence: TLabel;
+    lblAttribution: TLabel;
+    dbreAttribution: TDBRichEdit;
+    lblNotes: TLabel;
+    dbreNotes: TDBRichEdit;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbSaveClick(Sender: TObject);
     procedure bbCancelClick(Sender: TObject);
@@ -372,6 +379,8 @@ begin
     FieldByName('Survey_Status_Key').AsString:=NONE_RECORD_KEY;
     dbcmbSurveyMedia.KeyValue:=NONE_RECORD_KEY;
     FieldByName('Survey_Media_Key').AsString:=NONE_RECORD_KEY;
+    dbcmbLicence.KeyValue:=NONE_RECORD_KEY;
+    FieldByName('Licence_Key').AsString:=NONE_RECORD_KEY;
   end;
   ResetDBRichEditControls([dbreDescription, dbreGeoCoverage]);
   dmGeneralData.SetNameIDAndDate(FdmSurvey.qrySurvey,'Entered_By','Entry_Date');
@@ -782,6 +791,8 @@ begin
     qrySurveyStatus.Active := True;
     qrySurveyMedia.Active  := False;
     qrySurveyMedia.Active  := True;
+    qrySurveyLicence.Active  := False;
+    qrySurveyLicence.Active  := True;
   end;
 end;  // RefreshLists
 
