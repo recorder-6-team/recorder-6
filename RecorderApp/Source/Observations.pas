@@ -178,6 +178,8 @@ type
     SurveyTag2: TMenuItem;
     pmHSepLoad: TMenuItem;
     pmHLoadIntoRecordCard: TMenuItem;
+    pmSortTaxSortOrder: TMenuItem;
+    actSortTaxonSortOrder: TAction;
     procedure FormResize(Sender: TObject);
     procedure DrillSplitterPaint(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -228,6 +230,7 @@ type
     procedure tvObservationsExit(Sender: TObject);
     procedure pmHBatchUpdateClick(Sender: TObject);
     procedure actAddSurveyTagExecute(Sender: TObject);
+    procedure actSortTaxonSortOrderExecute(Sender: TObject);
   private
     FDetailForm    :TfrmBaseDockedForm;
     FdmObservation :TdmObservation;
@@ -451,6 +454,7 @@ const
   SORT_SAMPLE_TYPE        = 'Sample Type';
   SORT_TAXON_SCI_NAME     = 'Taxon Sci Name';
   SORT_TAXON_COMMON_NAME  = 'Taxon Common Name';
+  SORT_TAXON_SORT_ORDER   = 'Taxon Sort Order';
   SORT_BIOTOPE_CODE       = 'Biotope Code';
   SORT_BIOTOPE_SHORT_NAME = 'Biotope Short Name';
 
@@ -609,7 +613,8 @@ begin
                                      else lstSample := 'Sample_Reference';
 
   // Defaults to Taxon Sci Name, unless Common Name sort was found
-  if FTaxonOccField = SORT_TAXON_COMMON_NAME then lstTaxon := 'ITN.Common_Name'
+  if FTaxonOccField = SORT_TAXON_COMMON_NAME then lstTaxon := 'ITN.Common_Name' else
+  if FTaxonOccField = SORT_TAXON_SORT_ORDER then lstTaxon := 'ITN.Common_Name'
                                              else lstTaxon := 'ITN.Preferred_Name';
 
   // Defaults to Biotope Original Code, unless Short Term sort was found
@@ -892,6 +897,7 @@ begin
   pmSortTaxScientific.Default    := tfTaxon;
   actSortTaxonScientific.Visible := tfTaxon;
   actSortTaxonCommon.Visible     := tfTaxon;
+  actSortTaxonSortOrder.Visible  := tfTaxon;
   pmSortBioCode.Default          := tfBiotope;
   actSortBioCode.Visible         := tfBiotope;
   actSortBioName.Visible         := tfBiotope;
@@ -4205,7 +4211,7 @@ begin
   // Read Sort for Taxa
   if not AppSettings.ReadSort(Self, 'TaxonOcc', FTaxonOccField, SomeBool) then
     FTaxonOccField := SORT_TAXON_SCI_NAME
-  else if (FTaxonOccField <> SORT_TAXON_SCI_NAME) and (FTaxonOccField <> SORT_TAXON_COMMON_NAME) then
+  else if (FTaxonOccField <> SORT_TAXON_SCI_NAME) and (FTaxonOccField <> SORT_TAXON_COMMON_NAME) and (FTaxonOccField <> SORT_TAXON_SORT_ORDER)  then
     FTaxonOccField := SORT_TAXON_SCI_NAME;
   // Read Sort for Biotopes
   if not AppSettings.ReadSort(Self, 'BiotopeOcc', FBiotopeOccField, SomeBool) then
@@ -5582,6 +5588,15 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TfrmObservations.actSortTaxonSortOrderExecute(Sender: TObject);
+begin
+  inherited;
+  FTaxonOccField := SORT_TAXON_SORT_ORDER;
+  with FdmObservation.qryTaxonOcc do
+    SQL[SQL.Count-1]:='ORDER BY ITN.Sort_Order';
+  UpdateOrder(tvObservations.Selected);
 end;
 
 end.

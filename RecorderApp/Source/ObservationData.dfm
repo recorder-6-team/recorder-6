@@ -117,7 +117,7 @@ inherited dmObservation: TdmObservation
       '       ITN.Preferred_Name_Authority,'
       '       ITN.Common_Name,'
       '       ITN.Common_Name_Italic,'
-      '       ITN.Common_Name_Attribute,'
+      '       ITN.Common_Name_Attribute,ITN.Sort_Order,'
       '       TXO.Checked,'
       '       TXO.Confidential, TXO.Zero_Abundance,TXO.Verified'
       'FROM Taxon_Occurrence TXO'
@@ -130,7 +130,9 @@ inherited dmObservation: TdmObservation
       ''
       'AND'
       'TD.Preferred = 1'
+      ''
       'AND ITN.SYSTEM_SUPPLIED_DATA=1'
+      ''
       'ORDER BY ITN.Preferred_Name')
     ParseSQL = True
     Left = 36

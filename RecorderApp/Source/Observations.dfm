@@ -387,6 +387,10 @@ inherited frmObservations: TfrmObservations
     object pmSortTaxCommon: TMenuItem
       Action = actSortTaxonCommon
     end
+    object pmSortTaxSortOrder: TMenuItem
+      Action = actSortTaxonSortOrder
+      Caption = '&Sort Order'
+    end
     object pmSortBioCode: TMenuItem
       Action = actSortBioCode
     end
@@ -531,7 +535,7 @@ inherited frmObservations: TfrmObservations
     Left = 448
     Top = 4
     Bitmap = {
-      494C010116001800040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010116001800040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000006000000001002000000000000060
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1327,7 +1331,8 @@ inherited frmObservations: TfrmObservations
       0000F80000008000000080000000000000008000000000000000800000000000
       8000800000000000C000800000000000F00F800000000000F03F800000000001
       E03F800000000007E01F800000000007E01F8000000081FFE03F80000000C3FF
-      E01F801F0000FFFFF03F801F0000FFFF}
+      E01F801F0000FFFFF03F801F0000FFFF00000000000000000000000000000000
+      000000000000}
   end
   object ilObservationState: TImageList
     Left = 448
@@ -1847,6 +1852,10 @@ inherited frmObservations: TfrmObservations
       Caption = 'Find On Map'
       Hint = 'Find On Map'
       OnExecute = actFindOnMapExecute
+    end
+    object actSortTaxonSortOrder: TAction
+      Caption = 'acSortTaxonSortOrder'
+      OnExecute = actSortTaxonSortOrderExecute
     end
   end
 end
