@@ -4,7 +4,7 @@
 <!-- Records for specified polygon  with Designations
      XML Report by Mike Weideli of Littlefield Consultancy for JNCC
      http://www.lfield.co.uk
-     Version 5 - 28 November 2014
+     Version 6 - 1 September 2016
    
      QUICK REPORT - From Polygon on Map
      Confidential - By parameter 
@@ -90,7 +90,7 @@ CREATE TABLE #Main_Results (
   Actual_Common VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Recommended_Name VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Recommended_Common VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
-  Sort_Order VARCHAR(30) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Sort_Order VARCHAR(36) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Taxon_Group VARCHAR(60) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Location_Name VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Vague_Date_Start INTEGER,
@@ -249,7 +249,7 @@ CREATE TABLE #Main_Results (
   Actual_Common VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Recommended_Name VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Recommended_Common VARCHAR(125) COLLATE SQL_Latin1_General_CP1_CI_AS,
-  Sort_Order VARCHAR(30) COLLATE SQL_Latin1_General_CP1_CI_AS,
+  Sort_Order VARCHAR(36) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Taxon_Group VARCHAR(60) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Location_Name VARCHAR(100) COLLATE SQL_Latin1_General_CP1_CI_AS,
   Vague_Date_Start INTEGER,
