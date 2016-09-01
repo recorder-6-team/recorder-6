@@ -32,7 +32,8 @@ resourcestring
   ResStr_CurrentChecklist = 'Current Checklist';
   ResStr_Unrestricted     = 'Unrestricted';
   ResStr_PreferredLists   = 'Preferred Checklists';
-
+  ResStr_Recommended      = 'Recommended Taxa';
+  ResStr_Recommended_Full = 'Recommended Full';
   // Error messages
   ResStr_DBPathMissing      = 'Database Path not in registry - application cannot start';
   ResStr_DBPassMissing      = 'Database Password not in registry - application cannot start';

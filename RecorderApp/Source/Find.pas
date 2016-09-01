@@ -531,13 +531,13 @@ end; // SetUpFinder
 { Don't allow header for list of rucksacks to be selected }
 procedure TdlgFind.cmbTaxonRestrictionChange(Sender: TObject);
 begin
-  if cmbTaxonRestriction.ItemIndex = 3 then
+  if cmbTaxonRestriction.ItemIndex = 5 then
     cmbTaxonRestriction.ItemIndex := 0;
-  if cmbTaxonRestriction.ItemIndex > 3 then begin
+  if cmbTaxonRestriction.ItemIndex > 5 then begin
     eSearchText.MinChars := RUCKSACK_SEARCH_CODE_MIN_CHARS;
   end else begin
     eSearchText.MinChars := MIN_CHARS;
-  end;    // if cmbTaxonRestriction.ItemIndex > 3
+  end;    // if cmbTaxonRestriction.ItemIndex > 5
   eSearchText.SetSearchText(eSearchText.Text); // force refresh
 end;
 
