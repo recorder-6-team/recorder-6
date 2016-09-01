@@ -1023,7 +1023,7 @@ begin
   Result := (ValidLetter(Copy(iSpatialRef, 1, 2)) and
              ValidInteger(Copy(iSpatialRef, 3, Length(iSpatialRef))) and
              (Odd(Length(Copy(iSpatialRef, 3, Length(iSpatialRef)))) = false) and
-             (Length(iSpatialRef) > 1))
+             (Length(iSpatialRef) > 1) and (Length(ispatialRef) < 13))
             or
             ((Length(iSpatialRef) = 5) and
              ValidLetter(Copy(iSpatialRef, 1, 2)) and
@@ -1039,7 +1039,7 @@ begin
   Result := (ValidLetter(Copy(iSpatialRef, 1, 1)) and
              ValidInteger(Copy(iSpatialRef, 2, Length(iSpatialRef))) and
              (Odd(Length(Copy(iSpatialRef, 2, Length(iSpatialRef)))) = false) and
-             (Length(iSpatialRef) > 0))
+             (Length(iSpatialRef) > 0) and (Length(iSpatialRef) < 12))
             or
             ((Length(iSpatialRef) = 4) and
              ValidLetter(Copy(iSpatialRef, 1, 1)) and
