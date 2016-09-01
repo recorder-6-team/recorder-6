@@ -12,8 +12,8 @@ inherited frmSurveyTagDetails: TfrmSurveyTagDetails
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 377
-    Height = 357
+    Width = 385
+    Height = 368
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
@@ -78,6 +78,13 @@ inherited frmSurveyTagDetails: TfrmSurveyTagDetails
         Font.Name = 'MS Sans Serif'
         Font.Style = []
         ParentFont = False
+      end
+      object lblSortCode: TLabel
+        Left = 16
+        Top = 160
+        Width = 47
+        Height = 13
+        Caption = 'Sort Code'
       end
       object eTagName: TEdit
         Left = 80
@@ -158,10 +165,21 @@ inherited frmSurveyTagDetails: TfrmSurveyTagDetails
         Left = 80
         Top = 60
         Width = 293
-        Height = 117
+        Height = 93
         Anchors = [akLeft, akTop, akRight]
         ScrollBars = ssVertical
         TabOrder = 6
+      end
+      object eTagSortCode: TEdit
+        Left = 80
+        Top = 160
+        Width = 73
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        MaxLength = 10
+        TabOrder = 7
+        OnExit = eTagSortCodeExit
+        OnKeyPress = eTagSortCodeKeyPress
       end
     end
   end

@@ -54,6 +54,8 @@ type
     btnAddSurvey: TImageListButton;
     mmDescription: TMemo;
     Bevel1: TBevel;
+    eTagSortCode: TEdit;
+    lblSortCode: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnSaveClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -61,6 +63,8 @@ type
     procedure ExitRTF(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure pnlDetailsResize(Sender: TObject);
+    procedure eTagSortCodeExit(Sender: TObject);
+    procedure eTagSortCodeKeyPress(Sender: TObject; var Key: Char);
   private
     FDrillForm:TBaseForm;
     FConceptKey: TKeyString;
@@ -205,7 +209,7 @@ begin
     FConceptTerm.Load(ConceptKey);
     lblSurveyTagDisp.Caption := FConceptTerm.Term;
     eTagName.Text            := FConceptTerm.Term;
-
+    eTagSortCode.Text     := FConceptTerm.SortCode;
     with dmDatabase.GetRecordset(
         'usp_ThesaurusFact_Select_ForSurveyTag',
         ['@ConceptKey', ConceptKey]) do
@@ -288,6 +292,7 @@ begin
     end;
 
     FConceptTerm.Term := eTagName.Text;
+    FConceptTerm.SortCode := eTagSortCode.Text;
     ValidateValue(eTagName.Text <> '', ResStr_SurveyTagRequired, eTagName);
     if EditMode = emAdd then
       ValidateValue(not FConceptTerm.ReuseExistingConcept, ResStr_TagNameAlreadyUsed, eTagName);
@@ -379,7 +384,7 @@ begin
   editing := EditMode <> emView;
 
   RefreshColours;
-
+  eTagSortCode.ReadOnly := not editing;
   eTagName.ReadOnly := not editing;
   mmDescription.ReadOnly := not editing;
 
@@ -610,4 +615,27 @@ begin
   pnlInner.Height := pnlDetails.Height;
 end;
 
+procedure TfrmSurveyTagDetails.eTagSortCodeExit(Sender: TObject);
+var
+lVal,lErr: Integer;
+begin
+  inherited;
+  if eTagSortCode.Text = '' then eTagSortCode.Text := '0';
+  Val(eTagSortCode.Text, lVal, lErr);
+  if (lErr <> 0) or (lVal < 0) then
+    raise TExceptionPath.CreateValidation(ResStr_Invalid_Sort_Code, eTagSortCode)
+end;
+
+procedure TfrmSurveyTagDetails.eTagSortCodeKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if not (Key in [#8, '0'..'9']) then Key := #0;
+end;
+
 end.
+
+
+
+
+

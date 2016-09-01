@@ -32,13 +32,16 @@ type
     FTermKey: TKeyString;
     FTerm: String;
     FLanguageId: String;
+    FSortCode: String;
     FTimestamp: TSQLSvrTimestamp;
     FConceptGroupKey: TKeyString;
     procedure AddOrModifyTerm;
     procedure SetConceptGroupKey(const Value: TKeyString);
     procedure SetConceptKey(const Value: TKeyString);
     procedure SetLanguageId(const Value: String);
+    procedure SetSortCode(const Value: String);
     procedure SetTerm(const Value: String);
+
     function StripItalics(const text: String): String;
   public
     procedure Clear;
@@ -50,7 +53,8 @@ type
     property TermKey: TKeyString read FTermKey;
     property Term: String read FTerm write SetTerm;
     property LanguageId: String read FLanguageId write SetLanguageId;
-  end;
+    property SortCode: String read FSortCode write SetSortCode;
+  end;           
 
 {-------------------------------------------------------------------------------
 }
@@ -108,6 +112,7 @@ begin
   FTermKey         := '';
   FTerm            := '';
   FLanguageId      := '';
+  FSortCode        := '';
   FTimestamp       := Null;
 end;
 
@@ -123,6 +128,7 @@ begin
       FTerm            := Fields['Item_Name'].Value;
       FLanguageId      := Fields['Language_Key'].Value;
       FTimestamp       := Fields['Timestamp'].Value;
+      FSortCode        := vartostr(Fields['Sort_Code'].Value);
     end;
     Close;
   end;
@@ -166,6 +172,7 @@ begin
     AddOrModifyTerm;
 
   dmDatabase.Connection.BeginTrans;
+
   try
     lParams := VarArrayOf([
         '@Key', ConceptKey,
@@ -174,7 +181,7 @@ begin
         '@Preferred', True,
         '@ConceptRankKey', Null,
         '@NameTypeConceptKey', CONCEPT_KEY_COMMON,
-        '@SortCode', Null,
+        '@SortCode', SortCode,
         '@ListCode', Null,
         '@Timestamp', FTimestamp,
         '@SessionID', AppSettings.SessionID]);
@@ -183,14 +190,14 @@ begin
     if ConceptKey = '' then begin
       ConceptKey := VarToStr(dmDatabase.RunInsertStoredProc(
           TN_CONCEPT,
-          'usp_ConceptSimple_Insert', 
-          lParams, 
+          'usp_ConceptSimple_Insert',
+          lParams,
           '@Key'));
     end else
       dmDatabase.RunUpdateStoredProc('usp_ConceptSimple_Update', lParams);
 
     dmDatabase.Connection.CommitTrans;
-    
+
     // Will load all other info.
     Load(ConceptKey);
   except
@@ -223,6 +230,13 @@ end;
 procedure TConceptTerm.SetLanguageId(const Value: String);
 begin
   FLanguageId := Value;
+end;
+
+{-------------------------------------------------------------------------------
+}
+procedure TConceptTerm.SetSortCode(const Value: String);
+begin
+  FSortCode := Value;
 end;
 
 {-------------------------------------------------------------------------------
