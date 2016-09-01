@@ -1,0 +1,33 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC  Version Report
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 1 - August 2016   
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="Ver1" menupath="System Supplied\Version"  
+description="Reports on the current version of system supplied user files in the system" >
+
+
+<SQL>
+
+<Where keytype="Default">
+
+declare @version varchar(10)
+Set @version = '6.25'
+SELECT DISTINCT 'The current version of system supplied users files is ' + @Version + 
+'. If this is not as detailed in the upgrade notes then please seek assistance via the forum.' as Version
+FROM Survey
+   
+</Where>
+
+
+</SQL>
+
+</CustomReport>

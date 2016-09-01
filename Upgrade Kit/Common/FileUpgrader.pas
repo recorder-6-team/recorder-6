@@ -188,7 +188,9 @@ end;  // TFileUpgrader.DeleteOldFile
 // Mantis 470
 procedure TFileUpgrader.MoveUserFiles(const AUserSubFolder: string);
 begin
-  If FUserFolder <> FFolder + 'User Files\' then begin
+  If (Uppercase(FUserFolder) <> UpperCase(FFolder + 'User Files\')) and
+       (not FileExists(Uppercase (FFolder+'User Files\Reports\CrIdx.txt')))
+  then begin
     if DirectoryExists(FuserFolder + AUserSubFolder) then
       if not MoveFilesFromFolder(FFolder + 'User Files\' + AUserSubFolder, FUserFolder + AUserSubFolder) then
        MessageDlg(ResStr_FailedCopyingUserFiles, mtInformation, [mbOk], 0);
