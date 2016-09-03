@@ -1522,6 +1522,7 @@ var
   i: integer;
   PrefSet: boolean;
 begin
+  // Mantis
   //This will hold the distinct items to group by.
   lstrlGroupBy := TStringList.Create;
   // use a query to locate any item that doesn't have exactly 1 preferred
@@ -1530,9 +1531,17 @@ begin
     // Find all records with either no "Preferred" set, or more than one set.
     SQL.Text := Format('SELECT %s, Preferred FROM %s ' +
                        'WHERE Preferred = 0 ' +
-                       'AND %s NOT IN (SELECT %s FROM %s WHERE Preferred = 1)',
+                       'AND %s NOT IN (SELECT %s FROM %s WHERE Preferred = 1)' +
+                       ' UNION '  +
+                       'SELECT %s, ' +
+                       'Count(*) ' +
+                       ' FROM %s  ' +
+                       ' WHERE PREFERRED =1 ' +
+                       ' GROUP BY %s ' +
+                       ' HAVING count(*) > 1 ',
                        [istrPrefField, istrTableName, istrPrefField,
-                        istrPrefField, istrTableName]);
+                        istrPrefField, istrTableName,istrPrefField, istrTableName, istrPrefField ]);
+    showmessage (sql.Text);
     Open;
     First;
     // store the items that will need work on
