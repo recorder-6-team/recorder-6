@@ -219,14 +219,16 @@ const
   SQL_INDIVIDUAL_NAME =
         '[dbo].[FormatIndividualFull](Title,Initials,ForeName,Surname) AS INDIVIDUALNAME ';
 
+  SQL_INDIVIDUAL_NAME_ADDRESS =
+        '[dbo].[FormatIndividualFull](Title,Initials,ForeName,Surname) + '' <'' + [dbo].[ufn_GetAddress](Name_Key) + ''> '' AS INDIVIDUALNAME ' ;
 
   SQL_ORGANISATION_NAME =
           '  CASE WHEN Acronym IS NOT NULL THEN Acronym + '', '' + Full_Name ' +
           '  ELSE Full_Name END AS OrganisationName ';
 
   SQL_INDIVIDUAL_FROM_QUERY =
-          'SELECT Name_Key, Forename, Initials, Surname, ' + SQL_INDIVIDUAL_NAME +
-          'FROM Individual '+
+          'SELECT Name_Key, Forename, Initials, Surname, ' + SQL_INDIVIDUAL_NAME_ADDRESS  +
+          'FROM Individual ' +
           'WHERE Forename ' + ST_LIKE_PATTERN +
           '   OR Initials ' + ST_LIKE_PATTERN +
           '   OR Surname ' + ST_LIKE_PATTERN +

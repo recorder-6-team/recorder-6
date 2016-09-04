@@ -92,6 +92,7 @@ type
     procedure ChangeCursor;
     function  CompareNoStar(const iOldText, iNewText: String): boolean;
     function  GetAddress( const iNameKey: TKeyString ): string;
+    function  GetDOB( const iNameKey: TKeyString ): string;
     function  GetFullReference ( const iReferenceKey: TKeyString ): string;
     function  GetNoSourceItems: boolean;
     function  GetPreferredTaxonName(const AKey:TKeyString): string;
@@ -187,7 +188,7 @@ implementation
 
 resourcestring
   ResStr_NoAddressPresent = ' <No address present> ';
-
+  ResStr_NoDOB = ' <No Dob of Dod present> ';
 var
   lCursor: TCursor;
 
@@ -676,7 +677,7 @@ begin
   case HandleDuplicate of
     sfTaxon    : lGetFurtherDetails := GetPreferredTaxonName;
     sfLocation : lGetFurtherDetails := GetSiteCentroid;
-    sfName     : lGetFurtherDetails := GetAddress;
+    sfName     : lGetFurtherDetails := GetDob;
     sfReference: lGetFurtherDetails := GetFullReference;
   end;
 
@@ -714,7 +715,26 @@ begin
     end;
   end;
 end; // GetSiteCentroid
+//==============================================================================
+function TFinder.GetDob(const iNameKey: TKeyString): string;
+  var
+  lDOB: string;
+begin
+  with FDetailsQuery do begin
+    if Active then Close;
+    SQL.Text := 'SELECT [dbo].[ufn_GetDobandDod](''' + iNameKey + ''') as DOB';
+    try
+      Open;
+      lDob :=  FieldByName('DOB').AsString ;
+    finally
+      Close;
+    end;
+  end;
 
+  if lDob <> '' then Result:= lDob
+     else  Result :=  ResStr_NoDOb;
+
+end;
 //==============================================================================
 function TFinder.GetAddress(const iNameKey: TKeyString): string;
 var
