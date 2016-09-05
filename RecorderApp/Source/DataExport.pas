@@ -71,6 +71,7 @@ type
     bbExportTo: TButton;
     cbNoValidation: TCheckBox;
     cbExportPrivate: TCheckBox;
+    cbExportAddresses: TCheckBox;
     procedure bbCancelClick(Sender: TObject);
     procedure bbExportToClick(Sender: TObject);
     procedure bbOkClick(Sender: TObject);
@@ -89,6 +90,7 @@ type
     FDataBaseOutput: TThreadedDataBaseOutput;
     FFilter: TExportFilter;
     FFullFilePath: String;
+    FExcludeGroup: String;
     FKeyListCreated: Boolean;
     FValidationKeyList: TKeyList;
     FOldCursor: TCursor;
@@ -376,6 +378,7 @@ procedure TdlgDataExport.bbOkClick(Sender: TObject);
 var
    lstItemName: String;
 begin
+
   lstItemName := cmbExportType.Items[cmbExportType.ItemIndex];
   { if the file has no extension, then give it the default }
   if (ExtractFileExt(eDestination.Text)='') then
@@ -386,6 +389,9 @@ begin
       eDestination.Text := eDestination.Text + '.' + NBN_DB_EXT;
 
   FFullFilePath := eDestination.Text;
+
+  if cbExportAddresses.checked = false then FExcludeGroup := 'A'
+    else FExcludeGroup := '';
 
   { Confirm on replace }
   if FileExists(eDestination.Text) then
@@ -527,7 +533,7 @@ begin
         eDestination.Text, frmMain.SetStatus, frmMain.ProgressBar,
         FKeyList, AInvalidKeys, DataOutputComplete,
         (cbIncludeObservations.State = cbChecked) and (not cbReassignCustody.Checked),
-        AFromExportFilter,cbReassignCustody.Checked,cbExportPrivate.checked);
+        AFromExportFilter,cbReassignCustody.Checked,cbExportPrivate.checked,FExcludeGroup);
   end;
 end;  // DoNBNExport
 
@@ -600,6 +606,8 @@ begin
   end;
   cbNoValidation.Top :=  cbReassignCustody.Top ;
   cbExportPrivate.Top :=  cbReassignCustody.Top ;
+  cbExportAddresses.Top :=  cbReassignCustody.Top + 25;
+
 end;  // SetCheckBoxPositions
 
 //==============================================================================
@@ -855,6 +863,8 @@ begin
   cbNoValidation.checked := false;
   cbExportPrivate.Enabled := EnableDisable;
   cbExportPrivate.checked := false;
+  cbExportAddresses.Enabled := EnableDisable;
+  cbExportAddresses.checked  := true;
 end;
 end.
 

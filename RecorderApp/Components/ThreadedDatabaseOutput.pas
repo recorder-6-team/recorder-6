@@ -38,6 +38,7 @@ type
     FChangeCustodian :boolean;            //--|-- Mantis 343
     FDatabaseOutput: TDatabaseOutput;     // Performs the export
     FexportPrivate : boolean;
+    FexportExclude : string;
     FCancelled: boolean;
     FSetStatus: TSetStatusEvent;
     FStatusString: string;
@@ -57,7 +58,7 @@ type
         ASetStatusEvent: TSetStatusEvent; const AProgressBar: TTaskProgressBar;
         AKeyList, AInvalidKeys: TKeyList; ATerminated: TNotifyEvent; const
         AWantObservations: boolean; AFromExportFilter: boolean; AChangeCustodian :boolean;
-        AExportPrivate :boolean);
+        AExportPrivate :boolean; AExportExclude: string);
     destructor Destroy; override;
     procedure Execute; override;
     property Cancelled : boolean read FCancelled write SetCancelled;
@@ -98,7 +99,7 @@ constructor TThreadedDatabaseOutput.Create(ADatabaseModule: TdmDatabase; const
     ADBName: String; const ASetStatusEvent: TSetStatusEvent; const
     AProgressBar: TTaskProgressBar; AKeyList, AInvalidKeys: TKeyList;
     ATerminated: TNotifyEvent; const AWantObservations: boolean;
-    AFromExportFilter: boolean; AChangeCustodian: boolean; AExportPrivate: boolean);
+    AFromExportFilter: boolean; AChangeCustodian: boolean; AExportPrivate: boolean; AExportExclude:  string);
 begin
   inherited Create(False);
   FDatabaseModule := ADatabaseModule;
@@ -114,6 +115,7 @@ begin
   FFromExportFilter := AFromExportFilter;
   FChangeCustodian := AChangeCustodian;
   FExportPrivate := AExportPrivate;
+  FExportExclude := AExportExclude;
   FreeOnTerminate := True;
   OnTerminate := ATerminated;
 end;    // TThreadedDatabaseOutput.Create
@@ -159,7 +161,7 @@ begin
       FDatabaseOutput.ExportConfidentialOccurrences := AppSettings.ExportConfidentialOccurrences;
       FDatabaseOutput.CanExportSystemSupplied := AppSettings.CanExportSystemSupplied;
       FDatabaseOutput.UsingExportFilter := FFromExportFilter;
-      FDatabaseOutput.Execute(FKeyList, FInvalidKeys, FWantObservations,FChangeCustodian,FExportPrivate);
+      FDatabaseOutput.Execute(FKeyList, FInvalidKeys, FWantObservations,FChangeCustodian,FExportPrivate,FExportExclude);
     finally
       FDatabaseOutput.Free;
       FDatabaseOutput := nil;

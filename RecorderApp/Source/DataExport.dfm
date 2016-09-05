@@ -1,10 +1,10 @@
 object dlgDataExport: TdlgDataExport
-  Left = 748
-  Top = 251
+  Left = 543
+  Top = 221
   BorderStyle = bsDialog
   Caption = 'Data Export'
-  ClientHeight = 283
-  ClientWidth = 407
+  ClientHeight = 317
+  ClientWidth = 411
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,15 +19,15 @@ object dlgDataExport: TdlgDataExport
   OnDestroy = FormDestroy
   OnKeyPress = FormKeyPress
   DesignSize = (
-    407
-    283)
+    411
+    317)
   PixelsPerInch = 96
   TextHeight = 13
   object bvlFrame: TBevel
     Left = 4
     Top = 8
-    Width = 399
-    Height = 224
+    Width = 403
+    Height = 253
     Anchors = [akLeft, akTop, akRight, akBottom]
     Shape = bsFrame
   end
@@ -46,8 +46,8 @@ object dlgDataExport: TdlgDataExport
     Caption = 'Destination:'
   end
   object bbCancel: TImageListButton
-    Left = 327
-    Top = 252
+    Left = 331
+    Top = 286
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -60,8 +60,8 @@ object dlgDataExport: TdlgDataExport
     ImageIndex = 1
   end
   object bbOK: TImageListButton
-    Left = 243
-    Top = 252
+    Left = 247
+    Top = 286
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -93,7 +93,7 @@ object dlgDataExport: TdlgDataExport
   end
   object cbIncludeObservations: TCheckBox
     Left = 16
-    Top = 240
+    Top = 274
     Width = 129
     Height = 17
     Anchors = [akLeft, akBottom]
@@ -105,7 +105,7 @@ object dlgDataExport: TdlgDataExport
   end
   object cbIncludeSubSites: TCheckBox
     Left = 16
-    Top = 260
+    Top = 294
     Width = 217
     Height = 17
     Anchors = [akLeft, akBottom]
@@ -136,7 +136,7 @@ object dlgDataExport: TdlgDataExport
   end
   object cbReassignCustody: TCheckBox
     Left = 16
-    Top = 207
+    Top = 209
     Width = 137
     Height = 17
     Anchors = [akLeft, akBottom]
@@ -155,7 +155,7 @@ object dlgDataExport: TdlgDataExport
   end
   object cbNoValidation: TCheckBox
     Left = 160
-    Top = 208
+    Top = 210
     Width = 105
     Height = 17
     Anchors = [akLeft, akBottom]
@@ -165,13 +165,24 @@ object dlgDataExport: TdlgDataExport
   end
   object cbExportPrivate: TCheckBox
     Left = 272
-    Top = 208
+    Top = 210
     Width = 121
     Height = 17
     Anchors = [akLeft, akBottom]
     Caption = 'Export Private Fields'
     Enabled = False
     TabOrder = 11
+  end
+  object cbExportAddresses: TCheckBox
+    Left = 16
+    Top = 234
+    Width = 129
+    Height = 17
+    Anchors = [akLeft, akBottom]
+    Caption = 'Export Addresses'
+    Checked = True
+    State = cbChecked
+    TabOrder = 12
   end
   object dlgSave: TSaveDialog
     Left = 204

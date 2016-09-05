@@ -195,7 +195,7 @@ type
     FUsingExportFilter: Boolean;
     function GetRequiredFieldsForTable(const ATableName: string;
          const AAlias: string=''): string;
-    procedure ProcessTable(const ATableName, ALastTableName: string);
+    procedure ProcessTable(const ATableName, ALastTableName,AExcludeGroup : string);
     procedure CreateTable(const ATableName: string);
     procedure DoDataEntryNames;
     function DoExport(const AExportPrivate: boolean) : String;
@@ -208,7 +208,7 @@ type
     procedure ZipTotalPercentDone(Sender: TObject; Percent: Integer);
     procedure GetObservations;
     procedure CopyJoinedRecords(const ATable, AJoinTable, AField,
-      AJoinField: string; AForceProcess: boolean; AProcessNextTable: boolean=true);
+      AJoinField, AExportGroup : string; AForceProcess: boolean; AProcessNextTable: boolean=true);
     function GetFilterForTable(const tableName, alias: String): String;
     procedure ProcessMetadataTable;
     procedure ProcessSourceJoinTable;
@@ -237,8 +237,8 @@ type
     constructor Create(ADatabaseModule: TdmDatabase; const ADBName: String;
                   const ASetStatusEvent: TSetStatusEvent; const ASetProgressEvent: TSetProgressEvent); overload;
     destructor Destroy; override;
-    procedure Execute(AKeyList: TKeyList; AWantObservations: Boolean; AChangeCustodian :Boolean; AExportPrivate :Boolean); overload;
-    procedure Execute(AKeyList, AInvalidKeys: TKeyList; AWantObservations: Boolean; AChangeCustodian :Boolean; AExportPrivate : Boolean); overload;
+    procedure Execute(AKeyList: TKeyList; AWantObservations: Boolean; AChangeCustodian :Boolean; AExportPrivate :Boolean; AExcludeGroup: string ); overload;
+    procedure Execute(AKeyList, AInvalidKeys: TKeyList; AWantObservations: Boolean; AChangeCustodian :Boolean; AExportPrivate : Boolean; AExcludeGroup: string ); overload;
     property Cancelled: boolean read FCancelled write SetCancelled;
     property UserAccessLevel: Integer read GetUserAccessLevel write SetUserAccessLevel;
     property ExportConfidentialOccurrences: Boolean read FExportConfidentialOccurrences
@@ -295,10 +295,10 @@ const
 
   SQL_LINKED_TABLES =
       'SELECT Master_Table, Master_Field, Detail_Table, Detail_Field, '+
-      'Follow_Up, Follow_Down, One_To_One '+
+      'Follow_Up, Follow_Down, One_To_One, Exclude_Type '+
       'FROM Database_Relationship '+
-      'WHERE (Master_Table=''%s'' AND Follow_Down=1) '+
-      'OR (Detail_table=''%s'' AND Follow_Up=1)';
+      'WHERE ((Master_Table=''%s'' AND Follow_Down=1) '+
+      'OR (Detail_table=''%s'' AND Follow_Up=1)) AND (Exclude_Type <> ''%s'')';
 
   SQL_INSERT_TABLE =
       'INSERT INTO [#%s] ' +
@@ -450,7 +450,7 @@ end;
   Copy the records identified by the foreign key in a table into the temp
      version of the joined table.
 }
-procedure TDatabaseOutput.CopyJoinedRecords(const ATable, AJoinTable, AField, AJoinField: string;
+procedure TDatabaseOutput.CopyJoinedRecords(const ATable, AJoinTable, AField, AJoinField, AExportGroup: string;
      AForceProcess: boolean; AProcessNextTable: boolean=true);
 var
   lFilter: string;
@@ -491,20 +491,20 @@ begin
     if lRowsAffected > 0 then begin
       FTablesPopulated.Add(AJoinTable);
       if AProcessNextTable then
-        ProcessTable(AJoinTable, ATable);
+        ProcessTable(AJoinTable, ATable,AExportGroup);
     end;
   end;
 end;
 
 {-------------------------------------------------------------------------------
 }
-procedure TDatabaseOutput.ProcessTable(const ATableName, ALastTableName: string);
+procedure TDatabaseOutput.ProcessTable(const ATableName, ALastTableName,AExcludeGroup :string );
 begin
   SetStatus(ResStr_GatheringInformationForExport + ReadableFormat(ATableName));
   if FCancelled then
     raise EDatabaseOutput.CreateNonCritical(ResStr_Cancelled);
   with FDatabaseModule.ExecuteSQL(Format(SQL_LINKED_TABLES,
-      [ATableName, ATableName]), True) do
+      [ATableName, ATableName,AExcludeGroup]), True) do
     while not EOF do begin
       if (CompareText(Fields['Master_Table'].Value, ATableName) = 0) and
           (Fields['Follow_Down'].Value) and
@@ -514,6 +514,7 @@ begin
             Fields['Detail_Table'].Value,
             Fields['Master_Field'].Value,
             Fields['Detail_Field'].Value,
+            AExcludeGroup,
             Fields['One_To_One'].Value)
       else
       if (CompareText(Fields['Detail_Table'].Value, ATableName) = 0) and
@@ -524,6 +525,7 @@ begin
             Fields['Master_Table'].Value,
             Fields['Detail_Field'].Value,
             Fields['Master_Field'].Value,
+            AExcludeGroup,
             true);// always follow from detail to master
       //CCN298  handlling the hierachal recursive relationships here is for 'Location'
       if  (CompareText(Fields['Master_Table'].Value, ATableName) = 0) and
@@ -536,6 +538,7 @@ begin
             Fields['Detail_Table'].Value,
             Fields['Master_Field'].Value,
             Fields['Detail_Field'].Value,
+            AExcludeGroup,
             true) ;
       MoveNext;
     end;
@@ -619,14 +622,14 @@ end;    // TDatabaseOutput.InitialiseFields
 
 {-------------------------------------------------------------------------------
 }
-procedure TDatabaseOutput.Execute(AKeyList: TKeyList; AWantObservations: Boolean; AChangeCustodian: Boolean; AExportPrivate:Boolean);
+procedure TDatabaseOutput.Execute(AKeyList: TKeyList; AWantObservations: Boolean; AChangeCustodian: Boolean; AExportPrivate:Boolean; AExcludeGroup : string);
 begin
-  Execute(AKeyList, nil, AWantObservations,AChangeCustodian,AExportPrivate);
+  Execute(AKeyList, nil, AWantObservations,AChangeCustodian,AExportPrivate,AExcludeGroup);
 end;
 
 {-------------------------------------------------------------------------------
 }
-procedure TDatabaseOutput.Execute(AKeyList, AInvalidKeys: TKeyList; AWantObservations: Boolean; AChangeCustodian: Boolean; AExportPrivate: boolean );
+procedure TDatabaseOutput.Execute(AKeyList, AInvalidKeys: TKeyList; AWantObservations: Boolean; AChangeCustodian: Boolean; AExportPrivate: boolean; AExcludeGroup : string );
 var
   lIdx: integer;
   lPk : TPrimaryKey;
@@ -669,7 +672,7 @@ var
         // take a snapshot of the initial list of tables
         lTablesInSourceList.Assign(FTablesPopulated);
         for i := 0 to lTablesInSourceList.Count-1 do
-          ProcessTable(lTablesInSourceList[i], '');
+          ProcessTable(lTablesInSourceList[i], '',AExcludeGroup);
       finally
         lTablesInSourceList.Free;
       end; //try
@@ -1008,27 +1011,27 @@ procedure TDatabaseOutput.GetObservations;
 begin
   // Include events or samples for any locations
   if FTablesUsed.IndexOf('LOCATION')<>-1 then begin
-    CopyJoinedRecords('Location', 'Survey_Event', 'Location_Key', 'Location_Key', True, False);
-    CopyJoinedRecords('Location', 'Sample', 'Location_Key', 'Location_Key', True, False);
+    CopyJoinedRecords('Location', 'Survey_Event', 'Location_Key', 'Location_Key','', True, False);
+    CopyJoinedRecords('Location', 'Sample', 'Location_Key', 'Location_Key','', True,False);
   end;
   // Include surveys run by or events for a name, individual or organisation
   if FTablesUsed.IndexOf('NAME')<>-1 then begin
-    CopyJoinedRecords('Name', 'Survey', 'Name_Key', 'Run_By', True, False);
-    CopyJoinedRecords('Name', 'Survey_Event_Recorder', 'Name_Key', 'Name_Key', True, False);
+    CopyJoinedRecords('Name', 'Survey', 'Name_Key', 'Run_By','', True, False);
+    CopyJoinedRecords('Name', 'Survey_Event_Recorder', 'Name_Key', 'Name_Key','', True, False);
   end;
   if FTablesUsed.IndexOf('Individual')<>-1 then begin
-    CopyJoinedRecords('Individual', 'Survey', 'Name_Key', 'Run_By', True, False);
-    CopyJoinedRecords('Individual', 'Survey_Event_Recorder', 'Name_Key', 'Name_Key', True, False);
+    CopyJoinedRecords('Individual', 'Survey', 'Name_Key', 'Run_By','', True, False);
+    CopyJoinedRecords('Individual', 'Survey_Event_Recorder', 'Name_Key', 'Name_Key','', True, False);
   end;
   // Organisations cannot be survey event recorder
   if FTablesUsed.IndexOf('Organisation')<>-1 then
-    CopyJoinedRecords('Organisation', 'Survey', 'Name_Key', 'Run_By', True, False);
+    CopyJoinedRecords('Organisation', 'Survey', 'Name_Key', 'Run_By','', True, False);
   // Use the survey event recorder field to establish the samples required
   if (FTablesUsed.IndexOf('Name')<>-1) or (FTablesUsed.IndexOf('Individual')<>-1) then begin
     CopyJoinedRecords('Survey_Event_Recorder', 'Sample_Recorder',
-        'Se_Recorder_Key', 'Se_Recorder_Key', True, False);
+        'Se_Recorder_Key', 'Se_Recorder_Key', '',True, False);
     CopyJoinedRecords('Sample_Recorder', 'Sample',
-        'Sample_Key', 'Sample_Key', True, False);
+        'Sample_Key', 'Sample_Key','', True, False);
   end;
 end;
 
@@ -1071,7 +1074,7 @@ begin
   end;
   if FTablesPopulated.IndexOf('METADATA')<>-1 then
     CopyJoinedRecords('Metadata', 'Metadata_Type', 'Metadata_Type_Key',
-          'Metadata_Type_Key', True, False);
+          'Metadata_Type_Key','', True, False);
 end;  // ProcessMetadataTable
 
 {-------------------------------------------------------------------------------
@@ -1112,7 +1115,7 @@ begin
     end;
   end;
   if FTablesPopulated.IndexOf('SOURCE_JOIN')<>-1 then
-    CopyJoinedRecords('Source_Join', 'Source', 'Source_Key', 'Source_Key', True, True);
+    CopyJoinedRecords('Source_Join', 'Source', 'Source_Key', 'Source_Key','', True, True);
 end;
 
 {-------------------------------------------------------------------------------
@@ -1181,7 +1184,7 @@ procedure TDatabaseOutput.RemoveTempSurveyDataRecurse(qry, table: string);
 var
   subQuery: string;
 begin
-  with FDatabaseModule.ExecuteSQL(Format(SQL_LINKED_TABLES, [table, '']), True) do begin
+  with FDatabaseModule.ExecuteSQL(Format(SQL_LINKED_TABLES, [table, '','']), True) do begin
     if RecordCount>0 then begin
       MoveFirst;
       while not EOF do begin
