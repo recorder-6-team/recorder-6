@@ -220,6 +220,7 @@ type
     procedure SetUsingExportFilter(const Value: Boolean);
     procedure SetExportConfidentialOccurrences(const Value: Boolean);
     procedure RemoveTempSurveyData;
+    procedure RemoveUnlinkedRelationships;
     procedure RemoveTempSurveyDataRecurse(qry, table: string);
     //Michael Weideli  Mantis 450 Mantis 451
     function GetFieldsToExport(const table: string; const AExportprivate :boolean): String;
@@ -328,6 +329,20 @@ const
   SQL_CREATE_NAMETEMP =
       'CREATE TABLE #NameTemp (Name_Key CHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS)';
   SQL_DROP_NAMETEMP = 'DROP TABLE #NameTemp';
+
+  SQL_TIDY_RELATIONSHIPS_SS =
+       'DELETE FROM #%s FROM #%s INNER JOIN %s ON  %s.%s = #%s.%s ' +
+       ' WHERE %s.SYSTEM_SUPPLIED_DATA = 0 ' +
+       ' AND NOT EXISTS(SELECT * FROM #%s WHERE #%s.%s = %s.%s)';
+
+
+
+  SQL_TIDY_RELATIONSHIPS =
+        'DELETE FROM #%s ' +
+        'WHERE NOT EXISTS(SELECT * FROM #%s WHERE #%s.%s = #%s.%s)';
+
+
+
 
   EXT_ZIP = '.zip';
   EXT_MDB = '.mdb';
@@ -705,6 +720,7 @@ begin
       InsertStartingTables;
       // Do we want observations for any locations or names in the list?
       if AWantObservations then GetObservations;
+
       ProcessSourceTempTables;
     finally
       FDatabaseModule.ExecuteSQL('DROP TABLE #ExportKeys');
@@ -717,6 +733,8 @@ begin
     ProcessSourceJoinTable;
     // Mantis 410
     RemoveTempSurveyData;
+    // Mantis 633
+    RemoveUnlinkedRelationships;
     // Mantis 343
     // If Custodian Change required then do phase 1 here by changing Custodian on the temporary table
     if AChangeCustodian then
@@ -1149,13 +1167,60 @@ procedure TDatabaseOutput.SetExportConfidentialOccurrences(
 begin
   FExportConfidentialOccurrences := Value;
 end;
+(**
+ * Tidy relationships where not all the keys needed have been exported.
+ *)
+procedure TDatabaseOutput.RemoveUnlinkedRelationships;
+var
+idataset : _Recordset;
+relatedfield : string;
+letter : char;
+begin
+   idataset  := dmDatabase.ExecuteSQL('SELECT * FROM Database_Relationship_Tables',true);
+   while not idataset.Eof do begin
+     for letter := '1' to '2' do begin
+       relatedfield := 'Related_Field_' + letter;
+       If FTablesUsed.IndexOf(idataSet.Fields['Table_Name'].Value)<>-1 then begin
+         If idataSet.Fields['Has_System_Supplied'].Value = True then
+           dmDatabase.ExecuteSQL (Format(SQL_TIDY_RELATIONSHIPS_SS,
+                                 [idataset.Fields['Table_Name'].Value,
+                                  idataset.Fields['Table_Name'].Value,
+                                  idataset.Fields['Main_Table'].Value,
+                                  idataset.Fields['Main_Table'].Value,
+                                  idataset.Fields['Main_Key_Field'].Value,
+                                  idataset.Fields['Table_Name'].Value,
+                                  idataset.Fields[relatedfield].Value,
+                                  idataset.Fields['Main_Table'].Value,
+                                  idataset.Fields['Main_Table'].Value,
+                                  idataset.Fields['Main_Table'].Value,
+                                  idataset.Fields['Main_Key_Field'].Value,
+                                  idataset.Fields['Main_Table'].Value,
+                                  idataset.Fields['Main_Key_Field'].Value
+                                 ]))
+         //1,1,4,4,5,1,3,4,4,4,5,4,5
+         else
+           dmDatabase.ExecuteSQL (Format(SQL_TIDY_RELATIONSHIPS,
+                                 [idataset.Fields['Table_Name'].Value,
+                                  idataset.Fields['Main_Table'].Value,
+                                  idataset.Fields['Main_Table'].Value,
+                                  idataset.Fields['Main_Key_Field'].Value,
+                                  idataset.Fields['Table_Name'].Value,
+                                  idataset.Fields[relatedfield].Value
+                                  ]))
+         // 1,4,4,5,1,3
+       end;
+     end;
+     idataset.MoveNext;
+   end;
+
+end;
 
 (**
  * Deletes any records from the output data that belongs to a temp survey.
  *)
 procedure TDatabaseOutput.RemoveTempSurveyData;
 var
-  
+
   keys: _Recordset;
   tempSurveyKeys: string;
   qry: string;
