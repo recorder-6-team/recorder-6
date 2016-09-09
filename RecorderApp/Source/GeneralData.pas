@@ -2332,9 +2332,9 @@ var
 begin
   with icmbOptions do begin
     Items.Clear;
+    Items.Add(ResStr_Preferred_Taxa);
     Items.Add(ResStr_Unrestricted);
     Items.Add(ResStr_Recommended_Full);
-    Items.Add(ResStr_Recommended);
     Items.Add(ResStr_PreferredLists);
     Items.Add(ResStr_CurrentChecklist);
     Items.Add(ResStr_ContentsOfRucksack);
@@ -2355,7 +2355,7 @@ begin
     // select the current option
     ItemIndex := Items.IndexOf(AppSettings.SessionTaxonomicSearchRestriction);
     if ItemIndex = -1 then
-      AppSettings.SessionTaxonomicSearchRestriction := ResStr_Unrestricted;
+      AppSettings.SessionTaxonomicSearchRestriction := ResStr_Preferred_Taxa;
   end; // with icmbOptions
 end;
 

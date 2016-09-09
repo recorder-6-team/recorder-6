@@ -34,7 +34,7 @@ uses
 type
   TAddToListCallback = procedure( iQuery : TJNCCQuery; AFinder:TFinder ) of Object;
 
-  TTaxonSearchMode = (stList, stUnrestricted,stRecommended,stRecommendedFull,stPreferredLists, stRucksack);
+  TTaxonSearchMode = (stList, stUnrestricted,stPreferredTaxa,stRecommendedFull,stPreferredLists, stRucksack);
 
   TdmSearch = class(TBaseDataModule)
     qrySource: TJNCCQuery;
@@ -397,9 +397,9 @@ begin
   if iSearchRestriction = ResStr_Unrestricted then begin
     FTaxonSearchType := stUnrestricted;
     lSQL := Format(SQL_TAXON_FROM_QUERY_ALL_LISTS, [ResStr_Taxon_Can_Not_Expand,lText, lText, lText]);
-  end else if iSearchRestriction = ResStr_Recommended then begin
-    FTaxonSearchType := stRecommended;
-    lSQL := Format(SQL_TAXON_FROM_QUERY_RECOMMENDED, [ResStr_Taxon_Can_Not_Expand,lText, lText, lText]);
+  end else if iSearchRestriction = ResStr_Preferred_Taxa then begin
+    FTaxonSearchType := stPreferredTaxa;
+    lSQL := Format(SQL_TAXON_FROM_QUERY_PREFERRED_TAXA, [ResStr_Taxon_Can_Not_Expand,lText, lText, lText]);
   end else if  iSearchRestriction = ResStr_Recommended_Full then begin
     FTaxonSearchType := stRecommendedFull;
     lSQL := Format(SQL_TAXON_FROM_QUERY_RECOMMENDED_FULL, [ResStr_Taxon_Can_Not_Expand,lText, lText, lText]);
@@ -1320,7 +1320,7 @@ begin
       // Don't order by abbreviation
       lTaxon := lTaxon + ' - [' + lAbbr + ']';
 
-  if FTaxonSearchType in [stUnrestricted, stPreferredLists,stRecommended,stRecommendedFull] then begin
+  if FTaxonSearchType in [stUnrestricted, stPreferredLists,stPreferredTaxa,stRecommendedFull] then begin
     lTaxon := lTaxon + ' - ' + lListName;
     AFinder.AddToSourceList(iQuery.FieldByName('Taxon_List_Item_Key').AsString, lTaxon,
                             [lAuthority, lListName]);
