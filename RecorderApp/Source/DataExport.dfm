@@ -45,6 +45,19 @@ object dlgDataExport: TdlgDataExport
     Height = 13
     Caption = 'Destination:'
   end
+  object lblExportConfidential: TLabel
+    Left = 168
+    Top = 240
+    Width = 190
+    Height = 13
+    Caption = 'Confidential records will not be exported '
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clBlue
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+  end
   object bbCancel: TImageListButton
     Left = 331
     Top = 286

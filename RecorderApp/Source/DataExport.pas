@@ -72,6 +72,7 @@ type
     cbNoValidation: TCheckBox;
     cbExportPrivate: TCheckBox;
     cbExportAddresses: TCheckBox;
+    lblExportConfidential: TLabel;
     procedure bbCancelClick(Sender: TObject);
     procedure bbExportToClick(Sender: TObject);
     procedure bbOkClick(Sender: TObject);
@@ -162,7 +163,8 @@ resourcestring
   ResStr_NoDataForCustodyReassignment =
       'No data was found to which you have the right to re-assign custodianship.'#13#10
       + 'Do you want to proceed anyway?';
-
+  ResStr_ExportConfidential =  'Confidential records will be exported ';
+  ResStr_NotExportConfidential = 'Confidential records will not be exported ';
 //==============================================================================
 { Constructor - stores the input key list for later use }
 constructor TdlgDataExport.Create(AOwner : TComponent; AKeyList,
@@ -607,6 +609,11 @@ begin
   cbNoValidation.Top :=  cbReassignCustody.Top ;
   cbExportPrivate.Top :=  cbReassignCustody.Top ;
   cbExportAddresses.Top :=  cbReassignCustody.Top + 25;
+  lblExportConfidential.Top :=  cbExportAddresses.Top;
+  if AppSettings.ExportConfidentialOccurrences then
+    lblExportConfidential.caption  := ResStr_ExportConfidential
+  else
+    lblExportConfidential.caption := ResStr_NotExportConfidential;
 
 end;  // SetCheckBoxPositions
 
