@@ -731,8 +731,10 @@ begin
     end;
   end;
 
-  if lDob <> '' then Result:= lDob
-     else  Result :=  ResStr_NoDOb;
+  if lDob <>  ' - ' then
+     Result:= lDob
+  else
+    Result :=  ResStr_NoDOb;
 
 end;
 //==============================================================================

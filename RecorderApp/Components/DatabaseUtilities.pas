@@ -167,10 +167,19 @@ const
 
   SQL_APPLY_NAMESERVER =
       'EXEC usp_IndexTaxonName_ApplyNameServer';
+  SQL_APPLY_SORTS =
+      'EXEC usp_IndexTaxonName_ApplySorts';
+  SQL_POPULATE_INDEX_TAXON_HIERARCHY =
+      'EXEC usp_Populate_Index_Taxon_Hierarchy';
+  SQL_APPLY_PREFERRED_TAXA =
+      'EXEC usp_Index_Taxon_Name_Apply_Preferred_Taxa';
 
 resourcestring
   ResStr_ClearingOldNameIndex = 'Clearing old name index...';
   ResStr_PopRecommendedNames = 'Populating recommended names from NameServer...';
+  ResStr_PopSorts = 'Populating lineage and sorts...';
+  ResStr_PopIndexTaxonHierarchy = 'Populating Index Taxon Hierarchy...';
+  ResStr_PopPreferredTaxa = 'Populating Preferred Taxa...';
   ResStr_AddingTaxonName = 'Adding taxon names to index...';
   ResStr_AddingTaxonUserName = 'Adding taxon user names to index...';
   ResStr_ClearingOldSynonymInd = 'Clearing old synonym index...';
@@ -334,13 +343,68 @@ end;
 procedure PopulateRecommendedNames(iGeneralQuery: TADOQuery;
   iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
 begin
-  iSetProgress(0);
   iSetStatus(ResStr_PopRecommendedNames);
   try
     with iGeneralQuery do begin
       if Active then Close;
       SQL.Clear;
       SQL.Text := SQL_APPLY_NAMESERVER;
+      ExecSQL;
+    end;
+  finally
+    iSetStatus('');
+  end; // try
+end;
+
+{-------------------------------------------------------------------------------
+  Code to populate sorts and Organism related columns in Index_Taxon_Name
+}
+procedure PopulateSorts(iGeneralQuery: TADOQuery;
+  iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
+begin
+  iSetStatus(ResStr_PopSorts);
+  try
+    with iGeneralQuery do begin
+      if Active then Close;
+      SQL.Clear;
+      SQL.Text := SQL_APPLY_SORTS;
+      ExecSQL;
+    end;
+  finally
+    iSetStatus('');
+  end; // try
+end;
+{-------------------------------------------------------------------------------
+  Code to populate Index_taxon_Hierarchy
+}
+procedure PopulateIndexTaxonHierarchy(iGeneralQuery: TADOQuery;
+  iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
+begin
+  iSetStatus(ResStr_PopIndexTaxonHierarchy);
+  try
+    with iGeneralQuery do begin
+      if Active then Close;
+      SQL.Clear;
+      SQL.Text := SQL_POPULATE_INDEX_TAXON_HIERARCHY;
+      ExecSQL;
+    end;
+  finally
+    iSetStatus('');
+  end; // try
+end;
+
+{-------------------------------------------------------------------------------
+  Code to populate Preferred_Taxa in Index_Taxon_Name
+}
+procedure PopulatePreferredTaxa(iGeneralQuery: TADOQuery;
+  iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
+begin
+  iSetStatus(ResStr_PopPreferredTaxa);
+  try
+    with iGeneralQuery do begin
+      if Active then Close;
+      SQL.Clear;
+      SQL.Text := SQL_APPLY_PREFERRED_TAXA;
       ExecSQL;
     end;
   finally
@@ -479,8 +543,15 @@ begin
               'INNER JOIN Taxon_List_Item TLIChild '+
               ' 	ON TLIChild.Parent=ITN.Taxon_List_Item_Key';
       ExecSQL;
-      iSetProgress(100);
+      iSetProgress(10);
       PopulateRecommendedNames(iGeneralQuery, iSetStatus, iSetProgress);
+      iSetProgress(30);
+      PopulateSorts(iGeneralQuery, iSetStatus, iSetProgress);
+      iSetProgress(70);
+      PopulateIndexTaxonHierarchy(iGeneralQuery, iSetStatus, iSetProgress);
+      isetProgress(90);
+      PopulatePreferredTaxa(iGeneralQuery, iSetStatus, iSetProgress);
+      isetProgress(100);
     end;
   finally
     DefaultCursor(lCursor);

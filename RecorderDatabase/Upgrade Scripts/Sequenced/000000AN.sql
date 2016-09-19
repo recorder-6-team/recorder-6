@@ -117,8 +117,6 @@ EXECUTE [dbo].[usp_Populate_Index_Taxon_Hierarchy]
 GO
 
 
-USE [NBNData]
-GO
 /****** Object:  UserDefinedFunction [dbo].[ufn_FormattedSpeciesName]    Script Date: 08/30/2016 18:47:03 ******/
 SET ANSI_NULLS ON
 GO

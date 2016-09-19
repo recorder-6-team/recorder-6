@@ -1541,7 +1541,6 @@ begin
                        ' HAVING count(*) > 1 ',
                        [istrPrefField, istrTableName, istrPrefField,
                         istrPrefField, istrTableName,istrPrefField, istrTableName, istrPrefField ]);
-    showmessage (sql.Text);
     Open;
     First;
     // store the items that will need work on

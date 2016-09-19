@@ -14,7 +14,7 @@ GO
   
 
 \*===========================================================================*/
-ALTER PROCEDURE [dbo].[usp_Users_Select_Admin]
+CREATE PROCEDURE [dbo].[usp_Users_Select_Admin]
 	@Default_User_Key varChar(16) 
 AS
 SET NOCOUNT ON
@@ -25,7 +25,8 @@ SET NOCOUNT ON
 
 SET NOCOUNT OFF
 
+GO
 
-GRANT EXECUTE ON dbo].[usp_Users_Select_Admin] to Public	
+GRANT EXECUTE ON [dbo].[usp_Users_Select_Admin] to Public	
 	  
 

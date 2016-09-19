@@ -1,14 +1,16 @@
-/****** Changes associated with searching on Preferred  ******/
+/****** Changes associated with searching on Preferred_Taxa   ******/
 
 ALTER TABLE TAXON_LIST
 ADD PRIORITY Int
 
+
 GO
 
+UPDATE TAXON_LIST SET PRIORITY = 235 WHERE TAXON_LIST_KEY = 'NHMSYS0021161643'
 UPDATE TAXON_LIST SET PRIORITY = 250 WHERE TAXON_LIST_KEY = 'BMSSYS0000000001'
 UPDATE TAXON_LIST SET PRIORITY = 8090 WHERE TAXON_LIST_KEY = 'EHSSYS0000000001'
 UPDATE TAXON_LIST SET PRIORITY = 8100 WHERE TAXON_LIST_KEY = 'EHSSYS0000000002'
-UPDATE TAXON_LIST SET PRIORITY = 0 WHERE TAXON_LIST_KEY = 'LC00000100000001'
+UPDATE TAXON_LIST SET PRIORITY = 9999 WHERE TAXON_LIST_KEY = 'LC00000100000001'
 UPDATE TAXON_LIST SET PRIORITY = 8370 WHERE TAXON_LIST_KEY = 'NBNSYS0000000001'
 UPDATE TAXON_LIST SET PRIORITY = 8380 WHERE TAXON_LIST_KEY = 'NBNSYS0000000002'
 UPDATE TAXON_LIST SET PRIORITY = 8390 WHERE TAXON_LIST_KEY = 'NBNSYS0000000003'
@@ -176,7 +178,7 @@ UPDATE TAXON_LIST SET PRIORITY = 170 WHERE TAXON_LIST_KEY = 'NHMSYS0000356016'
 UPDATE TAXON_LIST SET PRIORITY = 490 WHERE TAXON_LIST_KEY = 'NHMSYS0000356589'
 UPDATE TAXON_LIST SET PRIORITY = 245 WHERE TAXON_LIST_KEY = 'NHMSYS0000357024'
 UPDATE TAXON_LIST SET PRIORITY = 640 WHERE TAXON_LIST_KEY = 'NHMSYS0000436459'
-UPDATE TAXON_LIST SET PRIORITY = 1030 WHERE TAXON_LIST_KEY = 'NHMSYS0000495044'
+UPDATE TAXON_LIST SET PRIORITY = 670 WHERE TAXON_LIST_KEY = 'NHMSYS0000495044'
 UPDATE TAXON_LIST SET PRIORITY = 4340 WHERE TAXON_LIST_KEY = 'NHMSYS0000527393'
 UPDATE TAXON_LIST SET PRIORITY = 4350 WHERE TAXON_LIST_KEY = 'NHMSYS0000527885'
 UPDATE TAXON_LIST SET PRIORITY = 80 WHERE TAXON_LIST_KEY = 'NHMSYS0000528629'
@@ -238,7 +240,7 @@ UPDATE TAXON_LIST SET PRIORITY = 195 WHERE TAXON_LIST_KEY = 'NHMSYS0020970930'
 UPDATE TAXON_LIST SET PRIORITY = 6380 WHERE TAXON_LIST_KEY = 'NHMSYS0020974327'
 UPDATE TAXON_LIST SET PRIORITY = 650 WHERE TAXON_LIST_KEY = 'NHMSYS0021013728'
 UPDATE TAXON_LIST SET PRIORITY = 8450 WHERE TAXON_LIST_KEY = 'NHMSYS0021111265'
-UPDATE TAXON_LIST SET PRIORITY = 770 WHERE TAXON_LIST_KEY = 'NHMSYS0021120134'
+UPDATE TAXON_LIST SET PRIORITY = 660 WHERE TAXON_LIST_KEY = 'NHMSYS0021120134'
 UPDATE TAXON_LIST SET PRIORITY = 2460 WHERE TAXON_LIST_KEY = 'NHMSYS0021120971'
 UPDATE TAXON_LIST SET PRIORITY = 6390 WHERE TAXON_LIST_KEY = 'NHMSYS0021128600'
 UPDATE TAXON_LIST SET PRIORITY = 330 WHERE TAXON_LIST_KEY = 'NHMSYS0021132351'
@@ -247,7 +249,7 @@ UPDATE TAXON_LIST SET PRIORITY = 4470 WHERE TAXON_LIST_KEY = 'NHMSYS0100000001'
 GO
 
 ALTER TABLE Index_Taxon_Name 
-	ADD PREFERRED_TAXA  BIT NULL
+	ADD PREFERRED_TAXA  smallint NULL
 
 GO
 
@@ -255,7 +257,7 @@ ALTER TABLE [dbo].[INDEX_TAXON_NAME] ADD  CONSTRAINT [DF_INDEX_TAXON_NAME_PREFER
 
 GO
 
-/****** Object:  StoredProcedure [dbo].[usp_Index_Taxon_Name_Preferred_Taxa]    Script Date: 09/09/2016 12:47:40 ******/
+/****** Object:  StoredProcedure [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa]    Script Date: 09/18/2016 17:03:07 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -266,11 +268,11 @@ GO
   Description:	
 			Procedure which populates the preferred taxa column 
 
-  Created:	January 2016 Mike Weideli
+  Created:	September 2016 Mike Weideli
 
   
    ===========================================================================*/
-CREATE PROCEDURE [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa] 
+create PROCEDURE [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa] 
 
 AS
 
@@ -289,11 +291,6 @@ FROM
   INNER JOIN TAXON_LIST_VERSION TLV ON TLV.TAXON_LIST_VERSION_KEY
   = TLI.TAXON_LIST_VERSION_KEY
   INNER JOIN Taxon_List TL ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_KEY
-  GROUP BY dbo.LCRemoveSubGenusText(ITN.ACTUAL_NAME),ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY)
-  AS D
-  ON
-  D.RTLIK = ITN.Recommended_Taxon_List_Item_Key
-  AND D.MINPRIORITY = TL.Priority AND D.TAXON_NAME = dbo.LCRemoveSubGenusText(ITN.ACTUAL_NAME)
   WHERE 
      ITN.Allow_Data_Entry = 1 AND 
      TLI.Taxon_List_Version_To IS NULL 
@@ -303,7 +300,52 @@ FROM
           	(SELECT Taxon_List_Key From Taxon_List_Version
           	 WHERE Taxon_List_Version_Key = TLV.Taxon_List_Version_Key)
            AND Version_Is_Amendment = 0)
+  GROUP BY dbo.LCRemoveSubGenusText(ITN.ACTUAL_NAME),ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY)
+  AS D
+  ON
+  D.RTLIK = ITN.Recommended_Taxon_List_Item_Key
+  AND D.MINPRIORITY = TL.Priority AND D.TAXON_NAME = dbo.LCRemoveSubGenusText(ITN.ACTUAL_NAME)
+  WHERE
+  ITN.Allow_Data_Entry = 1 AND 
+     TLI.Taxon_List_Version_To IS NULL 
+     AND TLV.Version >= (SELECT MAX(Version)
+			FROM Taxon_List_Version 
+          	WHERE Taxon_List_Key = 
+          	(SELECT Taxon_List_Key From Taxon_List_Version
+          	 WHERE Taxon_List_Version_Key = TLV.Taxon_List_Version_Key)
+           AND Version_Is_Amendment = 0)
 
+UPDATE INDEX_TAXON_NAME set preferred_taxa = 2
+FROM 
+  Index_taxon_name ITN INNER JOIN Taxon_List_Item TLi ON TLI.taxon_List_Item_Key
+  = ITN.Taxon_List_Item_Key INNER JOIN TAXON_LIST_VERSION TLV ON TLV.Taxon_List_Version_Key 
+  = TLi.TAXON_LIST_VERSION_KEY INNER JOIn Taxon_List TL ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_KEY
+ INNER JOIN 
+(SELECT   dbo.LCRemoveSubGenusText(ITN.ACTUAL_NAME) AS TAXON_NAME,
+  ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY AS RTLIK,
+  Min(TL.PRIORITY) AS MINPRIORITY  
+  FROM INDEX_Taxon_name ITN
+  INNER JOIN Taxon_List_Item TLI ON TLI.TAXON_LIST_ITEM_KEY =
+  ITN.Taxon_List_Item_Key
+  INNER JOIN TAXON_LIST_VERSION TLV ON TLV.TAXON_LIST_VERSION_KEY
+  = TLI.TAXON_LIST_VERSION_KEY
+  INNER JOIN Taxon_List TL ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_KEY
+  WHERE 
+     ITN.Allow_Data_Entry = 1 AND 
+     NOT Exists (select * FROM INDEX_TAXON_NAME WHERE 
+     PREFERRED_TAXA = 1 AND INDEX_TAXON_NAME.RECOMMENDED_TAXON_LIST_ITEM_KEY =
+     ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY AND 
+     dbo.LCRemoveSubGenusText(ITN.Actual_name)
+   = dbo.LCRemoveSubGenusText(INDEX_TAXON_NAME.Actual_name)) 
+      
+  GROUP BY dbo.LCRemoveSubGenusText(ITN.ACTUAL_NAME),ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY)
+  AS D
+  ON
+  D.RTLIK = ITN.Recommended_Taxon_List_Item_Key
+  AND D.MINPRIORITY = TL.Priority AND D.TAXON_NAME = dbo.LCRemoveSubGenusText(ITN.ACTUAL_NAME)
+  WHERE
+  ITN.Allow_Data_Entry = 1 
+    
 Go
 
 GRANT EXECUTE ON [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa] TO PUBLIC
@@ -311,7 +353,97 @@ GRANT EXECUTE ON [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa] TO PUBLIC
 GO
 
 
+/****** Object:  StoredProcedure [dbo].[usp_IndexTaxonName_ApplySorts]    Script Date: 09/18/2016 21:40:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*===========================================================================*\
+  Description: Applies the sorting and other information which is related 
+        to the Organism table.
+
+  Parameters:	None
+
+  Created:	September 2016
+
+  
+
+\*=========================================================================== */
+CREATE PROCEDURE [dbo].[usp_IndexTaxonName_ApplySorts]
+AS
+
+--Now set up the recommended sort orders, which depend on the recommended names
+
+UPDATE ITN
+SET ITN.Sort_Order=
+	LEFT('000', 3 - LEN(CONVERT(VARCHAR(3), ISNULL(TG.Sort_Order,0))))
+  + CONVERT(VARCHAR(3), ISNULL(TG.Sort_Order,0)) 
+	+ LEFT('00000000', 8 - LEN(CONVERT(VARCHAR(8), ISNULL(TLI.Sort_Code,0))))
+  + CONVERT(VARCHAR(8), ISNULL(TLI.Sort_Code,0)) 
+FROM Index_Taxon_Name ITN 
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Recommended_Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key
+LEFT JOIN Taxon_Group TG ON TG.Taxon_Group_Key=TV.Output_Group_Key
+
+-- Set Can_Expand to True
+
+Update Index_Taxon_Name set Can_Expand = 1
+
+-- Poulate Can_Expand in ITN
+
+EXECUTE [dbo].[usp_Populate_Can_Expand]
+
+-- Rebuild the lineage and sort order on the Organism table
+
+EXECUTE [dbo].[spPopulateOrganismLineage]
+
+
+-- If there is anything in the Organism table and the Sort_Method not there or set to Recommended.
+
+UPDATE Index_Taxon_Name 
+  SET SORT_ORDER = ORG.SORT_ORDER
+  FROM INDEX_TAXON_NAME ITN 
+  INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
+  INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+  WHERE NOT EXISTS (SELECT * FROM SETTING WHERE [NAME]  = 'SortMethod' AND [DATA] = 'Recommended')
+
+-- If there is anything in the Organism table then set the allow data entry based on redundant flag 
+
+UPDATE Index_Taxon_Name 
+Set Allow_Data_Entry = 1  
+FROM INDEX_TAXON_NAME ITN 
+INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
+INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+WHERE ITN.Allow_Data_Entry = 0 
+
+UPDATE Index_Taxon_Name 
+Set Allow_Data_Entry = 0  
+FROM INDEX_TAXON_NAME ITN 
+INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
+INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+WHERE ORG.REDUNDANT_FLAG = 'Y' 
+
+ 
+
+GO
+
+GRANT EXECUTE ON [dbo].[usp_IndexTaxonName_ApplySorts] TO PUBLIC
+
+GO
+
+
+--Now set up the recommended sort orders, which depend on the recommended names
+
+
+
+GO
 /****** Object:  StoredProcedure [dbo].[usp_IndexTaxonName_ApplyNameServer]    Script Date: 09/09/2016 12:55:48 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_IndexTaxonName_ApplyNameServer]    Script Date: 09/18/2016 21:38:02 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -371,63 +503,55 @@ INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY=ITN.TAXON_LIST_ITEM_KE
 INNER JOIN TAXON_LIST_ITEM TLI2 on TLI2.TAXON_LIST_ITEM_KEY=TLI.PREFERRED_NAME
 WHERE ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY IS NULL
 
---Now set up the recommended sort orders, which depend on the recommended names
+--Sort orders and procedures related to the Organsim table now separate
 
-UPDATE ITN
-SET ITN.Sort_Order=
-	LEFT('000', 3 - LEN(CONVERT(VARCHAR(3), ISNULL(TG.Sort_Order,0))))
-  + CONVERT(VARCHAR(3), ISNULL(TG.Sort_Order,0)) 
-	+ LEFT('00000000', 8 - LEN(CONVERT(VARCHAR(8), ISNULL(TLI.Sort_Code,0))))
-  + CONVERT(VARCHAR(8), ISNULL(TLI.Sort_Code,0)) 
-FROM Index_Taxon_Name ITN 
-INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Recommended_Taxon_List_Item_Key
-INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key
-LEFT JOIN Taxon_Group TG ON TG.Taxon_Group_Key=TV.Output_Group_Key
+GO
 
--- Set Can_Expand to True
+/****** Object:  UserDefinedFunction [dbo].[ufn_GetTLIKeyFromSearch]    Script Date: 09/18/2016 16:59:38 ******/
+SET ANSI_NULLS ON
 
-Update Index_Taxon_Name set Can_Expand = 1
+GO
+SET QUOTED_IDENTIFIER ON
 
--- Poulate Can_Expand in ITN
+GO
 
-EXECUTE [dbo].[usp_Populate_Can_Expand]
+/*===========================================================================*\
+  Description:	Returns the appropriate
+  TLI key from a search. 
+  If the PreferredTaxa is 2 which means deprecated TLI key then returns the Recommeded
+  TLIK. IF PreferredTaxa is 1 and language la no t la then returns the Recommended TLI .
+  In all other cases returns the key as provided.         
+  
+  
+   
+  Parameters:	@TLiKey, @PreferredKey, @RecommendedKey, @Language, @PreferredTaxa
 
--- Rebuild the lineage and sort order on the Organism table
+  Created:	September 2016 - Mike Weideli 
 
-EXECUTE [dbo].[spPopulateOrganismLineage]
+  Last revision information:
+    
 
-
--- If there is anything in the Organism table and the Sort_Method not there or set to Recommended.
-
-UPDATE Index_Taxon_Name 
-  SET SORT_ORDER = ORG.SORT_ORDER
-  FROM INDEX_TAXON_NAME ITN 
-  INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
-  INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
-  WHERE NOT EXISTS (SELECT * FROM SETTING WHERE [NAME]  = 'SortMethod' AND [DATA] = 'Recommended')
-
--- If there is anything in the Organism table then set the allow data entry based on redundant flag 
-
-UPDATE Index_Taxon_Name 
-Set Allow_Data_Entry = 1  
-FROM INDEX_TAXON_NAME ITN 
-INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
-INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
-WHERE ITN.Allow_Data_Entry = 0 
-
-UPDATE Index_Taxon_Name 
-Set Allow_Data_Entry = 0  
-FROM INDEX_TAXON_NAME ITN 
-INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
-INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
-WHERE ORG.REDUNDANT_FLAG = 'Y' 
-
+\*===========================================================================*/
+CREATE FUNCTION [dbo].[ufn_GetTLIKeyFromSearch]
+ (@TLIKey char(16),
+  @PreferredKey char(16),
+  @RecommendedKey char(16),
+  @Language varchar(2),
+  @PreferredTaxa smallint)
+RETURNS char(16)
+AS
+BEGIN
+  DECLARE @NewTLIKey char(16)
+  Set @NewTLIKey = @TLIKey
+  IF @PreferredTaxa = 2 
+     Set @NewTLIKey = @RecommendedKey
+  ELSE 
+     IF @Language <> 'la' Set @NewTLIKey = @PreferredKey
  
-EXECUTE [dbo].[usp_Populate_Index_Taxon_Hierarchy]
 
-EXECUTE [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa]
+  RETURN @NewTLIKey
+END
 
+GO
 
-
-
- 
+GRANT EXECUTE ON  [dbo].[ufn_GetTLIKeyFromSearch] TO PUBLIC

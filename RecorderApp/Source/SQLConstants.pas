@@ -64,32 +64,37 @@ const
           ' AND Version_Is_Amendment = 0)';
 
       SQL_TAXON_FROM_QUERY_RECOMMENDED_FULL =
-          'SELECT DISTINCT ITN2.Taxon_List_Item_Key, ITN.Abbreviation, ' +
-          '       ITN.Authority, TL.Item_Name AS ListName, ' +
-          '       dbo.ufn_FormattedSpeciesName( ITN.Actual_Name, ' +
-          '                                     ITN.Authority,  ' +
+        'SELECT DISTINCT ' +
+        '  ITN.Taxon_List_Item_Key , ' +
+        '       ITN.Abbreviation, ' +
+        '       ITN.Authority, TL.Item_Name AS ListName, ' +
+        '       dbo.ufn_FormattedSpeciesName( ITN2.Actual_Name, ' +
+          '                                     ITN2.Authority,  ' +
           '                                     ITN.Preferred_Name_Authority, ' +
           '                                     ITN.Preferred_Name, ' +
           '                                     ITN.Actual_Name_Italic, ' +
           '                                     ITN.Preferred_Name_Italic,  ' +
-          '                                     ITN.Actual_Name_Attribute, ' +
+          '                                     ITN2.Actual_Name_Attribute, ' +
           '                                     TR.Short_Name, ' +
-          '                                     ITN2.Can_Expand, ' +
-          '''%s'') AS ItemName ' +
-          'FROM (Index_Taxon_Name ITN ' +
-          ' INNER JOIN Index_Taxon_Name ITN2 ON ITN2.Taxon_List_Item_Key = ITN.Recommended_Taxon_List_Item_Key '  +
-          ' AND ITN2.Taxon_List_Item_Key = ITN2.Recommended_Taxon_List_Item_Key ' +
-          ' AND ITN2.Preferred_Taxa =1 ' +
-          ' INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN2.Taxon_List_Version_Key) ' +
-          'INNER JOIN Taxon_List TL ON TL.Taxon_List_Key = TLV.Taxon_List_Key ' +
-          'INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key = ITN2.Taxon_List_Item_Key ' +
-          'INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key ' +
-          'WHERE (ITN.Actual_Name ' + ST_LIKE_PATTERN +
-          ' OR ITN.Abbreviation ' + ST_LIKE_PATTERN + ') ' +
-          ' AND ITN.Preferred_Taxa =1';
+          '                                     ITN.Can_Expand, ' +
+        '''%s'') AS ItemName ' +
+        ' FROM (Index_Taxon_Name ITN ' +
+        ' INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN.Taxon_List_Version_Key) ' +
+        ' INNER JOIN Taxon_List TL ON TL.Taxon_List_Key = TLV.Taxon_List_Key ' +
+        ' INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key ' +
+        ' INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key ' +
+        ' INNER JOIN Index_Taxon_name ITN2 ON ITN2.Recommended_Taxon_List_Item_Key = ' +
+        ' ITN.Taxon_List_Item_Key ' +
+        ' WHERE (ITN2.Actual_Name ' + ST_LIKE_PATTERN +
+        ' OR ITN2.Abbreviation ' + ST_LIKE_PATTERN + ') ' +
+        ' AND ITN2.Preferred_Taxa >0 ';
 
     SQL_TAXON_FROM_QUERY_PREFERRED_TAXA =
-           'SELECT DISTINCT ITN.Taxon_List_Item_Key, ITN.Abbreviation, ' +
+          'SELECT DISTINCT ' +
+          ' [dbo].[ufn_GetTLIKeyFromSearch] (ITN.Taxon_List_Item_Key, ' +
+          ' TLI.Preferred_Name, ITN.Recommended_Taxon_List_Item_Key, ' +
+          ' T.Language, ITN.Preferred_Taxa) AS Taxon_List_Item_Key, ' +
+          '       ITN.Abbreviation, ' +
           '       ITN.Authority, TL.Item_Name AS ListName, ' +
           '       dbo.ufn_FormattedSpeciesName( ITN.Actual_Name, ' +
           '                                     ITN.Authority,  ' +
@@ -101,14 +106,16 @@ const
           '                                     TR.Short_Name, ' +
           '                                     ITN.Can_Expand, ' +
           '''%s'') AS ItemName ' +
-          'FROM (Index_Taxon_Name ITN ' +
-          'INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN.Taxon_List_Version_Key) ' +
-          'INNER JOIN Taxon_List TL ON TL.Taxon_List_Key = TLV.Taxon_List_Key ' +
-          'INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key ' +
-          'INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key ' +
-          'WHERE (ITN.Actual_Name ' + ST_LIKE_PATTERN +
+          ' FROM (Index_Taxon_Name ITN ' +
+          ' INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN.Taxon_List_Version_Key) ' +
+          ' INNER JOIN Taxon_List TL ON TL.Taxon_List_Key = TLV.Taxon_List_Key ' +
+          ' INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key ' +
+          ' INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key ' +
+          ' INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key = TLI.Taxon_Version_Key ' +
+          ' INNER JOIN Taxon T ON T.Taxon_Key = TV.Taxon_Key ' +
+          ' WHERE (ITN.Actual_Name ' + ST_LIKE_PATTERN +
           ' OR ITN.Abbreviation ' + ST_LIKE_PATTERN + ') ' +
-          ' AND ITN.Preferred_Taxa =1';
+          ' AND ITN.Preferred_Taxa >0 ';
 
     SQL_TAXON_FROM_QUERY_ALL_LISTS =
           'SELECT DISTINCT ITN.Taxon_List_Item_Key, ITN.Abbreviation, ' +
