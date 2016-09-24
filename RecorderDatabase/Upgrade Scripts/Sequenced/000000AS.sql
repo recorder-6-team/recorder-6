@@ -346,6 +346,21 @@ FROM
   WHERE
   ITN.Allow_Data_Entry = 1 
     
+UPDATE INDEX_TAXON_NAME 
+SET PREFERRED_TAXA = 0 
+FROM INDEX_TAXON_NAME 
+INNER JOIN TAXON_LIST_ITEM TLI 
+ON TLI.TAXON_LIST_ITEM_KEY = INDEX_TAXON_NAME.TAXON_LIST_ITEM_KEY
+WHERE INDEX_TAXON_NAME.PREFERRED_TAXA > 0
+AND EXISTS (SELECT * FROM INDEX_TAXON_NAME ITN2 
+WHERE ITN2.PREFERRED_TAXA > 0 AND
+ITN2.TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME
+AND dbo.LCRemoveSubgenusText(ITN2.Actual_Name)
+= INDEX_TAXON_NAME.Actual_Name AND INDEX_TAXON_NAME.TAXON_LIST_ITEM_KEY <> ITN2.TAXON_LIST_ITEM_KEY)
+
+
+
+
 Go
 
 GRANT EXECUTE ON [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa] TO PUBLIC
@@ -555,3 +570,24 @@ END
 GO
 
 GRANT EXECUTE ON  [dbo].[ufn_GetTLIKeyFromSearch] TO PUBLIC
+
+GO
+
+
+\*===========================================================================*/
+
+ALTER TABLE SURVEY
+ADD MEDIA_VAGUE_DATE_START  int,
+MEDIA_VAGUE_DATE_END int,
+MEDIA_VAGUE_DATE_TYPE varchar(2)
+
+
+
+\*===========================================================================*/
+
+ALTER TABLE LOCATION
+ADD VAGUE_DATE_TO_START  int,
+VAGUE_DATE_TO_END int,
+VAGUE_DATE_TO_TYPE varchar(2)
+
+\*===========================================================================*/
