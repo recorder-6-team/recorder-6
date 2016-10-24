@@ -322,6 +322,8 @@ type
     lblDesignationList: TLabel;
     lbDesignationAvailable: TListBox;
     cmbDesignationSet: TComboBox;
+    Function  ListIsVirtual() :boolean;
+    Procedure AllTaxonFromListEnable();
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbNextClick(Sender: TObject);
     procedure bbBackClick(Sender: TObject);
@@ -551,7 +553,7 @@ type
         TStringList; AAttribute: TAttribute; ADefaultImageIndex: Integer;
         AIncludeMemos: Boolean);
     function FindTopFolder: string;
-    procedure AddMeasurementFolderNodes(ATreeView: TKeyboardRapidTree; AFlyNode: 
+    procedure AddMeasurementFolderNodes(ATreeView: TKeyboardRapidTree; AFlyNode:
         TFlyNode; ANodeName: String);
     procedure AddNamedTableToQuery(const ATableName: string; AAvailableTableList,
         ARequiredTableList: TStringList);
@@ -1793,7 +1795,7 @@ begin
         lblTaxaBioFind.Caption := ResStr_Cap_FindTaxon;
         fndTaxaBioFinder.HandleDuplicate := sfTaxon;
         fndTaxaBioFinder.PartialTaxonSearch := AppSettings.PartialTaxonSearch;
-        FdmTaxa.PopulateCheckList(True);
+        FdmTaxa.PopulateCheckList(True,False);
         // Set the taxon list selected to the currently active taxon list
         lListKey := AppSettings.TaxonListKey;
       end else begin
@@ -1810,6 +1812,7 @@ begin
         for lIdxList := 0 to cmbCategories.Items.Count-1 do
           if (TKeyData(cmbCategories.Items.Objects[lIdxList]).ItemKey = lListKey) then begin
             cmbCategories.ItemIndex := lIdxList;
+            AllTaxonFromListEnable();
             Break; // from for loop
           end;
 
@@ -2747,14 +2750,15 @@ end;  // PopulateAdminListBox
 //------------------------------------------------------------------------------
 procedure TdlgWizard.cmbCategoriesChange(Sender: TObject);
 var lstCategory: String;
+    lstListKey: string;
 begin
   inherited;
   dmSearch.Terminate;
   lbAvailable.Clear;
   fndTaxaBiofinder.ClearSourceList;
   lblActiveBioTaxa.Caption := '';
-
   lstCategory := cmbCategories.Items[cmbCategories.ItemIndex];
+  lstListKey := TKeyData(cmbCategories.Items.Objects[cmbCategories.ItemIndex]).ItemKey;
   if (lstCategory = STR_RUCKSACK_EXP) or (lstCategory = STR_RUCKSACK) then
   begin
     fndTaxaBiofinder.SearchMode := smAlways;
@@ -2774,6 +2778,7 @@ begin
     end; // if assigned
     CheckButtons(lbAvailable, lbSelected, bbAdd, bbRemove, bbAddAll, bbClearAll);
   end else begin
+    AllTaxonFromListEnable();
     fndTaxaBiofinder.SearchMode := smMinChars; // default
     fndTaxaBioFinder.Text   :=''; // must do this last so we don't trigger premature search
   end;
@@ -4960,11 +4965,22 @@ begin
       if (Text <> STR_RUCKSACK) and (Text <> STR_RUCKSACK_EXP) then
         if ItemIndex >= 0 then begin
           dmSearch.SetDatabaseName(TKeyData(Items.Objects[ItemIndex]).ItemAdditional);
-          dmSearch.InitFromTaxonQuery(fndTaxaBioFinder,
-                                       TKeyData(Items.Objects[ItemIndex]).ItemKey,
-                                       AppSettings.DisplayTaxonCommonNames, stName,
-                                       ResStr_CurrentChecklist);
-          dmSearch.SetDatabaseName('LOCAL');
+          if ListisVirtual then begin
+            dmSearch.InitFromTaxonQuery(fndTaxaBioFinder,
+            TKeyData(Items.Objects[ItemIndex]).ItemKey,
+            AppSettings.DisplayTaxonCommonNames, stName,
+            ResStr_Recommended_Full);
+            dmSearch.SetDatabaseName('LOCAL');
+          end
+          else begin
+            dmSearch.InitFromTaxonQuery(fndTaxaBioFinder,
+            TKeyData(Items.Objects[ItemIndex]).ItemKey,
+            AppSettings.DisplayTaxonCommonNames, stName,
+            ResStr_CurrentChecklist);
+            dmSearch.SetDatabaseName('LOCAL');
+          end;
+
+
         end;
     end;
   end else
@@ -6425,4 +6441,18 @@ begin
   end;;
 end;
 
+function  TdlgWizard.ListIsVirtual():boolean;
+begin
+  Result:= false;
+  if leftstr(TKeyData(cmbCategories.Items.Objects[cmbCategories.ItemIndex]).ItemKey,8) = 'VIRTUAL_' then
+    Result:= true;
+end;
+
+Procedure TdlgWizard.AllTaxonFromListEnable();
+begin
+  if ListisVirtual then
+    chkIncludeListTxBt.enabled := false
+  else
+    chkIncludeListTxBt.enabled := true;
+end;
 end.

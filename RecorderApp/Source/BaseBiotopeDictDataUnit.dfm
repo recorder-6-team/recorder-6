@@ -99,7 +99,15 @@ inherited BaseBiotopeDictData: TBaseBiotopeDictData
         '_Code, BLI.System_Supplied_Data, B.Biotope_Key, BLI.Sort_Code'
       '<#OrderBy>')
   end
-  object qryStatus: TJNCCQuery
+  inherited ppVirtualTopLevel: TPageProducer
+    Left = 268
+    Top = 144
+  end
+  inherited ppVirtualChildLevel: TPageProducer
+    Left = 272
+    Top = 212
+  end
+  object qryStatus: TJNCCQuery [10]
     CommandTimeout = 0
     Parameters = <
       item
@@ -132,7 +140,7 @@ inherited BaseBiotopeDictData: TBaseBiotopeDictData
     Left = 96
     Top = 180
   end
-  object qryFacts: TJNCCQuery
+  object qryFacts: TJNCCQuery [11]
     CommandTimeout = 0
     Parameters = <
       item
@@ -167,7 +175,7 @@ inherited BaseBiotopeDictData: TBaseBiotopeDictData
     Left = 172
     Top = 124
   end
-  object qryAssociated: TJNCCQuery
+  object qryAssociated: TJNCCQuery [12]
     CommandTimeout = 0
     Parameters = <
       item
@@ -194,7 +202,7 @@ inherited BaseBiotopeDictData: TBaseBiotopeDictData
     Left = 96
     Top = 124
   end
-  object qryMain: TJNCCQuery
+  object qryMain: TJNCCQuery [13]
     CommandTimeout = 0
     Parameters = <
       item
@@ -219,7 +227,7 @@ inherited BaseBiotopeDictData: TBaseBiotopeDictData
     Left = 20
     Top = 180
   end
-  object qryGeneral: TJNCCQuery
+  object qryGeneral: TJNCCQuery [14]
     CommandTimeout = 0
     Parameters = <
       item

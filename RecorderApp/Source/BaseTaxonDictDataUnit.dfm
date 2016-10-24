@@ -2,7 +2,6 @@ inherited BaseTaxonDictData: TBaseTaxonDictData
   Left = 295
   Top = 226
   Height = 371
-  Width = 396
   inherited qryList: TJNCCQuery
     SQL.Strings = (
       'SELECT TL.Taxon_List_Key AS KeyField,'
@@ -120,6 +119,18 @@ inherited BaseTaxonDictData: TBaseTaxonDictData
       'AND TLI.Taxon_List_Version_To IS NULL'
       '<#Filter>')
     Left = 268
+  end
+  inherited ppVirtualTopLevel: TPageProducer
+    Left = 276
+    Top = 184
+  end
+  inherited ppVirtualChildLevel: TPageProducer
+    Left = 272
+    Top = 124
+  end
+  inherited ppVirtualParent: TPageProducer
+    Left = 272
+    Top = 260
   end
   object qryMain: TJNCCQuery
     CommandTimeout = 0

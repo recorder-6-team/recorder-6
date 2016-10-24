@@ -1,9 +1,11 @@
 inherited frmTaxonDictBrowser: TfrmTaxonDictBrowser
+  ActiveControl = lvTaxonList
   Caption = 'Taxon Dictionary Browser'
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 13
   inherited pcBrowser: TPageControl
+    ActivePage = tsList
     OnChanging = pcBrowserChanging
     inherited tsTree: TTabSheet
       TabVisible = True
@@ -21,7 +23,7 @@ inherited frmTaxonDictBrowser: TfrmTaxonDictBrowser
         Left = 0
         Top = 0
         Width = 350
-        Height = 299
+        Height = 307
         Align = alClient
         Columns = <
           item

@@ -62,13 +62,10 @@ const
           '	WHERE Taxon_List_Key = (SELECT Taxon_List_Key From Taxon_List_Version' +
           ' WHERE Taxon_List_Version_Key = TLV.Taxon_List_Version_Key)' +
           ' AND Version_Is_Amendment = 0)';
-
-      SQL_TAXON_FROM_QUERY_RECOMMENDED_FULL =
-        'SELECT DISTINCT ' +
-        '  ITN.Taxon_List_Item_Key , ' +
-        '       ITN.Abbreviation, ' +
-        '       ITN.Authority, TL.Item_Name AS ListName, ' +
-        '       dbo.ufn_FormattedSpeciesName( ITN2.Actual_Name, ' +
+      SQL_TAXON_FROM_QUERY_VIRTUAL =
+          'SELECT DISTINCT ITN.Taxon_List_Item_Key, ITN.Abbreviation, ' +
+          '       ITN.Authority, '''' AS ListName, ' +
+          '       dbo.ufn_FormattedSpeciesName( ITN2.Actual_Name, ' +
           '                                     ITN2.Authority,  ' +
           '                                     ITN.Preferred_Name_Authority, ' +
           '                                     ITN.Preferred_Name, ' +
@@ -77,6 +74,31 @@ const
           '                                     ITN2.Actual_Name_Attribute, ' +
           '                                     TR.Short_Name, ' +
           '                                     ITN.Can_Expand, ' +
+          '''%s'') AS ItemName ' +
+          'FROM %s TLI INNER JOIN ' +
+          'Index_Taxon_Name ITN ON ITN.taxon_List_Item_Key ' +
+          '= TLI.Taxon_List_Item_Key  ' +
+          'INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key ' +
+          'INNER JOIN Index_Taxon_Name ITN2 ON ITN2.Recommended_Taxon_List_Item_Key = ' +
+          'ITN.Taxon_List_Item_Key ' +
+          'WHERE ITN2.Actual_Name ' + ST_LIKE_PATTERN +
+          ' OR ITN2.Common_Name ' + ST_LIKE_PATTERN  +
+          ' OR ITN2.Abbreviation ' + ST_LIKE_PATTERN ;
+
+      SQL_TAXON_FROM_QUERY_RECOMMENDED_FULL =
+        'SELECT DISTINCT ' +
+        '  ITN.Taxon_List_Item_Key , ' +
+        '       ITN.Abbreviation, ' +
+        '       ITN.Authority, TL.Item_Name AS ListName, ' +
+        '       dbo.ufn_FormattedSpeciesName( ITN2.Actual_Name, ' +
+        '                                     ITN2.Authority,  ' +
+        '                                     ITN.Preferred_Name_Authority, ' +
+        '                                     ITN.Preferred_Name, ' +
+        '                                     ITN.Actual_Name_Italic, ' +
+        '                                     ITN.Preferred_Name_Italic,  ' +
+        '                                     ITN2.Actual_Name_Attribute, ' +
+        '                                     TR.Short_Name, ' +
+        '                                     ITN.Can_Expand, ' +
         '''%s'') AS ItemName ' +
         ' FROM (Index_Taxon_Name ITN ' +
         ' INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN.Taxon_List_Version_Key) ' +

@@ -1,6 +1,101 @@
 inherited dmTaxonDictEditor: TdmTaxonDictEditor
+  Left = 479
+  Top = 185
   Height = 454
   Width = 346
+  inherited qryList: TJNCCQuery
+    SQL.Strings = (
+      'SELECT TL.Taxon_List_Key AS KeyField,'
+      '       TL.Item_Name AS DisplayField,'
+      '       TL.Local_Disk AS IsLocal'
+      'FROM Taxon_List AS TL'
+      'INNER JOIN TAXON_LIST_VERSION TLV ON'
+      'TLV.TAXON_LIST_KEY = TL.TAXON_LIST_KEY'
+      'AND LEFT(TLV.TAXON_LIST_KEY,8)  <> '#39'VIRTUAL_'#39
+      'ORDER BY TL.Item_Name;')
+  end
+  inherited ppVirtualTopLevel: TPageProducer
+    HTMLDoc.Strings = (
+      
+        '                SELECT DISTINCT ITN.Taxon_List_Item_Key AS ListK' +
+        'ey, ITN.Authority, ITN.Preferred_Name AS ItemName, '
+      
+        '  ITN.Preferred_Name_Attribute AS ItemNameAttribute, ITN.Preferr' +
+        'ed_Name_Authority AS ItemNameAuthor,'
+      
+        '  ITN.Preferred_Name_Italic AS ItemNameItalic, TV.Taxon_Key AS T' +
+        'axonKey, ITN.Preferred_Name AS DisplayField,'
+      
+        '  TLI.Taxon_Rank_Key AS RankKey, TLI.Sort_Code AS SortCode, TLI.' +
+        'Preferred_Name AS PrefNameKey,'
+      
+        '  TLI.System_Supplied_Data AS SystemSupplied, TV.Taxon_Version_K' +
+        'ey AS TaxonVersionKey,'
+      
+        '  ITN.Common_Name AS CommonName,  ITN.Common_Name_Attribute AS C' +
+        'ommonNameAttribute,'
+      
+        '  ITN.Common_Name_Italic AS CommonItalic, ITN.Has_Children AS Ha' +
+        'sChildren'
+      'FROM Taxon_List_Item TLI'
+      
+        'INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TLI' +
+        '.Taxon_List_Item_Key'
+      
+        'INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key = TLI.Taxon_' +
+        'Version_Key'
+      '<#JoinFilter>'
+      'WHERE TLI.Taxon_List_Version_Key IN ('
+      '<#ListKeys>'
+      ')'
+      'AND TLI.Taxon_List_Item_Key = TLI.Preferred_Name'
+      'AND ITN.Taxon_List_Version_Key = TLI.Taxon_List_VERSION_Key'
+      'AND ITN.Actual_Name = ITN.Preferred_Name'
+      'AND TLI.Parent IS NULL'
+      'AND TLI.Taxon_List_Version_To IS NULL'
+      '<#Filter>'
+      '<#OrderBy>')
+  end
+  inherited ppVirtualChildLevel: TPageProducer
+    HTMLDoc.Strings = (
+      
+        '               SELECT DISTINCT ITN.Taxon_List_Item_Key AS ListKe' +
+        'y, ITN.Authority, ITN.Preferred_Name AS ItemName, '
+      
+        '  ITN.Preferred_Name_Attribute AS ItemNameAttribute, ITN.Preferr' +
+        'ed_Name_Authority AS ItemNameAuthor,'
+      
+        '  ITN.Preferred_Name_Italic AS ItemNameItalic, TV.Taxon_Key AS T' +
+        'axonKey, ITN.Preferred_Name AS DisplayField,'
+      
+        '  TLI.Taxon_Rank_Key AS RankKey, TLI.Sort_Code AS SortCode, TLI.' +
+        'Preferred_Name AS PrefNameKey,'
+      
+        '  TLI.System_Supplied_Data AS SystemSupplied, TV.Taxon_Version_K' +
+        'ey AS TaxonVersionKey,'
+      
+        '  TV.Validation_Level AS ValidationLevel, ITN.Common_Name AS Com' +
+        'monName, '
+      
+        '   ITN.Common_Name_Attribute AS CommonNameAttribute, ITN.Common_' +
+        'Name_Italic AS CommonItalic,'
+      '  ITN.Has_Children AS HasChildren'
+      'FROM ((Taxon_List_Item TLI'
+      
+        'INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TLI' +
+        '.Taxon_List_Item_Key)'
+      
+        'INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key = TLI.Taxon_' +
+        'Version_Key)'
+      '<#JoinFilter>'
+      'WHERE TLI.Parent = '#39'<#ParentKey>'#39
+      'AND TLI.Taxon_List_Item_Key = TLI.Preferred_Name'
+      'AND ITN.Actual_Name = ITN.Preferred_Name'
+      'AND TLI.Taxon_List_Version_To IS NULL'
+      '<#Fi')
+    Left = 256
+    Top = 308
+  end
   inherited qryCheckLists: TJNCCQuery
     Parameters = <
       item

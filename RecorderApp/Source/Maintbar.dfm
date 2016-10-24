@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 430
-  Top = 356
+  Left = 480
+  Top = 325
   Width = 655
   Height = 501
   Anchors = []

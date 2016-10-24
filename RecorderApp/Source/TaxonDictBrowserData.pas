@@ -31,7 +31,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   BaseTaxonDictDataUnit, Db, ADODB, DatabaseAccessADO, JNCCDatasets, ComCtrls,
   RapTree, HierarchyNodes, DataClasses, DictionaryHTMLDetails, HtmlView,
-  HTTPApp, HTTPProd;
+  HTTPApp, HTTPProd, strUtils;
 
 type
   TdmTaxonDictBrowser = class(TBaseTaxonDictData)
@@ -133,11 +133,16 @@ end;
 function TdmTaxonDictBrowser.HasFilteredChildNodes: Boolean;
 var
   rs: _Recordset;
+  lTableName : string;
 begin
   Result := False;
+  if leftstr(listkeys,9) <> '''VIRTUAL_' then
+    lTableName := 'Taxon_List_Item'
+  else
+    lTableName := midStr(listkeys,2,16);
 
   rs := dmDatabase.ExecuteSQL(
-      'SELECT Taxon_List_Item_Key FROM Taxon_List_Item WHERE Parent = '''
+      'SELECT Taxon_List_Item_Key FROM ' + lTableName + ' WHERE Parent = '''
       + TNodeObject(NodeToExpand.Data).ItemKey + '''', True);
   try
     while not rs.Eof do begin

@@ -944,7 +944,6 @@ begin
     lKeys := TEditableKeyList.Create;
     lField := TReportField.Create;
     lField.Initialise(FDataFilter.FilteredFieldKey);
-
     dmDatabase.SetDatabaseLocal([lQry]);
     with lQry do begin
       SQL.Text := lField.SQLFilter(EncodeCondition(FDataFilter.Condition),

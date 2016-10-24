@@ -27,7 +27,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Db,
   JNCCDatasets, DataClasses, StdCtrls, RapTree, HierarchyNodes, ExceptionForm,
-  GeneralFunctions, BaseData, ADODB, DatabaseAccessADO, HTTPApp, HTTPProd;
+  GeneralFunctions, BaseData, ADODB, DatabaseAccessADO, HTTPApp, HTTPProd,StrUtils;
 
 type
   EBaseDictData = class(TExceptionPath);
@@ -43,9 +43,13 @@ type
     qryTopLevel: TJNCCQuery;
     qryChildLevel: TJNCCQuery;
     qryParent: TJNCCQuery;
+    qryVirtualParent: TJNCCQuery;
     qryPreferredKey: TJNCCQuery;
     ppTopLevel: TPageProducer;
     ppChildLevel: TPageProducer;
+    ppVirtualTopLevel: TPageProducer;
+    ppVirtualChildLevel: TPageProducer;
+    ppVirtualParent: TPageProducer;
     procedure ppPopulateQueryTag(Sender: TObject; Tag: TTag;
       const TagString: String; TagParams: TStrings;
       var ReplaceText: String);
@@ -54,6 +58,8 @@ type
     FTree: TRapidTree;
     FNodeToExpand: TFlyNode;
     FListKeys: string;
+    FKeyofList: string;
+    FTableKeys: string;
     FFilterKeys: string;
     FFilterClause: string;
     FSortSQL: string;
@@ -61,6 +67,7 @@ type
     function GetPrefKey(const AKey: TKeyString): string;
     function GetParentKey(const AItemKey: TKeyString): TKeyString;
     procedure SetListKeys(const Value: string);
+    procedure SetTableKeys(const Value: string);
     procedure SetFilterClause(const Value: string);
     procedure SetSortSQL(const Value: string);
   protected
@@ -72,12 +79,13 @@ type
     procedure SetDatabase(const ADBLocation: TDBLocation);
     procedure SetupChildLevel; virtual;
     property NodeToExpand: TFlyNode read FNodeToExpand;
+    function GetTopLevelParent(const AListKey: String): string;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     function FindItem(const AListItemKey: TKeyString): TKeyList;
     function GetIndexFromKey(const AKey: TKeyString): Integer;
-    procedure PopulateCheckList(const ExcludeCDLists: Boolean = false);
+    procedure PopulateCheckList(const ExcludeCDLists: Boolean = false; const ExcludeVirtualLists: Boolean = false);
     procedure PopulateChildNodes(const AParentNode: TFlyNode);
     function PopulateTopLevel(const AListKeyData: TKeyData): Boolean; virtual; abstract;
     procedure SetFilter(const AKeyList: TKeyList);
@@ -85,9 +93,12 @@ type
     property List: TComboBox read FList write FList;
     property Tree: TRapidTree read FTree write FTree;
     property ListKeys: string read FListKeys write SetListKeys;
+    property KeyofList: string read FKeyofList;
+    property TableKeys: string read FTableKeys write SetTableKeys;
     property FilterClause: string read FFilterClause write SetFilterClause;
     property FilterKeys: String read FFilterKeys;
     property SortSQL: string read FSortSQL write SetSortSQL;
+    function ListIsVirtual(const AlistKey: string): boolean;
   end;
 
 //==============================================================================
@@ -146,16 +157,20 @@ end;  // SetDatabase
 procedure TBaseDictionaryData.BuildAncestryList(const AKey: TKeyString;
   AList, ADistinctList: TStringList);
 var lParentKey: TKeyString;
+    qryCurrent: TjnccQuery;
 begin
   // Only continue if we have never seen this key before
   if ADistinctList.IndexOf(AKey)=-1 then begin
     ADistinctList.Add(AKey);
     // Move up the hierarchy of locations to the top one
-    with qryParent do begin
+    if ListisVirtual(listkeys) then begin
+       qryVirtualParent.SQL.Text := ppVirtualParent.Content;
+       qryCurrent := qryVirtualParent;
+    end else  qryCurrent := qryParent;
+    with qryCurrent do begin
       // Get the parent key for the current one
       Parameters.ParamByName('Key').Value := AKey;
       Open;
-      lParentKey := FieldByName('Parent').AsString;
       Close;
     end;
     // now checks that there isn't a self-parented node, as this would cause an infinite recursion
@@ -192,7 +207,8 @@ begin
         frmMain.ProgressBar.TaskPosition := 100 * i div Header.ItemCount;
         // Get the top parent for each item by building the ancestry list
         BuildAncestryList(Items[i].KeyField1, lKeys, lDistinctKeys);
-        if qryPreferredKey.SQL.Text <> '' then begin// have a preferred key query to run
+        if qryPreferredKey.SQL.Text <> '' then begin
+        // have a preferred key query to run
           key := GetPrefKey(Items[i].KeyField1);
           if key <> '' then lKeys.Add(key);
         end else
@@ -232,10 +248,11 @@ begin
 end;  // GetPrefKey
 
 //==============================================================================
-procedure TBaseDictionaryData.PopulateCheckList(const ExcludeCDLists: Boolean = false);
+procedure TBaseDictionaryData.PopulateCheckList(const ExcludeCDLists: Boolean = false; const ExcludeVirtualLists: Boolean = false);
 var lsList       : String;
     lNewKey      : TKeyData;
     lIsLocalField: TField;
+
 begin
   if Assigned(FList) then
     with qryList do begin
@@ -247,7 +264,6 @@ begin
         lNewKey := TKeyData.Create;
         lNewKey.ItemKey := FieldByName('KeyField').AsString; // Store list key
         { if we have a dummy field 'VersionKey' in query then obtain the latest version of the list }
-
         if Assigned(lIsLocalField) then
         begin
           if lIsLocalField.AsBoolean then
@@ -263,8 +279,13 @@ begin
         // If must exclude CD Lists, free new object and carry on, else add it to combobox
         if ExcludeCDLists and (lNewKey.ItemAdditional = 'CD') then
           lNewKey.Free
-        else
-          FList.Items.AddObject(lsList, lNewKey);
+        else  begin
+          if not ExcludeVirtualLists then
+            FList.Items.AddObject(lsList, lNewKey)
+          else
+            if not ListisVirtual(lnewKey.ItemKey) then
+              FList.Items.AddObject(lsList, lNewKey);
+          end;
         Next;
       end; //while
       Close;
@@ -324,13 +345,18 @@ end;  // PopulateChildNodes
 //------------------------------------------------------------------------------
 procedure TBaseDictionaryData.SetupChildLevel;
 begin
-  qryChildLevel.SQL.Text := ppChildLevel.Content;
+  If ListIsVirtual(ListKeys) then
+    qryChildLevel.SQL.Text := ppVirtualchildLevel.Content
+  else
+    qryChildLevel.SQL.Text := ppchildLevel.Content;
+
 end;  // SetupChildLevel
 
 //==============================================================================
 function TBaseDictionaryData.FindItem(const AListItemKey: TKeyString): TKeyList;
 var lChainKeys: TEditableKeyList;
     lParentKey: TKeyString;
+    lTopParentKey :string;
 begin
   Result := nil;
   lChainKeys := TEditableKeyList.Create;     // create new key list
@@ -340,10 +366,12 @@ begin
     // until either lParentKey = '' i.e. top level or
     // key is equal to the supplied key iItemKey
     lParentKey := AListItemKey;
+    lTopParentKey := GetTopLevelParent(ListKeys);
     repeat
       lParentKey := GetParentKey(lParentKey); // get parent of found item
-      if lParentKey <> '' then lChainKeys.AddItem(lParentKey,'');
-    until (lParentKey = '');
+      if (lParentKey = lTopParentKey) and (lTopParentKey <> '') then lparentkey := '';
+      if (lParentKey <> '')  then lChainKeys.AddItem(lParentKey,'');
+    until (lParentKey = '') ;
 
     if Assigned(lChainKeys) then
       // return the keylist
@@ -356,16 +384,24 @@ end;  // FindItem
 //==============================================================================
 // function to get item key of parent of supplied item key
 function TBaseDictionaryData.GetParentKey(const AItemKey: TKeyString): TKeyString;
+var qryCurrent: TJNCCQuery;
 begin
-  Result := '';
-  with qryParent do
+  Result:= '';
+  If  ListIsVirtual(listKeys) then begin
+    qryVirtualParent.SQL.Text := ppVirtualParent.Content;
+    qryCurrent := qryVirtualParent;
+  end else
+     qryCurrent := qryParent;
+
+  with qryCurrent do
     try
       Parameters.ParamByName('Key').Value := AItemKey;
       Open;
-      if not Eof then Result := FieldByName('Parent').AsString;
+     if not Eof then Result := FieldByName('Parent').AsString;
     finally
       Close;
     end;
+  
 end;  // GetParentKey
 
 {-------------------------------------------------------------------------------
@@ -396,7 +432,9 @@ begin
   else if TagString = 'OrderBy' then
     ReplaceText := FSortSQL
   else if TagString = 'ListKeys' then
-    ReplaceText := FListKeys;
+    ReplaceText := FListKeys
+  else if TagString = 'TableName' then
+    ReplaceText := FTableKeys;
 end;
 
 {-------------------------------------------------------------------------------
@@ -405,6 +443,13 @@ end;
 procedure TBaseDictionaryData.SetListKeys(const Value: string);
 begin
   FListKeys := Value;
+end;
+{-------------------------------------------------------------------------------
+  Accessor - key(s) that identify the current table
+}
+procedure TBaseDictionaryData.SetTableKeys(const Value: string);
+begin
+  FTableKeys := Value;
 end;
 
 {-------------------------------------------------------------------------------
@@ -442,5 +487,26 @@ function TBaseDictionaryData.GetNodeHint(const key: String): String;
 begin
   Result := '';
 end;
+//==============================================================================
 
+function TBaseDictionaryData.ListIsVirtual(const AlistKey: string): boolean;
+begin
+  if AnsiContainsStr(Alistkey,'VIRTUAL_') then
+    Result := true
+  else
+    Result := false;
+
+end;
+//==============================================================================
+{ Gets the parent key of the top level of the current structure}
+function TBaseDictionaryData.GetTopLevelParent(const AListKey :string): string;
+begin
+  Result := '';
+  if ListIsVirtual(AListKey) then begin
+    qryTopLevel.SQL.Text := ppVirtualTopLevel.Content;
+    qryTopLevel.Open;
+    if not qryTopLevel.eof then Result:= qryTopLevel.FieldByName('Parent').AsString;
+    qryTopLevel.close;
+  end;
+end;  // PopulateTopLevel
 end.

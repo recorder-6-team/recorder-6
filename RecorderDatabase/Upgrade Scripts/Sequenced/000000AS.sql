@@ -400,17 +400,21 @@ INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Recommended_Taxon_
 INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key
 LEFT JOIN Taxon_Group TG ON TG.Taxon_Group_Key=TV.Output_Group_Key
 
+
+-- Rebuild the lineage and sort order on the Organism table - do this first because can_exapnd uses the Redundant Flag
+-- which is upated in populate Organism lineage 
+
+EXECUTE [dbo].[spPopulateOrganismLineage]
+
 -- Set Can_Expand to True
 
 Update Index_Taxon_Name set Can_Expand = 1
+
 
 -- Poulate Can_Expand in ITN
 
 EXECUTE [dbo].[usp_Populate_Can_Expand]
 
--- Rebuild the lineage and sort order on the Organism table
-
-EXECUTE [dbo].[spPopulateOrganismLineage]
 
 
 -- If there is anything in the Organism table and the Sort_Method not there or set to Recommended.
@@ -574,20 +578,16 @@ GRANT EXECUTE ON  [dbo].[ufn_GetTLIKeyFromSearch] TO PUBLIC
 GO
 
 
-\*===========================================================================*/
-
 ALTER TABLE SURVEY
 ADD MEDIA_VAGUE_DATE_START  int,
 MEDIA_VAGUE_DATE_END int,
 MEDIA_VAGUE_DATE_TYPE varchar(2)
 
+GO
 
-
-\*===========================================================================*/
 
 ALTER TABLE LOCATION
 ADD VAGUE_DATE_TO_START  int,
 VAGUE_DATE_TO_END int,
 VAGUE_DATE_TO_TYPE varchar(2)
 
-\*===========================================================================*/

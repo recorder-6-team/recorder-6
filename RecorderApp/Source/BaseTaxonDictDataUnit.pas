@@ -29,7 +29,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, Db,
   BaseDictionaryDataUnit, JNCCDatasets, RapTree, DataClasses, HierarchyNodes,
-  ExceptionForm, ADODB, DatabaseAccessADO, HTTPApp, HTTPProd;
+  ExceptionForm, ADODB, DatabaseAccessADO, HTTPApp, HTTPProd, StrUtils;
 
 type
   EPropertyNotSet=class(TExceptionPath);
@@ -90,7 +90,12 @@ begin
       lListVersion     := dmGeneralData.SetListVersionKeys(false, AListKeyData.ItemKey);
       FLatestVersion   := lListVersion.LastVersion;
       ListKeys         := lListVersion.LatestVersions;
-      qryTopLevel.SQL.Text := ppTopLevel.Content;
+      TableKeys        :=  AListKeyData.ItemKey;
+      if NOT ListIsVirtual( AListKeyData.ItemKey) then
+        qryTopLevel.SQL.Text := ppTopLevel.Content
+      else
+        qryTopLevel.SQL.Text := ppVirtualTopLevel.Content;
+
       PopulateTree(qryTopLevel, nil);
     end;
   end else

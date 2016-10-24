@@ -155,7 +155,7 @@ begin
       if (Items.Count > 0) then Selected := Items.GetFirstNode;
     SetupObjects;
     SortDictionary(FSortOrder, SortNameToSortSQL(FSortOrder));
-    DictionaryData.PopulateCheckList(FExcludeCDLists);
+    DictionaryData.PopulateCheckList(FExcludeCDLists,false);
     SelectList(InitialListKey);
     SetupHelp;
   finally
@@ -604,6 +604,8 @@ function TBaseDictionary.FindDictionaryItem(
   
 begin
   Result := ADefaultKey;   // Default return value
+  if  DictionaryData.ListIsVirtual(ListKeyData.ItemKey) then
+      AppSettings.SessionTaxonomicSearchRestriction := ResStr_Recommended_Full;
   with TdlgFind.CreateDialog(Self, ASearchTitle, ASearchType) do begin
     SetSearchText(ASearchString);
     if ShowModal = mrOk then Result := ItemKey;  // Get the associated key
@@ -679,7 +681,6 @@ begin
   cmbListChange(nil);
   btnShowAll.Visible := True;
   FormResize(nil);
-
   // if only one item, ensure its parents are expanded to show it
   if AKeyList.Header.ItemCount=1 then
     LocateDictionaryItem(AKeyList.Items[0].KeyField1, '');

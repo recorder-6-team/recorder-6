@@ -1,22 +1,38 @@
 inherited BaseBiotopeDict: TBaseBiotopeDict
+  Top = 326
+  Width = 559
+  Height = 411
   Caption = 'BaseBiotopeDict'
   PixelsPerInch = 96
   TextHeight = 13
   inherited DictSplitter: TSplitter
-    Height = 329
+    Left = 356
+    Height = 336
+  end
+  inherited pnlSelection: TPanel
+    Width = 551
+    inherited cmbList: TComboBox
+      Width = 376
+    end
+    inherited btnShowAll: TButton
+      Left = 467
+    end
   end
   inherited pcBrowser: TPageControl
-    Height = 329
+    Width = 356
+    Height = 336
     inherited tsTree: TTabSheet
       inherited tvDictionary: TKeyboardRapidTree
-        Height = 317
+        Width = 346
+        Height = 324
         PopupMenu = pmHierarchy
         Data = {0400000000000000}
       end
     end
   end
   inherited pnlDetails: TPanel
-    Height = 329
+    Left = 366
+    Height = 336
   end
   inherited mnuChildMerge: TMainMenu
     Images = dmFormActions.ilMenuOn

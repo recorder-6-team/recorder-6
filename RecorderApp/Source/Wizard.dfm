@@ -17,8 +17,8 @@ inherited dlgWizard: TdlgWizard
   object pnlOuter: TPanel
     Left = 0
     Top = 0
-    Width = 416
-    Height = 353
+    Width = 424
+    Height = 364
     Align = alClient
     TabOrder = 0
     OnResize = pnlOuterResize
@@ -78,7 +78,7 @@ inherited dlgWizard: TdlgWizard
         Top = 0
         Width = 417
         Height = 320
-        ActivePage = tsSummary
+        ActivePage = tsTaxaBioSelection
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabHeight = 10
         TabOrder = 3
@@ -2167,7 +2167,7 @@ inherited dlgWizard: TdlgWizard
               Font.Height = -11
               Font.Name = 'cmbDesignation'
               Font.Style = []
-              ItemHeight = 14
+              ItemHeight = 0
               ParentFont = False
               TabOrder = 0
               OnChange = cmbDesignationSetChange
@@ -5533,7 +5533,7 @@ inherited dlgWizard: TdlgWizard
               Height = 22
               Style = csDropDownList
               Enabled = False
-              ItemHeight = 14
+              ItemHeight = 0
               TabOrder = 3
               OnChange = cmbLayoutChange
             end

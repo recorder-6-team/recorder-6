@@ -31,7 +31,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   BaseDictionaryUnit, exgrid, RapTree, ComCtrls, StdCtrls, ExtCtrls,
   BaseTaxonDictDataUnit, DataClasses, HierarchyNodes, Constants, Menus,
-  ActnList, KeyboardRapidTree;
+  ActnList, KeyboardRapidTree,strUtils;
 
 const
   DEFAULT_SORT     = 'Default';
@@ -90,6 +90,7 @@ type
     constructor Create(Owner: TComponent); override;
     procedure LocateDictionaryItem(const AItemKey: TKeyString; const AMsgText: String); override;
     procedure actFindExecute(Sender: TObject; ASearchString: String); overload;
+
   end;
 
 //==============================================================================
@@ -156,7 +157,7 @@ begin
   inherited;
   // Force the taxon search restriction to current checklist, then reset it
   lOrigTaxonSearchRestriction := AppSettings.TaxonomicSearchRestriction;
-  AppSettings.TaxonomicSearchRestriction := ResStr_CurrentChecklist;
+  AppSettings.TaxonomicSearchRestriction := ResStr_CurrentCheckList;
   try
     LocateDictionaryItem(FindDictionaryItem('', ResStr_FindTaxon, ftTaxon), 'taxon');
   finally
@@ -255,8 +256,13 @@ procedure TBaseTaxonDict.actFilterExecute(Sender: TObject);
 var lListVersion: TListVersion;
 begin
   inherited;
-  lListVersion := dmGeneralData.SetListVersionKeys(false, ListKeyData.ItemKey);
-  FilterDictionary('Taxon', ResStr_Taxa, 'AND Taxon_List_Version_Key = ''' + lListVersion.LastVersion + '''');
+  if DictionaryData.ListIsVirtual(ListKeyData.ItemKey) then begin
+    FilterDictionary('Taxon', ResStr_Taxa, 'AND Taxon_List_Version_Key = Taxon_List_Version_Key');
+  end else begin
+    lListVersion := dmGeneralData.SetListVersionKeys(false, ListKeyData.ItemKey);
+    FilterDictionary('Taxon', ResStr_Taxa, 'AND Taxon_List_Version_Key = ''' + lListVersion.LastVersion + '''');
+  end;
+
 end;  // actFilterExecute
 
 //==============================================================================
@@ -269,10 +275,17 @@ var
   lChecklist : TKeyString;
 begin
   if AItemKey <> '' then begin
-    lPreferred := dmGeneralData.GetTaxonPreferredKey( AItemKey );
-    lChecklist := dmGeneralData.GetTaxonChecklistKey( AItemKey );
+    if not DictionaryData.ListIsVirtual(ListKeyData.ItemKey) then begin
+      lPreferred := dmGeneralData.GetTaxonPreferredKey( AItemKey );
+      lChecklist := dmGeneralData.GetTaxonChecklistKey( AItemKey );
+    end else begin
+      lPreferred := AITemKey;
+      lChecklist := ListKeyData.ItemKey;
+    end;
+
     SelectList(lChecklist);
     inherited LocateDictionaryItem( lPreferred, AMsgText );
+
   end;
 end;  // LocateDictionaryItem
 

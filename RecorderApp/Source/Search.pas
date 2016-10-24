@@ -29,7 +29,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   Db, StdCtrls, VagueDate, BaseData, ComCtrls, DataClasses, Finder, Constants,
-  SpatialRefFuncs, GeneralFunctions, JNCCDatasets, SQLConstants, ADODB, DatabaseAccessADO;
+  SpatialRefFuncs, GeneralFunctions, JNCCDatasets, SQLConstants, ADODB, DatabaseAccessADO,strUtils;
 
 type
   TAddToListCallback = procedure( iQuery : TJNCCQuery; AFinder:TFinder ) of Object;
@@ -389,10 +389,12 @@ procedure TdmSearch.InitFromTaxonQuery(AFinder: TFinder; const SourceParameter: 
 var
   lText, lSQL: String;
   lRucksackName: String;
+  lCurrentListKey: String;
 begin
   lText := SetupFilterText(AFinder.Text);
   { Build filter string.  Filter on abbreviation, names, or names including user common name }
   FOrderByAbbreviation := (iSearchBy = stAbbreviation);
+  lCurrentListKey := midStr(dmGeneralData.SetListVersionKeys(false, SourceParameter).LatestVersions,2,16);
 
   if iSearchRestriction = ResStr_Unrestricted then begin
     FTaxonSearchType := stUnrestricted;
@@ -409,10 +411,15 @@ begin
     lSQL := Format(SQL_TAXON_FROM_QUERY_PREF_LISTS, [ResStr_Taxon_Can_Not_Expand,lText, lText, lText]);
   end else if iSearchRestriction = ResStr_CurrentChecklist then begin
     FTaxonSearchType := stList;
-    // use generalData to get list version key for filter
-    lSQL := Format(SQL_TAXON_FROM_QUERY_CURR_LIST,
-                   [ResStr_Taxon_Can_Not_Expand,dmGeneralData.SetListVersionKeys(false, SourceParameter).LatestVersions,
-                    lText, lText, lText,ltext]);
+    if leftstr(lCurrentListKey,8)  <> 'VIRTUAL_' then begin
+      // use generalData to get list version key for filter
+      lSQL := Format(SQL_TAXON_FROM_QUERY_CURR_LIST,
+                     [ResStr_Taxon_Can_Not_Expand,dmGeneralData.SetListVersionKeys(false, SourceParameter).LatestVersions,lText, lText, lText,ltext]);
+    end else begin
+       lSQL := Format(SQL_TAXON_FROM_QUERY_VIRTUAL,
+              [ResStr_Taxon_Can_Not_Expand,lCurrentListKey,lText, lText, lText,ltext]);
+
+     end;
   end else begin
     { Search a rucksack }
     FTaxonSearchType := stRucksack;
@@ -1273,7 +1280,7 @@ begin
             dmGeneralData.EnterListVersionKeys(SQL, lLVKeys);
           end;
           try
-            OpenSourceQuery;
+           OpenSourceQuery;
             if Assigned(iAddToListMethod) then
             while not Eof do begin
               iAddToListMethod(qrySource, AFinder);
@@ -1292,6 +1299,7 @@ begin
     DefaultCursor(lCursor);
     FTerminated:=true;
   end;
+
 end;  // InitGenericQuery
 
 //==============================================================================
