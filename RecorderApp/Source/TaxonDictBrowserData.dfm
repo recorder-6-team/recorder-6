@@ -114,14 +114,14 @@ inherited dmTaxonDictBrowser: TdmTaxonDictBrowser
       '<#Filter>'
       ''
       
-        'SELECT ITN.Taxon_List_Item_Key AS ListKey, ITN.Authority, ITN.Pr' +
-        'eferred_Name AS ItemName,'
+        'SELECT ITN.Taxon_List_Item_Key AS ListKey, ITN.Authority, ITN.Ac' +
+        'tual_Name AS ItemName,'
       
-        'ITN.Preferred_Name_Italic AS ItemNameItalic, ITN.Preferred_Name_' +
-        'Attribute as ItemNameAttribute,'
+        'ITN.Actual_Name_Italic AS ItemNameItalic, ITN.Actual_Name_Attrib' +
+        'ute as ItemNameAttribute,'
       
-        'ITN.Preferred_Name_Authority AS ItemNameAuthor, ITN.Preferred_Na' +
-        'me AS DisplayField,'
+        'ITN.Authority AS ItemNameAuthor, ITN.Actual_Name AS DisplayField' +
+        ','
       'TLI.Taxon_Rank_Key AS RankKey, TLI.Sort_Code AS SortCode,'
       
         'TLI.Preferred_Name AS PrefNameKey, TLI.System_Supplied_Data AS S' +
@@ -136,7 +136,6 @@ inherited dmTaxonDictBrowser: TdmTaxonDictBrowser
       
         'INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TLI' +
         '.Taxon_List_Item_Key'
-      'WHERE ITN.Actual_Name = ITN.Preferred_Name'
       '<#OrderBy>'
       ''
       'DROP TABLE #Temp')
@@ -159,14 +158,14 @@ inherited dmTaxonDictBrowser: TdmTaxonDictBrowser
       '<#Filter>'
       ''
       
-        'SELECT ITN.Taxon_List_Item_Key AS ListKey, ITN.Authority, ITN.Pr' +
-        'eferred_Name AS ItemName,'
+        'SELECT ITN.Taxon_List_Item_Key AS ListKey, ITN.Authority, ITN.Ac' +
+        'tual_Name AS ItemName,'
       
-        'ITN.Preferred_Name_Italic AS ItemNameItalic, ITN.Preferred_Name_' +
-        'Attribute AS ItemNameAttribute,'
+        'ITN.Actual_Name_Italic AS ItemNameItalic, ITN.Actual_Name_Attrib' +
+        'ute AS ItemNameAttribute,'
       
-        'ITN.Preferred_Name_Authority AS ItemNameAuthor, ITN.Preferred_Na' +
-        'me AS DisplayField,'
+        'ITN.Authority AS ItemNameAuthor, ITN.Actual_Name AS DisplayField' +
+        ','
       'TLI.Taxon_Rank_Key AS RankKey, TLI.Sort_Code AS SortCode,'
       
         'TLI.Preferred_Name AS PrefNameKey, TLI.System_Supplied_Data AS S' +
