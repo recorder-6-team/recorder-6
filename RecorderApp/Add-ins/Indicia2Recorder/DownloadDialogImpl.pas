@@ -38,6 +38,7 @@ type
     ePassword: TEdit;
     btnLogin: TButton;
     lblLoginInstruct: TLabel;
+    cbLimitToAccepted: TCheckBox;
     procedure btnLoginClick(Sender: TObject);
   private
     { Private declarations }
@@ -524,7 +525,7 @@ end;
 function TDownloadDialog.DoOk: WordBool;
 var
   request: TIdMultiPartFormDataStream;
-  response, signature: string;
+  response, signature, quality: string;
   records, responseObj: TlkJSONbase;
   i: integer;
 const
@@ -556,9 +557,12 @@ begin
   end
   else
   begin
+    quality := '!R';
+    if cbLimitToAccepted.Checked then
+      quality := 'V';
     signature := IntToStr(integer(cmbSurvey.Items.Objects[cmbSurvey.ItemIndex])) + '|'
         + DateToIsoStr(dtpStartDate.Date) + '|' + DateToIsoStr(dtpEndDate.Date) + '|'
-        + FSurveys[cmbIntoSurvey.ItemIndex];
+        + FSurveys[cmbIntoSurvey.ItemIndex] + '|' + quality;
     if FDoneSignatures.IndexOf(signature)>=0 then
       if MessageDlg('You just downloaded records using exactly these settings. Are you sure you want to do it again?',
           mtConfirmation, [mbYes, mbNo], 0) = mrNo then
@@ -593,6 +597,7 @@ begin
           request.AddFormField('limit', IntToStr(LIMIT));
           request.AddFormField('smpAttrs', FSmpAttrs);
           request.AddFormField('occAttrs', FOccAttrs);
+          request.AddFormField('quality', quality);
           if FDone=0 then
             // first time through, so get the grand total
             request.AddFormField('wantCount', '1')
@@ -1471,6 +1476,7 @@ end;
 procedure TDownloadDialog.SaveSettings;
 var
   reg: TRegistry;
+  quality: string;
 begin
   reg := TRegistry.Create;
   try
@@ -1484,6 +1490,10 @@ begin
     reg.WriteString('Start Date', DateToStr(dtpStartDate.Date));
     reg.WriteString('End Date', DateToStr(dtpEndDate.Date));
     reg.WriteInteger('Download Type', rgDownloadType.ItemIndex);
+    quality := '!R';
+    if cbLimitToAccepted.Checked then
+      quality := 'V';
+    reg.WriteString('Quality', quality);
   finally
     reg.Free;
   end;
@@ -1524,6 +1534,10 @@ begin
         dtpEndDate.Date := StrToDate(reg.ReadString('End Date'));
       if reg.ValueExists('Download Type') then
         rgDownloadType.ItemIndex := reg.ReadInteger('Download Type');
+      if reg.ValueExists('Quality') then
+        cbLimitToAccepted.Checked := reg.ReadString('End Date')='V'
+      else
+        cbLimitToAccepted.Checked := true;
     end;
   finally
     reg.Free;
@@ -1546,6 +1560,7 @@ begin
   rgDownloadType.Enabled := true;
   lblSurvey.Enabled := true;
   cmbSurvey.Enabled := true;
+  cbLimitToAccepted.Enabled := true;
   lblStartDate.Enabled := true;
   dtpStartDate.Enabled := true;
   lblEndDate.Enabled := true;

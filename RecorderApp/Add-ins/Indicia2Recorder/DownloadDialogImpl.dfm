@@ -17,12 +17,12 @@ object DownloadDialog: TDownloadDialog
     Left = 437
     Top = 0
     Width = 268
-    Height = 345
+    Height = 344
     Align = alClient
     TabOrder = 0
     object ProgressBar: TProgressBar
       Left = 1
-      Top = 327
+      Top = 326
       Width = 266
       Height = 17
       Align = alBottom
@@ -32,7 +32,7 @@ object DownloadDialog: TDownloadDialog
       Left = 1
       Top = 1
       Width = 266
-      Height = 326
+      Height = 325
       Align = alClient
       TabOrder = 1
     end
@@ -41,7 +41,7 @@ object DownloadDialog: TDownloadDialog
     Left = 0
     Top = 0
     Width = 437
-    Height = 345
+    Height = 344
     Align = alLeft
     AutoSize = True
     Caption = 'Panel1'
@@ -50,7 +50,7 @@ object DownloadDialog: TDownloadDialog
       Left = 1
       Top = 122
       Width = 435
-      Height = 222
+      Height = 221
       Align = alClient
       Enabled = False
       TabOrder = 0
@@ -64,7 +64,7 @@ object DownloadDialog: TDownloadDialog
       end
       object lblStartDate: TLabel
         Left = 24
-        Top = 128
+        Top = 140
         Width = 49
         Height = 13
         Caption = 'Start date:'
@@ -72,7 +72,7 @@ object DownloadDialog: TDownloadDialog
       end
       object lblEndDate: TLabel
         Left = 24
-        Top = 160
+        Top = 166
         Width = 46
         Height = 13
         Caption = 'End date:'
@@ -112,7 +112,7 @@ object DownloadDialog: TDownloadDialog
       end
       object dtpStartDate: TDateTimePicker
         Left = 144
-        Top = 124
+        Top = 136
         Width = 186
         Height = 21
         Date = 0.653296238422626600
@@ -122,7 +122,7 @@ object DownloadDialog: TDownloadDialog
       end
       object dtpEndDate: TDateTimePicker
         Left = 144
-        Top = 156
+        Top = 162
         Width = 186
         Height = 21
         Date = 41414.653376331020000000
@@ -139,6 +139,17 @@ object DownloadDialog: TDownloadDialog
         Enabled = False
         ItemHeight = 13
         TabOrder = 4
+      end
+      object cbLimitToAccepted: TCheckBox
+        Left = 145
+        Top = 115
+        Width = 152
+        Height = 17
+        Caption = 'Limit to accepted records'
+        Checked = True
+        Enabled = False
+        State = cbChecked
+        TabOrder = 5
       end
     end
     object pnlLogin: TPanel
