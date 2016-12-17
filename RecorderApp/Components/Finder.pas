@@ -188,7 +188,7 @@ implementation
 
 resourcestring
   ResStr_NoAddressPresent = ' <No address present> ';
-  ResStr_NoDOB = ' <No Dob of Dod present> ';
+  ResStr_NoDOB = ' <No Dob or Dod present> ';
 var
   lCursor: TCursor;
 

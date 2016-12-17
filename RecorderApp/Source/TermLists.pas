@@ -1099,7 +1099,7 @@ var lTermListItem: TTermListNode;
   //----------------------------------------------------------------------------
 begin
 
-  if FCurrTermList.Table = 'LICENCES'then
+  if FCurrTermList.Table = 'LICENCE'then
   begin
     ValidateValue(eLongName.Text <> '', ResStr_LongNameRequired, eLongName);
   end;

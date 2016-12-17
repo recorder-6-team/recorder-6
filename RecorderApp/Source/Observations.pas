@@ -614,7 +614,7 @@ begin
 
   // Defaults to Taxon Sci Name, unless Common Name sort was found
   if FTaxonOccField = SORT_TAXON_COMMON_NAME then lstTaxon := 'ITN.Common_Name' else
-  if FTaxonOccField = SORT_TAXON_SORT_ORDER then lstTaxon := 'ITN.Common_Name'
+  if FTaxonOccField = SORT_TAXON_SORT_ORDER then lstTaxon := 'ITN.Sort_Order'
                                              else lstTaxon := 'ITN.Preferred_Name';
 
   // Defaults to Biotope Original Code, unless Short Term sort was found

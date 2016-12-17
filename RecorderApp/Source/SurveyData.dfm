@@ -136,7 +136,7 @@ inherited dmSurvey: TdmSurvey
     Parameters = <>
     SQL.Strings = (
       'SELECT Licence_Key,  Long_Name'
-      'FROM Licences'
+      'FROM Licence'
       'ORDER BY Long_Name')
     ParseSQL = True
     Left = 40
