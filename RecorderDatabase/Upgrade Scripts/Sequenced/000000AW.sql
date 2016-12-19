@@ -1,6 +1,6 @@
 /****** Changes to allow Virtual Organism table to be used by Import Wizard  ******/
 
-/****** Object:  StoredProcedure [dbo].[usp_IWMatch_Species]    Script Date: 12/17/2016 11:02:17 ******/
+/****** Object:  StoredProcedure [dbo].[usp_IWMatch_Species]    Script Date: 12/19/2016 08:29:13 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -132,46 +132,27 @@ SET	Species_Name =
 	  -- Deal with Virtual Organism table 
 	  BEGIN 
 	    UPDATE	UpdatedSpecies
-		SET	Match_Count =  (SELECT	Count(*)
+		SET	Match_Count =  (SELECT	Count(distinct TLI.Taxon_List_Item_Key)
 		    FROM	#Species S 
 			INNER JOIN Index_Taxon_Name ITN ON dbo.LCRemoveSubGenusText(ITN.Actual_Name) = S.Species_Name
-			INNER JOIN VIRTUAL_ORGANISM TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key
+			INNER JOIN VIRTUAL_ORGANISM TLI ON TLI.Taxon_List_Item_Key=ITN.Recommended_Taxon_List_Item_Key
 			WHERE	S.Import_Value = UpdatedSpecies.Import_Value)
 		    FROM	#Species UpdatedSpecies
 		    WHERE	Match_Key IS NULL
 
-		UPDATE	UpdatedSpecies
-		    SET	Match_Count = Match_Count + (SELECT	Count(*)
-			FROM	#Species S 
-			INNER JOIN Index_Taxon_Name ITN ON dbo.LCRemoveSubGenusText(ITN.Actual_Name)  + ' ' + ITN.Authority = S.Species_Name 
-			INNER JOIN VIRTUAL_ORGANISM TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key
-			WHERE S.Import_Value = UpdatedSpecies.Import_Value)
-			FROM	#Species UpdatedSpecies
-		    WHERE	Match_Key IS NULL
-		 
+			 
 		-- Virtal Organism get values and keys for unique matches only. Broken down in two separate updates for speed.
 		UPDATE	#Species
-		    SET	Match_Key = ITN.Taxon_List_Item_Key,
-		    Match_Value = dbo.ufn_GetFormattedSpeciesName(ITN.Taxon_List_Item_Key),
+		    SET	Match_Key = ITN.Recommended_Taxon_List_Item_Key,
+		    Match_Value = dbo.ufn_GetFormattedSpeciesName(ITN.Recommended_Taxon_List_Item_Key),
 			Checklist = 'VIRTUAL_ORGANISM',
 			Checklist_Key = 'VIRTUAL_ORGANISM'
 		    FROM	Index_Taxon_Name ITN
-		    INNER JOIN	VIRTUAL_ORGANISM TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key
+		    INNER JOIN	VIRTUAL_ORGANISM TLI ON TLI.Taxon_List_Item_Key=ITN.Recommended_Taxon_List_Item_Key
 		    WHERE	Match_Count = 1
 		    AND	Match_Key IS NULL
 		    AND	Species_Name = dbo.LCRemoveSubGenusText(Actual_Name)
-		
-		UPDATE	#Species
-		    SET	Match_Key = ITN.Taxon_List_Item_Key,
-			Match_Value = dbo.ufn_GetFormattedSpeciesName(ITN.Taxon_List_Item_Key),
-			Checklist = 'VIRTUAL_ORGANISM',
-			Checklist_Key = 'VIRTUAL_ORGANISM'
-		    FROM	Index_Taxon_Name ITN
-		    INNER JOIN	VIRTUAL_ORGANISM TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key	
-		    WHERE	Match_Count = 1
-		    AND	Match_Key IS NULL
-		    AND	Species_Name = dbo.LCRemoveSubGenusText(Actual_Name) + ' ' + ITN.Authority
-		
+				
 		
 	  END ELSE
 	  BEGIN
