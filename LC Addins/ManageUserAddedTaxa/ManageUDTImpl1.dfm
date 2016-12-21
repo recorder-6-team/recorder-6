@@ -55,7 +55,7 @@ object ManageUDT: TManageUDT
     Left = 512
     Top = 264
     Width = 305
-    Height = 81
+    Height = 73
   end
   object Label5: TLabel
     Left = 520
@@ -111,7 +111,7 @@ object ManageUDT: TManageUDT
   end
   object Shape4: TShape
     Left = 512
-    Top = 360
+    Top = 352
     Width = 305
     Height = 137
   end
@@ -142,9 +142,9 @@ object ManageUDT: TManageUDT
   object Label12: TLabel
     Left = 648
     Top = 16
-    Width = 53
+    Width = 59
     Height = 13
-    Caption = 'Version 2.0'
+    Caption = 'Version 6.26'
   end
   object Label13: TLabel
     Left = 768
@@ -178,6 +178,13 @@ object ManageUDT: TManageUDT
     Width = 26
     Height = 13
     Caption = 'Rank'
+  end
+  object Label17: TLabel
+    Left = 600
+    Top = 592
+    Width = 24
+    Height = 13
+    Caption = 'TVK '
   end
   object ListBox1: TListBox
     Left = 24
@@ -315,5 +322,12 @@ object ManageUDT: TManageUDT
     Caption = 'Add'
     TabOrder = 13
     OnClick = Button10Click
+  end
+  object Edit2: TEdit
+    Left = 640
+    Top = 592
+    Width = 169
+    Height = 21
+    TabOrder = 14
   end
 end

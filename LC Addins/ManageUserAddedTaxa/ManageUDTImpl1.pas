@@ -49,6 +49,8 @@ type
     ComboBox1: TComboBox;
     Label16: TLabel;
     Button10: TButton;
+    Edit2: TEdit;
+    Label17: TLabel;
     procedure ActiveFormDestroy(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure ListBox1Click(Sender: TObject);
@@ -130,7 +132,8 @@ type
     function CheckProposedParent(): string;
     function IncrementKey(LastKey : string): string;
     Function GenerateSortOrder(NewLineage : string) : string;
-    function CheckUserId () : integer;
+    Function CheckUserId () : integer;
+    Function CheckTVK(CurrentTVK :string) : boolean;
     function AutoProcess(R6Key : string) : integer;
     function WorkOutGenus(Taxon :string) : string;
     function ConnectToR6 : string;
@@ -495,7 +498,7 @@ end;
 
 function TManageUDT.Get_Description: WideString;
 begin
-  result:='Version 6.22';
+  result:='Version 6.26';
 end;
 
 function TManageUDT.Get_ImageFileName: WideString;
@@ -1076,8 +1079,21 @@ begin
      Remainder := ansirightstr(Remainder,length(remainder)-s);
      s := pos('\',Remainder);
    end;
-   Result := ansileftstr(NewSort + '000000000000000000000000000000',30);
+   Result := ansileftstr(NewSort + '000000000000000000000000000000000000',36);
 
+end;
+function TManageUDT.CheckTVK(CurrentTvk :string) : boolean;
+var
+  IResult: _Recordset;
+  IRecorder: IRecorder2000;
+begin
+
+  IResult := FConn.Execute('Select * from Taxon_Version Where Taxon_Version_Key  = ''' + CurrentTvk + '''');
+  if IResult.EOF = false then begin
+     MessageDlg ('The TVK entered already exists', MtInformation,[mbOk],0);
+     Result := false
+  end
+  else result := true;
 end;
 
 function TManageUDT.CheckUserId : integer;
@@ -1627,11 +1643,9 @@ var
  nitem : integer;
   IRecorder :  IRECORDER2000;
 begin
-
-
  nitem := combobox1.ItemIndex;
  ConnectToR6;
- if CheckUserid = 5 then
+ if (CheckUserid = 5) and (checkTVK(edit2.Text)) then
  Begin
   if (Edit1.text = '') Or (nitem < 0)  then
      MessageDlg ('Taxon and Rank must be completed', MtInformation,[mbOk],0)
@@ -1694,14 +1708,14 @@ begin
        SQLText := 'INSERT INTO Taxon_version (Taxon_version_Key,Taxon_Key,Entered_By,Entry_Date,System_Supplied_Data,Output_Group_Key,Custodian) '+
        ' VALUES(''' + NewTVKey + ''','''  + NewTaxonKey + ''',''' + FUserId + ''',GetDate(),0,''' + FR6OutputGroupKey + ''',''' + FsiteId + ''')';
        Execute_SQL(SQlText);
-       SQLText :=  'INSERT INTO Taxon_List_Item(Taxon_List_Item_Key,Taxon_version_Key,Taxon_List_Version_Key,Preferred_Name,Parent,Taxon_rank_key,Entered_By,Entry_date,System_supplied_data,Custodian ) ' +
-       ' VALUES(''' + NewTLIKey + ''',''' + NewTVKey + ''',''LC00000100000001'',''' + NewTLiKey + ''',' + ParentKeyString + ',''' + TRankKey + ''',''' + Fuserid + ''',GetDate(),0,''' + FsiteId + ''')';
+       SQLText :=  'INSERT INTO Taxon_List_Item(Taxon_List_Item_Key,Taxon_version_Key,Taxon_List_Version_Key,Preferred_Name,Parent,Taxon_rank_key,Lst_Itm_Code, Entered_By,Entry_date,System_supplied_data,Custodian ) ' +
+       ' VALUES(''' + NewTLIKey + ''',''' + NewTVKey + ''',''LC00000100000001'',''' + NewTLiKey + ''',' + ParentKeyString + ',''' + TRankKey + ''',''' + Fuserid + ''',''' + Edit2.text + ''', GetDate(),0,''' + FsiteId + ''')';
        Execute_SQL(SQlText);
        SqLText := 'INSERT INTO INDEX_TAXON_NAME (Taxon_List_item_Key,Taxon_List_Version_Key,Actual_name,Common_Name,' +
-       ' Preferred_Name,Abbreviation,System_Supplied_Data,Preferred_List,Allow_data_entry,Actual_Name_Italic,Common_Name_Italic, Preferred_Name_Italic,' +
+       ' Preferred_Name,Abbreviation,Preferred_Taxa,System_Supplied_Data,Preferred_List,Allow_data_entry,Actual_Name_Italic,Common_Name_Italic, Preferred_Name_Italic,' +
        ' Recommended_Taxon_List_Item_Key) ' +
        'VALUES(''' + NEWTLIkey + ''',''LC00000100000001'',''' +  Edit1.text + ''',''' +  Edit1.text +  ''',''' +
-       Edit1.text + ''',''' + abbreviation + ''',1,0,1,0,0,0, '   +
+       Edit1.text + ''',''' + abbreviation + ''',1,1,0,1,0,0,0, '   +
        '''' + NewTLIKey + ''')';
        Execute_SQL(SQlText);
 
