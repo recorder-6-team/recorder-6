@@ -177,6 +177,48 @@ implementation
 uses ComObj, ComServ, Math, VagueDate, DECUtil, DECCipher, DECHash, DECFmt,
     registry;
 
+resourcestring
+  ResStr_AddinDescription = 'Download records you have access to in iRecord or a Drupal Indicia website.';
+  ResStr_AddinHint = 'Download records you have access to in iRecord.';
+  ResStr_AddinTitle = 'Indicia2Recorder';
+  ResStr_CouldNotFindTVK = 'Could not find a taxon version key for %s (%s) in the Name Server.';
+  ResStr_DeterminedByComment = 'Determined by person named %s';
+  ResStr_Done = 'Done';
+  ResStr_DownloadStarting = 'Download starting';
+  ResStr_FetchingRecords = 'Fetching some records';
+  ResStr_InvalidConfigLine = 'Invalid config setting on line %d.';
+  ResStr_InvalidData = 'Invalid data';
+  ResStr_NoConfigFile = 'There is no configuration file available to define connection settings for the remote site. ' +
+      'If you are an administrator wanting to create a connection then please answer the following questions.';
+  ResStr_NoConnectionAvailable =
+      'No connection available. Please contact an administrator who can help you set up the connection details.';
+  ResStr_ParsingRecords = 'Parsing records';
+  ResStr_ProcessedNRecords = 'Processed %d records';
+  ResStr_ProvideSharedSecret =
+      'Please provide the Shared App Secret of the website you want to download records from';
+  ResStr_ProvideSiteID =
+      'Please provide the Site ID for records created in Recorder from the website you want to download records from';
+  ResStr_ProvideUrl = 'Please provide the URL of the website you want to download records from';      
+  ResStr_ProvideWebsiteTitle = 'Please provide the title of the website you want to download records from';
+  ResStr_PleaseLogInIrecord = 'Please log in to iRecord before downloading any records.';
+  ResStr_ReceivedNRecords = 'Received %d records';
+  ResStr_RecordedByComment = 'Recorded by person named %s';
+  ResStr_RecordsICanCollate = 'Records I can collate';
+  ResStr_RecordsICanVerify = 'Records I can verify';
+  ResStr_RejectedStatusFromIndicia = 'Rejected';
+  ResStr_SameSettingsRepeat =
+      'You just downloaded records using exactly these settings. Are you sure you want to do it again?';
+  ResStr_SelectDownloadType = 'Please select a download type.';
+  ResStr_SelectSurveyToImport = 'Please select a survey to import.';
+  ResStr_SelectSurveyToImportInto = 'Please select a survey to import into.';
+  ResStr_SettingsFolderMissing = 'The Indicia2Recorder folder does not exist in My Documents or Public Documents';
+  ResStr_SensitiveLocationNameFromIndicia = 'Sensitive';
+  ResStr_SkippingSensitiveRecord = 'Skipping sensitive record %s';
+  ResStr_SpecifyEmailAddress = 'Please specify your email address registered against your %d account.';
+  ResStr_SpecifyPassword = 'Please specify the password for your %s account.';
+  ResStr_ToolsMenuName = 'Tools';
+  ResStr_VerifiedStatusFromIndicia = 'Verified';
+
 var
   ACipherClass: TDECCipherClass = TCipher_Rijndael;
   ACipherMode: TCipherMode = cmCBCx;
@@ -228,7 +270,7 @@ begin
     SetLength(Result, ALen div SizeOf(AText[1]));
     Decode(AData[1], Result[1], ALen);
     if ACheck <> CalcMAC then
-      raise Exception.Create('Invalid data');
+      raise Exception.Create(ResStr_InvalidData);
   finally
     Free;
     ProtectBinary(ASalt);
@@ -540,19 +582,19 @@ begin
   if FRunning then
     exit;
   if pnlLogin.Enabled then begin
-    ShowMessage('Please log in to iRecord before downloading any records.');
+    ShowMessage(ResStr_PleaseLogInIrecord);
     eEmail.SetFocus;
   end
   else if rgDownloadType.ItemIndex=-1 then begin
-    ShowMessage('Please select a download type.');
+    ShowMessage(ResStr_SelectDownloadType);
     rgDownloadType.SetFocus;
   end
   else if cmbSurvey.ItemIndex=-1 then begin
-    ShowMessage('Please select a survey to import .');
+    ShowMessage(ResStr_SelectSurveyToImport);
     cmbSurvey.SetFocus;
   end
   else if cmbIntoSurvey.ItemIndex=-1 then begin
-    ShowMessage('Please select a survey to import into.');
+    ShowMessage(ResStr_SelectSurveyToImportInto);
     cmbIntoSurvey.SetFocus;
   end
   else
@@ -564,11 +606,10 @@ begin
         + DateToIsoStr(dtpStartDate.Date) + '|' + DateToIsoStr(dtpEndDate.Date) + '|'
         + FSurveys[cmbIntoSurvey.ItemIndex] + '|' + quality;
     if FDoneSignatures.IndexOf(signature)>=0 then
-      if MessageDlg('You just downloaded records using exactly these settings. Are you sure you want to do it again?',
-          mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+      if MessageDlg(ResStr_SameSettingsRepeat, mtConfirmation, [mbYes, mbNo], 0) = mrNo then
         exit;
     Log('---------------------------------');
-    Log('Download starting');
+    Log(ResStr_DownloadStarting);
     Log('---------------------------------');
     // Get a short date format for iso dates returned from the Indicia reports
     GetLocaleFormatSettings(LOCALE_SYSTEM_DEFAULT, Ffsiso);
@@ -585,7 +626,7 @@ begin
     records := nil;
     try
       repeat
-        Log('Fetching some records');
+        Log(ResStr_FetchingRecords);
         request := TIdMultiPartFormDataStream.Create;
         try
           request.AddFormField('email', FEmail);
@@ -609,7 +650,7 @@ begin
         finally
           request.Free;
         end;
-        Log('Parsing records');
+        Log(ResStr_ParsingRecords);
         responseObj := TlkJSON.ParseText(response);
         if FDone=0 then begin
           for i := 0 to responseObj.Count-1 do begin
@@ -623,11 +664,11 @@ begin
         end else
           records := responseObj;
         if assigned(records) then
-          Log('Received ' + IntToStr(records.Count) + ' records');
+          Log(Format(ResStr_ReceivedNRecords, [records.Count]));
         ImportRecords(records);
         FDone := FDone + records.Count;
       until FDone>=FTotal;
-      Log('Done');
+      Log(ResStr_Done);
     finally
       FAttrs.Free;
       CleanupTempTables;
@@ -669,7 +710,7 @@ begin
           FOccAttrs := FOccAttrs + Copy(def, 9, 255);
         end
         else
-          raise EDownloadDialogConfigException.Create('Invalid config setting on line ' + IntToStr(i+1) + '.');
+          raise EDownloadDialogConfigException.Create(Format(ResStr_InvalidConfigLine, [i+1]));
       end;
     end;
   end;
@@ -693,14 +734,13 @@ var
   connectionFile, tokens: TStringList;
   encrypted, decrypted: string;
 begin
-//  Log(Encrypt('http://localhost/instant|lAdy_b1rd|BRC00000|iRecord', 'brim5tone'));
   connectionFile := TStringList.Create;
   tokens := TStringList.Create;
   if not FileExists(FSettingsFolder + 'indiciaConnection.txt') then
     if not CreateConnectionFile then begin
       pnlLogin.Enabled := false;
       pnlSelectDownload.Enabled := false;
-      ShowMessage('No connection available. Please contact an administrator who can help you set up the connection details.');
+      ShowMessage(ResStr_NoConnectionAvailable);
       // lock the dialog out
       FRunning := true;
       exit;
@@ -729,17 +769,15 @@ var
   connectionFile: TStringList;
 begin
   result := false;
-  if MessageDlg('There is no configuration file available to define connection settings for the remote site. '+
-      'If you are an administrator wanting to create a connection then please answer the following questions.',
-          mtConfirmation, [mbOk, mbCancel], 0) = mrCancel then
+  if MessageDlg(ResStr_NoConfigFile, mtConfirmation, [mbOk, mbCancel], 0) = mrCancel then
     exit;
-  if not InputQuery('Remote Site', 'Please provide the URL of the website you want to download records from', FURL) then
+  if not InputQuery('Remote Site', ResStr_ProvideUrl, FURL) then
     exit;
-  if not InputQuery('Remote Site', 'Please provide the Shared App Secret of the website you want to download records from', FAppSecret) then
+  if not InputQuery('Remote Site', ResStr_ProvideSharedSecret, FAppSecret) then
     exit;
-  if not InputQuery('Remote Site', 'Please provide the Site ID for records created in Recorder from the website you want to download records from', FRemoteSiteID) then
+  if not InputQuery('Remote Site', ResStr_ProvideSiteID, FRemoteSiteID) then
     exit;
-  if not InputQuery('Remote Site', 'Please provide the title of the website you want to download records from', FRemoteSite) then
+  if not InputQuery('Remote Site', ResStr_ProvideWebsiteTitle, FRemoteSite) then
     exit;
   connectionFile := TStringList.Create;
   try
@@ -777,9 +815,9 @@ begin
         Application.ProcessMessages;
       end
       else
-        log('Skipping sensitive record '+rec.Field['recordkey'].Value);
+        log(Format(ResStr_SkippingSensitiveRecord, [rec.Field['recordkey'].Value]));
       end;
-    Log('Processed ' + IntToStr(records.Count) + ' records');
+    Log(Format(ResStr_ProcessedNRecords, [records.Count]));
   finally
     doneSamples.Free;
     thisrec.free;
@@ -848,7 +886,7 @@ begin
   comment := thisrec.values['sample_comment'];
   if (recorder = 'NBNSYS0000000004') and (thisrec.values['recorder']<>'') then
     // since we couldn't resolve the name key, don't lose the recorder name data
-    comment := 'Recorded by person named ' + thisrec.values['recorder'] + #13#10 + comment;
+    comment := Format(ResStr_RecordedByComment, [thisrec.values['recorder']]) + #13#10 + comment;
   if existing.RecordCount=0 then begin
     // Insert new event
     FConnection.Execute('INSERT INTO survey_event (survey_event_key, vague_date_start, vague_date_end, vague_date_type, '+
@@ -980,7 +1018,7 @@ begin
   tli := FConnection.Execute('SELECT recommended_taxon_list_item_key FROM nameserver ' +
       'WHERE input_taxon_version_key=''' + thisrec.values['taxonversionkey'] + ''' AND recommended_taxon_list_item_key IS NOT NULL');
   if tli.RecordCount=0 then begin
-    Log('Could not find a taxon version key for ' + thisrec.values['taxonversionkey'] + ' (' + thisrec.values['taxon'] + ') in the Name Server.');
+    Log(Format(ResStr_CouldNotFindTVK, [thisrec.values['taxonversionkey'], thisrec.values['taxon']]));
     exit;
   end;
   vd.StartDate := StrToDate(thisrec.values['date_start'], Ffsiso);
@@ -991,18 +1029,19 @@ begin
   determiner := GetIndividual(thisrec.values['determiner_person_id'], thisrec.values['determiner']);
   if (determiner = 'NBNSYS0000000004') and (thisrec.values['determiner']<>'') then
     // since we couldn't resolve the name key, don't lose the determiner name data
-    comment := 'Determined by person named ' + thisrec.values['determiner'] + #13#10 + comment;
+    comment := Format(ResStr_DeterminedByComment, [thisrec.values['determiner']])
+        + #13#10 + comment;
   if thisrec.values['zeroabundance']='T' then
     zeroAbundance := '1'
   else
     zeroAbundance := '0';
-  if copy(thisrec.values['location_name'], 1, 9)='Sensitive' then
+  if copy(thisrec.values['location_name'], 1, 9)=ResStr_SensitiveLocationNameFromIndicia then
     confidential := '1'
   else
     confidential := '0';
-  if thisrec.values['record_status']='Verified' then
+  if thisrec.values['record_status']=ResStr_VerifiedStatusFromIndicia then
     verified := '2'
-  else if thisrec.values['record_status']='Rejected' then
+  else if thisrec.values['record_status']=ResStr_RejectedStatusFromIndicia then
     verified := '1'
   else
     verified := '0';
@@ -1328,9 +1367,9 @@ function TDownloadDialog.GetDownloadType: string;
 var caption: string;
 begin
   caption := rgDownloadType.Items[rgDownloadType.ItemIndex];
-  if caption='Records I can verify' then
+  if caption=ResStr_RecordsICanVerify then
     result := 'expert-records'
-  else if caption='Records I can collate' then
+  else if caption=ResStr_RecordsICanCollate then
     result := 'collate-records'
   else
     result := 'my-records';
@@ -1348,7 +1387,7 @@ end;
 
 function TDownloadDialog.Get_Description: WideString;
 begin
-  result := 'Download records you have access to in iRecord or a Drupal Indicia website.';
+  result := ResStr_AddinDescription;
 end;
 
 function TDownloadDialog.Get_DimmedImageFilename: WideString;
@@ -1368,7 +1407,7 @@ end;
 
 function TDownloadDialog.Get_Hint: WideString;
 begin
-  result := 'Download records you have access to in iRecord.';
+  result := ResStr_AddinHint;
 end;
 
 function TDownloadDialog.Get_ImageFileName: WideString;
@@ -1378,12 +1417,12 @@ end;
 
 function TDownloadDialog.Get_Name: WideString;
 begin
-  result := 'Indicia2Recorder';
+  result := ResStr_AddinTitle;
 end;
 
 function TDownloadDialog.Get_ParentMenu: WideString;
 begin
-  result := 'Tools';
+  result := ResStr_ToolsMenuName;
 end;
 
 function TDownloadDialog.Get_Width: Integer;
@@ -1396,7 +1435,7 @@ begin
       CreateDir(FSettingsFolder);
     end;
     if not DirectoryExists(FSettingsFolder) then
-      raise Exception.Create('The Indicia2Recorder folder does not exist in My Documents or Public Documents');
+      raise Exception.Create(ResStr_SettingsFolderMissing);
     GetConnectionToIndicia;
     LoadSettings(true);
   end;
@@ -1413,9 +1452,9 @@ var
 begin
   errorMsg := '';
   if eEmail.Text='' then
-    errorMsg := 'Please specify your email address registered against your ' + FRemoteSite + ' account.'#13#10;
+    errorMsg := Format(ResStr_SpecifyEmailAddress, [FRemoteSite]) + #13#10;
   if ePassword.Text='' then
-    errorMsg := errorMsg + 'Please specify the password for your ' + FRemoteSite + ' account.'#13#10;
+    errorMsg := errorMsg + Format(ResStr_SpecifyPassword, [FRemoteSite]) + #13#10;
   if errorMsg<>'' then begin
     ShowMessage(errorMsg);
     exit;
@@ -1603,9 +1642,9 @@ begin
 
     for i:=0 to types.count - 1 do begin
       if types.Child[i].value='expert-records' then
-        rgDownloadType.Items.Add('Records I can verify')
+        rgDownloadType.Items.Add(ResStr_RecordsICanVerify)
       else if types.Child[i].value='collate-records' then
-        rgDownloadType.Items.Add('Records I can collate');
+        rgDownloadType.Items.Add(ResStr_RecordsICanCollate);
     end;
   finally
     request.free;
