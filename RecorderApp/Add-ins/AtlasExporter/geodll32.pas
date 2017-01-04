@@ -16,6 +16,7 @@
 
 {     syntax errors in the source code, the author asks for report!      }
 {************************************************************************}
+{Änderungen/Changes 28.02.2013 getdllversion hinzugefügt  TS             }
 
 
 unit geodll32;
@@ -68,6 +69,15 @@ type tGeo_Setlanguage = function
  wLanguage: dword {1=German, 2=English}
 ) : dword; stdcall;
 var  setlanguage : tGeo_Setlanguage;
+
+{ Get Version information }
+type tGeo_Getdllversion = function
+
+(
+ pszVersion : pchar     { Version }
+) : dword; stdcall;
+var  getdllversion : tGeo_Getdllversion;
+
 
 { Unlock the GeoDLL function groups }
 type tGeo_Setunlockcode = function
@@ -252,6 +262,16 @@ begin
  L_ERROR  := 0;
 end;
 
+function V_Error
+(
+ pszVersion : pchar
+) : dword; stdcall
+begin
+ ShowMessage ('GeoDLL32 : Function getdllversion() not bound ');
+ V_ERROR  := 0;
+end;
+
+
 function F_Error
 (
  FCode : pchar;
@@ -336,6 +356,7 @@ begin
          Setuserelltarget := GetProcAddress(LHandle, 'setuserelltarget');
          Setusercoordsys1 := GetProcAddress(LHandle, 'setusercoordsys1');
          Geterrorcode     := GetProcAddress(LHandle, 'geterrorcode');
+         Getdllversion    := GetProcAddress(LHandle, 'getdllversion');
         end
 
    else begin
@@ -348,11 +369,12 @@ begin
          Setuserellsource := @ES_Error;
          Setuserelltarget := @ET_Error;
          Setusercoordsys1 := @ET_Error;
+         Getdllversion    := @V_Error;
+
          ShowMessage ('Unable to load GeoDLL32.DLL');
         end;
 end;
 
 begin
-
-
 end.
+

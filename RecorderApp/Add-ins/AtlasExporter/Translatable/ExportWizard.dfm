@@ -1,8 +1,8 @@
 object dlgExportWizard: TdlgExportWizard
-  Left = 1103
-  Top = 279
+  Left = 362
+  Top = 282
   Width = 515
-  Height = 335
+  Height = 344
   Caption = 'Atlas Exporter'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -24,8 +24,8 @@ object dlgExportWizard: TdlgExportWizard
   OldCreateOrder = False
   Position = poScreenCenter
   DesignSize = (
-    499
-    297)
+    507
+    317)
   PixelsPerInch = 96
   TextHeight = 13
   object lblExportProgress: TLabel
@@ -46,8 +46,8 @@ object dlgExportWizard: TdlgExportWizard
   object pcWizard: TPageControl
     Left = 0
     Top = 0
-    Width = 499
-    Height = 257
+    Width = 507
+    Height = 267
     ActivePage = tsOutput
     Align = alTop
     MultiLine = True
@@ -58,20 +58,20 @@ object dlgExportWizard: TdlgExportWizard
       Caption = 'Output'
       ImageIndex = 2
       DesignSize = (
-        491
-        229)
+        499
+        239)
       object Label1: TLabel
         Left = 24
-        Top = 176
+        Top = 197
         Width = 167
         Height = 13
         Caption = 'Enter the directory to output files to:'
       end
       object rgOutputMode: TRadioGroup
         Left = 24
-        Top = 16
+        Top = 10
         Width = 441
-        Height = 73
+        Height = 55
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Please select the grid output mode:'
         Items.Strings = (
@@ -82,7 +82,7 @@ object dlgExportWizard: TdlgExportWizard
       end
       object eOutputDir: TEdit
         Left = 24
-        Top = 192
+        Top = 213
         Width = 417
         Height = 21
         Anchors = [akLeft, akTop, akRight]
@@ -90,7 +90,7 @@ object dlgExportWizard: TdlgExportWizard
       end
       object btnSelectDir: TButton
         Left = 442
-        Top = 191
+        Top = 213
         Width = 21
         Height = 21
         Anchors = [akLeft, akTop, akRight]
@@ -100,9 +100,9 @@ object dlgExportWizard: TdlgExportWizard
       end
       object rgSynonymHandling: TRadioGroup
         Left = 24
-        Top = 96
+        Top = 70
         Width = 441
-        Height = 73
+        Height = 55
         Caption = 'Handling of synonyms:'
         ItemIndex = 0
         Items.Strings = (
@@ -112,12 +112,25 @@ object dlgExportWizard: TdlgExportWizard
           'Only use the preferred names in the output')
         TabOrder = 1
       end
+      object rgOutputFileFormat: TRadioGroup
+        Left = 24
+        Top = 128
+        Width = 441
+        Height = 65
+        Caption = 'Please select the output file format'
+        ItemIndex = 0
+        Items.Strings = (
+          'dBase 3 (dbf)'
+          'Comma separated text (csv)'
+          'ESRI Shape File (shp)')
+        TabOrder = 4
+      end
     end
     object tsGrid: TTabSheet
       Caption = 'Grid'
       DesignSize = (
-        491
-        229)
+        499
+        239)
       object lblOutputFinestInstruct: TLabel
         Left = 24
         Top = 24
@@ -233,8 +246,8 @@ object dlgExportWizard: TdlgExportWizard
       Caption = 'Region'
       ImageIndex = 1
       DesignSize = (
-        491
-        229)
+        499
+        239)
       object Label4: TLabel
         Left = 8
         Top = 8
@@ -260,7 +273,7 @@ object dlgExportWizard: TdlgExportWizard
   end
   object btnCancel: TButton
     Left = 232
-    Top = 264
+    Top = 278
     Width = 75
     Height = 25
     Cancel = True
@@ -271,7 +284,7 @@ object dlgExportWizard: TdlgExportWizard
   end
   object btnPrev: TButton
     Left = 331
-    Top = 264
+    Top = 278
     Width = 75
     Height = 25
     Caption = 'Previous'
@@ -280,7 +293,7 @@ object dlgExportWizard: TdlgExportWizard
   end
   object btnNext: TButton
     Left = 416
-    Top = 264
+    Top = 278
     Width = 75
     Height = 25
     Caption = 'Next'
@@ -289,7 +302,7 @@ object dlgExportWizard: TdlgExportWizard
   end
   object btnFinish: TButton
     Left = 416
-    Top = 264
+    Top = 278
     Width = 75
     Height = 25
     Caption = 'Finish'

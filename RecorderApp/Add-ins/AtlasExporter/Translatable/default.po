@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2011-06-08 12:23\n"
-"PO-Revision-Date: 2011-06-08 12:23\n"
+"POT-Creation-Date: 2012-09-21 12:48\n"
+"PO-Revision-Date: 2012-09-21 12:48\n"
 "Last-Translator: Somebody <your.email@address.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,8 +19,8 @@ msgstr ""
 #: ExportWizard.dfm:6
 #. ReportButton..btnAtlasExporter..Caption
 #: ReportButtonImpl.dfm:22
-#: ExportWizard.pas:1059
-#: ExportWizard.pas:1096
+#: ExportWizard.pas:1759
+#: ExportWizard.pas:1801
 msgid "Atlas Exporter"
 msgstr ""
 
@@ -73,122 +73,142 @@ msgid "Only use the preferred names in the "
 "output"
 msgstr ""
 
+#. dlgExportWizard..pcWizard..tsOutput..rgOutputFileFormat..Caption
+#: ExportWizard.dfm:120
+msgid "Please select the output file format"
+msgstr ""
+
+#. dlgExportWizard..pcWizard..tsOutput..rgOutputFileFormat....Items.Strings
+#: ExportWizard.dfm:123
+msgid "dBase 3 (dbf)"
+msgstr ""
+
+#. dlgExportWizard..pcWizard..tsOutput..rgOutputFileFormat....Items.Strings
+#: ExportWizard.dfm:124
+msgid "Comma separated text (csv)"
+msgstr ""
+
+#. dlgExportWizard..pcWizard..tsOutput..rgOutputFileFormat....Items.Strings
+#: ExportWizard.dfm:125
+msgid "ESRI Shape File (shp)"
+msgstr ""
+
 #. dlgExportWizard..pcWizard..tsGrid..Caption
-#: ExportWizard.dfm:117
+#: ExportWizard.dfm:130
 msgid "Grid"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsGrid..lblOutputFinestInstruct....Caption
-#: ExportWizard.dfm:128
+#: ExportWizard.dfm:141
 msgid "For non MTB data, please select the grid system and output resolution "
 "for the data."
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsGrid..lblOutputAggregatedInstruct....Caption
-#: ExportWizard.dfm:139
+#: ExportWizard.dfm:152
 msgid "Please select the default grid system and output resolution that data "
 "will be aggregated to where possible."
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsGrid..rgGridSystem..Caption
-#: ExportWizard.dfm:148
+#: ExportWizard.dfm:161
 msgid "Grid system:"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsGrid..rgGridSystem....Items.Strings
-#: ExportWizard.dfm:150
+#: ExportWizard.dfm:163
 msgid "MTB"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsGrid..rgGridSystem....Items.Strings
-#: ExportWizard.dfm:151
+#: ExportWizard.dfm:164
 msgid "MTBQ"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsGrid..rgGridSystem....Items.Strings
-#: ExportWizard.dfm:152
+#: ExportWizard.dfm:165
 msgid "MTBQQ"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsGrid..rgGridSystem....Items.Strings
-#: ExportWizard.dfm:153
+#: ExportWizard.dfm:166
 msgid "MTBQQQ"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsGrid..rgGridSystem....Items.Strings
-#: ExportWizard.dfm:154
+#: ExportWizard.dfm:167
 msgid "MTBQYX"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..Caption
-#: ExportWizard.dfm:160
+#: ExportWizard.dfm:173
 msgid "Non-compatible grids"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..gbNonCompatibleGrids..Caption
-#: ExportWizard.dfm:168
+#: ExportWizard.dfm:181
 msgid "How should non-compatible grids be handled?"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..gbNonCompatibleGrids..gbGermanGridConversions..Caption
-#: ExportWizard.dfm:175
+#: ExportWizard.dfm:188
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..gbNonCompatibleGrids..rgGermanGridConversions..Caption
-#: ExportWizard.dfm:211
+#: ExportWizard.dfm:224
 msgid "German grids"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..gbNonCompatibleGrids..gbGermanGridConversions..chkDiscardQYX..Caption
-#: ExportWizard.dfm:182
-#: ExportWizard.pas:782
+#: ExportWizard.dfm:195
+#: ExportWizard.pas:1416
 msgid "Discard MTBQYX data"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..gbNonCompatibleGrids..gbGermanGridConversions..chkDiscardQQQ..Caption
-#: ExportWizard.dfm:190
-#: ExportWizard.pas:785
+#: ExportWizard.dfm:203
+#: ExportWizard.pas:1419
 msgid "Discard MTBQQ and MTBQQQ data"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..gbNonCompatibleGrids..rgNonGermanGridConversion..Caption
-#: ExportWizard.dfm:199
+#: ExportWizard.dfm:212
 msgid "Non-German Grids"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..gbNonCompatibleGrids..rgNonGermanGridConversion....Items.Strings
-#: ExportWizard.dfm:202
+#: ExportWizard.dfm:215
 msgid "Convert non German grid system data into the target "
 "system"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..gbNonCompatibleGrids..rgNonGermanGridConversion....Items.Strings
-#: ExportWizard.dfm:203
+#: ExportWizard.dfm:216
 msgid "Discard non-German grid system data"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..rgResolveConflicts..Caption
-#: ExportWizard.dfm:220
+#: ExportWizard.dfm:233
 msgid "Conflict Resolution"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..rgResolveConflicts......Items.Strings
-#: ExportWizard.dfm:225
+#: ExportWizard.dfm:238
 msgid "Keep larger grid squares when more recent than smaller grid "
 "squares."
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsNonCompatibleGrids..rgResolveConflicts......Items.Strings
-#: ExportWizard.dfm:228
+#: ExportWizard.dfm:241
 msgid "Discard larger grid squares even when more recent than smaller grid "
 "squares."
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsRegion..Caption
-#: ExportWizard.dfm:233
+#: ExportWizard.dfm:246
 msgid "Region"
 msgstr ""
 
 #. dlgExportWizard..pcWizard..tsRegion..Label4....Caption
-#: ExportWizard.dfm:249
+#: ExportWizard.dfm:262
 msgid "By default only Observations that fall into a valid MTB notation "
 "(between upper left 0900 and lower right 8756) will be exported. You "
 "can override this by specifying MTB squares to include in the "
@@ -197,22 +217,22 @@ msgid "By default only Observations that fall into a valid MTB notation "
 msgstr ""
 
 #. dlgExportWizard..btnCancel..Caption
-#: ExportWizard.dfm:267
+#: ExportWizard.dfm:280
 msgid "Cancel"
 msgstr ""
 
 #. dlgExportWizard..btnPrev..Caption
-#: ExportWizard.dfm:277
+#: ExportWizard.dfm:290
 msgid "Previous"
 msgstr ""
 
 #. dlgExportWizard..btnNext..Caption
-#: ExportWizard.dfm:286
+#: ExportWizard.dfm:299
 msgid "Next"
 msgstr ""
 
 #. dlgExportWizard..btnFinish..Caption
-#: ExportWizard.dfm:295
+#: ExportWizard.dfm:308
 msgid "Finish"
 msgstr ""
 
@@ -222,135 +242,191 @@ msgid "ReportButton"
 msgstr ""
 
 #. also accept an XML report with a taxon_occurrence_key field
-#: ExportWizard.pas:260
+#: ExportWizard.pas:291
 msgid "The Atlas Exporter is only available for reports that include a taxon "
 "occurrence key in the data"
 msgstr ""
 
-#: ExportWizard.pas:409
+#: ExportWizard.pas:464
 msgid "Please select an output mode"
 msgstr ""
 
-#: ExportWizard.pas:411
+#: ExportWizard.pas:466
 msgid "Please select how synonyms are handled"
 msgstr ""
 
-#: ExportWizard.pas:413
+#: ExportWizard.pas:468
 msgid "Please specify a valid directory to output data "
 "into"
 msgstr ""
 
-#: ExportWizard.pas:419
+#: ExportWizard.pas:470
+msgid "Please select an output file format"
+msgstr ""
+
+#: ExportWizard.pas:476
 msgid "Please select a grid system"
 msgstr ""
 
-#: ExportWizard.pas:425
+#: ExportWizard.pas:482
 msgid "Please select how non-German grids are "
 "handled"
 msgstr ""
 
-#: ExportWizard.pas:444
+#: ExportWizard.pas:499
 msgid "Region MTB Squares are not specified in a valid "
 "format"
 msgstr ""
 
-#. ensure trailing slash on folder
-#: ExportWizard.pas:474
-msgid "The destination folder already contains exported atlas data. Are you "
-"sure you want to overwrite it?"
+#. todo: Esri Shape Format einbauen! besteht aus 3 Dateien!
+#: ExportWizard.pas:558
+msgid "Shape File already exists. Are you sure you want to overwrite "
+"it?"
 msgstr ""
 
-#: ExportWizard.pas:480
+#: ExportWizard.pas:565
+#: ExportWizard.pas:597
+#: ExportWizard.pas:615
+#. as deleted even though it is only mark deleted until dbase closes!
+#: ExportWizard.pas:623
 msgid "The existing files cannot be deleted at this point in time, either "
 "because they are already open or you don't have "
 "permission."
 msgstr ""
 
-#: ExportWizard.pas:506
+#. Wir müssen ebenfalls die zugehörige dBase Datei löschen // We also need to also delete the dBase file
+#: ExportWizard.pas:572
+msgid "The existing Shape dBase database file cannot be deleted at this "
+"point in time, either because it is already open or you don't have "
+"permission."
+msgstr ""
+
+#: ExportWizard.pas:591
+msgid "CSV File already exists. Are you sure you want to overwrite "
+"it?"
+msgstr ""
+
+#: ExportWizard.pas:608
+msgid "The destination folder already contains exported atlas data. Are you "
+"sure you want to overwrite it?"
+msgstr ""
+
+#: ExportWizard.pas:672
 msgid "Exporting data table"
 msgstr ""
 
-#: ExportWizard.pas:515
+#: ExportWizard.pas:681
 msgid "Exporting taxon table"
 msgstr ""
 
-#. Save a copy of the settings for reference
-#: ExportWizard.pas:530
+#. Data
+#: ExportWizard.pas:698
+msgid "Exporting csv data table"
+msgstr ""
+
+#. Data
+#: ExportWizard.pas:713
+msgid "Exporting Shape Data"
+msgstr ""
+
+#: ExportWizard.pas:729
 msgid "Export was cancelled"
 msgstr ""
 
-#: ExportWizard.pas:532
+#: ExportWizard.pas:731
 msgid "Export complete"
 msgstr ""
 
 #. replace , with . as we don't want European number format for lat long.
-#: ExportWizard.pas:564
+#: ExportWizard.pas:763
 #. #output is the table created by the aggregation script
-#: ExportWizard.pas:597
+#: ExportWizard.pas:810
 #. Don't export common name if the same as latin (which Recorder defaults to).
-#: ExportWizard.pas:642
+#: ExportWizard.pas:1073
 msgid "Failure on query: "
 msgstr ""
 
+#. Saves the file
+#: ExportWizard.pas:900
+#. Saves the file
+#: ExportWizard.pas:973
+#. to do: handle exception
+#: ExportWizard.pas:1036
+msgid "Failure creating file stream: "
+msgstr ""
+
 #. taxon occurrence key
-#: ExportWizard.pas:668
+#: ExportWizard.pas:1299
 msgid "Processing additional data columns"
 msgstr ""
 
-#: ExportWizard.pas:713
+#: ExportWizard.pas:1345
 msgid "Aggregating data"
 msgstr ""
 
 #. false
-#: ExportWizard.pas:732
+#: ExportWizard.pas:1365
 msgid "Error during processing of script %d"
 msgstr ""
 
 #. all data is compatible.
-#: ExportWizard.pas:781
+#: ExportWizard.pas:1415
 msgid "Convert MTBQYX data resulting in some imprecise "
 "data"
 msgstr ""
 
-#: ExportWizard.pas:784
+#: ExportWizard.pas:1418
 msgid "Convert MTBQQ and MTBQQQ data resulting in some imprecise "
 "data"
 msgstr ""
 
-#: ExportWizard.pas:800
+#: ExportWizard.pas:1434
 msgid "Processing German grid data"
 msgstr ""
 
-#: ExportWizard.pas:825
+#: ExportWizard.pas:1459
 msgid "Removing out of range data"
 msgstr ""
 
-#: ExportWizard.pas:847
+#: ExportWizard.pas:1485
 msgid "Discarding non-German grid data"
 msgstr ""
 
-#: ExportWizard.pas:867
+#: ExportWizard.pas:1521
 msgid "Converting non-German grid data"
 msgstr ""
 
 #. and notify the user
-#: ExportWizard.pas:883
+#: ExportWizard.pas:1538
 msgid "Some of the data in the output is outside the range of the selected "
 "output grid system so has been removed from the "
 "export."
 msgstr ""
 
-#: ExportWizard.pas:1011
+#: ExportWizard.pas:1711
 msgid "Processing synonyms"
 msgstr ""
 
+#: ReportButtonImpl.pas:365
+msgid "description"
+msgstr ""
+
+#: ReportButtonImpl.pas:365
+msgid "Version"
+msgstr ""
+
+#: ReportButtonImpl.pas:365
+msgid "Shape export uses Shape Viewer Objects from Ecological Software "
+"Solutions (http://www.ecostats.com)"
+msgstr ""
+
 #. Can ignore installing the scripts if already in the addins folder
-#: ReportButtonImpl.pas:415
+#: ReportButtonImpl.pas:398
 msgid "You can complete the installation by copying the %s and %s folder to "
 "%s and %s respectively."
 msgstr ""
 
-#: ReportButtonImpl.pas:442
+#: ReportButtonImpl.pas:425
 msgid "Cancelled"
 msgstr ""
 

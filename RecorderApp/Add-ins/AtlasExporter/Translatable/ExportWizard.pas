@@ -5,10 +5,20 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls, ExtCtrls, Recorder2000_TLB, ADOdb, ADOInt, ComObj,
-  ActiveX, ShlObj, FileCtrl, Registry, StrUtils, TypInfo, gnugettext, SHFolder;
+  geodll32, ActiveX, ShlObj, FileCtrl, Registry, StrUtils, TypInfo, gnugettext,
+  GISShape, DataFields, SHFolder, GISReadWrite;
 
 type
   TOccKeyMode = (kmWizard, kmXmlReport);
+
+  TCoord = record
+    x, y: Double;
+  end;
+
+  TLatLong = record
+    Lat, Long: widestring;
+  end;
+
 
   TdlgExportWizard = class(TForm)
     pcWizard: TPageControl;
@@ -39,6 +49,7 @@ type
     chkDiscardQYX: TCheckBox;
     chkDiscardQQQ: TCheckBox;
     rgResolveConflicts: TRadioGroup;
+    rgOutputFileFormat: TRadioGroup;
     procedure btnNextClick(Sender: TObject);
     procedure btnPrevClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -49,6 +60,7 @@ type
     procedure rgGridSystemClick(Sender: TObject);
     procedure btnSelectDirClick(Sender: TObject);
   private
+    FSVOGISReadWrite1: TSVOGISReadWrite;  //SVOGIS Objekt hier deklarieren?
     FoldConn: _Connection;
     FOccKeyMode: TOccKeyMode;
     FRecorder: IRecorder2000;
@@ -74,8 +86,13 @@ type
     procedure DiscardNonGermanGridData;
     procedure PrepareConversionTable;
     procedure OutputDataTableFinest(outputConn: TADOConnection);
+    procedure OutputDataTableFinestCSV(outputFileName: string);
+    procedure OutputDataTableFinestSHP(outputFileName: string);
     procedure OutputDataTableAggregated(outputConn: TADOConnection);
+    procedure OutputDataTableAggregatedCSV(outputFileName: string);
+    procedure OutputDataTableAggregatedSHP(outputFileName: string);
     procedure OutputTaxaTable(outputConn: TADOConnection);
+    procedure OutputTaxaTableCSV(outputFileName: string);
     procedure ProcessAggregationValues;
     procedure DiscardOutOfRangeGridData;
     procedure ConvertOrDiscardGermanData;
@@ -87,6 +104,14 @@ type
     procedure SaveSettings(const overrideFilePath: string='');
     function CleanupRegions(text: string): string;
     procedure ValidateAllPages;
+    function ConvertQQQToLatLongCenter(const mtbQqq: string) : TCoord;
+    function ConvertQYXToLatLongCenter(const mtbQyx: string) : TCoord;
+    function ConvertToWGS(const koord: string): TLatLong;
+    function DHDNtoWGS84(const iLat, iLong: Double): TLatLong;
+    procedure PrepareGridCenterTable;
+    procedure AddFieldToShapeList(AShapeList: TSVOShapeList;      
+    const AFieldName: string; 
+    const AColumnType: TColumnTypes; ASize: Word=0);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -95,7 +120,7 @@ type
 implementation
 
 uses
-  XmlSystemsImpl;
+  XmlSystemsImpl, DynamicArrayUnit;
 
 const
   SQL_CLEANUP_TEMP = 'IF OBJECT_ID(''TempDB..#%s'') IS NOT NULL DROP TABLE #%s';
@@ -182,7 +207,7 @@ const
   SQL_CREATE_DATA_OUTPUT_TABLE_FINEST = 'CREATE TABLE data ('+
       'TLI_KEY CHAR(16), '+
       'MTBQ VARCHAR(7), '+
-      'OUTPUTSYS VARCHAR(4), '+      
+      'OUTPUTSYS VARCHAR(4), '+
       'STATUS VARCHAR(1), '+
       'RAST_UN VARCHAR(1), '+
       'FE_U VARCHAR(1), '+
@@ -196,15 +221,17 @@ const
   SQL_CREATE_DATA_OUTPUT_TABLE_AGGREGATED = 'CREATE TABLE data ('+
       'TLI_KEY CHAR(16), '+
       'MTBQ VARCHAR(7), '+
-      'OUTPUTSYS VARCHAR(4), '+      
+      'OUTPUTSYS VARCHAR(4), '+
       'STATUS VARCHAR(1), '+
-      'RAST_UN VARCHAR(1))';
+      'RAST_UN VARCHAR(1), '+
+      'CENTER_X VARCHAR(16), '+
+      'CENTER_Y VARCHAR(16))';
 
   SQL_CREATE_TAXA_OUTPUT_TABLE = 'CREATE TABLE taxa ('+
       'TLI_KEY CHAR(16), '+
       'TAXNAME VARCHAR(200), '+
       'TAXNAMED VARCHAR(200), '+
-      'AUTOR VARCHAR(40))';
+      'AUTOR VARCHAR(100))';
 
   SQL_DISCARD_INCOMPATIBLE_GERMAN_DATA = 'DELETE FROM #interim '+
       'WHERE SPATREFSYS=''%s'' AND LEN(SPATREF)>5';
@@ -235,9 +262,10 @@ begin
   inherited;
   FOldConn := nil;
   TranslateComponent(self, 'atlasexporter');
-  TextDomain('atlasexporter');  
+  TextDomain('atlasexporter');
   LoadSettings;
   FClosing := false;
+  FSVOGISReadWrite1 := TSVOGISReadWrite.Create(Self);  //SVOGIS ReadWirte Objekt zuordnen
   FMessages := TStringList.Create;
   FMessages.Sorted := true;
   FMessages.Duplicates := dupIgnore;
@@ -282,6 +310,8 @@ begin
   if FileExists(path + '\settings.ini') then begin
     settings := TStringList.Create;
     settings.LoadFromFile(path + '\settings.ini');
+    if settings.IndexOfName('rgOutputFileFormat')<>-1 then
+      rgOutputFileFormat.ItemIndex := StrToInt(settings.Values['rgOutputFileFormat']);
     if settings.IndexOfName('rgOutputMode')<>-1 then
       rgOutputMode.ItemIndex := StrToInt(settings.Values['rgOutputMode']);
     if settings.IndexOfName('rgSynonymHandling')<>-1 then
@@ -320,6 +350,7 @@ var
 begin
   settings := TStringList.Create;
   settings.Add('rgOutputMode=' + IntToStr(rgOutputMode.ItemIndex));
+  settings.Add('rgOutputFileFormat=' + IntToStr(rgOutputFileFormat.ItemIndex));
   settings.Add('rgSynonymHandling=' + IntToStr(rgSynonymHandling.ItemIndex));
   settings.Add('eOutputDir=' + eOutputDir.Text);
   settings.Add('rgGridSystem=' + IntToStr(rgGridSystem.ItemIndex));
@@ -437,6 +468,8 @@ begin
     raise EValidation.Create(_('Please select how synonyms are handled'));
   if (not DirectoryExists(eOutputDir.Text)) then
     raise EValidation.Create(_('Please specify a valid directory to output data into'));
+  if rgOutputFileFormat.ItemIndex = -1 then
+    raise EValidation.Create(_('Please select an output file format'));
 end;
 
 procedure TdlgExportWizard.ValidateGrid;
@@ -487,32 +520,116 @@ procedure TdlgExportWizard.btnFinishClick(Sender: TObject);
 var
   affected: integer;
   outputFolder: string;
+  outputFileName: string;
+  outputFileExtention: string;
   outputConn: TADOConnection;
+  saveDialog: TSaveDialog;
 begin
   ValidateAllPages;
   outputFolder := eOutputDir.Text;
+
+  if rgOutputFileFormat.ItemIndex=0 then
+    outputFileExtention := 'DBF'
+  else if rgOutputFileFormat.ItemIndex=1 then
+    outputFileExtention := 'csv'
+  else
+    outputFileExtention := 'shp';
+
   // ensure trailing slash on folder
   if Copy(outputFolder, Length(outputFolder), 1) <> '\' then
     outputFolder := outputFolder + '\';
-  if FileExists(outputFolder + 'DATA.DBF') or FileExists(outputFolder + 'TAXA.DBF') then begin
-    if MessageDlg(_('The destination folder already contains exported atlas data. Are you sure you want to overwrite it?'),
-        mtConfirmation, mbOKCancel, 0)=mrCancel then begin
-      Abort;
+
+  //save dialog used for shape files
+  try
+    saveDialog := TSaveDialog.Create(self);
+    saveDialog.Title := 'Daten speichern';
+    saveDialog.InitialDir := outputFolder;
+    saveDialog.FilterIndex := 1;
+
+    // todo: Esri Shape Format einbauen! besteht aus 3 Dateien!
+    if outputFileExtention = 'shp' then begin
+      saveDialog.Filter := 'Esri shp file|*.shp';
+      saveDialog.DefaultExt := 'shp';
+      saveDialog.FilterIndex := 1;
+      saveDialog.FileName := 'AtlasExport.shp';
+      if not saveDialog.Execute then begin
+        abort;
+      end
+      else begin
+        if FileExists(saveDialog.FileName) or FileExists(ChangeFileExt(saveDialog.FileName,'.shx')) then begin
+          if MessageDlg(_('Shape File already exists. Are you sure you want to overwrite it?'),
+              mtConfirmation, mbOKCancel, 0)=mrCancel then begin
+            Abort;
+          end;
+          if (FileExists(saveDialog.FileName) and not DeleteFile(saveDialog.FileName)) or
+             (FileExists(ChangeFileExt(saveDialog.FileName,'.shx')) and not DeleteFile(ChangeFileExt(saveDialog.FileName,'.shx'))) then begin
+            Msg(_('The existing files cannot be deleted at this point in time, either because they are '+
+                'already open or you don''t have permission.'));
+            Abort;
+          end;
+
+          //Wir müssen ebenfalls die zugehörige dBase Datei löschen // We also need to also delete the dBase file
+          if FileExists(ChangeFileExt(saveDialog.FileName,'.dbf'))and not DeleteFile(ChangeFileExt(saveDialog.FileName,'.dbf')) then begin
+            Msg(_('The existing Shape dBase database file cannot be deleted at this point in time, either because it is '+
+                'already open or you don''t have permission.'));
+            Abort;
+          end;
+        end;
+        outputFileName := saveDialog.filename;
+        outputFolder := extractFilePath(outputFileName);
+        eOutputDir.Text := extractFileDir(outputFileName);
+      end;
+    end
+    else if outputFileExtention = 'csv' then begin
+      saveDialog.Filter := 'Komma getrennter Text (csv)|*.csv';
+      saveDialog.DefaultExt := 'shp';
+      saveDialog.FilterIndex := 1;
+      saveDialog.FileName := 'AtlasExport.csv';
+      if not saveDialog.Execute then begin
+        abort;
+      end
+      else begin
+        if FileExists(saveDialog.FileName) then begin
+          if MessageDlg(_('CSV File already exists. Are you sure you want to overwrite it?'),
+              mtConfirmation, mbOKCancel, 0)=mrCancel then begin
+            Abort;
+          end;
+          if (FileExists(saveDialog.FileName) and not DeleteFile(saveDialog.FileName)) then begin
+            Msg(_('The existing files cannot be deleted at this point in time, either because they are '+
+                'already open or you don''t have permission.'));
+            Abort;
+          end;
+        end;
+        outputFileName := saveDialog.filename;
+        outputFolder := extractFilePath(outputFileName);
+        eOutputDir.Text := extractFileDir(outputFileName);
+      end;
+    end
+    else begin
+      if FileExists(outputFolder + 'DATA.'+outputFileExtention) or FileExists(outputFolder + 'TAXA.'+outputFileExtention) then begin
+        if MessageDlg(_('The destination folder already contains exported atlas data. Are you sure you want to overwrite it?'),
+            mtConfirmation, mbOKCancel, 0)=mrCancel then begin
+          Abort;
+        end;
+        if (FileExists(outputFolder + 'DATA.'+outputFileExtention) and not DeleteFile(outputFolder + 'DATA.'+outputFileExtention)) or
+            (FileExists(outputFolder + 'TAXA.'+outputFileExtention) and not DeleteFile(outputFolder + 'TAXA.'+outputFileExtention)) then begin
+          Msg(_('The existing files cannot be deleted at this point in time, either because they are '+
+              'already open or you don''t have permission.'));
+          Abort;
+        end;
+      end;
+      // We do a double check, because it seems that if held open by 16 bit dbase, Windows reports the file
+      // as deleted even though it is only mark deleted until dbase closes!
+      if FileExists(outputFolder + 'DATA.DBF') or FileExists(outputFolder + 'TAXA.DBF') then begin
+        Msg(_('The existing files cannot be deleted at this point in time, either because they are '+
+              'already open or you don''t have permission.'));
+        Abort;
+      end;
     end;
-    if (FileExists(outputFolder + 'DATA.DBF') and not DeleteFile(outputFolder + 'DATA.DBF')) or
-        (FileExists(outputFolder + 'TAXA.DBF') and not DeleteFile(outputFolder + 'TAXA.DBF')) then begin
-      Msg(_('The existing files cannot be deleted at this point in time, either because they are '+
-          'already open or you don''t have permission.'));
-      Abort;
-    end;
+  finally
+    saveDialog.Free;
   end;
-  // We do a double check, because it seems that if held open by 16 bit dbase, Windows reports the file
-  // as deleted even though it is only mark deleted until dbase closes!
-  if FileExists(outputFolder + 'DATA.DBF') or FileExists(outputFolder + 'TAXA.DBF') then begin
-    Msg(_('The existing files cannot be deleted at this point in time, either because they are '+
-          'already open or you don''t have permission.'));
-    Abort;
-  end;
+
   // dialog can close when we are done, as all checks are complete.
   modalResult := mrOk;
   btnFinish.Enabled := false;
@@ -520,46 +637,96 @@ begin
   // hide the page control to show the progress bar beneath
   pcWizard.Visible := false;
   FOutputGridSystem := rgGridSystem.Items[rgGridSystem.ItemIndex];
+  // output Grid System can be translated so "retranslate" it
+  // expects the original grid name in ():
+  if ansipos('(MTBQYX)', FOutputGridSystem) > 0 then
+    FOutputGridSystem := 'MTBQYX'
+  else if ansipos('(MTBQQQ)', FOutputGridSystem) > 0 then
+    FOutputGridSystem := 'MTBQQQ'
+  else if ansipos('(MTBQQ)', FOutputGridSystem) > 0 then
+    FOutputGridSystem := 'MTBQQ'
+  else if ansipos('(MTBQ)', FOutputGridSystem) > 0 then
+    FOutputGridSystem := 'MTBQ'
+  else
+    FOutputGridSystem := 'MTB';
   // find the Recorder grid system code we are converting to
   if FOutputGridSystem='MTBQYX' then
     FOutputGridCode := 'QYX'
   else
     FOutputGridCode := 'QQQ';
+
   // Set a value to 0 for MTB through to 3 for MTBQQQ or QYX
   FOutputResolution := Length(FOutputGridSystem)-3;
   BuildAtlasOutputData;
-  try
-    outputConn := TADOConnection.Create(nil);
-    try
 
-      outputConn.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' +
-                                          outputFolder +
-                                          ';Extended Properties=dBASE III;User ID=Admin;Password=;';
-      outputConn.Open;
-      outputConn.Connected := true;
-      SetProgressLabel(_('Exporting data table'));
-      if rgOutputMode.ItemIndex=0 then begin
-        outputConn.Execute(SQL_CREATE_DATA_OUTPUT_TABLE_FINEST, affected);
-        OutputDataTableFinest(outputConn);
-      end
-      else begin
-        outputConn.Execute(SQL_CREATE_DATA_OUTPUT_TABLE_AGGREGATED, affected);
-        OutputDataTableAggregated(outputConn);
+  // Schalter um CSV oder DBF zu exportieren
+  // Hier startet die eigentliche Datenausgabe
+  if rgOutputFileFormat.ItemIndex=0  then begin  //DBF
+    try
+      outputConn := TADOConnection.Create(nil);
+      try
+
+        outputConn.ConnectionString := 'Provider=Microsoft.Jet.OLEDB.4.0;Data Source=' +
+                                            outputFolder +
+                                            ';Extended Properties=dBASE III;User ID=Admin;Password=;';
+        outputConn.Open;
+        outputConn.Connected := true;
+        SetProgressLabel(_('Exporting data table'));
+        if rgOutputMode.ItemIndex=0 then begin
+          outputConn.Execute(SQL_CREATE_DATA_OUTPUT_TABLE_FINEST, affected);
+          OutputDataTableFinest(outputConn);
+        end
+        else begin
+          outputConn.Execute(SQL_CREATE_DATA_OUTPUT_TABLE_AGGREGATED, affected);
+          OutputDataTableAggregated(outputConn);
+        end;
+        SetProgressLabel(_('Exporting taxon table'));
+        outputConn.Execute(SQL_CREATE_TAXA_OUTPUT_TABLE, affected);
+        OutputTaxaTable(outputConn);
+        // Save a copy of the settings for reference
+        SaveSettings(outputFolder + 'settings.ini');
+      finally
+        outputConn.Free;
       end;
-      SetProgressLabel(_('Exporting taxon table'));
-      outputConn.Execute(SQL_CREATE_TAXA_OUTPUT_TABLE, affected);
-      OutputTaxaTable(outputConn);
-      // Save a copy of the settings for reference
-      SaveSettings(outputFolder + 'settings.ini');
     finally
-      outputConn.Free;
+      FConnection.Execute(
+        'IF EXISTS(SELECT 1 FROM tempdb.dbo.sysobjects WHERE Name LIKE ''#interim_%'' AND Type=''U'') '+
+        'DROP TABLE #interim',
+        affected);
     end;
-  finally
-    FConnection.Execute(
-      'IF EXISTS(SELECT 1 FROM tempdb.dbo.sysobjects WHERE Name LIKE ''#interim_%'' AND Type=''U'') '+
-      'DROP TABLE #interim',
-      affected);
+  end
+  else if rgOutputFileFormat.ItemIndex=1  then begin //CSV Export
+    //Data
+    SetProgressLabel(_('Exporting csv data table'));
+    if rgOutputMode.ItemIndex=0 then begin
+      OutputDataTableFinestCSV(outputFileName);
+    end
+    else begin
+      OutputDataTableAggregatedCSV(outputFileName);
+    end;
+    //Taxa
+    //SetProgressLabel(_('Exporting csv taxon table'));
+    //OutputTaxaTableCSV(outputFolder + 'TAXA.'+outputFileExtention);
+    // Save a copy of the settings for reference
+    SaveSettings(outputFileName + '.settings.ini');
+  end
+  else begin //SHP Export
+    //Data
+    SetProgressLabel(_('Exporting Shape Data'));
+    if rgOutputMode.ItemIndex=0 then begin
+      //Shape Export for data table finest
+      OutputDataTableFinestSHP(outputFileName);
+    end
+    else begin
+      OutputDataTableAggregatedSHP(outputFileName);
+    end;
+    //Taxa
+    //SetProgressLabel(_('Exporting cav taxon table'));
+    //OutputTaxaTableCSV(outputFolder + 'TAXA.'+outputFileExtention);
+    // Save a copy of the settings for reference
+    SaveSettings(outputFileName + '.settings.ini');
   end;
+
   if FClosing then
     Msg(_('Export was cancelled'))
   else begin
@@ -615,29 +782,261 @@ var
   rs: _Recordset;
   query: string;
 begin
-  // #output is the table created by the aggregation script
-  rs := FConnection.Execute('SELECT * FROM #output');
-  while not rs.EOF do begin
-    query := 'INSERT INTO data VALUES (''' +
-        VarToStr(rs.Fields[0].Value) + ''', ''' +
-        VarToStr(rs.Fields[1].Value) + ''', ''' +
-        VarToStr(rs.Fields[2].Value) + ''', ''' +
-        VarToStr(rs.Fields[3].Value) + ''', ''' +
-        VarToStr(rs.Fields[4].Value) + ''')';
+  try
+    // Grid conversation to WGS
+    // Need to use direct transformation via geodll as transformation via
+    // Recorder xmlsystems implementation slows down export extremly
+    // (~2 min to 20 min in a 2000 records dataset)
+    // PrepareGridCenterTable creates table #gridcenter containing all grid center coordinates
+    ProgressBar.Position := 0;
+    PrepareGridCenterTable;
+    // #output is the table created by the aggregation script
+    rs := FConnection.Execute(
+    'SELECT op.tlikey, op.grid, op.outputsys, op.status, op.rast_un, gc.center_x, gc.center_y ' +
+    'FROM #output op ' +
+    'INNER JOIN #gridcenter gc ON gc.grid = op.grid COLLATE DATABASE_DEFAULT '
+     );
+    while not rs.EOF do begin
+      query := 'INSERT INTO data VALUES (''' +
+          VarToStr(rs.Fields[0].Value) + ''', ''' +
+          VarToStr(rs.Fields[1].Value) + ''', ''' +
+          VarToStr(rs.Fields[2].Value) + ''', ''' +
+          VarToStr(rs.Fields[3].Value) + ''', ''' +
+          VarToStr(rs.Fields[4].Value) + ''', ''' +
+          VarToStr(rs.Fields[5].Value) + ''', ''' +
+          VarToStr(rs.Fields[6].Value) + ''')';
+      try
+        outputConn.Execute(query, affected);
+      except on E:Exception do
+        begin
+          Msg(_('Failure on query: ') + query);
+          raise;
+        end;
+      end;
+      ProgressBar.Position := rs.AbsolutePosition * 100 div rs.RecordCount;
+      rs.MoveNext;
+      // allow window to respond once every so often
+      if rs.AbsolutePosition mod 100 = 0 then begin
+        Application.ProcessMessages;
+        if FClosing then break;
+      end;
+    end;
+  finally
+    FConnection.Execute('DROP TABLE #gridcenter', affected);
+  end;
+end;
+
+procedure TdlgExportWizard.OutputDataTableFinestCSV(outputFileName: string);
+var
+  Stream: TFileStream;
+  OutLine: string;
+  rs: _Recordset;
+  ls: char;
+  ds: char;
+  taxonName, commonName: string;
+begin
+  //to do: include taxon names
+  //rs := FConnection.Execute('SELECT * FROM #interim');
+  rs := FConnection.Execute('SELECT tax.Taxon_List_Item_Key, tax.Tax_Name, tax.Common_Name, tax.Authority , ' +
+        ' i.MTBQ, i.outputsys, i.status, i.rast_un, i.fe_u, i.fe_h, i.usr, ' +
+        ' i.lat, i.long, i.spatref, i.spatrefsys, i.sample_key '+
+        'FROM #interim i ' +
+        'INNER JOIN ' +
+        ' (SELECT DISTINCT itn.Taxon_List_Item_Key, ITN.Actual_Name + ISNULL('' '' +TV.Attribute, '''') as Tax_Name, ITN.Common_Name, ITN.Authority ' +
+        '  FROM #interim o '+
+        '  INNER JOIN Index_Taxon_Name itn ON itn.Taxon_List_Item_Key=o.Taxon_List_Item_Key '+
+        '  INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key '+
+        '  INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key) tax ' +
+        ' ON i.Taxon_List_Item_Key = tax.Taxon_List_Item_Key  '      );
+
+  ls := ListSeparator;    // lokalen Listentrenner abfragen; ask for local list separator
+  ds := DecimalSeparator; // dito für Dezimaltrenner; ask for decimal separator
+
+  ProgressBar.Position := 0;
+
+  try
+    Stream := TFileStream.Create(outputFileName, fmCreate);
     try
-      outputConn.Execute(query, affected);
+      // Write column header
+      //OutLine := '"TLI_KEY"'+ls+' "MTBQ"'+ls+' "QUTPUTSYS"'+ls+' "STATUS"'+ls+' "RAST_UN"'+ls+' "FE_U"'+ls+' "FE_H"'+ls+' "USR"'+ls+' "LAT"'+ls+' "LONG"'+ls+' "SPATREF"'+ls+' "SPATREFSYS"';
+      OutLine := '"TLI_KEY"'+ls+' "TAXNAME"'+ls+' "TAXNAME_D"'+ls+' "AUTOR"'+' "MTBQ"'+ls+' "QUTPUTSYS"'+ls+' "STATUS"'+ls+' "RAST_UN"'+ls+' "FE_U"'+ls+' "FE_H"'+ls+' "USR"'+ls+' "LAT"'+ls+' "LONG"'+ls+' "SPATREF"'+ls+' "SPATREFSYS"';
+      Stream.Write(OutLine[1], Length(OutLine) * SizeOf(Char));
+      // Write line ending
+      Stream.Write(sLineBreak, Length(sLineBreak));
+
+      while not rs.EOF do begin
+        OutLine := '"' +
+            VarToStr(rs.Fields[0].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[1].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[2].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[3].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[4].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[5].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[6].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[7].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[8].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[9].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[10].Value) + '"'+ls+' "' +
+            // replace , with . as we don't want European number format for lat long.
+            LeftStr(StringReplace(VarToStr(rs.Fields[11].Value), ',', '.', [rfReplaceAll]), 16) + '"'+ls+' "' +
+            LeftStr(StringReplace(VarToStr(rs.Fields[12].Value), ',', '.', [rfReplaceAll]), 16) + '"'+ls+' "' +
+            VarToStr(rs.Fields[13].Value) + '"'+ls+' "' +
+            VarToStr(rs.Fields[14].Value) + '"';
+        // Write line to file
+        Stream.Write(OutLine[1], Length(OutLine) * SizeOf(Char));
+        // Write line ending
+        Stream.Write(sLineBreak, Length(sLineBreak));
+        ProgressBar.Position := rs.AbsolutePosition * 100 div rs.RecordCount;
+        rs.MoveNext;
+        // allow window to respond once every so often
+        if rs.AbsolutePosition mod 100 = 0 then begin
+          Application.ProcessMessages;
+          if FClosing then break;
+        end;
+      end;
+    finally
+      Stream.Free;  // Saves the file
+    end;
+  except on E:Exception do
+    begin
+      Msg(_('Failure creating file stream: ') + outputFileName);
+      raise;
+    end;
+  end;
+end;
+
+procedure TdlgExportWizard.OutputDataTableAggregatedCSV(outputFileName: string);
+var
+  Stream: TFileStream;
+  OutLine, taxonName, commonName: string;
+  rs: _Recordset;
+  ls: char; //list separator
+  affected: integer;
+begin
+  ls := ListSeparator;    // lokalen Listentrenner abfragen; ask for local list separator
+  // include taxon data into csv data output table
+  ProgressBar.Position := 0;
+  try
+    // grid conversiotion to WGS
+    PrepareGridCenterTable;
+    rs := FConnection.Execute(
+        'SELECT tax.Taxon_List_Item_Key, tax.Tax_Name, tax.Common_Name, tax.Authority , ' +
+        '       op.grid, op.outputsys, op.status, op.rast_un, gc.center_x, gc.center_y ' +
+        'FROM #output op ' +
+        'INNER JOIN #gridcenter gc ON gc.grid = op.grid COLLATE DATABASE_DEFAULT ' +
+        'INNER JOIN ' +
+        '(SELECT DISTINCT itn.Taxon_List_Item_Key, ITN.Actual_Name + ISNULL('' '' +TV.Attribute, '''') as Tax_Name, ITN.Common_Name, ITN.Authority ' +
+        ' FROM #interim o '+
+        ' INNER JOIN Index_Taxon_Name itn ON itn.Taxon_List_Item_Key=o.Taxon_List_Item_Key '+
+        ' INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key '+
+        ' INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key) tax ' +
+        ' ON op.tlikey COLLATE DATABASE_DEFAULT = tax.Taxon_List_Item_Key COLLATE DATABASE_DEFAULT '      );
+    try
+      Stream := TFileStream.Create(outputFileName, fmCreate);
+      try
+        // Write column header
+        OutLine := 'TLI_KEY'+ls+'TAXNAME'+ls+'TAXNAME_D'+ls+'AUTOR'+ls+'MTBQ'+ls+'QUTPUTSYS'+ls+'STATUS'+ls+'RAST_UN'+ls+'CENTER_X'+ls+'CENTER_Y';
+        Stream.Write(OutLine[1], Length(OutLine) * SizeOf(Char));
+        // Write line ending
+        Stream.Write(sLineBreak, Length(sLineBreak));
+        while not rs.EOF do begin
+          taxonName :=VarToStr(rs.Fields[1].Value);
+          commonName:=VarToStr(rs.Fields[2].Value);
+          if commonName=taxonName then
+            commonName := '';
+          //For Quantum GIS 1.8 import system don't use doublequotes
+          OutLine := '' + VarToStr(rs.Fields[0].Value) + ''+ls+
+                     '' + taxonName  + ''+ls+
+                     '' + commonName + ''+ls+''+
+                     '' + VarToStr(rs.Fields[3].Value) + ''+ls+
+                     '' + VarToStr(rs.Fields[4].Value) + ''+ls+
+                     '' + VarToStr(rs.Fields[5].Value) + ''+ls+
+                     '' + VarToStr(rs.Fields[6].Value) + ''+ls+
+                     '' + VarToStr(rs.Fields[7].Value) + ''+ls+
+                     '' + VarToStr(rs.Fields[8].Value) + ''+ls+
+                     '' + VarToStr(rs.Fields[9].Value) + '';
+          // Write line to file
+          Stream.Write(OutLine[1], Length(OutLine) * SizeOf(Char));
+          // Write line ending
+          Stream.Write(sLineBreak, Length(sLineBreak));
+          ProgressBar.Position := rs.AbsolutePosition * 100 div rs.RecordCount;
+          rs.MoveNext;
+          // allow window to respond once every so often
+          if rs.AbsolutePosition mod 100 = 0 then begin
+            Application.ProcessMessages;
+            if FClosing then break;
+          end;
+        end;
+      finally
+        Stream.Free;  // Saves the file
+      end;
     except on E:Exception do
       begin
-        Msg(_('Failure on query: ') + query);
+        Msg(_('Failure creating file stream: ') + outputFileName);
         raise;
       end;
     end;
-    ProgressBar.Position := rs.AbsolutePosition * 100 div rs.RecordCount;
-    rs.MoveNext;
-    // allow window to respond once every so often
-    if rs.AbsolutePosition mod 100 = 0 then begin
-      Application.ProcessMessages;
-      if FClosing then break;
+  finally
+      FConnection.Execute('DROP TABLE #gridcenter', affected);
+  end;
+end;
+
+procedure TdlgExportWizard.OutputTaxaTableCSV(outputFileName: string);
+var
+  Stream: TFileStream;
+  OutLine: string;
+  rs: _Recordset;
+  ls: char; //list separator
+  taxonName, commonName, authority: string;
+begin
+  ls := ListSeparator;    // lokalen Listentrenner abfragen; ask for local list separator
+  rs := FConnection.Execute(
+      'SELECT DISTINCT itn.Taxon_List_Item_Key, ITN.Actual_Name + ISNULL('' '' +TV.Attribute, ''''), ITN.Common_Name, ITN.Authority ' +
+      'FROM #interim o '+
+      'INNER JOIN Index_Taxon_Name itn ON itn.Taxon_List_Item_Key=o.Taxon_List_Item_Key '+
+      'INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key '+
+      'INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key');
+  try
+    Stream := TFileStream.Create(outputFileName, fmCreate);
+    try
+      // Write column header
+      OutLine := 'TLI_KEY'+ls+'TAXNAME'+ls+'TAXNAME_D'+ls+'AUTOR';
+      Stream.Write(OutLine[1], Length(OutLine) * SizeOf(Char));
+      // Write line ending
+      Stream.Write(sLineBreak, Length(sLineBreak));
+
+      while not rs.EOF do begin
+        taxonName :=VarToStr(rs.Fields[1].Value);
+        commonName:=VarToStr(rs.Fields[2].Value);
+        authority:=VarToStr(rs.Fields[3].Value);
+        if commonName=taxonName then
+          commonName := '';
+        //For Quantum GIS 1.8 import system dont use doublequotes
+        OutLine := '' +
+            VarToStr(rs.Fields[0].Value) + ''+ls+'' +
+            taxonName + ''+ls+'' +
+            commonName + ''+ls+'' +
+            authority + '';
+        // Write line to file
+        Stream.Write(OutLine[1], Length(OutLine) * SizeOf(Char));
+        // Write line ending
+        Stream.Write(sLineBreak, Length(sLineBreak));
+        ProgressBar.Position := rs.AbsolutePosition * 100 div rs.RecordCount;
+        rs.MoveNext;
+        // allow window to respond once every so often
+        if rs.AbsolutePosition mod 100 = 0 then begin
+          Application.ProcessMessages;
+          if FClosing then break;
+        end;
+      end;
+    finally
+      Stream.Free;  // Saves the file
+    end;
+  except on E:Exception do
+    // to do: handle exception
+    begin
+      Msg(_('Failure creating file stream: ') + outputFileName);
+      raise;
     end;
   end;
 end;
@@ -647,7 +1046,7 @@ var
   affected: integer;
   rs: _Recordset;
   query: string;
-  taxonName, commonName, authority: array[0..255] of Char;
+  taxonName, commonName, authority: array[0..255] of Char; //pchar?
 begin
   rs := FConnection.Execute(
       'SELECT DISTINCT itn.Taxon_List_Item_Key, ITN.Actual_Name + ISNULL('' '' +TV.Attribute, ''''), ITN.Common_Name, ITN.Authority ' +
@@ -687,6 +1086,205 @@ begin
   end;
 end;
 
+
+procedure TdlgExportWizard.OutputDataTableFinestSHP(outputFileName: string);
+var
+  Stream: TFileStream;
+  longlat: TDoublePoint;
+  rs: _Recordset;
+  pointsList: TSVOShapeList;
+  APointShape : TSVOPointShape;
+  FieldNames: TStringList;
+  lSuccess: boolean;
+  OutLine, taxonName, commonName: string;
+  ls: char;
+  ds: char;
+begin
+  //to do: include taxon names
+  pointsList  := TSVOShapeList.Create;
+  ProgressBar.Position := 0;
+  try
+    //column headers for shp dbf
+    AddFieldToShapeList(pointsList, 'ID', ctInteger);
+    AddFieldToShapeList(pointsList, 'TLI_KEY', ctString, 16);
+    AddFieldToShapeList(pointsList, 'TAXNAME', ctString, 200);
+    AddFieldToShapeList(pointsList, 'TAXNAME_D', ctString, 200);
+    AddFieldToShapeList(pointsList, 'AUTOR', ctString, 100);
+    AddFieldToShapeList(pointsList, 'MTBQ', ctString, 8);
+    AddFieldToShapeList(pointsList, 'QUTPUTSYS', ctString, 4);
+    AddFieldToShapeList(pointsList, 'STATUS', ctString, 1);
+    AddFieldToShapeList(pointsList, 'RAST_UN', ctString, 4);
+    AddFieldToShapeList(pointsList, 'FE_U', ctString, 1);
+    AddFieldToShapeList(pointsList, 'FE_H', ctString, 1);
+    AddFieldToShapeList(pointsList, 'USR', ctString, 4);
+    AddFieldToShapeList(pointsList, 'SAMPLE_KEY', ctString, 16);
+
+    rs := FConnection.Execute('SELECT tax.Taxon_List_Item_Key, tax.Tax_Name, tax.Common_Name, tax.Authority , ' +
+            ' i.MTBQ, i.outputsys, i.status, i.rast_un, i.fe_u, i.fe_h, i.usr, ' +
+            ' i.lat, i.long, i.spatref, i.spatrefsys, i.sample_key '+
+            'FROM #interim i ' +
+            'INNER JOIN ' +
+            ' (SELECT DISTINCT itn.Taxon_List_Item_Key, ITN.Actual_Name + ISNULL('' '' +TV.Attribute, '''') as Tax_Name, ITN.Common_Name, ITN.Authority ' +
+            '  FROM #interim o '+
+            '  INNER JOIN Index_Taxon_Name itn ON itn.Taxon_List_Item_Key=o.Taxon_List_Item_Key '+
+            '  INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key '+
+            '  INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key) tax ' +
+            ' ON i.Taxon_List_Item_Key  COLLATE DATABASE_DEFAULT = tax.Taxon_List_Item_Key COLLATE DATABASE_DEFAULT '      );
+
+    while not rs.EOF do begin
+      taxonName :=VarToStr(rs.Fields[1].Value);
+      commonName:=VarToStr(rs.Fields[2].Value);
+      longlat.x := rs.Fields[12].Value;
+      longlat.y := rs.Fields[11].Value;
+      if commonName=taxonName then
+        commonName := '';
+      APointShape := TSVOPointShape.Create(pointsList);
+      APointShape.SetShape(longlat);
+      APointShape.FieldByName('ID').AsInteger := rs.AbsolutePosition;
+      APointShape.FieldByName('TLI_KEY').Value := VarToStr(rs.Fields[0].Value) ;
+      APointShape.FieldByName('TAXNAME').Value := taxonName;
+      APointShape.FieldByName('TAXNAME_D').Value := commonName;
+      APointShape.FieldByName('AUTOR').Value := VarToStr(rs.Fields[3].Value);
+      APointShape.FieldByName('MTBQ').Value := VarToStr(rs.Fields[4].Value);
+      APointShape.FieldByName('QUTPUTSYS').Value := VarToStr(rs.Fields[5].Value);
+      APointShape.FieldByName('STATUS').Value := VarToStr(rs.Fields[6].Value);
+      APointShape.FieldByName('RAST_UN').Value := VarToStr(rs.Fields[7].Value);
+      APointShape.FieldByName('FE_U').Value := VarToStr(rs.Fields[8].Value);
+      APointShape.FieldByName('FE_H').Value := VarToStr(rs.Fields[9].Value);
+      APointShape.FieldByName('USR').Value := VarToStr(rs.Fields[10].Value);
+      APointShape.FieldByName('SAMPLE_KEY').Value := VarToStr(rs.Fields[15].Value);
+      ProgressBar.Position := rs.AbsolutePosition * 100 div rs.RecordCount;
+      rs.MoveNext;
+      // allow window to respond once every so often
+      if rs.AbsolutePosition mod 100 = 0 then begin
+        Application.ProcessMessages;
+        if FClosing then break;
+      end;
+    end;
+    //SVO ReadWrite Object zum Schreiben des Shapes vorbereiten
+    FSVOGISReadWrite1.FileType := sftArcView;
+    FSVOGISReadWrite1.ShapeList := pointsList;  //shapelist zuordnen
+    //SVOGISReadWrite1.ImportFileName := AShapeList.Source; //benötigt? nein!
+    FSVOGISReadWrite1.ExportFileName := outputFileName;
+    Screen.Cursor := crHourGlass;
+    try
+      FSVOGISReadWrite1.WriteFile;
+    finally
+      Screen.Cursor := crDefault;
+    end;
+  finally
+    pointsList.Free;
+  end;
+end;
+
+
+
+{-------------------------------------------------------------------------------
+  Write the DATA to a GIS shape file.
+}
+
+procedure TdlgExportWizard.OutputDataTableAggregatedSHP(outputFileName: string);
+var
+  longlat: TDoublePoint;
+  pointsList: TSVOShapeList;
+  APointShape : TSVOPointShape;
+  FieldNames: TStringList;
+  lSuccess: boolean;
+  OutLine, taxonName, commonName: string;
+  rs: _Recordset;
+  affected: integer;
+begin
+  pointsList  := TSVOShapeList.Create;
+  ProgressBar.Position := 0;
+  try
+    //column headers for shp dbf
+    AddFieldToShapeList(pointsList, 'ID', ctInteger);
+    AddFieldToShapeList(pointsList, 'TLI_KEY', ctString, 16);
+    AddFieldToShapeList(pointsList, 'TAXNAME', ctString, 200);
+    AddFieldToShapeList(pointsList, 'TAXNAME_D', ctString, 200);
+    AddFieldToShapeList(pointsList, 'AUTOR', ctString, 100);
+    AddFieldToShapeList(pointsList, 'MTBQ', ctString, 8);
+    AddFieldToShapeList(pointsList, 'QUTPUTSYS', ctString, 4);
+    AddFieldToShapeList(pointsList, 'STATUS', ctString, 1);
+    AddFieldToShapeList(pointsList, 'RAST_UN', ctString, 4);
+    //prepare conversation to wgs
+    PrepareGridCenterTable;
+    try
+      //Grid Center Table get lat long as strings, they need to be converted into float
+      rs := FConnection.Execute(
+        'SELECT tax.Taxon_List_Item_Key, tax.Tax_Name, tax.Common_Name, tax.Authority , ' +
+        '       op.grid, op.outputsys, op.status, op.rast_un, CAST(gc.center_x AS float) as cx, CAST(gc.center_y AS float) as cy ' +
+        'FROM #output op ' +
+        'INNER JOIN #gridcenter gc ON gc.grid = op.grid COLLATE DATABASE_DEFAULT ' +
+        'INNER JOIN ' +
+        '(SELECT DISTINCT itn.Taxon_List_Item_Key, ITN.Actual_Name + ISNULL('' '' +TV.Attribute, '''') as Tax_Name, ITN.Common_Name, ITN.Authority ' +
+        ' FROM #interim o '+
+        ' INNER JOIN Index_Taxon_Name itn ON itn.Taxon_List_Item_Key=o.Taxon_List_Item_Key '+
+        ' INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key '+
+        ' INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key) tax ' +
+        ' ON op.tlikey COLLATE DATABASE_DEFAULT = tax.Taxon_List_Item_Key COLLATE DATABASE_DEFAULT '      );
+      while not rs.EOF do begin
+        taxonName :=VarToStr(rs.Fields[1].Value);
+        commonName:=VarToStr(rs.Fields[2].Value);
+        longlat.x := rs.Fields[8].Value;
+        longlat.y := rs.Fields[9].Value;
+        if commonName=taxonName then
+          commonName := '';
+        APointShape := TSVOPointShape.Create(pointsList);
+        APointShape.SetShape(longlat);
+        APointShape.FieldByName('ID').AsInteger := rs.AbsolutePosition;
+        APointShape.FieldByName('TLI_KEY').Value := VarToStr(rs.Fields[0].Value) ;
+        APointShape.FieldByName('TAXNAME').Value := taxonName;
+        APointShape.FieldByName('TAXNAME_D').Value := commonName;
+        APointShape.FieldByName('AUTOR').Value := VarToStr(rs.Fields[3].Value);
+        APointShape.FieldByName('MTBQ').Value := VarToStr(rs.Fields[4].Value);
+        APointShape.FieldByName('QUTPUTSYS').Value := VarToStr(rs.Fields[5].Value);
+        APointShape.FieldByName('STATUS').Value := VarToStr(rs.Fields[6].Value);
+        APointShape.FieldByName('RAST_UN').Value := VarToStr(rs.Fields[7].Value);
+        ProgressBar.Position := rs.AbsolutePosition * 100 div rs.RecordCount;
+        rs.MoveNext;
+        // allow window to respond once every so often
+        if rs.AbsolutePosition mod 100 = 0 then begin
+          Application.ProcessMessages;
+          if FClosing then break;
+        end;
+      end;
+    finally
+      FConnection.Execute('DROP TABLE #gridcenter', affected);
+    end;
+    //SVO ReadWrite Object zum Schreiben des Shapes vorbereiten
+    FSVOGISReadWrite1.FileType := sftArcView;
+    FSVOGISReadWrite1.ShapeList := pointsList;  //shapelist zuordnen
+    //SVOGISReadWrite1.ImportFileName := AShapeList.Source; //benötigt? nein!
+    FSVOGISReadWrite1.ExportFileName := outputFileName;
+    Screen.Cursor := crHourGlass;
+    try
+      FSVOGISReadWrite1.WriteFile;
+    finally
+      Screen.Cursor := crDefault;
+    end;
+  finally
+    pointsList.Free;
+  end;
+end;
+
+
+
+{-------------------------------------------------------------------------------
+  Add a field to a shape list
+}
+procedure TdlgExportWizard.AddFieldToShapeList(AShapeList: TSVOShapeList;
+    const AFieldName: string; const AColumnType: TColumnTypes; ASize: Word=0);
+begin
+  with AShapeList.DataFields.AddField do begin
+    FieldName := AFieldName;
+    FieldType := AColumnType;
+    if ASize<>0 then
+      Size := ASize;
+  end;
+end;
+
+
 procedure TdlgExportWizard.BuildAtlasOutputData;
 var
   affected: integer;
@@ -707,13 +1305,15 @@ begin
       ' WHERE TOD.Data IN (''+'',''0'',''I'',''X'',''W'',''Z'',''A'',''E'',''S'',''U'',''K'')',
       affected);
   // Get the Unscharf data and process it
-  FConnection.Execute(
-      Format(SQL_UPDATE_SAMPLE_DATA, ['RAST_UN', 'BFNSYS0000000028', 'BFNSYS0000000077']),
+
+  FConnection.Execute( StringReplace(
+      Format(SQL_UPDATE_SAMPLE_DATA, ['RAST_UN', 'BFNSYS0000000028', 'BFNSYS0000000077']),'SD.DATA','LEFT(SD.DATA,1)',[rfReplaceAll, rfIgnoreCase]),
       affected);
   FConnection.Execute(SQL_UPDATE_RAST_UN_1, affected);
   FConnection.Execute(SQL_UPDATE_RAST_UN_2, affected);
   // Todo: processing of the RAST_UN values to set to U in some circumstance - see docs
   // some measurements only output when not aggregating the data
+  // wird nur ausgeführt wenn "Im feinsten verfügbaren Raster" exportiert wird
   if rgOutputMode.ItemIndex=0 then begin
     FConnection.Execute(
         Format(SQL_UPDATE_DATA, ['FE_U', 'BFNSYS0000000033', 'BFNSYS0000000100']),
@@ -746,6 +1346,7 @@ var
   discard: string;
 begin
   SetProgressLabel(_('Aggregating data'));
+  progressbar.Position := 0;
   script := TStringList.Create;
   try
     // run the 6 script files in sequence
@@ -769,6 +1370,7 @@ begin
           raise e;
         end;
       end;
+      progressbar.Position := fileIdx * 100 div 6;
     end;
   finally
     script.free;
@@ -833,6 +1435,7 @@ var
   affected: integer;
 begin
   SetProgressLabel(_('Processing German grid data'));
+  progressBar.Position := 0;
   if (FOutputGridSystem = 'MTB') or (FOutputGridSystem='MTBQ') then begin
     if chkDiscardQYX.Checked then
       FConnection.Execute(Format(SQL_DISCARD_INCOMPATIBLE_GERMAN_DATA, ['QYX']), affected);
@@ -857,6 +1460,7 @@ var
   affected: integer;
 begin
   SetProgressLabel(_('Removing out of range data'));
+  progressBar.Position := 0;
   list := TStringList.Create;
   try
     list.Delimiter := ';';
@@ -882,6 +1486,7 @@ var
   i: integer;
 begin
   SetProgressLabel(_('Discarding non-German grid data'));
+  progressBar.Position := 0;
   coordSys := TStringList.Create;
   if not FileExists(addinPath + '\Atlas Exporter\coordsys.ini') then
     raise Exception.Create('coordsys.ini file missing from ' + addinpath);
@@ -889,7 +1494,7 @@ begin
   coordSys.LoadFromFile(addinPath + '\Atlas Exporter\coordsys.ini');
   // we also want to keep German grids
   coordSys.Add('QQQ');
-  coordSys.Add('QYX');  
+  coordSys.Add('QYX');
   // build a string suitable for an SQL in clause of these systems which are not to be deleted.
   notDeleted := '';
   for i:=0 to coordSys.Count-1 do begin
@@ -917,6 +1522,7 @@ var
 
 begin
   SetProgressLabel(_('Converting non-German grid data'));
+  ProgressBar.Position := 0;
   rs := FConnection.Execute('SELECT DISTINCT Lat, Long, SpatRef, SpatRefSys '+
       'FROM #interim '+
       'WHERE SPATREFSYS NOT IN (''QYX'', ''QQQ'')');
@@ -980,6 +1586,51 @@ begin
       FConnection.Execute('DROP TABLE #convertor', affected);
     end;
   end;
+end;
+
+//PrepareGridCenterTable;
+procedure TdlgExportWizard.PrepareGridCenterTable;
+var
+  conversions: TStringList;
+  rs: _Recordset;
+  //grid: string;
+  latlongBess: TCoord;
+  latlongWGS: TLatLong;
+  ds: char; //decimal separator
+  affected: integer;
+begin
+      ds := DecimalSeparator; // dito für Dezimaltrenner; ask for decimal separator
+      FConnection.Execute('CREATE TABLE #gridcenter (grid VARCHAR(8) COLLATE Database_Default PRIMARY KEY , '+
+          'outputsys VARCHAR(3) COLLATE Database_Default, center_x VARCHAR(16) COLLATE Database_Default, center_y VARCHAR(16) COLLATE Database_Default)', affected);
+      FConnection.Execute('INSERT INTO #gridcenter (grid, outputsys) SELECT DISTINCT grid, outputsys from #output');
+      rs := FConnection.Execute('SELECT grid, outputsys FROM #gridcenter');
+
+      while not rs.eof do begin
+        //grid := rs.Fields['grid'].Value;
+        if VarToStr(rs.Fields[1].Value) = 'QQQ' then begin
+          latlongBess := ConvertQqqToLatLongCenter(trim(VarToStr(rs.Fields[0].Value)));
+        end else begin
+          latlongBess := ConvertQYXToLatLongCenter(trim(VarToStr(rs.Fields[0].Value)));
+        end;
+        latlongWGS := DHDNtoWGS84(latlongBess.y, latlongBess.x);
+        //need to replace local decimal separator with "." and truncate the string;
+        latlongWGS.Long := LeftStr(StringReplace(latlongWGS.Long,ds,'.',[]),16);
+        latlongWGS.Lat := LeftStr(StringReplace(latlongWGS.Lat,ds,'.',[]),16);
+        FConnection.Execute('UPDATE #gridcenter ' +
+            'SET center_x=''' + latlongWGS.Long + ''', '+
+            'center_y=''' + latlongWGS.Lat + ''' '+
+            'WHERE grid=''' + rs.Fields['grid'].Value + ''' AND '+
+            'outputsys=''' + rs.Fields['outputsys'].Value + '''', affected);
+        rs.MoveNext;
+      end;
+      (*ProgressBar.Position := rs.AbsolutePosition * 100 div rs.RecordCount;*)
+      (*
+      // allow window to respond once every so often
+      if rs.AbsolutePosition mod 100 = 0 then begin
+        Application.ProcessMessages;
+        if FClosing then break;
+      end;
+      *)
 end;
 
 procedure TdlgExportWizard.PrepareConversionTable;
@@ -1127,6 +1778,7 @@ destructor TdlgExportWizard.Destroy;
 begin
   FTranslations.Free;
   FMessages.Free;
+  FSVOGISReadWrite1.Free;
   // We MUST set the connection back to its previous state, otherwise the Recorder connection
   // gets destroyed when our connection is garbage collected.
   FConnection.ConnectionObject := FOldConn;
@@ -1152,4 +1804,272 @@ begin
   MessageBox(self.Handle, PChar(text), PChar(AnsiString(_('Atlas Exporter'))), MB_OK);
 end;
 
+(**
+ * Konvertiert fortschreitende Quadrantenteilung in Geographische Koordinaten
+ * des Rastercentroids
+ * Converts QQQ into lat long coordinates of the grid centroid
+ * (Bessel/DHDN), Geodll Kode coordSysQ = 6; refSysQ := 17;
+ *)
+function TdlgExportWizard.ConvertQQQToLatLongCenter(
+  const mtbQqq: string): TCoord;
+var
+  yy, xx, q, q2, q3: integer;
+  gs : string;
+const
+  SIX_MINUTES = 1/10;
+  TEN_MINUTES = 1/6;
+  Y_ORIGIN = 55.1; //55°6'
+  X_ORIGIN = 35/6; //5°50'
+
+begin
+  yy := StrtoInt(Copy(mtbQqq, 1, 2));
+  xx := StrToInt(Copy(mtbQqq, 3, 2));
+  //MTB
+  yy := yy - 09;
+  xx := xx - 01;
+  Inc(yy);
+  Result.y := Y_ORIGIN - yy * SIX_MINUTES;
+  Result.x := X_ORIGIN + xx * TEN_MINUTES;
+  gs := 'mtb';
+  //MTBQ
+  if Length(mtbQqq) >= 5 then begin
+    q := StrtoInt(mtbQqq[5]);
+    if q in [1, 2] then
+      Result.y := Result.y + (SIX_MINUTES / 2);
+    if q in [2, 4] then
+      Result.x := Result.x + (TEN_MINUTES / 2);
+    gs := 'mtbq';
+  end;
+  //MTBQQ
+  if Length(mtbQqq) >= 6 then begin
+    q2 := StrToInt(mtbQqq[6]);
+    if (q2 < 3) then
+      result.y := result.y + (SIX_MINUTES / 4);
+    if (q2 = 2) or (q2 = 4) then
+      result.x := result.x + (TEN_MINUTES / 4);
+    gs := 'mtbqq';
+  end;
+  //MTBQQQ
+  if Length(mtbQqq)>=7 then begin
+    q3 := StrtoInt(mtbQqq[7]);
+    if (q3 < 3) then
+      result.y := result.y + (SIX_MINUTES / 8);
+    if (q3 = 2) or (q3 = 4) then
+      result.x := result.x + (TEN_MINUTES / 8);
+    gs := 'mtbqqq';
+  end;
+
+  // Korrektur: SW to Center
+  if gs = 'mtb' then begin
+    result.y := result.y + (1/20);
+    result.x := result.x + (1/12);
+  end
+  else if gs = 'mtbq' then begin
+    result.y := result.y + (1/40);
+    result.x := result.x + (1/24);
+  end
+  else if gs = 'mtbqq' then begin
+    result.y := result.y + (1/80);
+    result.x := result.x + (1/48);
+  end
+  else if gs = 'mtbqqq' then begin
+    result.y := result.y + (1/160);
+    result.x := result.x + (1/96);
+  end;
+end;
+
+
+(**
+ * Konvertiert Minutenfelder in Geographische Koordinaten
+ * des Rastercentroids
+ * Converts QYX into lat long coordinates of the grid centroid
+ * (Bessel/DHDN), Geodll Kode coordSysQ = 6; refSysQ := 17;
+ * Erwartet folgende Notation: 65061A2?
+ *)
+function TdlgExportWizard.ConvertQYXToLatLongCenter(
+  const mtbQyx: string): TCoord;
+var
+  yy, xx, q, y, x : Integer;
+  gs, sy: string;
+const
+  SIX_MINUTES = 1/10;
+  TEN_MINUTES = 1/6;
+  Y_ORIGIN = 55.1; //55°6'
+  X_ORIGIN = 35/6; //5°50'
+begin
+  // Split the input string to separate all the numbers
+  yy := StrtoInt(Copy(mtbQyx, 1, 2));
+  xx := StrToInt(Copy(mtbQyx, 3, 2));
+  // MTB
+  yy := yy - 09;
+  xx := xx - 01;
+  Inc(yy);
+  Result.y := Y_ORIGIN - yy * SIX_MINUTES;
+  Result.x := X_ORIGIN + xx * TEN_MINUTES;
+  gs := 'mtb';
+  // MTBQ
+  if Length(mtbQyx) >= 5 then begin
+    q := StrtoInt(mtbQyx[5]);
+    // If in top half move up by half a cell
+    if q in [1, 2] then
+      Result.y := Result.y + (SIX_MINUTES / 2);
+    // If in right half move right by half a cell
+    if q in [2, 4] then
+      Result.x := Result.x + (TEN_MINUTES / 2);
+    gs := 'mtbq';
+  end;
+  //MTBQYX
+  if Length(mtbQyx) >= 7 then begin
+    //set back to standard notation 111 instaed of 1A1
+    if Copy(mtbQyx, 6, 1) = 'A' then sy := '1'
+    else if Copy(mtbQyx, 6, 1) = 'B' then sy := '2'
+    else if Copy(mtbQyx, 6, 1) = 'C' then sy := '3';
+
+    y := StrToInt(sy);
+    x := StrtoInt(Copy(mtbQyx, 7, 1));
+    // Set the latitude and longitude to 1 degree precision
+    result.y := result.y + ((3 - y) * (SIX_MINUTES / 6));
+    result.x := result.x + ((x - 1) * (TEN_MINUTES / 10));
+    gs := 'mtbqyx';
+  end;
+
+  // Korrektur: SW to Center
+  if gs = 'mtb' then begin
+    result.y := result.y + (1/20);
+    result.x := result.x + (1/12);
+  end
+  else if gs = 'mtbq' then begin
+    result.y := result.y + (1/40);
+    result.x := result.x + (1/24);
+  end
+  else if gs = 'mtbqyx' then begin
+    result.y := result.y + (1/120);
+    result.x := result.x + (1/120);
+  end;
+end;
+
+(*
+ * Converts to WGS; uses XmlSystemsImpl;
+ * this seeem to be extremly slow (???why???)
+ *)
+function TdlgExportWizard.ConvertToWGS(const koord: string): TLatLong;
+var
+  list: TSpatialSystemList;
+  toSys: TSpatialSystem;
+begin
+  list := TSpatialSystemList.Create;
+  toSys := list.GetSystem('DHDN');
+  result.lat := toSys.ConvertToLat(koord);
+  result.long := toSys.ConvertToLong(koord);
+end;
+
+
+(*
+ * Converts to Bessel(DHDN) to WGS; uses Geodll directly;
+ *)
+function TdlgExportWizard.DHDNtoWGS84(const iLat, iLong: Double): TLatLong;
+var
+  lUnlockLicensee, lUnlockCode: ansiString;
+  ln : integer;
+  e : pchar;
+  dKoordXQ : double;
+  dKoordYQ : double;
+  iKoordSysQ : integer;
+  iBezSysQ : integer;
+  iNotationQ : integer;
+  dKoordXZ : double; // Ausgabe
+  dKoordYZ : double; //Ausgabe
+  iKoordSysZ : integer;
+  iBezSysZ : integer;
+  iNotationZ : integer;
+  iStreifen : integer;
+  lResult : integer;
+  pszVersion : pchar;
+  sVersion : string;
+begin
+  e := '';
+  //Koordinaten holen und Parsen
+  dKoordXQ := iLong;
+  dKoordYQ := iLat;
+
+  //Version der Geodll checken und freischalten
+
+
+  //  Getdllversion
+  lresult := getdllversion(@pszVersion);
+  if lresult = 0 then
+    begin
+     geterrorcode(pszVersion);
+     showmessage(pszVersion);
+    end
+   else sVersion := pszVersion;
+
+  SetLanguage(2);
+  if leftStr(sVersion,5) = '13.05' then
+    begin
+      lUnlockLicensee := 'Delattinia e.V., Büro Merzig';  //'LIZ015/20130220';//
+      // Funktionsgruppe Koordinatentransformationen freischalten
+      lUnlockCode := '027883454-367867986';
+      ln := SetUnlockCode(PChar(lUnlockCode), PChar(lUnlockLicensee));
+      if ln = 1 then
+      begin
+      //showmessage('Gruppe "Koordinatentransformationen": frei geschaltet!');
+      end
+      else
+      begin
+        Geterrorcode(e);
+        showmessage(strpas(e)+' | ' +inttostr(ln));
+      end;
+    end
+  else
+    begin
+      lUnlockLicensee := 'Dorset Software Services ltd., Poole';  //'20060629/02';//
+      //Funktionsgruppe Koordinatentransformationen freischalten
+      lUnlockCode := '119355936-385574105';
+      if (ln = 1) then
+      begin
+      //showmessage('Gruppe "Koordinatentransformationen": frei geschaltet!');
+      end
+      else
+      begin
+        Geterrorcode(e);
+        if not ln = 38354736 then showmessage(strpas(e)+' | ' +inttostr(ln));
+      end;
+    end;
+
+
+  //Bessel/DHDN
+    iKoordSysQ := 6;
+    iBezSysQ := 17;
+
+  //WGS84
+  //iKoordSysQ := 6;  // Koordinatensystem Geographische Koordinaten (Greenwich) [Grad]
+  //iBezSysQ := 10;   // WGS84 (Weltweit GPS), geozentrisch, WGS84
+
+  iNotationQ := 0;
+  iKoordSysZ := 6;
+  iBezSysZ := 10;
+  iNotationZ := 0;
+  iStreifen := 0;
+
+  lResult := CoordTrans3(
+             dKoordXQ,   //double
+             dKoordYQ,   //double
+             iKoordSysQ, //integer
+             iBezSysQ,   //integer
+             iNotationQ, //integer
+             dKoordXZ,   //double Ausgabe lat!!!
+             dKoordYZ,   //double Ausgabe long!!!
+             iKoordSysZ, //integer
+             iBezSysZ,   //integer
+             iNotationZ, //integer
+             iStreifen); //integer
+
+  result.lat  := floattostr(dKoordYZ);
+  result.long := floattostr(dKoordXZ);
+  //debug
+  //showmessage(floattostr(dKoordXQ)+'|'+floattostr(dKoordYQ)+#10#13+result.Lat+'|'+result.long);
+end;
+
 end.
+

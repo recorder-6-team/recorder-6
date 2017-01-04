@@ -1,8 +1,8 @@
 object ReportButton: TReportButton
   Left = 773
   Top = 466
-  Width = 132
-  Height = 61
+  Width = 121
+  Height = 51
   AutoSize = True
   Caption = 'ReportButton'
   Color = clBtnFace

@@ -94,7 +94,7 @@ OutputDir=C:\Program Files (x86)\Recorder 6\Addins
 UnitOutputDir=C:\localsource\dcu
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=
+SearchPath=C:\Localsource\recorder-6\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source
 Packages=vcl;rtl;vclx;indy;vclie;xmlrtl;inetdbbde;inet;inetdbxpress;dbrtl;soaprtl;dsnap;VclSmp;dbexpress;vcldb;dbxcds;inetdb;bdertl;vcldbx;adortl;teeui;teedb;tee;ibxpress;visualclx;visualdbclx;vclactnband;vclshlctrls;dclOfficeXP;madBasic_;madDisAsm_;UnitLib7;InHouseAPI7;InHouseDB7;InHouse7;RecorderAddin7;Qrpt7;rapid;Extended3rdParty7;Jncc7;Qrd7;localizer7;qrdBase_D7;qrdBDE_d7
 Conditionals=
 DebugSourceDirs=
@@ -130,9 +130,9 @@ TimestampServer=
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=4
-Release=0
-Build=0
+MinorVer=6
+Release=1
+Build=14
 Debug=0
 PreRelease=0
 Special=0
@@ -143,7 +143,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Biodiverse IT
 FileDescription=
-FileVersion=1.4.0.0
+FileVersion=1.6.1.14
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -161,8 +161,9 @@ Item0=madExcept
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=1
-Item0=Third Party\QBS Software\QRDesign;Third Party\QBS Software\QuickReport\quickrpt;Third Party\Kevin Boylan\VCLZip;Third Party\L David Baldwin\HTML Components\Package;Third Party\Peter Morris\Fast Strings;Third Party\IMCA Systems\Rapid Tree\Source;Third Party\Khaled Shagrouni\XP Menu;Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;Third Party\Mike Shkolnik\SMExport\Sources;Third Party\Mike Shkolnik\SMImport\D7
+Count=2
+Item0=C:\Localsource\recorder-6\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source
+Item1=Third Party\QBS Software\QRDesign;Third Party\QBS Software\QuickReport\quickrpt;Third Party\Kevin Boylan\VCLZip;Third Party\L David Baldwin\HTML Components\Package;Third Party\Peter Morris\Fast Strings;Third Party\IMCA Systems\Rapid Tree\Source;Third Party\Khaled Shagrouni\XP Menu;Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;Third Party\Mike Shkolnik\SMExport\Sources;Third Party\Mike Shkolnik\SMImport\D7
 [HistoryLists\hlUnitOutputDirectory]
 Count=1
 Item0=C:\localsource\dcu

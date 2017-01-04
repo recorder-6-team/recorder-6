@@ -91,7 +91,7 @@ type
 
 implementation
 
-uses ComObj, ComServ, ExportWizard, StrUtils;
+uses ComObj, ComServ, ExportWizard, StrUtils, VersionInfo;
 
 {$R *.DFM}
 
@@ -362,7 +362,7 @@ end;
 
 function TReportButton.Get_Description: WideString;
 begin
-  result := 'Dellatinia Atlas exporter';
+  result := 'Atlas Exporter: ' + _('description')+#13#10+_('Version')+' '+ GetFileVersion(GetAddinPath()+'\AtlasExporter.ocx')+#13#10+#13#10+_('Shape export uses Shape Viewer Objects from Ecological Software Solutions (http://www.ecostats.com)');
 end;
 
 function TReportButton.Get_ImageFileName: WideString;

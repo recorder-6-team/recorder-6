@@ -12,10 +12,10 @@ unit AtlasExporter_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 22/07/2011 10:56:48 from Type Library described below.
+// File generated on 04/01/2017 20:43:57 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\Biodiverse IT\Projects\Delattinia\Atlas Generator\Development\AtlasExporter.tlb (1)
+// Type Lib: C:\Localsource\recorder-6\RecorderApp\Add-ins\AtlasExporter\AtlasExporter.tlb (1)
 // LIBID: {DE71CFB8-BB8B-48CE-BA52-D4A14D081548}
 // LCID: 0
 // Helpfile: 
