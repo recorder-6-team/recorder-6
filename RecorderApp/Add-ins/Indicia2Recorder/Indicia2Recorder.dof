@@ -94,7 +94,7 @@ OutputDir=C:\Program Files (x86)\Recorder 6\Addins
 UnitOutputDir=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=$(DELPHI)\Lib\Debug;C:\Localsource\recorder-6\Third Party\dec\Part_I
+SearchPath=C:\Localsource\recorder-6\Third Party\dec\Part_I
 Packages=vcl;rtl;vclx;indy;vclie;xmlrtl;inetdbbde;inet;inetdbxpress;dbrtl;soaprtl;dsnap;VclSmp;dbexpress;vcldb;dbxcds;inetdb;bdertl;vcldbx;adortl;teeui;teedb;tee;ibxpress;visualclx;visualdbclx;vclactnband;vclshlctrls;dclOfficeXP;localizer7;InHouseAPI7;InHouseDB7;UnitLib7;Qrpt7;InHouse7;RecorderAddin7;Qrd7;rapid;Extended3rdParty7;Jncc7;madBasic_;madDisAsm_;madExcept_;qrdBase_D7;qrdBDE_d7
 Conditionals=madExcept
 DebugSourceDirs=
@@ -161,11 +161,12 @@ Item0=madExcept
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=4
-Item0=$(DELPHI)\Lib\Debug;C:\Localsource\recorder-6\Third Party\dec\Part_I
-Item1=$(DELPHI)\Lib\Debug
-Item2=$(DELPHI)\Lib\Debug;C:\Localsource\Recorder\RecorderApp\trunk\Add-ins\Indicia2Recorder\dec\Part_I
-Item3=..\..\..\Third Party\Kevin Boylan\VCLZip
+Count=5
+Item0=C:\Localsource\recorder-6\Third Party\dec\Part_I
+Item1=$(DELPHI)\Lib\Debug;C:\Localsource\recorder-6\Third Party\dec\Part_I
+Item2=$(DELPHI)\Lib\Debug
+Item3=$(DELPHI)\Lib\Debug;C:\Localsource\Recorder\RecorderApp\trunk\Add-ins\Indicia2Recorder\dec\Part_I
+Item4=..\..\..\Third Party\Kevin Boylan\VCLZip
 [HistoryLists\hlUnitOutputDirectory]
 Count=2
 Item0=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU

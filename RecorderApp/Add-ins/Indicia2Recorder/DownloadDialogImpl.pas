@@ -188,6 +188,8 @@ resourcestring
   ResStr_FetchingRecords = 'Fetching some records';
   ResStr_InvalidConfigLine = 'Invalid config setting on line %d.';
   ResStr_InvalidData = 'Invalid data';
+  ResStr_InvalidResponse = 'Invalid response: %s';  
+  ResStr_LoggedInAs = 'Logged in as %s %s';
   ResStr_NoConfigFile = 'There is no configuration file available to define connection settings for the remote site. ' +
       'If you are an administrator wanting to create a connection then please answer the following questions.';
   ResStr_NoConnectionAvailable =
@@ -216,6 +218,8 @@ resourcestring
   ResStr_SkippingSensitiveRecord = 'Skipping sensitive record %s';
   ResStr_SpecifyEmailAddress = 'Please specify your email address registered against your %d account.';
   ResStr_SpecifyPassword = 'Please specify the password for your %s account.';
+  ResStr_SurveyTypeTermlistRequired = 'Please create a Survey Type termlist entry called Indicia ' +
+      'and at least one survey of this type to import into';
   ResStr_ToolsMenuName = 'Tools';
   ResStr_VerifiedStatusFromIndicia = 'Verified';
 
@@ -1497,13 +1501,13 @@ begin
       FFirstName := tokens[1];
       FSurname := tokens[2];
       FEmail := eEmail.Text;
-      lblLoggedInAs.Caption := 'Logged in as ' + FFirstName + ' ' + FSurname;
+      lblLoggedInAs.Caption := Format(ResStr_LoggedInAs, [FFirstName, FSurname]);;
       EnableDownloadControls;
       FetchDownloadOptions;
       LoadSettings(false);
     end
     else
-      raise Exception.Create('Invalid response: ' + response);
+      raise Exception.Create(Format(ResStr_InvalidResponse, [response]));
   finally
     tokens.free;
   end;
@@ -1662,8 +1666,7 @@ begin
       'JOIN survey_type st on st.survey_type_key=s.survey_type_key '+
       'WHERE st.short_name=''Indicia''');
   if rs.RecordCount=0 then
-    raise EDownloadDialogConfigException.Create('Please create a Survey Type termlist entry called Indicia and at least one ' +
-        'survey of this type to import into');
+    raise EDownloadDialogConfigException.Create(ResStr_SurveyTypeTermlistRequired);
   while not rs.EOF do begin
     cmbIntoSurvey.Items.Add(rs.Fields['item_name'].value);
     FSurveys.Add(rs.Fields['survey_key'].value);
