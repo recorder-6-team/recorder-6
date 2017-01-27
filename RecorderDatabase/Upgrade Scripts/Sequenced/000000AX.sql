@@ -1,6 +1,4 @@
 /****** Fix issue with redundant flag on parents ******/
-
-GO
 /****** Object:  StoredProcedure [dbo].[spPopulateOrganismLineage]    Script Date: 01/25/2017 21:25:44 ******/
 SET ANSI_NULLS ON
 GO
