@@ -1,7 +1,8 @@
 library Indicia2Recorder;
 
 uses
-  madExcept, LocOnFly,
+  madExcept,
+  LocOnFly,
   madLinkDisAsm,
   madListHardware,
   madListProcesses,

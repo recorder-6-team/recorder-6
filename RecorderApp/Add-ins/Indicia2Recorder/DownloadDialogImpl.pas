@@ -9,7 +9,7 @@ uses
   ActiveX, AxCtrls, Indicia2Recorder_TLB, StdVcl, ComCtrls, StdCtrls,
   ExtCtrls, Recorder2000_TLB, IdBaseComponent, IdComponent, uLkJSON,
   IdTCPConnection, IdTCPClient, IdHTTP, IdMultipartFormData, AdoDb, Variants,
-  SHFolder;
+  SHFolder, IdSSLOpenSSL;
 
 type
   EDownloadDialogConfigException = class(Exception);
@@ -737,6 +737,7 @@ procedure TDownloadDialog.GetConnectionToIndicia();
 var
   connectionFile, tokens: TStringList;
   encrypted, decrypted: string;
+  sslSocket: TIdSSLIOHandlerSocket;
 begin
   connectionFile := TStringList.Create;
   tokens := TStringList.Create;
@@ -759,6 +760,13 @@ begin
     FAppSecret := tokens[1];
     FRemoteSiteID := tokens[2];
     FRemoteSite := tokens[3];
+    // if https, then set up the IO Handler. See
+    // http://stackoverflow.com/questions/11554003/tidhttp-get-eidiohandlerpropinvalid-error
+    if Copy(FUrl, 1, 5) = 'https' then begin
+      sslSocket := TIdSSLIOHandlerSocket.Create(nil);
+      sslSocket.SSLOptions.Method := sslvSSLv23;//, sslvSSLv3, sslvTLSv1 
+      idHttp1.IOHandler := sslSocket;
+    end;
     lblLoginInstruct.Caption := StringReplace(lblLoginInstruct.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
     lblEmail.Caption := StringReplace(lblEmail.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
     lblPassword.Caption := StringReplace(lblPassword.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
@@ -1490,6 +1498,9 @@ begin
   end;
   tokens := TStringList.Create;
   try
+    // If the response has a UTF8 BOM at the start, we need a hack to strip that.
+    if copy(response, 1, 3)='﻿' then
+      response := copy(response, 4, 255);
     tokens.text := response;
     if (tokens.Count = 1) then
       // single line indicates an error message
