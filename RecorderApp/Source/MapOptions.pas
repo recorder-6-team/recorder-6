@@ -12,7 +12,7 @@
 //    $Revision: 105 $
 //    $Date: 6/07/09 15:19 $
 //    $Author: Ericsalmon $
-//
+//    //9:30
 //==============================================================================
 
 unit MapOptions;
@@ -29,16 +29,16 @@ uses
 type
   EOptionsError = class (TExceptionPath)
   end;
-  
+
   EConfigureToolbar = class (EOptionsError)
   end;
-  
+
   EDatasetSetupError = class (TExceptionPath)
   end;
-  
+
   EMapConfigError = class (TExceptionPath)
   end;
-  
+
   EMapOptionsError = class (TExceptionPath)
   end;
 
@@ -77,7 +77,8 @@ type
     procedure SetDisplayName(const Value: String);
     procedure SetIsDefault(const Value: Boolean);
     procedure UpdateData;
-  public
+
+    public
     constructor Create;
     destructor Destroy; override;
     procedure ResetData(const AResetAll: Boolean);
@@ -127,6 +128,20 @@ type
     tsBaseMap: TTabSheet;
     tsDistributionSymbols: TTabSheet;
     tsMapLayers: TTabSheet;
+    tsRecover: TTabSheet;
+    rgSecure: TRadioGroup;
+    btnSecure: TButton;
+    lblCurrentObjectSheet: TLabel;
+    lblCurrentMapSheetPath: TLabel;
+    lblMapSheet: TLabel;
+    lblObjectSheetPath: TLabel;
+    edWorkstation: TEdit;
+    lblWorkStation: TLabel;
+    cbRetain: TCheckBox;
+    lblUserFile: TLabel;
+    lblUserFilePath: TLabel;
+    lblBaseMap: TLabel;
+    lblCurrentBasemap: TLabel;
     procedure btnAddMapClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnDeleteDatasetClick(Sender: TObject);
@@ -153,7 +168,10 @@ type
     procedure sgMapsMouseWheel(Sender: TObject; Shift: TShiftState; MousePos: TPoint;
       var Handled: Boolean);
     procedure sgMapsClick(Sender: TObject);
-  private
+    procedure btnSecureClick(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure rgSecureClick(Sender: TObject);
+   private
     FAddBackgroundLayer: TMenuItem;
     FAddPolygonLayer: TMenuItem;
     FDatasetLegend: TDatasetLegend;
@@ -187,11 +205,35 @@ type
     procedure UpdateMapLayerTabButtons(ARow: Integer);
     procedure ValidateCutOffYear;
     procedure WMUpdateMenuIcons(var Msg:TMessage); message WM_UPDATE_MENU_ICONS;
+    function QuotedNullStr(Value,cType : string) :string;
+    procedure ResetMaps(const AAuto: Boolean);
+    procedure BackupMapFiles;
+    procedure RestoreAllMapFiles(const AScope: string);
+    function GetHostName : string;
+    function RemovePathDelim(AFolder: string) :string;
+    function RemoveFolderContent(const path,AType: string; AKeepList: TStringList): Boolean;
+    function CreateBackup(AFromFolder, AToFolder, AType,ASystem : string) : Boolean;
+    function RestoreBackup(AFromFolder, AToFolder,AType : string; AAction : integer): Boolean;
+    procedure RecoverMapSheet(const AFilePath: string; ASheetType: string; ACompId: string);
+    procedure RecoverMapData(const AScope : string);
+    procedure PopulateMapLocBoundary;
+    procedure RecoverBdyLinks;
+    function GetMasterObjectSheet: string;
+    function UpdateComputerMap: Boolean;
+    function ObjectSheetPathUpdate: Boolean;
+    procedure PopulateMapFileMff(const AFilePath : string; ASheetTypes:string; ACheckExists: Boolean; CompId : string);
+    function CheckComputerMap: Boolean;
+    function CheckObjectSheet : Boolean;
+    function ArchiveBackup: Boolean;
+    function ExecuteArchivebackup : string;
+    function UserFilePath: string;
+    function DeleteSpecifiedFiles(AFilename : string) : Boolean;
+    function BaseMapWidowOpen: Boolean;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
-  
+
 //==============================================================================
 implementation
 
@@ -199,8 +241,8 @@ implementation
 
 uses
   ApplicationSettings, SpatialRefFuncs, Recorder2000_TLB, GeneralData, Registry,
-  Maintbar, FormActions, RegisterMap, APIUtils, Contnrs, DatabaseAccessADO,
-  ADOInt, StrUtils;
+  Maintbar, RegisterMap, APIUtils, Contnrs, DatabaseAccessADO,
+  ADOInt, StrUtils,FormActions;
 
 const
   MIN_YEAR = 1900;
@@ -216,7 +258,7 @@ resourcestring
     //Map DataSetSetup
   ResStr_Error  = 'An error has occured while creating a new datset.';
   ResStr_Cancel = 'Are you sure you want to exit?'#13 +
-               'You will not be able to run the map until you have created a new dataset.';
+                  'You will not be able to run the map until you have created a new dataset.';
   ResStr_NoBaseMap   = 'No valid base maps can be located on the Base Map file path';
   ResStr_DatasetFail = 'There has been a general error setting up the new Dataset.';
   ResStr_AddPolygonlayer = 'Add Polygon Layer';
@@ -227,26 +269,90 @@ resourcestring
 
   ResStr_ResetMapDSYesNo = 'This will reset the ''%s'' map dataset.'#13#13 +
                            'Select Yes to reset the base map and background layers, ' +
-                           'select All to reset '#13'everything including shared polygon layers,' +
+                           'select All to DELETE '#13'everything including shared polygon layers,' +
                            ' or select No to cancel.';
 
   ResStr_MaynotSetBaseMap = 'You may not set the base map to this map because its system ' +
                             'is different to the current system.';
 
   ResStr_ResetMapDSRemovePolygons = 'This will reset the ''%s'' map dataset.'#13#13 +
-                                    'If you proceed this will remove all your polygon layers and any links ' +
-                                    'to locations or admin '#13'areas in the database.  This will affect all users.';
+                                    'If you wish to retain existing map data then do not proceed ' +
+                                    'unless you have backup.'#13#13 +
+                                    'Proceed ? ';
 
   ResStr_RemoveAllDataset = 'This action will remove all datasets except %s.'#13#10 +
                             'Do you want to continue?';
 
   ResStr_NeedOneMapReset = 'You need at least one map reset to be able to access the other options.';
 
+
+  ResStr_FailedToDelete = 'This file has failed to delete - check that it is not read only';
+
+  ResStr_Continue_Recover = 'This process will copy the maps files from the latest backup and ' +
+                            'use these to replace the existing mapping for the selected base map.'#13#10 +
+                             #13#10  +
+                             'Do you wish to proceed' ;
+
+  ResStr_Continue_Refresh = 'This process will refresh the links for the maps file  ' +
+                            'by creating replacement database entries for the map sheets.'#13#10 +
+                             #13#10  +
+                             'Do you wish to proceed' ;
+
+
+  ResStr_RecoverComplete = 'Restore complete';
+
+  ResStr_AddBaseMap = 'Are you sure you wish to add a new base map ?'#13#10 +
+                      'If you have more than one base map please change the default names';
+
+  ResStr_Object_Sheet = 'The object sheet path on this workstation does not appear to be correct'#13#10 +
+                        'Do not add new base maps or reset the maps until this is fixed.'#13#10 +
+                        'Attempt to fix this now ?';
+
+  ResStr_Object_Sheet_Fail = 'The changes to the object sheet path did not work'#13#10 +
+                            'Changes to the registry may be required';
+
+  ResStr_Admin_Permission  = 'This change can only be made by an Administrator';
+
+  ResStr_BaseMap_Permission  = 'The Map Window must be closed to make these changes.';
+
+  ResStr_Number_Saved = 'Update Complete ''%s'' files have been processed';
+
+  ResStr_NoFilesToBackup = 'There are no files to backup. Backup will ' +
+                           'not complete. Open a map to create the files.';
+
+  ResStr_NoFilesToRestore = 'There are no files to restore. ' +
+                            'No action has been taken';
+
+  ResStr_RestoreDifWS = 'Background maps from the selected workstation will loaded onto this workstation.'#13#10 +
+                        'Do you wish to proceed ?';
+
+  ResStr_Complete = '%s Complete';
+
+  ResStr_Restore = 'Restore';
+
+  ResStr_Backup = 'Backup';
+
+  ResStr_Archive = 'Archive';
+  ResStr_Failed = '''%s'' did not fully complete '+
+                   'there may be no files to backup or you may not have the required permissions.';
+
+  ResStr_DoArchive = 'Backup of %s base map complete do you wish to archive your map file backups now ?';
+
+  // rgButton captions
+
+  Resstr_Button0 =  'Backup Map Data';
+  Resstr_Button1 =  'Archive Backups';
+  Resstr_Button2 =  'Restore Map Data';
+  Resstr_Button3 =  'Restore Background Map Data';
+  Resstr_Button4 =  'Relink Map Data';
+  Resstr_Button5 =  'Relink Background Map Data';
+
   //Map Configure
   ResStr_DBFail         = 'Unable to read or write Map Configuration details to the database';
   ResStr_ValidDate      = 'The cut off year entered is not a valid year';
   ResStr_DateOutOfRange = 'The cut off year is not within the acceptable range';
   ResStr_DateEmpty      = 'A cut off year must be entered';
+
 
 {-==============================================================================
     TdlgMapOptions
@@ -258,9 +364,9 @@ var
   lFormatSettings: TFormatSettings;
 begin
   inherited Create(AOwner);
-  
+
   FdmMap := TdmMap.Create(nil);
-  
+
   pcMapOptions.ActivePageIndex := 0;
   SetGridColumnTitles(
       sgMaps,
@@ -371,11 +477,17 @@ var
   lQuery:string;
 begin
   { And add the Base Sheet - we have already checked for its existance }
+  { But if the file is not there and the database entry is then another db entry will be created
+   which we dont want so make sure it isn't there}
+
   MapCheck(ImportFileName(AItem, AppSettings.BaseMapPath + AItem.OriginalFileName),
            ResStr_CannotImportBaseMap);
 
   try
     lKey := dmGeneralData.GetNextKey('MAP_SHEET', 'Map_Sheet_Key');
+    dmDatabase.ExecuteSQL(Format('Delete From Map_Sheet where Base_map_key = ''%s''' +
+                          ' and Sheet_Type = 0',
+                          [AItem.BaseMapKey]));
     lQuery:=Format(
                 'INSERT INTO Map_Sheet (Map_Sheet_Key, Sheet_Name, Sheet_Type, File_Name, ' +
                 'Cut_In_Scale, Cut_Out_Scale, Sheet_Displayed, New_Data, Modified_Data, ' +
@@ -419,7 +531,7 @@ begin
     // Move layer to top. If main map displayed, it will be done automatically.
     FLayerLegend.MoveLayer(FLayerLegend.Count - 1, 0);
   end;
-end;  // TdlgMapOptions.AddPolygonLayerClick 
+end;  // TdlgMapOptions.AddPolygonLayerClick
 
 {-------------------------------------------------------------------------------
 }
@@ -428,53 +540,54 @@ var
   lItem: TSavedMap;
   lBase: TBaseMap;
 begin
-  with sgMaps do begin
-    // Save current, if editing, before moving on to new row.
-    SetBaseMapDisplayName(TSavedMap(Objects[COL_OBJECT, Row]), Cells[COL_DISPLAY_NAME, Row]);
+  If MessageDlg(ResStr_AddBaseMap, mtWarning, [mbYes, mbNo], 0) = mrYes then begin
+    with sgMaps do begin
+      // Save current, if editing, before moving on to new row.
+      SetBaseMapDisplayName(TSavedMap(Objects[COL_OBJECT, Row]), Cells[COL_DISPLAY_NAME, Row]);
+      if Assigned(Objects[COL_OBJECT, RowCount - 1]) then
+        RowCount := RowCount + 1;
 
-    if Assigned(Objects[COL_OBJECT, RowCount - 1]) then
-      RowCount := RowCount + 1;
-  
-    // Defaults the filename to first item in base maps combobox.
-    lItem := TSavedMap.Create;
-    lBase := TBaseMap(cmbBaseMaps.Items.Objects[0]);
-    with lItem do begin
-      FOriginalFileName := lBase.FileName;
-      FSpatialSystem    := lBase.SpatialSystem;
-      FDescription      := lBase.Description;
-      SaveData;
-    end;
-    Objects[COL_OBJECT, RowCount - 1] := lItem;
-  
-    // Keep grid in sync.
-    Cells[COL_DISPLAY_NAME, RowCount - 1] := ResStr_BaseMapSheet;
-    Cells[COL_BASE_MAP,     RowCount - 1] := lItem.OriginalFileName;
-    Row := RowCount - 1;
-    Col := COL_DISPLAY_NAME;
+      // Defaults the filename to first item in base maps combobox.
+      lItem := TSavedMap.Create;
+      lBase := TBaseMap(cmbBaseMaps.Items.Objects[0]);
+      with lItem do begin
+        FOriginalFileName := lBase.FileName;
+        FSpatialSystem    := lBase.SpatialSystem;
+        FDescription      := lBase.Description;
+        SaveData;
+      end;
+      Objects[COL_OBJECT, RowCount - 1] := lItem;
 
-    // Automatically create files for new map.
-    btnResetClick(nil);
+      // Keep grid in sync.
+      Cells[COL_DISPLAY_NAME, RowCount - 1] := ResStr_BaseMapSheet;
+      Cells[COL_BASE_MAP,     RowCount - 1] := lItem.OriginalFileName;
+      Row := RowCount - 1;
+      Col := COL_DISPLAY_NAME;
 
-    Options    := Options + [goEditing];
-    EditorMode := True;
-    // Select the whole text.
-    if TGridAccessor(sgMaps).InPlaceEditor <> nil then
+      // Automatically create files for new map.
+      ResetMaps(False);
+
+      Options    := Options + [goEditing];
+      EditorMode := True;
+      // Select the whole text.
+      if TGridAccessor(sgMaps).InPlaceEditor <> nil then
       with TGridAccessor(sgMaps).InPlaceEditor do begin
         SelStart  := 0;
         SelLength := Length(Text);
       end;
+    end;
+    UpdateEnabledMapsTabButtons;
   end;
-  UpdateEnabledMapsTabButtons;
 end;  // TdlgMapOptions.btnAddMapClick
 
 {-------------------------------------------------------------------------------
 }
 procedure TdlgMapOptions.btnCloseClick(Sender: TObject);
 begin
-  if pcMapOptions.ActivePage = tsBaseMap then
-    with sgMaps do
-      // Save current, if editing, before closing form.
-      SetBaseMapDisplayName(TSavedMap(Objects[COL_OBJECT, Row]), Cells[COL_DISPLAY_NAME, Row]);
+ if pcMapOptions.ActivePage = tsBaseMap then
+   with sgMaps do
+     // Save current, if editing, before closing form.
+     SetBaseMapDisplayName(TSavedMap(Objects[COL_OBJECT, Row]), Cells[COL_DISPLAY_NAME, Row]);
 end;  // TdlgMapOptions.btnCloseClick
 
 {-------------------------------------------------------------------------------
@@ -482,14 +595,14 @@ end;  // TdlgMapOptions.btnCloseClick
 procedure TdlgMapOptions.btnDeleteDatasetClick(Sender: TObject);
 begin
   FDatasetLegend.DeleteItem(sgDatasets.Row);
-end;  // TdlgMapOptions.btnDeleteDatasetClick 
+end;  // TdlgMapOptions.btnDeleteDatasetClick
 
 {-------------------------------------------------------------------------------
 }
 procedure TdlgMapOptions.btnDeleteLayerClick(Sender: TObject);
 begin
   FLayerLegend.DeleteItem(sgLayers.Row);
-end;  // TdlgMapOptions.btnDeleteLayerClick 
+end;  // TdlgMapOptions.btnDeleteLayerClick
 
 {-------------------------------------------------------------------------------
   Invoke the properties dialog for the selected layer
@@ -497,21 +610,21 @@ end;  // TdlgMapOptions.btnDeleteLayerClick
 procedure TdlgMapOptions.btnLayerPropertiesClick(Sender: TObject);
 begin
   FLayerLegend.EditItemProperties(sgLayers.Row);
-end;  // TdlgMapOptions.btnLayerPropertiesClick 
+end;  // TdlgMapOptions.btnLayerPropertiesClick
 
 {-------------------------------------------------------------------------------
 }
 procedure TdlgMapOptions.btnMoveDownClick(Sender: TObject);
 begin
   FLayerLegend.MoveLayer(sgLayers.Row, sgLayers.Row + 1);
-end;  // TdlgMapOptions.btnMoveDownClick 
+end;  // TdlgMapOptions.btnMoveDownClick
 
 {-------------------------------------------------------------------------------
 }
 procedure TdlgMapOptions.btnMoveUpClick(Sender: TObject);
 begin
   FLayerLegend.MoveLayer(sgLayers.Row, sgLayers.Row - 1);
-end;  // TdlgMapOptions.btnMoveUpClick 
+end;  // TdlgMapOptions.btnMoveUpClick
 
 {-------------------------------------------------------------------------------
 }
@@ -532,7 +645,6 @@ begin
     SetBaseMapDisplayName(lItem, Cells[COL_DISPLAY_NAME, Row]);
     Application.ProcessMessages;
   end;
-
   lProceed := True;
   if lItem.ComputerMapKey <> '' then
     lProceed := MessageDlg(Format(ResStr_RemoveMap, [lItem.DisplayName]), mtWarning, [mbYes, mbNo], 0) = mrYes;
@@ -561,7 +673,7 @@ begin
     dmDatabase.ExecuteSQL('DELETE Computer_Map WHERE Computer_Map_Key=''' +
                           lItem.ComputerMapKey + '''');
     dmDatabase.ExecuteSQL('DELETE Base_Map WHERE Base_Map_Key=''' + lBaseMapKey + '''');
-  
+
     // Destroy object.
     FreeAndNil(lItem);
 
@@ -599,92 +711,8 @@ end;  // TdlgMapOptions.btnRemoveMapClick
 {-------------------------------------------------------------------------------
 }
 procedure TdlgMapOptions.btnResetClick(Sender: TObject);
-var
-  lCursor: TCursor;
-  lMapShowing: Boolean;
-  lProceed: Integer;
-  lClearPolygonLayers: Boolean;
-  lItem: TSavedMap;
-  lMapWindow: TfrmMap;
 begin
-  with sgMaps do begin
-    lItem := TSavedMap(Objects[COL_OBJECT, Row]);
-    SetBaseMapDisplayName(lItem, Cells[COL_DISPLAY_NAME, Row]);
-  end;
-
-  // Check there is something to process.
-  if (lItem.BaseResetIndex <> lItem.ComputerResetIndex) or
-     ((lItem.OriginalFileName <> '') and (lItem.SpatialSystem <> '')) then
-  begin
-    lProceed := mrNo;
-    // Base map and computer map out of synch. Behave as if map wasn't on machine and reset.
-    if lItem.BaseResetIndex <> lItem.ComputerResetIndex then
-      lProceed := mrYes
-    else
-    // Check the base map already exists as a map dataset. If not, it's easy.
-    // Otherwise, check a few things first.
-    if FileExists(AppSettings.MapFilePath + lItem.BaseMapKey + '.gds') then
-      if CompareText(lItem.SpatialSystem, lItem.SpatialSystemBeforeReset) = 0 then begin
-        // Same Spatial System as before, can choose to keep polygon layers.
-        if AppSettings.UserAccessLevel in [ualReadOnly, ualRecorder, ualAddOnly] then
-          lProceed := MessageDlg(Format(ResStr_ResetMapDS, [lItem.DisplayName]), mtConfirmation, [mbYes, mbNo], 0)
-        else
-          lProceed := MessageDlg(Format(ResStr_ResetMapDSYesNo, [lItem.DisplayName]), mtConfirmation, [mbYes, mbAll, mbNo], 0)
-      end else begin
-        // Change of Spatial System, can't keep polygon layers.
-        if AppSettings.UserAccessLevel in [ualReadOnly, ualRecorder, ualAddOnly] then begin
-          MessageDlg(ResStr_MaynotSetBaseMap, mtInformation, [mbOK], 0);
-          lProceed := mrNo;
-        end else begin
-          lProceed := MessageDlg(Format(ResStr_ResetMapDSRemovePolygons, [lItem.DisplayName]),
-              mtConfirmation, [mbOk, mbCancel], 0);
-          // So that both messages have consistent results.
-          if lProceed = mrOk then lProceed := mrAll
-                             else lProceed := mrNo;
-        end;
-      end;
-  
-    // Proceed if user said so, or if dataset doesn't already exist.
-    if (lProceed <> mrNo) or
-       not FileExists(AppSettings.MapFilePath + lItem.BaseMapKey + '.gds') then
-    begin
-      try
-        lCursor := HourglassCursor;
-        lMapShowing := False;
-        try
-          // Locate Map window for BaseMapKey, and close it if found.
-          lMapWindow := dmFormActions.MapWindow(lItem.BaseMapKey);
-          if Assigned(lMapWindow) then begin
-            lMapShowing := True;
-            lMapWindow.Close;
-            Application.ProcessMessages;
-          end;
-          try
-            lClearPolygonLayers := (lProceed = mrAll) or
-                                    not PolygonLayersPresent(lItem.BaseMapKey);
-            // Remove files and records
-            ResetDataset(lItem.BaseMapKey, lClearPolygonLayers);
-            // Refresh data in Base_Map and Computer_Map
-            lItem.ResetData(lClearPolygonLayers);
-            // Create new Dataset file
-            CreateDatasetFile(lItem, lClearPolygonLayers);
-            // Refresh the other tabs too.
-            FLayerLegend.Refresh;
-            FDatasetLegend.Refresh;
-          except
-            on EDatasetSetupError do
-              Exit;
-          end;
-        finally
-          DefaultCursor(lCursor);
-        end;
-        if lMapShowing then { Reshow the map }
-          TfrmMap.Create(frmMain, lItem.BaseMapKey);
-      finally
-      end;
-    end;
-    sgMaps.Invalidate;
-  end;
+  Resetmaps(False);
 end;  // TdlgMapOptions.btnResetClick
 
 {-------------------------------------------------------------------------------
@@ -694,7 +722,7 @@ var
   lMapWindow: TfrmMap;
 begin
   AppSettings.MapSingleDataset := chkUniqueDataset.Checked;
-  
+
   // Grid is empty unless a map window with some datasets is open.
   lMapWindow := dmFormActions.MapWindow(FLayerLegend.BaseMapKey);
   if Assigned(lMapWindow) then
@@ -706,7 +734,7 @@ begin
         FDatasetLegend.SetUnique;
         lMapWindow.DatasetLegend.SetUnique;  // Will trigger Map refresh.
       end;
-end;  // TdlgMapOptions.chkUniqueDatasetClick 
+end;  // TdlgMapOptions.chkUniqueDatasetClick
 
 {-------------------------------------------------------------------------------
 }
@@ -722,14 +750,14 @@ begin
     SaveData;
   end;
   sgMaps.Invalidate;
-end;  // TdlgMapOptions.cmbBaseMapsChange 
+end;  // TdlgMapOptions.cmbBaseMapsChange
 
 {-------------------------------------------------------------------------------
 }
 procedure TdlgMapOptions.cmbBaseMapsExit(Sender: TObject);
 begin
   cmbBaseMaps.Visible := False;
-end;  // TdlgMapOptions.cmbBaseMapsExit 
+end;  // TdlgMapOptions.cmbBaseMapsExit
 
 {-------------------------------------------------------------------------------
 }
@@ -771,12 +799,12 @@ begin
           end;
       end;
     end;
-end;  // TdlgMapOptions.cmbMapsChange 
+end;  // TdlgMapOptions.cmbMapsChange
 
 {-------------------------------------------------------------------------------
   Sends the call to clean out the MAP_SHEET table, then creates and opens a dataset.
-  Attaches the selected base sheet Creates a blank Object sheet, including the fields required 
-      for storing Static IDs and KeyValues in the internal database. 
+  Attaches the selected base sheet Creates a blank Object sheet, including the fields required
+      for storing Static IDs and KeyValues in the internal database.
 }
 procedure TdlgMapOptions.CreateDatasetFile(AItem: TSavedMap; AResetPolygons: Boolean);
 var
@@ -795,7 +823,7 @@ begin
 
   // Add the Base sheet, or import file, and add to Map Dataset and database.
   AddBaseSheet(AItem);
-  
+
   // Map window is closed, the default layer will be added to Map Dataset when form
   // is re-opened.
   if AResetPolygons then
@@ -804,10 +832,10 @@ begin
   // Size the map appropriately
   MapCheck(MapGetDatasetExtent(AItem.MapServerLink.MapHandle, lExtent));
   MapCheck(MapZoomToExtents(AItem.MapServerLink.MapHandle, lExtent));
-end;  // TdlgMapOptions.CreateDatasetFile 
+end;  // TdlgMapOptions.CreateDatasetFile
 
 {-------------------------------------------------------------------------------
-  Creates the default polygon layer - the one the user always gets after they reset the map  
+  Creates the default polygon layer - the one the user always gets after they reset the map
 }
 procedure TdlgMapOptions.CreateDefaultDrawingLayer(const ABaseMapKey: TKeyString);
 var
@@ -821,7 +849,7 @@ begin
     '''%s'', ''Polygon layer'', 3, 1, 1, 1, 1, ''Polygon layer'', %d, %d, %d, ' +
     '''%s.gsf'', ''%s'', ''%s'')',
     [lKey, clRed, clBlue, Ord(bsFDiagonal), lKey, ABaseMapKey, AppSettings.UserID]));
-end;  // TdlgMapOptions.CreateDefaultDrawingLayer 
+end;  // TdlgMapOptions.CreateDefaultDrawingLayer
 
 {-------------------------------------------------------------------------------
 }
@@ -896,7 +924,7 @@ begin
   finally
     FindClose(lSRec);
   end;
-end;  // TdlgMapOptions.FindBaseMaps 
+end;  // TdlgMapOptions.FindBaseMaps
 
 {-------------------------------------------------------------------------------
 }
@@ -906,9 +934,9 @@ var
 begin
   //MapConfig
   CutOffYearChange;
-  //dmFormActions.actMapWindow.Enabled:= true;
+  //dmFormActions.actMapWindow.Enabled:= True;
   Action:=caFree;
-  
+
   // Loop through all opened Map windows, if any, and refresh the sheets.
   for i := 0 to frmMain.MDIChildCount - 1 do
     if frmMain.MDIChildren[i] is TfrmMap then
@@ -920,9 +948,9 @@ end;  // TdlgMapOptions.FormClose
   Populates lbFileNames with filenames of .gsf files in the "Base Map Files" folder.  In order 
       to be a base map the file MUST be of a MapServer sheet format (ie. .gsf file plus the 
       other 3 files of which a MapServer file is made up of).
-  For other types of vector sheet to become BaseMapFiles they would need importing into 
-      MapServer format, or the filter in the following method would need changing and an 
-      'Import' method added. 
+  For other types of vector sheet to become BaseMapFiles they would need importing into
+      MapServer format, or the filter in the following method would need changing and an
+      'Import' method added.
 }
 procedure TdlgMapOptions.GetAvailableBaseMaps;
 begin
@@ -964,7 +992,7 @@ begin
         FSpatialSystem    := Fields['Spatial_System'].Value;
         FOriginalFileNameBeforeReset := Fields['Original_FileName_Before_Reset'].Value;
         FSpatialSystemBeforeReset    := Fields['Spatial_System_Before_Reset'].Value;
-  
+
         MapServerLink.ActiveDataset := FBaseMapKey + '.gds';
       end;
       // Add rows only if last one has been filled
@@ -990,7 +1018,7 @@ var
 begin
   if Assigned(FSpatialSystemsList) then FreeAndNil(FSpatialSystemsList);
   FSpatialSystemsList := TStringList.Create;
-  
+
   { Add all standard systems to the check list box
     By using AddObject a title (OS_GB_TITLE) is associated with a system name }
   with FSpatialSystemsList do begin
@@ -999,7 +1027,7 @@ begin
     Add(LAT_LONG);
     Add(UTM);
   end;
-  
+
   // Now add any COM spatial systems
   with AppSettings.ComAddins.SpatialSystemInterfaces do
     for i := 0 to Count - 1 do begin
@@ -1012,7 +1040,7 @@ begin
         on EIntfCastError do;
       end;
     end;
-end;  // TdlgMapOptions.GetSpatialRefSystems 
+end;  // TdlgMapOptions.GetSpatialRefSystems
 
 {-------------------------------------------------------------------------------
   Adds a sheet to the map dataset. If this is a MapServer.gsf file then by calling 
@@ -1045,7 +1073,7 @@ begin
                             AItem.MapServerLink.SheetTotal - 1, False),
            AFileName);
   Result := MS_SUCCESS;
-end;  // TdlgMapOptions.ImportFileName 
+end;  // TdlgMapOptions.ImportFileName
 
 {-------------------------------------------------------------------------------
 }
@@ -1057,7 +1085,7 @@ begin
   if Assigned(lMapWindow) then
     // Locate item to delete in Map window from index in FDatasetLegend.
     lMapWindow.DatasetLegend.DeleteItem(FDatasetLegend.IndexOf(TBaseLegendItem(Sender)));
-end;  // TdlgMapOptions.MapDatasetDeleteItem 
+end;  // TdlgMapOptions.MapDatasetDeleteItem
 
 {-------------------------------------------------------------------------------
 }
@@ -1085,7 +1113,7 @@ begin
   if Assigned(lMapWindow) then
     // Locate item to delete in Map window from index in FLayerLegend.
     lMapWindow.LayerLegend.DeleteItem(FLayerLegend.IndexOf(TBaseLegendItem(Sender)));
-end;  // TdlgMapOptions.MapLayerDeleteItem 
+end;  // TdlgMapOptions.MapLayerDeleteItem
 
 {-------------------------------------------------------------------------------
 }
@@ -1096,7 +1124,7 @@ begin
   lMapWindow := dmFormActions.MapWindow(FLayerLegend.BaseMapKey);
   if Assigned(lMapWindow) then
     lMapWindow.LayerLegend.MoveLayer(AFromPos, AToPos);
-end;  // TdlgMapOptions.MapLayerMove 
+end;  // TdlgMapOptions.MapLayerMove
 
 {-------------------------------------------------------------------------------
 }
@@ -1118,8 +1146,11 @@ end;  // TdlgMapOptions.MapLayerNeedRefresh
 }
 procedure TdlgMapOptions.pcMapOptionsChange(Sender: TObject);
 begin
+  if pcMapOptions.ActivePageIndex = 3 then
+    lblCurrentBasemap.caption := TSavedMap(sgMaps.Objects[COL_OBJECT, sgMaps.Row]).DisplayName;
+
   // Keep only one combo with map names, just change parent from one tab to the other
-  if pcMapOptions.ActivePageIndex > 0 then begin
+  if pcMapOptions.ActivePageIndex in [1,2] then begin
     lblMap.Parent := pcMapOptions.Pages[pcMapOptions.ActivePageIndex];
     // If the selected row on first page is a reset map, select it in the combo too.
     with cmbMaps do begin
@@ -1133,7 +1164,7 @@ begin
   end;
   UpdateMapLayerTabButtons(sgLayers.Row);
   btnDeleteDataset.Enabled := Assigned(FDatasetLegend[sgDatasets.Row]);
-end;  // TdlgMapOptions.pcMapOptionsChange 
+end;  // TdlgMapOptions.pcMapOptionsChange
 
 {-------------------------------------------------------------------------------
 }
@@ -1141,8 +1172,13 @@ procedure TdlgMapOptions.pcMapOptionsChanging(Sender: TObject; var AllowChange: 
 var
   i: Integer;
   lItem: TSavedMap;
+  lObjectSheetOk: Boolean;
 begin
-  if not Assigned(sgMaps.Objects[COL_OBJECT, sgMaps.Row]) then
+  // check that the object sheets paths are ok
+  // Until this is fixed then other changes can not be made
+  // Will still allow the reset on an new workstation
+  lObjectSheetOK := CheckObjectSheet;
+  if (not Assigned(sgMaps.Objects[COL_OBJECT, sgMaps.Row])) or (not lObjectSheetOk) then
     AllowChange := False
   else begin
     // Allow moving from one tab to another by default. Special case for first page though.
@@ -1159,7 +1195,7 @@ begin
         for i := 1 to RowCount - 1 do begin
           lItem := TSavedMap(Objects[COL_OBJECT, i]);
           // Only allow base maps saved/reset. New ones need to be reset first.
-          if lItem.ComputerMapKey <> '' then cmbMaps.Items.AddObject(lItem.DisplayName, lItem);
+          if lItem.ComputerMapKey <> '' then  cmbMaps.Items.AddObject(lItem.DisplayName, lItem);
         end;
       end;
 
@@ -1168,7 +1204,7 @@ begin
 
       // If can change, see if the combo should be displayed.
       if AllowChange then begin
-        cmbMaps.Visible := cmbMaps.Items.Count > 1;
+        cmbMaps.Visible := cmbMaps.Items.Count > 0;
         lblMap.Visible  := cmbMaps.Visible;
         if cmbMaps.Visible then begin
           // Only one map available.
@@ -1186,13 +1222,13 @@ begin
       end;
     end;
   end;
-  if not AllowChange then
+  if (not AllowChange) and (lObjectSheetOk) then
     MessageDlg(ResStr_NeedOneMapReset, mtInformation, [mbOk], 0);
 end;  // TdlgMapOptions.pcMapOptionsChanging
 
 {-------------------------------------------------------------------------------
-  Returns true if there are any polygon layers in the map_sheet table. When resetting a map 
-      for the first time, need to detect if we are attaching to the existing layers already 
+  Returns True if there are any polygon layers in the map_sheet table. When resetting a map
+      for the first time, need to detect if we are attaching to the existing layers already
       created by someone else, or are the first to reset therefore must pick up our own
 }
 function TdlgMapOptions.PolygonLayersPresent(const ABaseMapKey: TKeyString): Boolean;
@@ -1209,10 +1245,10 @@ end;  // TdlgMapOptions.PolygonLayersPresent
   a) Deletes any old dataset on the Map File Path folder.
   b) Goes through MAP_SHEET table and deletes any files from MapFilePath which may have been
       created by the last dataset. (ie. importing a non-MapServer vector file will create the
-      4 MapServer type files in the MapFile Path, stored in the MAP_SHEET table in the 
+      4 MapServer type files in the MapFile Path, stored in the MAP_SHEET table in the
       DATASET_SHEET_FILENAME field )
   c) Calls to clean out the MAP_SHEET table
-  d) Cleans out location boundary and admin area boundaries 
+  d) Cleans out location boundary and admin area boundaries
 }
 procedure TdlgMapOptions.ResetDataset(const ABaseMapKey: String; AResetPolygons: Boolean);
 var
@@ -1300,7 +1336,7 @@ begin
     tsDistributionSymbols.Enabled := True;
     pcMapOptions.ActivePage := tsDistributionSymbols;
   end;
-end;  // TdlgMapOptions.SetupUserAccess 
+end;  // TdlgMapOptions.SetupUserAccess
 
 {-------------------------------------------------------------------------------
 }
@@ -1441,7 +1477,7 @@ begin
 
     // Need to get the object on ARow, as it can be different from the one on Row.
     lItem := TSavedMap(Objects[COL_OBJECT, ARow]);
-  
+
     lRect := CellRect(ACol, ARow);
     case ACol of
       COL_DEFAULT:
@@ -1503,7 +1539,7 @@ begin
   inherited;
   // The lDummy parameter is necessary for the function call, variable required.
   sgMapsSelectCell(nil, sgMaps.Col, sgMaps.Row, lDummy);
-end;  // TdlgMapOptions.sgMapsTopLeftChanged 
+end;  // TdlgMapOptions.sgMapsTopLeftChanged
 
 {-------------------------------------------------------------------------------
 }
@@ -1538,7 +1574,7 @@ begin
 end;  // TdlgMapOptions.UpdateMapLayerTabButtons
 
 {-------------------------------------------------------------------------------
-  Does what it says it does  
+  Does what it says it does
 }
 procedure TdlgMapOptions.ValidateCutOffYear;
 var
@@ -1550,13 +1586,13 @@ begin
   try
     if eCutOffYear.Text = '' then
       raise EMapConfigError.CreateValidation(ResStr_DateEmpty, eCutOffYear);
-  
+
     lYear := StrToInt(eCutOffYear.Text);
     if (lYear < MIN_YEAR) or (lYear > MAX_YEAR) then begin
       pcMapOptions.ActivePage := tsDistributionSymbols;
       raise EMapConfigError.CreateValidation(ResStr_DateOutOfRange, eCutOffYear);
     end;
-  
+
     lDate := EncodeDate(StrToInt(eCutOffYear.Text), 1, 1);
     if lDate > lNow then
     begin
@@ -1570,16 +1606,16 @@ begin
       raise EMapConfigError.CreateValidation(ResStr_ValidDate, eCutOffYear);
     end;
   end;
-end;  // TdlgMapOptions.ValidateCutOffYear 
+end;  // TdlgMapOptions.ValidateCutOffYear
 
 {-------------------------------------------------------------------------------
-  Update menu icon appearnance & XP Menus when requested  
+  Update menu icon appearnance & XP Menus when requested
 }
 procedure TdlgMapOptions.WMUpdateMenuIcons(var Msg:TMessage);
 begin
   FXPMenu.Active   := AppSettings.ShowMenuIcons;
   FXPMenu.Gradient := AppSettings.GraduatedMenus;
-end;  // TdlgMapOptions.WMUpdateMenuIcons 
+end;  // TdlgMapOptions.WMUpdateMenuIcons
 
 {-==============================================================================
     TBaseMap
@@ -1591,7 +1627,7 @@ begin
   FFileName      := AFileName;
   FSpatialSystem := ASpatialSystem;
   FDescription   := ADescription;
-end;  // TBaseMap.Create 
+end;  // TBaseMap.Create
 
 {-==============================================================================
     TSavedMap
@@ -1601,13 +1637,13 @@ end;  // TBaseMap.Create
 constructor TSavedMap.Create;
 begin
   inherited Create;
-  
+
   FDisplayName := ResStr_BaseMapSheet;
   FIsDefault   := False;
   FComputerID  := AppSettings.ComputerID;
-  
+
   FMapServerLink := TMapServerLink.Create(nil);
-end;  // TSavedMap.Create 
+end;  // TSavedMap.Create
 
 {-------------------------------------------------------------------------------
 }
@@ -1616,7 +1652,7 @@ begin
   FMapServerLink.Free;
 
   inherited Destroy;
-end;  // TSavedMap.Destroy 
+end;  // TSavedMap.Destroy
 
 {-------------------------------------------------------------------------------
 }
@@ -1624,7 +1660,7 @@ function TSavedMap.GetNeedReset: Boolean;
 begin
   Result := (FOriginalFileName <> FOriginalFileNameBeforeReset) or
             (FComputerMapKey = '') or (FComputerResetIndex <> FBaseResetIndex);
-end;  // TSavedMap.GetNeedReset 
+end;  // TSavedMap.GetNeedReset
 
 {-------------------------------------------------------------------------------
 }
@@ -1640,10 +1676,9 @@ begin
              [FBaseMapKey, QuotedStr(FOriginalFileName), FSpatialSystem,
              QuotedStr(FDisplayName), QuotedStr(FOriginalFileName), FSpatialSystem,
              AppSettings.UserID]));
-end;  // TSavedMap.InsertData 
+end;  // TSavedMap.InsertData
 
-{-------------------------------------------------------------------------------
-}
+
 procedure TSavedMap.ResetData(const AResetAll: Boolean);
 begin
   // Increase the Base Map Reset Index only if the file changed, or user asks for a
@@ -1651,9 +1686,10 @@ begin
   if AResetAll or
      (FOriginalFileNameBeforeReset <> FOriginalFileName) or
      (FSpatialSystemBeforeReset <> FSpatialSystem) then
-    Inc(FBaseResetIndex);
-
-  // Synchronize values so that NeedReset returns false (until filename changes).
+   begin
+      Inc(FBaseResetIndex);
+   end;
+  // Synchronize values so that NeedReset returns False (until filename changes).
   FComputerResetIndex          := FBaseResetIndex;
   FOriginalFileNameBeforeReset := FOriginalFileName;
   FSpatialSystemBeforeReset    := FSpatialSystem;
@@ -1670,10 +1706,10 @@ begin
 
     dmDatabase.ExecuteSQL(Format(
                        'INSERT INTO Computer_Map (Computer_Map_Key, Computer_ID, ' +
-                       'Base_Map_Key, Reset_Index, Default_Map, Entered_By) ' +
-                       'VALUES (''%s'', Host_Name(), ''%s'', %d, %d, ''%s'')',
+                       'Base_Map_Key, Reset_Index, Default_Map, Entered_By,Object_Sheet_Folder,Master) ' +
+                       'VALUES (''%s'', Host_Name(), ''%s'', %d, %d, ''%s'',''%s'',0)',
                        [FComputerMapKey, FBaseMapKey, FComputerResetIndex,
-                        Ord(FIsDefault), AppSettings.UserID]));
+                        Ord(FIsDefault), AppSettings.UserID,AppSettings.ObjectSheetFilePath]));
   end else
     // If record already exists, just need to update the Reset Index value. Don't touch the
     // others.
@@ -1690,7 +1726,8 @@ begin
                      'WHERE Base_Map_Key = ''%s''',
                      [QuotedStr(FOriginalFileName), FSpatialSystem, FBaseResetIndex,
                       AppSettings.UserID, FBaseMapKey]));
-end;  // TSavedMap.ResetData 
+
+end;  // TSavedMap.ResetData
 
 {-------------------------------------------------------------------------------
 }
@@ -1698,7 +1735,7 @@ procedure TSavedMap.SaveData;
 begin
   if FBaseMapKey = '' then InsertData
                       else UpdateData;
-end;  // TSavedMap.SaveData 
+end;  // TSavedMap.SaveData
 
 {-------------------------------------------------------------------------------
 }
@@ -1708,7 +1745,7 @@ begin
     FDisplayName := Value;
     SaveData;
   end;
-end;  // TSavedMap.SetDisplayName 
+end;  // TSavedMap.SetDisplayName
 
 {-------------------------------------------------------------------------------
 }
@@ -1718,7 +1755,7 @@ begin
     FIsDefault := Value;
     SaveData;
   end;
-end;  // TSavedMap.SetIsDefault 
+end;  // TSavedMap.SetIsDefault
 
 {-------------------------------------------------------------------------------
 }
@@ -1748,4 +1785,898 @@ begin
                [Ord(FIsDefault), AppSettings.UserID, FComputerMapKey]));
 end;  // TSavedMap.UpdateData
 
+
+function TdlgMapOptions.QuotedNullStr(Value, cType: string): string;
+begin
+  if value = '' then
+    Result := 'NULL'
+  else if CType = 'S' then
+    Result := QuotedStr(Value)
+  else if uppercase(Value) = 'FALSE' then
+    Result := '0'
+  else if uppercase(Value) = 'TRUE' then
+    Result := '1'
+  else
+    Result := Value;
+end;
+
+procedure TdlgMapOptions.RecoverMapSheet(const AFilePath: string;
+                         ASheetType: string; ACompId: string);
+var
+lPath,lQuery,lCompId,lBaseMapSystem : string;
+lSearchRec: TSearchRec;
+lFileList,lMapSheetList: TStringList;
+lMapSheetKey,lUserId,lSheetName,lFileName,lSheetType,lSWSpatialRef, lNESpatialRef,
+    lSpatialRefSystem, lSWLat,lSWLong,lNELat,lNeSpatialRefQualifier,
+    lSwSpatialRefQualifier,lCutInScale, lCutOutScale,lSheetDisplayed,lNewData,
+    lModifiedData, lDataSetSheetName, lRemoveSheet, lDataSheetFileName,
+    lDatasetSheetOrder, lSelectedColour, lUnselectedColour,lPatternIndex,
+    lComputerId,lBaseMapKey,lFileBaseMapkey,lNELong,lSpatialSystem : string;
+i,lRow : integer;
+lItem : TSavedMap;
+begin
+  lCompid := ACompId;
+  if ACompId = 'NULL' then
+    lCompId := 'IS NULL'
+  else
+    lCompId := ' = Host_Name() ';
+
+  lMapSheetList := TStringList.Create;
+  with sgMaps do begin
+    lRow:= Row;
+    lItem := TSavedMap(Objects[COL_OBJECT,lRow]);
+    lBaseMapKey := lItem.BaseMapKey;
+    lBaseMapSystem := lItem.FSpatialSystem;
+  end;
+
+  lquery := 'IF NOT EXISTS (SELECT * FROM MAP_SHEET WHERE DATASET_SHEET_FILENAME = ' +
+            ' %s ) INSERT INTO MAP_SHEET ' +
+            '(MAP_SHEET_KEY,USER_ID,SHEET_NAME,FILE_NAME,SHEET_TYPE,' +
+            'SW_SPATIAL_REF,NE_SPATIAL_REF,SPATIAL_REF_SYSTEM,SW_LAT,SW_LONG,' +
+            'NE_LAT,NE_LONG,NE_SPATIAL_REF_QUALIFIER,SW_SPATIAL_REF_QUALIFIER, ' +
+            'CUT_IN_SCALE,CUT_OUT_SCALE,SHEET_DISPLAYED,ENTERED_BY,ENTRY_DATE, ' +
+            'NEW_DATA,MODIFIED_DATA,DATASET_SHEET_NAME,REMOVE_SHEET,DATASET_SHEET_FILENAME, ' +
+            'DATASET_SHEET_ORDER,SELECTED_COLOUR,UNSELECTED_COLOUR,PATTERN_INDEX,' +
+            'COMPUTER_ID,BASE_MAP_KEY) ' +
+            'VALUES (''%s'',%s,%s,%s,%s,' +
+            '%s,%s,%s,%s,%s, ' +
+            '%s,%s,%s,%s,' +
+            '%s,%s,%s,''%s'',getdate(),' +
+            '%s,%s,%s,%s,%s,' +
+            '%s,%s,%s,%s,'+
+            '%s,''%s'')';
+
+  if not cbRetain.checked then dmDatabase.ExecuteSQL(Format('Delete FROM MAP_SHEET WHERE Sheet_type in(%s)' +
+                              ' AND COMPUTER_ID %s AND ' +
+                              ' Base_Map_Key = ''' + lBaseMapKey + '''',[ASheetType,lCompId]));
+  lFileList := TStringList.Create;
+  lPath := AFilePath;
+  if FindFirst(lPath + '*.mff', 0, lSearchRec) = 0 then begin
+    lFileList.add (lPath + lSearchRec.Name);
+    while FindNext(lSearchRec) = 0 do
+      lFileList.add (lPath + lSearchRec.Name);
+    FindClose(lSearchRec);
+  end;
+
+  for i := 0 to lFileList.count-1 do begin
+    if FileExists(lPath + ExtractWithoutExt(lFileList[i]) + '.gsf') then begin
+      lMapSheetList.LoadFromFile(lFileList[i]);
+      lUserId := QuotedNullStr(lMapSheetList.Values['USER_ID'],'S');
+      lSheetName :=  QuotedNullStr(lMapSheetList.Values['SHEET_NAME'],'S');
+      lFileName := QuotedNullStr(lMapSheetList.Values['FILE_NAME'],'S');
+      lSheetType := QuotedNullStr(lMapSheetList.Values['SHEET_TYPE'],'');
+      lSWSpatialRef := QuotedNullStr(lMapSheetList.Values['SW_SPATIAL_REF'],'S');
+      lNESpatialRef := QuotedNullStr(lMapSheetList.Values['NE_SPATIAL_REF'],'S');
+      lSpatialRefSystem := QuotedNullStr(lMapSheetList.Values['SPATIAL_REF_SYSTEM'],'S');
+      lSWLat := QuotedNullStr(lMapSheetList.Values['SW_LAT'],'');
+      lSWLong := QuotedNullStr(lMapSheetList.Values['SW_LONG'],'');
+      lNELat := QuotedNullStr(lMapSheetList.Values['NE_LAT'],'');
+      lNELong := QuotedNullStr(lMapSheetList.Values['NE_LONG'],'');
+      lNeSpatialRefQualifier := QuotedNullStr(lMapSheetList.Values['NE_SPATIAL_REF_QUALIFIER'],'S');
+      lSwSpatialRefQualifier  := QuotedNullStr(lMapSheetList.Values['SW_SPATIAL_REF_QUALIFIER'],'S');
+      lCutInScale := QuotedNullStr(lMapSheetList.Values['CUT_IN_SCALE'],'S');
+      lCutOutScale := QuotedNullStr(lMapSheetList.Values['CUT_OUT_SCALE'],'S');
+      lSheetDisplayed := QuotedNullStr(lMapSheetList.Values['SHEET_DISPLAYED'],'');
+      lNewData := QuotedNullStr(lMapSheetList.Values['NEW_DATA'],'');
+      lModifiedData := QuotedNullStr(lMapSheetList.Values['MODIFIED_DATA'],'');
+      lDataSetSheetName := QuotedNullStr(lMapSheetList.Values['DATASET_SHEET_NAME'],'S');
+      lRemoveSheet := QuotedNullStr(lMapSheetList.Values['REMOVE_SHEET'],'');
+      lDataSheetFileName := QuotedNullStr(lMapSheetList.Values['DATASET_SHEET_FILENAME' ],'S');
+      lDatasetSheetOrder := QuotedNullStr(lMapSheetList.Values['DATASET_SHEET_ORDER'],'');
+      lSelectedColour := QuotedNullStr(lMapSheetList.Values['SELECTED_COLOUR'],'');
+      lUnselectedColour := QuotedNullStr(lMapSheetList.Values['UNSELECTED_COLOUR'],'');
+      lPatternIndex := QuotedNullStr(lMapSheetList.Values['PATTERN_INDEX'],'');
+      lComputerId := QuotedNullStr(lMapSheetList.Values['COMPUTER_ID'],'S');
+      lFileBaseMapKey := lMapSheetList.Values['BASE_MAP_KEY'];
+      lSpatialSystem := lMapSheetList.Values['SPATIAL_SYSTEM'];
+      //Only proceed if the spatial systems are the same.
+      if lBaseMapSystem = lSpatialSystem then begin
+        lMapSheetKey := dmGeneraldata.GetNextKey('MAP_SHEET', 'Map_Sheet_Key');
+        dmDatabase.ExecuteSQL(Format(lQuery,
+        [lDataSheetFileName,lMapSheetKey,lUserId,lSheetName,lFileName,lSheetType,
+        lSWSpatialRef,lNESpatialRef,lSpatialRefSystem,lSWLat,lSWLong,
+        lNELat,lNELong,lNeSpatialRefQualifier,lSwSpatialRefQualifier,
+        lCutInScale,lCutOutScale,lSheetDisplayed,AppSettings.UserID,
+        lNewData,lModifiedData,lDataSetSheetName,lRemoveSheet,lDataSheetFileName,
+        lDatasetSheetOrder,lSelectedColour,lUnselectedColour,lPatternIndex,
+        ACompId,lBaseMapKey]),False);
+      end;
+    end;
+  end;
+  lMapSheetList.Free;
+  lFileList.Free;
+end;
+
+procedure TdlgMapOptions.ResetMaps(const AAuto: Boolean);
+var
+  lCursor: TCursor;
+  lMapShowing,lClearPolygonLayers: Boolean;
+  lProceed: Integer;
+  lItem: TSavedMap;
+  lMapWindow: TfrmMap;
+begin
+  with sgMaps do begin
+    lItem := TSavedMap(Objects[COL_OBJECT, Row]);
+    SetBaseMapDisplayName(lItem, Cells[COL_DISPLAY_NAME, Row]);
+  end;
+  // Check there is something to process.
+  if (lItem.BaseResetIndex <> lItem.ComputerResetIndex) or
+     ((lItem.OriginalFileName <> '') and (lItem.SpatialSystem <> '')) then
+  begin
+    lProceed := mrNo;
+    // Base map and computer map out of synch. Behave as if map wasn't on machine and reset.
+    if (lItem.BaseResetIndex <> lItem.ComputerResetIndex) or (AAuto) then
+      lProceed := mrYes
+    else
+    // Check the base map already exists as a map dataset. If not, it's easy.
+    // Otherwise, check a few things first.
+    if FileExists(AppSettings.MapFilePath + lItem.BaseMapKey + '.gds') then
+      if CompareText(lItem.SpatialSystem, lItem.SpatialSystemBeforeReset) = 0 then begin
+        // Same Spatial System as before, can choose to keep polygon layers.
+        if AppSettings.UserAccessLevel in [ualReadOnly, ualRecorder, ualAddOnly] then
+          lProceed := MessageDlg(Format(ResStr_ResetMapDS, [lItem.DisplayName]), mtConfirmation, [mbYes, mbNo], 0)
+        else
+          lProceed := MessageDlg(Format(ResStr_ResetMapDSYesNo, [lItem.DisplayName]), mtConfirmation, [mbYes, mbAll, mbNo], 0)
+      end else begin
+        // Change of Spatial System, can't keep polygon layers.
+        if AppSettings.UserAccessLevel in [ualReadOnly, ualRecorder, ualAddOnly] then begin
+          MessageDlg(ResStr_MaynotSetBaseMap, mtInformation, [mbOK], 0);
+          lProceed := mrNo;
+        end else begin
+          lProceed := MessageDlg(Format(ResStr_ResetMapDSRemovePolygons, [lItem.DisplayName]),
+              mtConfirmation, [mbOk, mbCancel], 0);
+          // So that both messages have consistent results.
+          if lProceed = mrOk then lProceed := mrAll
+                             else lProceed := mrNo;
+        end;
+      end;
+
+    // Proceed if user said so, or if dataset doesn't already exist.
+    if (lProceed <> mrNo) or not (FileExists(AppSettings.MapFilePath + lItem.BaseMapKey + '.gds')) then
+    begin
+      try
+        lCursor := HourglassCursor;
+        lMapShowing := False;
+        try
+          // Locate Map window for BaseMapKey, and close it if found.
+          lMapWindow := dmFormActions.MapWindow(lItem.BaseMapKey);
+          if Assigned(lMapWindow) then begin
+            lMapShowing := True;
+            lMapWindow.Close;
+            Application.ProcessMessages;
+          end;
+          try
+            lClearPolygonLayers := (lProceed = mrAll) or
+                not PolygonLayersPresent(lItem.BaseMapKey);
+            // Remove files and records
+            ResetDataset(lItem.BaseMapKey, lClearPolygonLayers);
+            // Refresh data in Base_Map and Computer_Map
+            lItem.ResetData(lClearPolygonLayers);
+            // Create new Dataset file
+            CreateDatasetFile(lItem, lClearPolygonLayers);
+            // Refresh the other tabs too.
+            FLayerLegend.Refresh;
+            FDatasetLegend.Refresh;
+            if lClearPolygonLayers then begin
+              // Always make a machine doing a full reset the master we are not concerned about the basemap
+              dmDatabase.ExecuteSQL('Update Computer_Map set master = 0');
+              dmDatabase.ExecuteSQL('Update Computer_Map set master = 1 where Computer_Id = host_name()');
+            end;
+            // check that the Object sheet path is OK
+            CheckObjectSheet;
+          except
+            on EDatasetSetupError do
+              Exit;
+          end;
+        finally
+          DefaultCursor(lCursor);
+        end;
+        if lMapShowing then { Reshow the map }
+          TfrmMap.Create(frmMain, lItem.BaseMapKey);
+      finally
+      end;
+    end;
+  end;
+  sgMaps.Invalidate;
+end;
+
+procedure TdlgMapOptions.btnSecureClick(Sender: TObject);
+begin
+  if rgSecure.ItemIndex = 0 then
+    BackupMapFiles
+  else begin
+    if (AppSettings.UserAccessLevel = ualAdmin) and (Not BaseMapWidowOpen) then begin
+      case rgSecure.ItemIndex of
+        1 : ExecuteArchiveBackup;
+        2 : RestoreAllMapFiles('');
+        3 : RestoreAllMapFiles('MS');
+        4 : RecoverMapData('');
+        5 : RecoverMapData('MS');
+      end;
+    end else
+      if (Not BaseMapWidowOpen)then
+        MessageDlg(ResStr_Admin_Permission,mtInformation, [mbOk], 0)
+      else  MessageDlg(ResStr_BaseMap_Permission,mtInformation, [mbOk], 0);
+  end;
+end;
+
+procedure TdlgMapOptions.PopulateMapFileMff(const AFilePath : string; ASheetTypes:string; ACheckExists: Boolean; CompId : string);
+var
+lMSFileName : string;
+lString : TStringList;
+begin
+  if ASheetTypes <> '1' then
+    DeleteSpecifiedFiles(AppSettings.ObjectSheetFilePath + '*.mff')
+  else DeleteSpecifiedFiles(AppSettings.MapFilePath + '*.mff');
+
+  with dmDatabase.ExecuteSQL(Format('SELECT MS.*,BM.SPATIAL_SYSTEM ' +
+                                   ' FROM Map_Sheet MS INNER JOIN ' +
+                                   ' BASE_MAP BM ON BM.BASE_MAP_KEY = MS.BASE_MAP_KEY' +
+                                   ' WHERE ISNull(Dataset_Sheet_FileName,'''') <>'''' AND Sheet_Type in(%s) ' +
+                                   ' and Computer_Id %s',[ASheetTypes,CompId]), True) do
+  begin
+    while not Eof do begin
+        // Get Filename with path to where it should be found.
+        lMSFileName := AFilePath +
+                       ExtractWithoutExt(Fields['Dataset_Sheet_FileName'].Value) + '.mff';
+        if (not FileExists(lMSFileName)) or (not ACheckExists) then
+        begin
+          lString := TStringList.Create;
+          lString.add('MAP_SHEET_KEY=' + VarToStr(Fields['MAP_SHEET_KEY'].Value));
+          lString.add('USER_ID=' + VarToStr(Fields['USER_ID'].Value));
+          lString.add('SHEET_NAME=' + VarToStr(Fields['SHEET_NAME'].Value));
+          lString.add('FILE_NAME=' + VarToStr(Fields['FILE_NAME'].Value));
+          lString.add('SHEET_TYPE=' + VarToStr(Fields['SHEET_TYPE'].Value));
+          lString.add('SW_SPATIAL_REF=' + VarToStr(Fields['SW_SPATIAL_REF'].Value));
+          lString.add('NE_SPATIAL_REF=' + VarToStr(Fields['NE_SPATIAL_REF'].Value));
+          lString.add('SPATIAL_REF_SYSTEM=' + VarToStr(Fields['SPATIAL_REF_SYSTEM'].Value));
+          lString.add('SW_LAT=' + VarToStr(Fields['SW_LAT'].Value));
+          lString.add('SW_LONG=' + VarToStr(Fields['SW_LONG'].Value));
+          lString.add('NE_LAT=' + VarToStr(Fields['NE_LAT'].Value));
+          lString.add('NE_LONG=' + VarToStr(Fields['NE_LONG'].Value));
+          lString.add('NE_SPATIAL_REF_QUALIFIER=' + VarToStr(Fields['NE_SPATIAL_REF_QUALIFIER'].Value));
+          lString.add('SW_SPATIAL_REF_QUALIFIER=' + VarToStr(Fields['SW_SPATIAL_REF_QUALIFIER'].Value));
+          lString.add('CUT_IN_SCALE=' + VarToStr(Fields['CUT_IN_SCALE'].Value));
+          lString.add('CUT_OUT_SCALE=' + VarToStr(Fields['CUT_OUT_SCALE'].Value));
+          lString.add('SHEET_DISPLAYED=' + VarToStr(Fields['SHEET_DISPLAYED'].Value));
+          lString.add('NEW_DATA=' + VarToStr(Fields['NEW_DATA'].Value));
+          lString.add('MODIFIED_DATA=' + VarToStr(Fields['MODIFIED_DATA'].Value));
+          lString.add('DATASET_SHEET_NAME=' + VarToStr(Fields['DATASET_SHEET_NAME'].Value));
+          lString.add('REMOVE_SHEET=' + VarToStr(Fields['REMOVE_SHEET'].Value));
+          lString.add('DATASET_SHEET_FILENAME=' + VarToStr(Fields['DATASET_SHEET_FILENAME'].Value));
+          lString.add('DATASET_SHEET_ORDER=' + VarToStr(Fields['DATASET_SHEET_ORDER'].Value));
+          lString.add('SELECTED_COLOUR=' + VarToStr(Fields['SELECTED_COLOUR'].Value));
+          lString.add('UNSELECTED_COLOUR=' + VarToStr(Fields['UNSELECTED_COLOUR'].Value));
+          lString.add('PATTERN_INDEX=' + VarToStr(Fields['PATTERN_INDEX'].Value));
+          lString.add('COMPUTER_ID=' + VarToStr(Fields['COMPUTER_ID'].Value));
+          lString.add('BASE_MAP_KEY=' + VarToStr(Fields['Base_Map_Key'].Value));
+          lString.add('SPATIAL_SYSTEM=' + VarToStr(Fields['Spatial_System'].Value));
+          lString.SaveToFile(lMSFileName);
+          lString.Free;
+        end; //end of write
+      MoveNext;
+    end; // end of while
+    Close;
+  end; //end of with
+end;
+
+// Procedure will create a .rbd (recorder boundary)file in the Map file folder for entries
+// in Map Sheet table for this work station
+procedure TdlgMapOptions.PopulateMapLocBoundary;
+var
+  lString,lObsSheets,lFileList : TStringList;
+  lQuery,lData,lFileName,lMSFileName: string;
+  i,x: integer;
+begin
+  lObsSheets := TStringlist.create;
+  lFileList :=  TStringlist.create;
+  lQuery := 'Select ''LOCATION'',MS.DATASET_SHEET_FILENAME,LB.MAP_SHEET_KEY,LB.LOCATION_BOUNDARY_KEY,' +
+            'LB.LOCATION_KEY,LB.FROM_VAGUE_DATE_START,LB.FROM_VAGUE_DATE_END,LB.FROM_VAGUE_DATE_TYPE,' +
+            'LB.TO_VAGUE_DATE_START,LB.TO_VAGUE_DATE_END,LB.TO_VAGUE_DATE_TYPE, ' +
+            'LB.VERSION,LB.[OBJECT_ID],LB.SYSTEM_SUPPLIED_DATA,BM.SPATIAL_SYSTEM,NULL,NULL ' +
+            'FROM MAP_SHEET MS INNER JOIN LOCATION_BOUNDARY LB  ON ' +
+            'MS.MAP_SHEET_KEY = LB.MAP_SHEET_KEY ' +
+            'INNER JOIN BASE_MAP BM ON BM.BASE_MAP_KEY = MS.BASE_MAP_KEY ' +
+            'WHERE MS.DATASET_SHEET_FILENAME = ''%s'''  +
+            'UNION Select ''ADMIN'',MS.DATASET_SHEET_FILENAME,AB.MAP_SHEET_KEY,AB.ADMIN_BOUNDARY_KEY,' +
+            'AB.ADMIN_AREA_KEY,NULL,NULL,NULL, ' +
+            'NULL,NULL,NULL,NULL,NULL,AB.SYSTEM_SUPPLIED_DATA,BM.SPATIAL_SYSTEM,AB.DATE_FROM,AB.DATE_TO ' +
+            'FROM MAP_SHEET MS INNER JOIN ADMIN_BOUNDARY AB  On ' +
+            'MS.MAP_SHEET_KEY = AB.MAP_SHEET_KEY ' +
+            'INNER JOIN BASE_MAP BM ON BM.BASE_MAP_KEY = MS.BASE_MAP_KEY ' +
+            'WHERE MS.DATASET_SHEET_FILENAME = ''%s''';
+
+  {Allow for the fact that links may have been deleted so that a .rbd may be there, but not
+  required, so delete all a start again}
+  DeleteSpecifiedFiles(appsettings.ObjectSheetFilePath + '*.rbd');
+
+  With dmDatabase.ExecuteSQL('SELECT MS.DATASET_SHEET_FILENAME ' +
+                             'FROM LOCATION_BOUNDARY LB INNER JOIN Map_Sheet MS ' +
+                             'ON MS.MAP_SHEET_KEY = LB.MAP_SHEET_KEY '  +
+                             'UNION SELECT MS.DATASET_SHEET_FILENAME ' +
+                             'FROM ADMIN_BOUNDARY AB INNER JOIN Map_Sheet MS ' +
+                             'ON MS.MAP_SHEET_KEY = AB.MAP_SHEET_KEY', True) do
+  begin
+    While not Eof do begin
+      lObsSheets.Add(VarToStr(Fields['DATASET_SHEET_FILENAME'].Value));
+      movenext;
+    end; //end of while
+    close;
+  end; // end of Dataset with
+  { For each object sheet get the file name and the data and write the
+   data to the .rbd file. One line for each entry in the Location or Admin Table
+   Not that a Location may have links to mutiple polygons.
+  }
+  for i := 0 to lObsSheets.count - 1 do begin
+    lFileName := lObsSheets[i];
+    with dmDatabase.ExecuteSQL(Format(lQuery,[lFileName,lFileName]), True) do
+    begin
+      lMSFileName := AppSettings.ObjectSheetFilePath +
+                   ExtractWithoutExt(lFileName) + '.rbd';
+      lString := TStringList.Create;
+      while not Eof do begin
+        for x := 0 to 16 do
+          lData := lData +  VarToStr(Fields[x].Value)+ ',';
+        lString.add(lData);
+        lData := '';
+        movenext;
+      end; //end of file read
+      close;
+    end; // end of with
+    try
+      lString.SaveToFile(lMSFileName);
+    finally
+      lString.Free;
+    end;
+  end; // end of for
+  lObsSheets.Free;
+  lFileList.Free;
+end;
+
+// recovers the link from the Location and Admin Area to Map_Sheets
+procedure TdlgMapOptions.RecoverBdyLinks;
+var
+  lBaseMapKey,lQueryLoc,lQueryAdm,lFileName,lMapSheetKey,lBoundaryKey: string;
+  lSearchRec: TSearchRec;
+  lFileList: TStringList;
+  x,i,lRow: integer;
+  lItem: TSavedMap;
+  lMapSheetList: TStringList;
+  lData: TStrings;
+  lQueryDelete, lSystem : String;
+begin
+  lData := TStringList.Create;
+  lQueryLoc := 'IF EXISTS (SELECT * FROM LOCATION WHERE LOCATION_KEY = ''%s'')' +
+               ' AND NOT EXISTS (SELECT * FROM LOCATION_BOUNDARY WHERE LOCATION_BOUNDARY_KEY = ''%s'')' +
+               'Insert Into Location_Boundary (LOCATION_BOUNDARY_KEY,LOCATION_KEY,' +
+               'FROM_VAGUE_DATE_START,FROM_VAGUE_DATE_END,FROM_VAGUE_DATE_TYPE,' +
+               'TO_VAGUE_DATE_START,TO_VAGUE_DATE_END,TO_VAGUE_DATE_TYPE,VERSION,' +
+               'OBJECT_ID,SYSTEM_SUPPLIED_DATA,ENTERED_BY,ENTRY_DATE,MAP_SHEET_KEY) VALUES(''%s'',''%s'',' +
+               '%s,%s,''%s'',%s,%s,''%s'',%s,''%s'',%s,''%s'',GetDate(),''%s'')';
+
+  lQueryAdm := 'IF NOT EXISTS (SELECT * FROM ADMIN_BOUNDARY WHERE ADMIN_BOUNDARY_KEY = ''%s'')' +
+               'Insert Into ADMIN_BOUNDARY (ADMIN_BOUNDARY_KEY,ADMIN_AREA_KEY,DATE_FROM,DATE_TO,SYSTEM_SUPPLIED_DATA,' +
+               'ENTERED_BY,ENTRY_DATE,MAP_SHEET_KEY) VALUES(''%s'',''%s'',Cast(left(''%s'',10) AS DateTime),' +
+               'Cast(left(''%s'',10) AS DateTime),%s,''%s'',GetDate(),''%s'')';
+
+  lQueryDelete := 'DELETE FROM %s_Boundary FROM %s_Boundary INNER JOIN MAP_SHEET MS ON ' +
+                  'MS.MAP_SHEET_KEY = %s_Boundary.MAP_SHEET_KEY INNER JOIN BASE_MAP BM ' +
+                  'ON BM.BASE_MAP_KEY = MS.BASE_MAP_KEY WHERE BM.SPATIAL_SYSTEM = ''%s''';
+
+  lMapSheetList := TStringList.Create;
+  with sgMaps do begin
+    lRow:= Row;
+    lItem := TSavedMap(Objects[COL_OBJECT,lRow]);
+    lBaseMapKey := lItem.BaseMapKey;
+    lSystem := lItem.SpatialSystem;
+  end;
+  lFileList := TStringList.Create;
+  if FindFirst(Appsettings.ObjectSheetFilePath + '*.rbd', 0, lSearchRec) = 0 then begin
+    lFileList.add (lSearchRec.Name);
+    while FindNext(lSearchRec) = 0 do
+      lFileList.add (lSearchRec.Name);
+    FindClose(lSearchRec);
+  end;
+  if (not cbRetain.checked) and (lFileList.count > -1) then begin //dont delete if if retain is true
+    dmDatabase.ExecuteSQL(Format(lQueryDelete,['Location','Location','Location',lSystem]));
+    dmDatabase.ExecuteSQL(Format(lQueryDelete,['Admin','Admin','Admin',lSystem]));
+  end;
+  for i := 0 to lFileList.count-1 do begin
+    lFileName := ExtractWithoutExt(lFileList[i]) + '.gsf';
+    if FileExists(Appsettings.ObjectSheetFilePath+ lFileName) then begin
+      with dmDatabase.ExecuteSQL(Format('Select Map_Sheet_Key from MAP_SHEET INNER JOIN ' +
+                                'BASE_MAP BM ON BM.Base_Map_Key = MAP_SHEET.BASE_MAP_KEY ' +
+                                'WHERE BM.SPATIAL_SYSTEM = ''%s'' AND ' +
+                                'SHEET_TYPE In(2,3) AND ' +
+                                'DATASET_SHEET_FILENAME = ''%s''',[lSystem,lFileName]),True) do
+      begin
+        if not eof then lMapSheetKey := VarToStr(Fields['Map_Sheet_Key'].Value);
+        close;
+      end; // end of with
+      if lMapSheetKey <> '' then begin
+        lMapSheetList.LoadFromFile(Appsettings.ObjectSheetFilePath+lFileList[i]);
+        for x := 0 to lMapSheetList.count - 1 do begin
+          ParseStringIntoList(lMapSheetList[x],',',lData);
+          if lData[0] = 'LOCATION' then begin
+            lBoundaryKey := dmGeneraldata.GetNextKey('Location_Boundary', 'Location_Boundary_Key');
+            dmDataBase.ExecuteSQL(format(lQueryLoc,[lData[4],lData[3],lBoundaryKey,lData[4],lData[5],lData[6],
+                               lData[7],lData[8],lData[9],lData[10],lData[11],
+                               ldata[12],QuotedNullStr(ldata[13],''),AppSettings.UserID,lMapSheetKey]));
+          end
+          else begin
+            lBoundaryKey := dmGeneraldata.GetNextKey('Admin_Boundary', 'Admin_Area_Key');
+            dmDataBase.ExecuteSQL(format(lQueryAdm,[lData[3],lBoundaryKey,lData[4],lData[15],
+                     lData[16],QuotedNullStr(ldata[13],''),AppSettings.UserID,lMapSheetKey]));
+          end;
+          lData.Clear;
+        end; /// end for
+      end; //if no map sheet
+    end;
+  end;
+  lMapSheetList.Free;
+  lFileList.Free;
+  lData.Free;
+  sgMaps.Invalidate;
+end;
+
+procedure TdlgMapOptions.RecoverMapData(const AScope : string);
+begin
+  if MessageDlg(ResStr_Continue_Recover, mtConfirmation,
+     [mbYes, mbNo], 0) = mrYes then
+  begin
+    if AScope = '' then begin
+      RecoverMapSheet(AppSettings.ObjectSheetFilePath, '2,3' , 'NULL',);
+      RecoverBdyLinks;
+      Resetmaps(True);
+    end;
+    RecoverMapSheet(Appsettings.MapFilePath,'1',' Host_Name()');
+  end;
+end;
+
+procedure TdlgMapOptions.FormActivate(Sender: TObject);
+begin
+  rgsecure.Buttons[0].Caption := ResStr_Button0;
+  rgsecure.Buttons[1].Caption := ResStr_Button1;
+  rgsecure.Buttons[2].Caption := ResStr_Button2;
+  rgsecure.Buttons[3].Caption := ResStr_Button3;
+  rgsecure.Buttons[4].Caption := ResStr_Button4;
+  rgsecure.Buttons[5].Caption := ResStr_Button5;
+  lblMapsheet.caption := appsettings.MapFilePath;
+  lblCurrentObjectSheet.caption := appsettings.ObjectSheetFilePath;
+  lblUserFilePath.caption := UserFilePath;
+  edWorkstation.Text := GetHostName;
+  UpdateComputerMap;
+  CheckObjectSheet;
+end;
+
+procedure TdlgMapOptions.BackupMapFiles;
+var
+  lToFilepath: String;
+  lReturn: Boolean;
+  lItem: TSavedMap;
+  lRow: Integer;
+begin
+  with sgMaps do begin
+    lRow        := Row;
+    lItem       := TSavedMap(Objects[COL_OBJECT, lRow]);
+  end;
+  lReturn := True;
+  Try
+    PopulateMapFileMff(appsettings.ObjectSheetFilePath,'2,3',False, 'IS NULL');
+    PopulateMapLocBoundary;
+    lToFilepath := UserFilePath + 'Security\' +  lItem.SpatialSystem + '\ObjectSheets\';
+    lReturn := lReturn AND CreateBackup(AppSettings.ObjectSheetFilePath, lToFilePath,'OS',lItem.SpatialSystem);
+    PopulateMapFileMff(appsettings.MapFilePath,'1',False, ' = Host_Name() ');
+    lToFilepath := UserFilePath + 'Security\' + lItem.SpatialSystem + '\MapSheets\' + GetHostName + '\';
+    lReturn := lReturn AND CreateBackup(AppSettings.MapFilePath, lToFilepath, 'MS',lItem.SpatialSystem);
+  Except
+    lReturn := False;
+  end;
+  if lReturn then begin
+    If MessageDlg(Format(ResStr_DoArchive,[lItem.DisplayName]), mtConfirmation, [mbYes,mbNo], 0) = mrYes then
+      ExecuteArchivebackup;
+  end else
+    MessageDlg(Format(ResStr_Failed,[ResStr_Backup]), mtInformation, [mbOK], 0);
+  sgMaps.Invalidate;
+end;
+
+function TdlgMapOptions.CreateBackup(AFromFolder, AToFolder, AType,ASystem: string): Boolean;
+var
+  lFileList: TStringList;
+  lKeepList: TStringlist;
+  lNewFile: string;
+  lSearchRec: TSearchRec;
+  lDataSetFile: string;
+  i: integer;
+begin
+  lFileList := TStringList.Create;
+  lKeepList := TStringList.Create;
+  Result := True;
+  //Check that there is something to copy
+  if (Not DirectoryExists(RemovePathDelim(AFromFolder))) or
+       (FindFirst(AFromFolder + '*.*', 0, lSearchRec) <> 0) then begin
+    MessageDlg(ResStr_NoFilesToBackup, mtInformation, [mbOK], 0);
+    Result := false;
+  end;
+  // Don't want to delete the folder just the files
+  if Result then begin
+    if DirectoryExists(RemovePathDelim(AToFolder)) then
+      Result :=  RemoveFolderContent(AToFolder,'',lKeeplist)
+    else
+      Result :=  ForceDirectories(RemovePathDelim(AToFolder));
+
+    If DirectoryExists(RemovePathDelim(AFromFolder)) then begin// Not concerned as nothing to copy
+      if Result then begin
+        // Folders should have final \
+        if FindFirst(AFromFolder + '*.*', 0, lSearchRec) = 0 then begin
+          lFileList.add (AFromFolder + lSearchRec.Name);
+          while FindNext(lSearchRec) = 0 do
+            lFileList.add (AFromFolder + lSearchRec.Name);
+          FindClose(lSearchRec);
+        end;
+        for i := 0 to lFileList.count-1 do begin
+          { We only want files which are listed in map files
+           and which are for the correct base map and spatial system, buit not basemaps }
+          lDatasetFile := rightStr(lFilelist[i],length(lFilelist[i])-LastDelimiter('\',lFilelist[i]));
+          with dmDatabase.ExecuteSQL(Format('Select * from Map_Sheet ' +
+                         ' inner join Base_map BM ON BM.Base_Map_Key = Map_Sheet.Base_Map_Key ' +
+                         ' WHERE BM.Spatial_System = ''%s'' and (''%s'' = ' +
+                         ' LEFT(DataSet_Sheet_FileName,LEN(DataSet_Sheet_FileName)-4) ' +
+                         ' AND SHEET_TYPE <> 0)'
+                         , [ASystem,ExtractWithoutExt(lDatasetFile),ASystem]),true) do
+          begin
+            //Base Maps are not copied
+            if not eof then begin
+              lNewFile := AToFolder + lDataSetFile;
+              CopyFile(PChar(lFilelist[i]), PChar(lNewFile),True);
+            end;
+            close;
+          end;
+        end;
+      end;
+    end;
+  end;
+  lFileList.Free;
+  lKeepList.Free;
+end;
+
+procedure TdlgMapOptions.rgSecureClick(Sender: TObject);
+begin
+  edWorkStation.enabled := False;
+  cbRetain.Enabled := False;
+  cbRetain.Checked := False;
+  if rgSecure.ItemIndex in[3,4,5] then begin
+    cbRetain.Enabled := True;
+    if rgSecure.ItemIndex = 3 then edWorkstation.Enabled := True;
+  end
+  else begin
+    edWorkstation.Enabled := False;
+    cbRetain.Enabled := False;
+  end;
+end;
+
+function TdlgMapOptions.GetHostName: string;
+begin
+  with dmDatabase.ExecuteSQL('Select host_name() as hostname', True) do begin
+    Result := VarToStr(Fields['hostname'].Value);
+    Close;
+  end;
+end;
+
+function TdlgMapOptions.RemovePathDelim(AFolder: string): string;
+begin
+  Result:= Afolder;
+  if LastDelimiter('\',AFolder) = length(AFolder) then
+    Result:= leftstr(AFolder,length(AFolder)-1)
+
+end;
+
+procedure TdlgMapOptions.RestoreAllMapFiles(const AScope: string);
+var
+  lFromFilePath: string;
+  lAction: integer;
+  lReturn: Boolean;
+  lRow: Integer;
+  lItem: TSavedMap;
+begin
+  lReturn := True;
+  lAction := 1;
+  with sgMaps do begin
+    lRow        := Row;
+    lItem       := TSavedMap(Objects[COL_OBJECT, lRow]);
+  end;
+  if edWorkStation.Text <> GetHostName then begin
+    lAction := 2;
+    if MessageDlg(ResStr_RestoreDifWS, mtWarning, [mbYes, mbNo], 0) = mrNO then lAction := 3;
+  end;
+  if lAction < 3 then begin
+    Try
+      Try
+        if AScope = '' then begin
+          lFromFilepath := UserFilePath + 'Security\' + lItem.SpatialSystem + '\ObjectSheets\';
+          lReturn := RestoreBackup(lFromFilepath,AppSettings.ObjectSheetFilePath,'OS',lAction);
+        end;
+        lFromFilepath := UserFilePath + 'Security\' + lItem.SpatialSystem + '\MapSheets\'+ edWorkStation.text  + '\';
+        lReturn := lReturn AND RestoreBackup(lFromFilepath, AppSettings.MapFilePath,'MS', lAction);
+      except
+         lReturn := False;
+      end;
+       RecoverMapData('');
+    Finally
+      if lReturn then
+        MessageDlg(Format(ResStr_Complete,[ResStr_Restore]), mtInformation, [mbOK], 0)
+      else
+        MessageDlg(Format(ResStr_Failed,[ResStr_Restore]), mtInformation, [mbOK], 0);
+    end;
+  end;
+end;
+
+function TdlgMapOptions.RemoveFolderContent(const path, AType: String; AKeepList: TStringList): Boolean;
+var
+  lSearchrec: TSearchRec;
+  lFileList: TStringList;
+  i: integer;
+begin
+  lFileList := TStringList.Create;
+  Result := True;
+  if FindFirst(Path + '*.*', 0, lSearchRec) = 0 then begin
+    // dont add it if the file name is in the keeplist
+    if AKeepList.IndexOf(ExtractWithoutExt(lSearchRec.Name)) = -1  then lFileList.add (Path + lSearchRec.Name);
+    while FindNext(lSearchRec) = 0 do
+      if AKeepList.IndexOf(ExtractWithoutExt(lSearchRec.Name)) = -1  then lFileList.add (Path + lSearchRec.Name);
+    FindClose(lSearchRec);
+  end;
+  for i := 0 to lFileList.count - 1 do begin
+    FileSetAttr(lFileList[i], not SysUtils.faReadOnly);
+    Result := Result and DeleteFile(lFileList[i]);
+    if not Result then
+        MessageDlg(lFileList[i] + ' ' + ResStr_FailedToDelete, mtInformation, [mbOK], 0);
+  end;
+lFileList.free;
+end;
+
+function TdlgMapOptions.RestoreBackup(AFromFolder, AToFolder, AType : string; AAction : integer): Boolean;
+var
+  lFileList,lKeepList: TStringList;
+  lNewFile: string;
+  lSearchRec: TSearchRec;
+  i,lRow: integer;
+  lItem: TSavedMap;
+begin
+  lFileList := TStringList.Create;
+  lKeepList := TstringList.Create;
+  Result := True;
+  with sgMaps do begin
+    lRow:= Row;
+    lItem := TSavedMap(Objects[COL_OBJECT,lRow]);
+  end;
+  //Check that there is something to copy if not do nothing on a restore
+  if (Not DirectoryExists(RemovePathDelim(AFromFolder))) or
+     (FindFirst(AFromFolder + '*.*', 0, lSearchRec) <> 0) then Result:=False;
+  if Result then begin
+    {Keeplist will contain the base maps files plus those relating to
+     spatial systems other then the one are restoring. Everthing else will be deleted to keep things tidy}
+    with dmDatabase.ExecuteSQL(Format('Select DATASET_SHEET_FILENAME FROM MAP_SHEET MS ' +
+                              'INNER JOIN Base_Map BM ON BM.Base_Map_Key = MS.Base_Map_Key ' +
+                              'WHERE BM.Spatial_System <> ''%s'' ' +
+                              'UNION SELECT Base_Map_Key+ ''.gsf'' FROM Base_Map',[lItem.SpatialSystem]),True) do
+    begin
+      While not eof do begin
+        lKeepList.Add(ExtractWithoutExt(varToStr(Fields['DATASET_SHEET_FILENAME'].Value)));
+        Movenext;
+      end;
+      Close;
+    end; //end of with
+    if DirectoryExists(RemovePathDelim(AToFolder)) then
+      if not cbRetain.checked then RemoveFolderContent(RemovePathDelim(AToFolder) + '\',AType,lKeepList)
+    else
+      Result :=  ForceDirectories(RemovePathDelim(AToFolder));
+
+    If DirectoryExists(RemovePathDelim(AFromFolder)) then begin// Not concerned as nothing to copy
+      if Result then begin
+        // Folders should have final \
+        if FindFirst(AFromFolder + '*.*', 0, lSearchRec) = 0 then begin
+          lFileList.add (AFromFolder + lSearchRec.Name);
+          while FindNext(lSearchRec) = 0 do
+            lFileList.add (AFromFolder + lSearchRec.Name);
+          FindClose(lSearchRec);
+        end;
+        for i := 0 to lFileList.count-1 do begin
+          lNewFile := AToFolder + rightstr(lFilelist[i],length(lFilelist[i])-LastDelimiter('\',lFilelist[i]));
+          CopyFile(PChar(lFilelist[i]), PChar(lNewFile), True);
+        end;
+      end;
+    end;
+  end;
+  lFileList.Free;
+  lKeepList.Free;
+end;
+
+{Changes the object sheet path for this workstation to that of the master workstation
+   Any polygon files already in the wrong object sheet folder
+   any links in the wrong folder or any boundaries created within them will be lost.}
+function TdlgMapOptions.ObjectSheetPathUpdate: boolean;
+var
+ lCurrentPath, lNewPath : string;
+begin
+  Result := True;
+  if AppSettings.UserAccessLevel = ualAdmin then begin
+    lCurrentPath := AppSettings.ObjectSheetFilePath;
+    lNewPath := GetMasterObjectSheet;
+    try
+      begin
+        if CompareText(lNewPath,LCurrentPath) <> 0 then begin
+          AppSettings.ObjectSheetFilePath := lNewPath;
+          AppSettings.WriteRegistrySettings;
+          UpdateComputerMap;
+        end;
+      end;
+      except begin
+        MessageDlg(ResStr_Object_Sheet_Fail, mtInformation, [mbOK], 0);
+        Result := False;
+      end;
+    end;
+  end else begin
+    MessageDlg(ResStr_Admin_Permission,mtInformation, [mbOk], 0);
+    Result := False;
+  end;
+end;
+
+function TdlgMapOptions.GetMasterObjectSheet: string;
+begin
+  Result:= AppSettings.ObjectSheetFilePath;
+  with dmDatabase.ExecuteSQL('Select Object_Sheet_Folder FROM COMPUTER_MAP WHERE  ' +
+                                ' MASTER = 1', True) do
+  try
+    if not eof then Result := Fields['Object_Sheet_Folder'].Value;
+  finally
+     Close;
+  end;
+end;
+
+function TdlgMapOptions.UpdateComputerMap: boolean;
+begin
+  dmDatabase.ExecuteSQL(
+  format('UPDATE COMPUTER_MAP SET OBJECT_SHEET_FOLDER = ''%s'' WHERE ' +
+         ' COMPUTER_ID = host_name()', [AppSettings.ObjectSheetFilePath]));
+  Result := True;
+end;
+
+function TdlgMapOptions.CheckComputerMap: boolean;
+begin
+  dmDatabase.ExecuteSQL(Format('UPDATE COMPUTER_MAP SET OBJECT_SHEET_FOLDER = ''%s'' WHERE ' +
+                       ' COMPUTER_ID = host_name()', [AppSettings.ObjectSheetFilePath]));
+  Result:= CompareText(GetMasterObjectSheet,AppSettings.ObjectSheetFilePath) = 0;
+end;
+
+function TdlgMapOptions.CheckObjectSheet: boolean;
+begin
+ Result:= CheckComputerMap;
+ if not Result then
+   If MessageDlg(ResStr_Object_Sheet, mtWarning, [mbYes, mbNo], 0) = mrYes then
+     Result := ObjectSheetPathUpdate
+end;
+
+function TdlgMapOptions.UserFilePath: String;
+begin
+   Result := leftstr(AppSettings.ReportPath,pos('\Reports\',AppSettings.ReportPath));
+end;
+
+function TdlgMapOptions.ArchiveBackup: Boolean;
+var
+  lArchiveSuffix: string;
+  lFileList: TStringList;
+  lFolderList: TStringList;
+  lSearchRec: TSearchRec;
+  lFromFile: string;
+  lToFile: string;
+  i,lRow: integer;
+  lItem: TSavedMap;
+begin
+  with sgMaps do begin
+    lRow := Row;
+    lItem:= TSavedMap(Objects[COL_OBJECT, lRow]);
+  end;
+  Result := True;
+  lFolderList := TStringList.Create;
+  lFileList := TStringList.Create;
+  // Find all the folder we need
+  if FindFirst(UserFilePath + 'Security\' + lItem.SpatialSystem + '\ObjectSheets\*', faDirectory, lSearchRec) = 0 then begin
+    if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..')
+       then lFolderList.add (UserFilePath + 'Security%s\' + lItem.SpatialSystem + '\ObjectSheets\' + lSearchRec.Name);
+    while FindNext(lSearchRec) = 0 do begin
+      if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..') then
+         lFolderList.add (UserFilePath + 'Security%s\' + lItem.SpatialSystem + '\ObjectSheets\' + lSearchRec.Name);
+    end;
+    FindClose(lSearchRec);
+  end;
+  if FindFirst(UserFilePath + 'Security\' + lItem.SpatialSystem + '\MapSheets\*', faDirectory, lSearchRec) = 0 then begin
+    if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..')
+       then lFolderList.add (UserFilePath + 'Security%s\MapSheets\' + lSearchRec.Name);
+    while FindNext(lSearchRec) = 0 do begin
+      if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..') then
+         lFolderList.add (UserFilePath + 'Security%s\MapSheets\' + lSearchRec.Name);
+    end;
+    FindClose(lSearchRec);
+  end;
+  //Create the Archive folder and find all the files we need
+  for i := 0 to lFolderList.count-1 do begin
+     lArchiveSuffix := FloatToStr(round(now*10000));
+     if Not DirectoryExists(Format(lFolderList[i],[lArchiveSuffix])) then
+       Result :=  ForceDirectories(Format(lFolderList[i],[lArchiveSuffix]));
+     if (Result = True) and (FindFirst(Format(lFolderList[i],[''])+'\*.*', 0, lSearchRec) = 0) then begin
+       lFileList.add (lFolderList[i] + '\' + lSearchRec.Name);
+       while FindNext(lSearchRec) = 0 do begin
+        lFileList.add (lFolderList[i] + '\' + lSearchRec.Name);
+       end;
+      FindClose(lSearchRec);
+     end;
+  end;
+  for i := 0 to lFileList.count -1 do begin
+    lFromFile := Format(lFilelist[i],['']);
+    lToFile :=  format(lFilelist[i],[lArchiveSuffix]);
+    Result := Result AND CopyFile(PChar(lFromFile), PChar(lToFile), True);
+  end;
+  lFileList.Free;
+  lFolderList.Free;
+end;
+
+function TdlgMapOptions.ExecuteArchiveBackup: string;
+begin
+  if ArchiveBackup then
+    MessageDlg(Format(ResStr_Complete,[ResStr_Archive]), mtInformation, [mbOK], 0)
+  else MessageDlg(Format(ResStr_Failed,[ResStr_Archive]), mtInformation, [mbOK], 0);
+end;
+
+function TdlgMapOptions.DeleteSpecifiedFiles(AFilename: string): Boolean;
+var
+ lSearchRec: TSearchRec;
+ lFileList: TStringList;
+ i: integer;
+begin
+  Result := True;
+  lFileList := TStringList.Create;
+  if FindFirst(AFileName, 0, lSearchRec) = 0 then begin
+    lFileList.add (appsettings.ObjectSheetFilePath + lSearchRec.Name);
+    while FindNext(lSearchRec) = 0 do
+      lFileList.add (appsettings.ObjectSheetFilePath + lSearchRec.Name);
+    FindClose(lSearchRec);
+  end;
+  for i := 0 to lFileList.count-1 do
+    Result := DeleteFile(lFilelist[i]);
+  lFileList.Free;
+end;
+
+function TdlgMapOptions.BaseMapWidowOpen: Boolean;
+var
+  lMapWindow: TfrmMap;
+begin
+  lMapWindow := dmFormActions.MapWindow(FLayerLegend.BaseMapKey);
+  Result := Assigned(lMapWindow);
+end;
+
 end.
+
+
+
+

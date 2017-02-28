@@ -1,6 +1,6 @@
 object dlgMapOptions: TdlgMapOptions
-  Left = 428
-  Top = 382
+  Left = 555
+  Top = 316
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Map Options'
@@ -14,6 +14,7 @@ object dlgMapOptions: TdlgMapOptions
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnActivate = FormActivate
   OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
@@ -34,14 +35,14 @@ object dlgMapOptions: TdlgMapOptions
     Top = 4
     Width = 457
     Height = 289
-    ActivePage = tsBaseMap
+    ActivePage = tsRecover
     TabOrder = 0
     OnChange = pcMapOptionsChange
     OnChanging = pcMapOptionsChanging
     object tsBaseMap: TTabSheet
       Caption = 'Enabled Maps'
       object bvlBaseMapFrame: TBevel
-        Left = 4
+        Left = -12
         Top = 4
         Width = 441
         Height = 253
@@ -114,7 +115,7 @@ object dlgMapOptions: TdlgMapOptions
         Height = 21
         AutoCloseUp = True
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         Sorted = True
         TabOrder = 1
         Visible = False
@@ -144,7 +145,7 @@ object dlgMapOptions: TdlgMapOptions
         Width = 193
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         OnChange = cmbMapsChange
       end
@@ -272,6 +273,131 @@ object dlgMapOptions: TdlgMapOptions
           21
           31
           361)
+      end
+    end
+    object tsRecover: TTabSheet
+      Caption = 'Security'
+      ImageIndex = 3
+      object lblCurrentObjectSheet: TLabel
+        Left = 104
+        Top = 168
+        Width = 59
+        Height = 13
+        Caption = 'ObjectSheet'
+        Color = clWindow
+        ParentColor = False
+      end
+      object lblCurrentMapSheetPath: TLabel
+        Left = 8
+        Top = 192
+        Width = 80
+        Height = 13
+        Caption = 'Map Sheet Path '
+        Color = clBtnFace
+        ParentColor = False
+      end
+      object lblMapSheet: TLabel
+        Left = 104
+        Top = 192
+        Width = 52
+        Height = 13
+        Caption = 'Map Sheet'
+        Color = clWindow
+        ParentColor = False
+      end
+      object lblObjectSheetPath: TLabel
+        Left = 8
+        Top = 168
+        Width = 90
+        Height = 13
+        Caption = 'Object Sheet Path '
+        Color = clBtnFace
+        ParentColor = False
+      end
+      object lblWorkStation: TLabel
+        Left = 8
+        Top = 138
+        Width = 60
+        Height = 13
+        Caption = 'Workstation '
+      end
+      object lblUserFile: TLabel
+        Left = 8
+        Top = 216
+        Width = 74
+        Height = 13
+        Caption = 'User Files Path '
+      end
+      object lblUserFilePath: TLabel
+        Left = 104
+        Top = 216
+        Width = 60
+        Height = 13
+        Caption = 'UserFilePath'
+        Color = clBtnHighlight
+        ParentColor = False
+      end
+      object lblBaseMap: TLabel
+        Left = 8
+        Top = 8
+        Width = 51
+        Height = 13
+        Caption = 'Base Map '
+      end
+      object lblCurrentBasemap: TLabel
+        Left = 64
+        Top = 8
+        Width = 84
+        Height = 13
+        Caption = 'Current Base map'
+        Color = clWindow
+        ParentColor = False
+      end
+      object rgSecure: TRadioGroup
+        Left = 8
+        Top = 32
+        Width = 425
+        Height = 97
+        Caption = 'Options'
+        Color = clBtnFace
+        Columns = 2
+        ItemIndex = 0
+        Items.Strings = (
+          'Backup Map Data'
+          'Archive Backups'
+          'Restore Map Data'
+          'Restore Background Map Data'
+          'Relink  All Map Data'
+          'Relink  Background Map Data')
+        ParentColor = False
+        TabOrder = 0
+        OnClick = rgSecureClick
+      end
+      object btnSecure: TButton
+        Left = 336
+        Top = 232
+        Width = 95
+        Height = 25
+        Caption = 'Action'
+        TabOrder = 1
+        OnClick = btnSecureClick
+      end
+      object edWorkstation: TEdit
+        Left = 88
+        Top = 136
+        Width = 161
+        Height = 21
+        Enabled = False
+        TabOrder = 2
+        Text = 'edWorkstation'
+      end
+      object cbRetain: TCheckBox
+        Left = 272
+        Top = 136
+        Width = 73
+        Height = 25
+        Caption = 'Retain'
+        TabOrder = 3
       end
     end
   end

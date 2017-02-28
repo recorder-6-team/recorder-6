@@ -118,7 +118,7 @@ uses
   VagueDateEdit, ShellAPI, DbCtrls, BaseData, Recorder2000_TLB, JNCCDatasets,
   ExtCtrls, DataClasses, HierarchyNodes, QRPrntr, UserConfig, OnlineHelp, Printers,
   Constants, ExceptionForm, ActiveX, GeneralFunctions, ADODB, Contnrs, Map, ExternalFilter,
-  ADODB_TLB, BatchUpdates, CRCommonClasses;
+  ADODB_TLB, BatchUpdates, CRCommonClasses, Variants;
 
 resourcestring
   ResStr_AddinActionFailed = 'An error occurred running an addin action.  '+
@@ -192,6 +192,9 @@ resourcestring
       + 'These records will not be exported. Do you wish to continue?';
   ResStr_NoMapsSetup =
       'Cannot display a map as you have not configured any base maps';
+  ResStr_ObjectSheetFolderError =
+      ' The object sheet path on this workstation is not as expected.'#13#10
+      + 'Go to Map Options to correct this.';
 
 type
   { Class to store the interface pointer with an action for action lists }
@@ -359,6 +362,9 @@ type
     function MapNeedReset(const ABaseMapKey: TKeyString): Boolean;
     procedure PopulateAddinImportTypes;
     function DoComImport(ADialog: TOpenDialog): boolean;
+    function CheckComputerMap: boolean;
+    function GetMasterObjectSheet: string;
+
   protected
     function CheckForForm( iFormClass : TFormClass ) : integer;
     procedure DisplaySubForm( iFormClass : TFormClass; Sender : TObject );
@@ -397,6 +403,7 @@ type
     procedure SetValidateSelectedAction(const state: Boolean);
     property StandardActionCount : integer read FStandardActionCount;
     property BatchUpdate: TBatchUpdate read FBatchUpdate write FBatchUpdate;
+
   end;
 
 var
@@ -1630,7 +1637,6 @@ var
   lBaseMapKey: TKeyString;
 begin
   lBaseMapKey := AppSettings.AvailableMaps[TMenuItem(Sender).Tag].BaseMapKey;
-
   // Check the Map window isn't up yet
   lMapWindow := MapWindow(lBaseMapKey, True);
   // Allow several Map windows, but each should have different dataset.
@@ -1648,43 +1654,49 @@ var
   lBaseMapKey: TKeyString;
   lMapFileMissing, lMapNeedReset: Boolean;
   defaultMap: TAvailableMap;
+
 begin
   Result := nil;
-  for i := 0 to frmMain.MDIChildCount - 1 do
-    if frmMain.MDIChildren[i] is TfrmMap then
-      // If no BaseMapKey, return first Map window found.
-      if (ABaseMapKey = '') or (TfrmMap(frmMain.MDIChildren[i]).BaseMapKey = ABaseMapKey) then
-      begin
-        Result := TfrmMap(frmMain.MDIChildren[i]);
-        Exit;
-      end;
-  // Get here if no map window displayed, or requested one not up.
-  // Check if really want a map window displayed.
-  if AForceCreate then begin
-    defaultMap := AppSettings.AvailableMaps.DefaultMap;
-    if not assigned(defaultMap) then
-      raise EFormActions.CreateNonCritical(ResStr_NoMapsSetup);
-    // If no specific base map requested, select default.
-    if ABaseMapKey = '' then lBaseMapKey := defaultMap.BaseMapKey
-                        else lBaseMapKey := ABaseMapKey;
-    // If a file is missing from the object sheet file set...
-    lMapFileMissing := not MapFilesExist(lBaseMapKey);
-    lMapNeedReset   := MapNeedReset(lBaseMapKey);
-    if lMapFileMissing or lMapNeedReset then
-      if (lMapFileMissing and
-          (MessageDlg(ResStr_NoAccessMapFile,
-                      mtConfirmation, [mbYes, mbNo], 0) <> mrYes)) or
-         (lMapNeedReset and
-          (MessageDlg(ResStr_BaseMapReset,
-                      mtConfirmation, [mbYes, mbNo], 0) <> mrYes)) then
+  { If the object sheet path for this workstation is not the same as that of the master //
+   workstation then no further map access is possible }
+  if CheckComputerMap then begin
+    for i := 0 to frmMain.MDIChildCount - 1 do
+      if frmMain.MDIChildren[i] is TfrmMap then
+        // If no BaseMapKey, return first Map window found.
+        if (ABaseMapKey = '') or (TfrmMap(frmMain.MDIChildren[i]).BaseMapKey = ABaseMapKey) then
+        begin
+          Result := TfrmMap(frmMain.MDIChildren[i]);
+          Exit;
+        end;
+    // Get here if no map window displayed, or requested one not up.
+    // Check if really want a map window displayed.
+    if AForceCreate then begin
+      defaultMap := AppSettings.AvailableMaps.DefaultMap;
+      if not assigned(defaultMap) then
+        raise EFormActions.CreateNonCritical(ResStr_NoMapsSetup);
+      // If no specific base map requested, select default.
+      if ABaseMapKey = '' then lBaseMapKey := defaultMap.BaseMapKey
+                          else lBaseMapKey := ABaseMapKey;
+      // If a file is missing from the object sheet file set...
+      lMapFileMissing := not MapFilesExist(lBaseMapKey);
+      lMapNeedReset   := MapNeedReset(lBaseMapKey);
+      if lMapFileMissing or lMapNeedReset then
+        if (lMapFileMissing and
+           (MessageDlg(ResStr_NoAccessMapFile,
+              mtConfirmation, [mbYes, mbNo], 0) <> mrYes)) or
+           (lMapNeedReset and
+             (MessageDlg(ResStr_BaseMapReset,
+                mtConfirmation, [mbYes, mbNo], 0) <> mrYes)) then
         Exit
       else
         actMapOptionsExecute(nil);
+      // If we get here, all should be ok.
+      Result := TfrmMap.Create(frmMain, lBaseMapKey);
+      Result.Caption := Format(ResStr_Cap_MapWindow,[AppSettings.AvailableMaps.ItemsByKey[lBaseMapKey].DisplayName]);
+    end;
+  end else
+    MessageDlg(ResStr_ObjectSheetFolderError,mtInformation, [mbOK], 0);
 
-    // If we get here, all should be ok.
-    Result := TfrmMap.Create(frmMain, lBaseMapKey);
-    Result.Caption := Format(ResStr_Cap_MapWindow,[AppSettings.AvailableMaps.ItemsByKey[lBaseMapKey].DisplayName]);
-  end;
 end;  // TdmFormActions.MapWindow
 
 {-------------------------------------------------------------------------------
@@ -2049,7 +2061,7 @@ begin
     FBatchUpdate.CommitUpdate;
   FreeAndNil(FBatchUpdate);
 end;
-  
+
 {-------------------------------------------------------------------------------
   Cancel batch updates after reviewing an external filter
 }
@@ -2082,6 +2094,25 @@ begin
       end;
   if Result then
     ShowInformation(Format(ResStr_FormsInEditMode, [lScreens]));
+end;
+
+function TdmFormActions.CheckComputerMap: boolean;
+begin
+  dmDatabase.ExecuteSQL(Format('UPDATE COMPUTER_MAP SET OBJECT_SHEET_FOLDER = ''%s'' WHERE ' +
+                       ' COMPUTER_ID = host_name()', [AppSettings.ObjectSheetFilePath]));
+  Result := CompareText(GetMasterObjectSheet,AppSettings.ObjectSheetFilePath) = 0;
+end;
+
+function TdmFormActions.GetMasterObjectSheet: string;
+begin
+  Result:= AppSettings.ObjectSheetFilePath;
+  with dmDatabase.ExecuteSQL('Select Object_Sheet_Folder FROM COMPUTER_MAP WHERE  ' +
+                                'MASTER = 1', true) do
+  try
+    if not eof then Result := Fields['Object_Sheet_Folder'].Value;
+  finally
+     Close;
+  end;
 end;
 
 end.

@@ -357,7 +357,7 @@ begin
     1, 2: Result := AFileName;
     // Polygon layers.
     3   : Result := AppSettings.ObjectSheetFilePath + AFileName;
-  end;
+   end;
 end;
 
 {-------------------------------------------------------------------------------

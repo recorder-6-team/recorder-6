@@ -25,6 +25,7 @@ uses
   CheckLst, ExceptionForm, FolderBrowser, FileCtrl, BaseFormUnit, OnlineHelp,
   Constants, XPToolButton, ImageListButton, Recorder2000_TLB, StrUtils, Math,
   ApplicationSettings;
+  ApplicationSettings,ADODB, DatabaseAccessADO;
 
 resourcestring
   SOptions_SelectFolder = 'Select the source folder for %s';
@@ -171,6 +172,32 @@ type
     eExportTemplates: TEdit;
     btnExportTemplateBrowse: TButton;
     cbUseOriginalicons: TCheckBox;
+    tsSettingTable: TTabSheet;
+    edMaster: TEdit;
+    lblSetting1: TLabel;
+    btnMaster: TButton;
+    lblMapMaster: TLabel;
+    lblThisWorkStation: TLabel;
+    lblSetting2: TLabel;
+    lblSetting3: TLabel;
+    lblSetting4: TLabel;
+    lblSetting5: TLabel;
+    lblSetting6: TLabel;
+    lblSetting7: TLabel;
+    lblSetting8: TLabel;
+    lblSetting10: TLabel;
+    lblSetting11: TLabel;
+    edCompetency: TEdit;
+    edPreLocs: TEdit;
+    edPrefnames: TEdit;
+    edSortMethod: TEdit;
+    edTaxDesList: TEdit;
+    edTempMedia: TEdit;
+    edTempNames: TEdit;
+    edGatewayURL: TEdit;
+    edHelpUrl: TEdit;
+    btnSaveSetting: TButton;
+    lblWorksattion: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DrawListItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);

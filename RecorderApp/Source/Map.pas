@@ -861,12 +861,17 @@ resourcestring
       'No polygon layers to export.'#13#10#13#10
       + 'You need at least one visible polygon layer to use the Export All Polygon Layers functionality.';
 
+  ResStr_UseNewPolygon =
+      'A corrupt import file may result in all data attached to a polygon being lost.'#13#10 +
+      'Please ensure that you have a a backup of yout map data before proceeding - see Map Options'#13#10#13#10 +
+      'Do you wish to continue ';
+
   //used in FilterDropped procedure
   ResStr_Local_ReportOutput = 'Report Output';
   ResStr_Local_Biotope =  ' - Biotopes';
   ResStr_Local_Taxa = ' - Taxa';
   ResStr_OnlyOneBoundaryImport = 'You can only run one Boundary Import at once.';
-  ResStr_BoundaryImportInProgress = 'A Boundary Import is in progress, please cancel or complete the import before closing this window.';                                                
+  ResStr_BoundaryImportInProgress = 'A Boundary Import is in progress, please cancel or complete the import before closing this window.';
 
 var
   mBoundaryImportInProgress : Boolean;
@@ -4189,13 +4194,19 @@ var
   checkFile: Integer;
   boundaryImport: TdlgBoundaryImportDialog;
   lPolygonIndices: Array of Integer;
+  lContinue : boolean;
 begin
-
-  if mBoundaryImportInProgress then
-  begin
+  // add a warning here
+  lContinue := true;
+  if mBoundaryImportInProgress then begin
     ShowInformation(ResStr_OnlyOneBoundaryImport);
+    lContinue := false;
   end
-  else
+  else if
+    MessageDlg(ResStr_UseNewPolygon, mtWarning, [mbYes,MbNo],0) = MrNo then
+    lContinue := false;
+
+  if lContinue = true then
   begin
     if TPolygonLayerItem(CurrentDrawingLayer) = nil then
       ShowInformation(ResStr_NoPolygonLayer)

@@ -16,7 +16,7 @@ object dlgMapSelection: TdlgMapSelection
   OldCreateOrder = False
   DesignSize = (
     377
-    231)
+    238)
   PixelsPerInch = 96
   TextHeight = 13
   object Bevel1: TBevel
