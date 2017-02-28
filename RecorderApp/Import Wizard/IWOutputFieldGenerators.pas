@@ -104,14 +104,31 @@ type
   {-----------------------------------------------------------------------------
     Vague date. If the user put an empty value for the import, will take
     the vague date from the date column instead.
-  }
+    }
   TDeterminationDateFieldGenerator = class(TOutputFieldGenerator)
   public
     function Value(Fields: Fields; FieldIndex: Integer): OLEVariant; override;
     function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String;
         override;
   end;
-
+  {-----------------------------------------------------------------------------
+    Vague date. If the user put an empty value for the import, will take
+    the vague date from the date column instead.
+  }
+  TReviewDateFieldGenerator = class(TOutputFieldGenerator)
+  public
+    function Value(Fields: Fields; FieldIndex: Integer): OLEVariant; override;
+    function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String;
+        override;
+  end;
+  {-----------------------------------------------------------------------------
+    Determiner Preferred
+  }
+  TDeterminerPreferredFieldGenerator = class(TOutputFieldGenerator)
+  public
+    function Value(Fields: Fields; FieldIndex: Integer): OLEVariant; override;
+    function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String; override;
+  end;
   {-----------------------------------------------------------------------------
     Custodian.
   }
@@ -120,7 +137,6 @@ type
     function Value(Fields: Fields; FieldIndex: Integer): OLEVariant; override;
     function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String; override;
   end;
-
   {-----------------------------------------------------------------------------
     Current user, current date.
   }
@@ -151,10 +167,19 @@ type
     function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String;
         override;
   end;
-
   {-----------------------------------------------------------------------------
-    Individual key identifying the determiner role, 
-    either obtained from the import file or 
+    Individual key identifying the reviewer
+    always obtained from the import file.
+  }
+  TReviewerFieldGenerator = class(TOutputFieldGenerator)
+  public
+    function Value(Fields: Fields; FieldIndex: Integer): OLEVariant; override;
+    function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String;
+        override;
+  end;
+  {-----------------------------------------------------------------------------
+    Individual key identifying the determiner role,
+    either obtained from the import file or
     set to 'Original Recorder'.
   }
   TDeterminerRoleFieldGenerator = class(TOutputFieldGenerator)
@@ -163,10 +188,20 @@ type
     function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String;
         override;
   end;
-
   {-----------------------------------------------------------------------------
-    Individual key identifying the determination type, 
-    either obtained from the import file or 
+    Individual key identifying the reviewer role,
+    either obtained from the import file or
+    set to default.
+  }
+  TReviewerRoleFieldGenerator = class(TOutputFieldGenerator)
+  public
+    function Value(Fields: Fields; FieldIndex: Integer): OLEVariant; override;
+    function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String;
+        override;
+  end;
+  {-----------------------------------------------------------------------------
+    Individual key identifying the determination type,
+    either obtained from the import file or
     set to 'Unconfirmed'.
   }
   TDeterminationTypeFieldGenerator = class(TOutputFieldGenerator)
@@ -175,9 +210,30 @@ type
     function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String;
         override;
   end;
-  
   {-----------------------------------------------------------------------------
-    Taxon occurrence key within the same sample 
+    Individual key identifying the review type,
+    either obtained from the import file or
+    set to 'Unconfirmed'.
+  }
+  TReviewTypeFieldGenerator = class(TOutputFieldGenerator)
+  public
+    function Value(Fields: Fields; FieldIndex: Integer): OLEVariant; override;
+    function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String;
+        override;
+  end;
+  {-----------------------------------------------------------------------------
+    For Reviewer (second determiner) get teh species, but if teh column is blanj
+    or not uses then uses the main species.
+  }
+  TReviewSpeciesFieldGenerator = class(TOutputFieldGenerator)
+  public
+    function Value(Fields: Fields; FieldIndex: Integer): OLEVariant; override;
+    function GeneratingSQL(FieldIndex: Integer; Tables: TTableSource): String;
+        override;
+  end;
+
+  {-----------------------------------------------------------------------------
+    Taxon occurrence key within the same sample
     for the associated species.
   }
   TAssociatedOccurenceKeyFieldGenerator = class(TOutputFieldGenerator)
@@ -698,7 +754,7 @@ begin
           + ' FROM Location'
           + ' WHERE Location_Key = ' + LocationKeySQL + ')';
     end;
-  end;  
+  end;
 end;
 
 
@@ -882,6 +938,137 @@ begin
 end;  // TDeterminationDateFieldGenerator.Value
 
 {-==============================================================================
+    TReviewDateFieldGenerator
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+function TReviewDateFieldGenerator.GeneratingSQL(FieldIndex: Integer;
+  Tables: TTableSource): String;
+var
+  lDate: TVagueDate;
+  lDateResult: String;
+  lDateField : string;
+begin
+ if ColumnMapping.KeyIsMapped(CT_KEY_REVIEW_DATE) then
+    lDatefield := CT_KEY_REVIEW_DATE
+  else
+   lDatefield := CT_KEY_DETERMINATION_DATE;
+
+  if ColumnMapping.KeyIsMapped(lDateField) then begin
+    case FieldIndex of
+      0:
+      begin
+        lDateResult := FieldValueSQL(Tables, CT_KEY_DATE, FLD_DATESTART);
+        Result := FieldValueSQL(Tables, lDateField, FLD_DATESTART);
+        Result := 'CASE WHEN ' + Result + ' <> -1 THEN '
+        + Result
+        + ' ELSE '
+        + lDateResult
+        + ' END';
+      end;
+      1:
+      begin
+        Result := FieldValueSQL(Tables, lDateField, FLD_DATEEND);
+        lDateResult := FieldValueSQL(Tables, CT_KEY_DATE, FLD_DATEEND);
+        Result := 'CASE WHEN ' + Result + ' <> -1 THEN '
+        + Result
+        + ' ELSE '
+        + lDateResult
+        + ' END';
+      end;
+      2:
+      begin
+        Result := FieldValueSQL(Tables, lDateField, FLD_DATETYPE);
+        lDateResult := FieldValueSQL(Tables, CT_KEY_DATE, FLD_DATETYPE);
+        Result := 'CASE WHEN ' + Result + ' <> ''Z'' THEN '
+        + Result
+        + ' ELSE '
+        + lDateResult
+        + ' END';
+      end;
+    else
+        InvalidFieldIndex(FieldIndex);
+    end;
+  end
+  else if ColumnMapping.KeyIsMapped(CT_KEY_DATE) then begin
+    case FieldIndex of
+      0: Result := FieldValueSQL(Tables, CT_KEY_DATE, FLD_DATESTART);
+      1: Result := FieldValueSQL(Tables, CT_KEY_DATE, FLD_DATEEND);
+      2: Result := FieldValueSQL(Tables, CT_KEY_DATE, FLD_DATETYPE);
+    else
+      InvalidFieldIndex(FieldIndex);
+    end;
+  end
+  else
+  begin
+    lDate := StringToVagueDate(UserSuppliedData.SingleDate);
+    case FieldIndex of
+      0: Result := TransactSqlLiteral(Trunc(lDate.StartDate));
+      1: Result := TransactSqlLiteral(Trunc(lDate.EndDate));
+      2: Result := TransactSqlLiteral(lDate.DateTypeString);
+    else
+      InvalidFieldIndex(FieldIndex);
+    end;
+  end;
+end;
+
+{--------------------------------------------------------------------------
+}
+function TReviewDateFieldGenerator.Value(Fields: Fields; FieldIndex: Integer):
+    OLEVariant;
+var
+  lDate: TVagueDate;
+  lDateField: string;
+begin
+  if ColumnMapping.KeyIsMapped(CT_KEY_REVIEW_DATE) then
+    lDatefield := CT_KEY_REVIEW_DATE
+  else
+    lDatefield := CT_KEY_DETERMINATION_DATE;
+
+  if ColumnMapping.KeyIsMapped(lDateField) then begin
+    Result := FieldValue(Fields, lDateField, FLD_DATESTART);
+    if (Result <> -1) then begin
+      case FieldIndex of
+        0: Result := FieldValue(Fields, lDateField, FLD_DATESTART);
+        1: Result := FieldValue(Fields, lDateField, FLD_DATEEND);
+        2: Result := FieldValue(Fields, lDateField, FLD_DATETYPE);
+      else
+        InvalidFieldIndex(FieldIndex);
+      end
+    end
+    else begin
+      case FieldIndex of
+        0: Result := FieldValue(Fields, CT_KEY_DATE, FLD_DATESTART);
+        1: Result := FieldValue(Fields, CT_KEY_DATE, FLD_DATEEND);
+        2: Result := FieldValue(Fields, CT_KEY_DATE, FLD_DATETYPE);
+      else
+        InvalidFieldIndex(FieldIndex);
+      end
+    end
+  end
+  else if ColumnMapping.KeyIsMapped(CT_KEY_DATE) then
+    case FieldIndex of
+      0: Result := FieldValue(Fields, CT_KEY_DATE, FLD_DATESTART);
+      1: Result := FieldValue(Fields, CT_KEY_DATE, FLD_DATEEND);
+      2: Result := FieldValue(Fields, CT_KEY_DATE, FLD_DATETYPE);
+    else
+      InvalidFieldIndex(FieldIndex);
+    end
+  else
+  begin
+    lDate := StringToVagueDate(UserSuppliedData.SingleDate);
+    case FieldIndex of
+      0: Result := Trunc(lDate.StartDate);
+      1: Result := Trunc(lDate.EndDate);
+      2: Result := lDate.DateTypeString;
+    else
+      InvalidFieldIndex(FieldIndex);
+    end;
+  end;
+end;  // TReviewDateFieldGenerator.Value
+
+
+{-==============================================================================
     TSurveyKeyFieldGenerator
 ===============================================================================}
 {-------------------------------------------------------------------------------
@@ -930,6 +1117,33 @@ begin
   else
     Result := AppSettings.SiteID;
 end;  // TCustodianFieldGenerator.Value
+ /////
+{-==============================================================================
+    TCustodianFieldGenerator
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+function TDeterminerPreferredFieldGenerator.GeneratingSQL(FieldIndex: Integer;
+  Tables: TTableSource): String;
+begin
+  if NOT ColumnMapping.KeyIsMapped(CT_KEY_REVIEWER_PREFERRED) then
+    Result := TransactSqlLiteral(1)
+  else
+    Result :=  FieldValueSQL(Tables, CT_KEY_REVIEWER_PREFERRED, FLD_BOOLEAN) + ' ^ 1'
+end;
+
+{-------------------------------------------------------------------------------
+}
+function TDeterminerPreferredFieldGenerator.Value(Fields: Fields; FieldIndex: Integer):
+    OLEVariant;
+begin
+  if NOT ColumnMapping.KeyIsMapped(CT_KEY_REVIEWER_PREFERRED) then
+    Result := 1
+  else 
+    Result := not(FieldValue(Fields, CT_KEY_REVIEWER_PREFERRED, FLD_BOOLEAN))
+
+end;  // TDeterminerPreferredFieldGenerator
+
 
 {-==============================================================================
     TCurrentStatusFieldGenerator
@@ -958,7 +1172,7 @@ begin
   else
     InvalidFieldIndex(FieldIndex);
   end;
-end;  // TCurrentStatusFieldGenerator.Value 
+end;  // TCurrentStatusFieldGenerator.Value
 
 {-==============================================================================
     TRecordTypeKeyFieldGenerator
@@ -1056,9 +1270,39 @@ begin
         + ' ELSE '
         + Result
         + ' END';
-  end;    
+  end;
 end;
+ {-==============================================================================
+    TReviewerFieldGenerator
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+function TReviewerFieldGenerator.Value(Fields: Fields; FieldIndex: Integer):
+    OLEVariant;
+begin
+  Result := Null;
+  if ColumnMapping.KeyIsMapped(CT_KEY_REVIEWER) then
+    Result := FieldValue(Fields, CT_KEY_REVIEWER, FLD_DATA);
 
+end;  // TReviewerFieldGenerator.Value
+
+{ ------------------------------------------------------------------------------
+}
+function TReviewerFieldGenerator.GeneratingSQL(FieldIndex: Integer;
+    Tables: TTableSource): String;
+var
+  MappedReviewerSQL: String;
+begin
+  if ColumnMapping.KeyIsMapped(CT_KEY_REVIEWER) then
+  begin
+    MappedReviewerSQL := FieldValueSQL(Tables, CT_KEY_REVIEWER, FLD_DATA);
+    Result := 'CASE WHEN ' + MappedReviewerSQL + ' IS NOT NULL THEN '
+        + MappedReviewerSQL
+        + ' ELSE '
+        + Result
+        + ' END';
+  end;
+end;
 {-==============================================================================
     TDeterminerRoleFieldGenerator
 ===============================================================================}
@@ -1090,6 +1334,37 @@ begin
 end;
 
 {-==============================================================================
+    TReviewerRoleFieldGenerator
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+function TReviewerRoleFieldGenerator.Value(Fields: Fields; FieldIndex: Integer):
+    OLEVariant;
+begin
+  if not ColumnMapping.KeyIsMapped(CT_KEY_REVIEWER_ROLE) then
+    Result := 'NBNSYS0000000005'
+  else
+  begin
+    Result := FieldValue(Fields, CT_KEY_REVIEWER_ROLE, FLD_DATA);
+    if VarIsNull(Result) then Result := 'NBNSYS0000000005'
+  end
+end;
+
+{ ------------------------------------------------------------------------------
+}
+function TReviewerRoleFieldGenerator.GeneratingSQL(FieldIndex: Integer;
+    Tables: TTableSource): String;
+begin
+  if not ColumnMapping.KeyIsMapped(CT_KEY_REVIEWER_ROLE) then
+    Result := TransactSQLLiteral('NBNSYS0000000005')
+  else
+    Result := 'ISNULL('
+        + FieldValueSQL(Tables, CT_KEY_REVIEWER_ROLE, FLD_DATA) + ', '
+        + TransactSQLLiteral('NBNSYS0000000005') + ')'
+end;
+
+
+{-==============================================================================
     TDeterminationTypeFieldGenerator
 ===============================================================================}
 {-------------------------------------------------------------------------------
@@ -1117,6 +1392,67 @@ begin
     Result := 'ISNULL('
         + FieldValueSQL(Tables, CT_KEY_DETERMINATION_TYPE, FLD_DATA) + ', '
         + TransactSQLLiteral('NBNSYS0000000011') + ')'
+end;
+{-==============================================================================
+    TReviewTypeFieldGenerator
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+function TReviewTypeFieldGenerator.Value(Fields: Fields; FieldIndex: Integer):
+    OLEVariant;
+
+begin
+ if not ColumnMapping.KeyIsMapped(CT_KEY_REVIEW_TYPE) then
+    Result := 'NBNSYS0000000007'
+  else
+  begin
+    Result := FieldValue(Fields, CT_KEY_REVIEW_TYPE, FLD_DATA);
+    if VarIsNull(Result) then Result := 'NBNSYS0000000007';
+  end;
+end;
+
+{ ------------------------------------------------------------------------------
+}
+function TReviewTypeFieldGenerator.GeneratingSQL(FieldIndex: Integer;
+    Tables: TTableSource): String;
+
+begin
+  if not ColumnMapping.KeyIsMapped(CT_KEY_REVIEW_TYPE) then
+    Result := TransactSQLLiteral('NBNSYS0000000007')
+  else
+    Result := 'ISNULL('
+        + FieldValueSQL(Tables, CT_KEY_REVIEW_TYPE, FLD_DATA) + ', '
+        + TransactSQLLiteral('NBNSYS0000000007') + ')'
+end;
+{-==============================================================================
+    TReviewSpeciesFieldGenerator
+===============================================================================}
+{-------------------------------------------------------------------------------
+}
+function TReviewSpeciesFieldGenerator.Value(Fields: Fields; FieldIndex: Integer):
+    OLEVariant;
+
+begin
+ if ColumnMapping.KeyIsMapped(CT_KEY_REVIEW_SPECIES) then
+ begin
+   Result := FieldValue(Fields, CT_KEY_REVIEW_SPECIES, FLD_DATA);
+ end;
+ if VarIsNull(Result) then Result := FieldValue(Fields, CT_KEY_SPECIES, FLD_DATA)
+
+end;
+
+{ ------------------------------------------------------------------------------
+}
+function TReviewSpeciesFieldGenerator.GeneratingSQL(FieldIndex: Integer;
+    Tables: TTableSource): String;
+
+begin
+ if not ColumnMapping.KeyIsMapped(CT_KEY_REVIEW_SPECIES) then
+   Result := '(' + FieldValueSQL(Tables, CT_KEY_SPECIES, FLD_DATA) + ')'
+ else
+   Result := 'ISNULL('
+        + FieldValueSQL(Tables, CT_KEY_REVIEW_SPECIES, FLD_DATA) + ', '
+        + FieldValueSQL(Tables, CT_KEY_SPECIES, FLD_DATA)+ ')'
 end;
 
 {-==============================================================================
@@ -1219,12 +1555,18 @@ initialization
        TSurveyEventSpatialReferenceFieldGenerator,
        TDateFieldGenerator,
        TDeterminationDateFieldGenerator,
+       TReviewDateFieldGenerator,
        TCustodianFieldGenerator,
        TCurrentStatusFieldGenerator,
        TRecordTypeKeyFieldGenerator,
        TDeterminerFieldGenerator,
+       TDeterminerPreferredFieldGenerator,
+       TReviewerFieldGenerator,
        TDeterminerRoleFieldGenerator,
+       TReviewerRoleFieldGenerator,
        TDeterminationTypeFieldGenerator,
+       TReviewTypeFieldGenerator,
+       TReviewSpeciesFieldGenerator,
        TAssociatedOccurenceKeyFieldGenerator,
        TAbundanceAccuracyFieldGenerator,
        TObserverFieldGenerator]);

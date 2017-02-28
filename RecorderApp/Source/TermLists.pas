@@ -1706,7 +1706,7 @@ begin
     if (lErr<>0) or (lVal>3) or (lVal<0) then
       dbeAddField1.Text:=FdmTermLists.qryTermList.FieldByName(dbeAddField1.DataField).AsString;
     ValidateValue(lErr = 0, Format(ResStr_InvalidIntegerValue, [stVal]), dbeAddField1);
-    ValidateValue(lVal <= 3, Format(ResStr_TooBigValue, [stVal]), dbeAddField1);
+    ValidateValue(lVal <= 9, Format(ResStr_TooBigValue, [stVal]), dbeAddField1);
   end;
 end;  // dbeAddField1Change
 

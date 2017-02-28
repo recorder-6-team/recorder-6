@@ -845,7 +845,7 @@ var
             FOnFastParseError(parser, columnsToValidate[i], dependencyErrors);
             cvInfo.ErrorCount := cvInfo.ErrorCount + dependencyErrors.RecordCount;
           end;
-          
+
           cvInfo.RequiresParsing := False;
           columnsToValidate.Delete(i);
         end;
@@ -978,7 +978,14 @@ var
             DoParseErrorChanged(cvInfo.MappedType.Parser, columnsToValidate[i], True);
             cvInfo.ErrorCount := cvInfo.ErrorCount + 1;
           end;
-
+          // Fail when Review Date is before Date.
+          if cvInfo.MappedType.Key = CT_KEY_REVIEW_DATE then
+            if ColumnMapping.ValidateFieldDependency(cvInfo.MappedType, FDataSource) =
+              ResStr_ReviewDateBeforeSampleDate then
+            begin
+              DoParseErrorChanged(cvInfo.MappedType.Parser, columnsToValidate[i], True);
+              cvInfo.ErrorCount := cvInfo.ErrorCount + 1;
+            end;
           // Fail when Determination Date is before Date.
           if cvInfo.MappedType.Key = CT_KEY_DETERMINATION_DATE then
            if ColumnMapping.ValidateFieldDependency(cvInfo.MappedType, FDataSource) =

@@ -1,16 +1,27 @@
 inherited fraMatchGeneric: TfraMatchGeneric
   inherited pnlControls: TPanel
     Height = 49
-    inherited btnSearch: TBitBtn
-      TabOrder = 1
-      Visible = False
+    inherited pnlBtnSearch: TPanel
+      Height = 49
+      inherited btnSearch: TBitBtn
+        Visible = False
+      end
     end
-    inherited btnNew: TBitBtn
-      TabOrder = 0
+    inherited pnlBtnNew: TPanel
+      Height = 49
+    end
+    inherited pnlBtnNewEntries: TPanel
+      Height = 49
+    end
+    inherited pnlBtnCommit: TPanel
+      Height = 49
+    end
+    inherited pnlBtnExcludeUnmatched: TPanel
+      Height = 49
     end
   end
   inherited dbgMatch: TImportWizardDBGrid
     Top = 122
-    Height = 126
+    Height = 297
   end
 end

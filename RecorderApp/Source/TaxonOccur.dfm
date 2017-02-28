@@ -53,7 +53,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
         Top = 24
         Width = 373
         Height = 301
-        ActivePage = tsDeterminations
+        ActivePage = tsSources
         Anchors = [akLeft, akTop, akRight, akBottom]
         ParentShowHint = False
         ShowHint = True
@@ -102,11 +102,10 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             Caption = 'Surveyor'#39's Ref:'
           end
           object lblVerificationStatus: TLabel
-            Left = 288
+            Left = 168
             Top = 245
             Width = 63
             Height = 13
-            Alignment = taRightJustify
             Anchors = [akLeft, akBottom]
             Caption = 'Not validated'
             Color = clBtnFace
@@ -183,7 +182,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             OnExit = ExitRTF
           end
           object dbcbChecked: TDBCheckBox
-            Left = 152
+            Left = 96
             Top = 244
             Width = 69
             Height = 17
@@ -230,7 +229,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             Height = 21
             Style = csDropDownList
             Anchors = [akLeft, akTop, akRight]
-            ItemHeight = 0
+            ItemHeight = 13
             Sorted = True
             TabOrder = 1
             ListField = 'SHORT_NAME'
@@ -246,7 +245,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             Width = 105
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             Sorted = True
             TabOrder = 2
             ListField = 'SHORT_NAME'
@@ -263,7 +262,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             Height = 21
             Style = csDropDownList
             Anchors = [akLeft, akRight, akBottom]
-            ItemHeight = 0
+            ItemHeight = 13
             Sorted = True
             TabOrder = 8
             OnChange = cmbDeterminationTypeChange
@@ -450,6 +449,22 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
                 Anchors = [akLeft, akTop, akRight]
                 Pen.Color = clRed
               end
+              object lblReviewSummary: TLabel
+                Left = 264
+                Top = 72
+                Width = 8
+                Height = 13
+                Anchors = [akLeft, akBottom]
+                Caption = 'N'
+                Color = clBtnFace
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlue
+                Font.Height = -11
+                Font.Name = 'MS Sans Serif'
+                Font.Style = []
+                ParentColor = False
+                ParentFont = False
+              end
               object bbDetAccept: TImageListButton
                 Left = 301
                 Top = 147
@@ -512,7 +527,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
                 OnKeyPress = eWorkKeyPress
               end
               object cbPreferred: TCheckBox
-                Left = 252
+                Left = 196
                 Top = 70
                 Width = 65
                 Height = 17
@@ -537,7 +552,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
               object dbcmbRole: TDBListCombo
                 Left = 64
                 Top = 68
-                Width = 145
+                Width = 129
                 Height = 21
                 Style = csDropDownList
                 ItemHeight = 13
@@ -823,7 +838,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
                 Height = 21
                 Style = csDropDownList
                 Anchors = [akLeft, akTop, akRight]
-                ItemHeight = 0
+                ItemHeight = 13
                 Sorted = True
                 TabOrder = 1
                 ListField = 'SHORT_NAME'
@@ -964,7 +979,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
               Height = 21
               Style = csDropDownList
               Anchors = [akLeft, akTop, akRight]
-              ItemHeight = 0
+              ItemHeight = 13
               Sorted = True
               TabOrder = 2
               ListField = 'SHORT_NAME'
