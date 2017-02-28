@@ -24,7 +24,6 @@ uses
   StdCtrls, ActnList, Buttons, ComCtrls, ExtCtrls, ColorBtn, JPeg, ExtDlgs,
   CheckLst, ExceptionForm, FolderBrowser, FileCtrl, BaseFormUnit, OnlineHelp,
   Constants, XPToolButton, ImageListButton, Recorder2000_TLB, StrUtils, Math,
-  ApplicationSettings;
   ApplicationSettings,ADODB, DatabaseAccessADO;
 
 resourcestring
@@ -247,6 +246,11 @@ type
     procedure btnExtraLocationSearchColumnsClick(Sender: TObject);
     procedure btnExternalFilePathClick(Sender: TObject);
     procedure btnExportTemplateBrowseClick(Sender: TObject);
+    procedure btnMasterClick(Sender: TObject);
+    procedure btnSaveSettingClick(Sender: TObject);
+    procedure edCompetencyKeyPress(Sender: TObject; var Key: Char);
+    procedure FormActivate(Sender: TObject);
+
   private
     hlpOptions: TOnlineHelp;
     FSpatialRefSystem: String;
@@ -262,6 +266,7 @@ type
     procedure InitCOMSpatialSystems;
     function CheckFileLocation(AEdit: TEdit): boolean;
     function SelectFolder(const AFolder, AMsg: String): String;
+    procedure PopulateSettingFields;
     procedure ResetDefaultPaths;
     procedure AddAddinPage(APage: IOptionsPage);
     procedure SetAddinPagesToDefault;
@@ -289,7 +294,7 @@ uses
 resourcestring
   ResStr_RuckSacks      = 'Rucksacks:';
   ResStr_Template       = 'Templates:';
-  ResStr_ExportTemplate = 'Export Templates:';  
+  ResStr_ExportTemplate = 'Export Templates:';
   ResStr_Queries        = 'Queries:';
   ResStr_RecordingCards = 'Recording Cards:';
   ResStr_ImageFiles     = 'Image Files:';
@@ -298,7 +303,11 @@ resourcestring
   ResStr_Separator      = 'Separator';
   ResStr_BatchUpdates   = 'Batch Updates:';
   ResStr_None           = '(none)';
-  ResStr_ExternalFilePath = 'External Files:';  
+  ResStr_ExternalFilePath = 'External Files:';
+  Restr_Master_Workstation = 'The map on this workstation must be reset before it can be made the master';
+  Restr_Admin_Permission  = 'Administrator permission is required to make these changes';
+  Restr_Settings_Changed = 'Change complete';
+  Restr_Confirm_Change = 'Are you sure you wish to change these settings ?';
 
 const
   BAD_DELIMITERS = ['a'..'z', '0'..'9', 'A'..'Z', '<', '>', '~', '-', '/', ' '];
@@ -387,7 +396,7 @@ begin
     cbShowWelcomeAtStart.Checked       := ShowWelcomeAtStart;
     cbShowCommonNames.Checked          := DisplayTaxonCommonNames;
     cbShowNamesAsEntered.Checked       := DisplayTaxonEnteredNames;
-    cbShowAuthors.Checked              := DisplayTaxonAuthors;    
+    cbShowAuthors.Checked              := DisplayTaxonAuthors;
     cbFullTranslation.Checked          := UseRecommendedTaxaNames;
     cbAutoEmail.Checked                := AutoSchemeEmail;
     eDateCutYear.Text                  := RightStr('0' + IntToStr(DateCutYear), 2);
@@ -395,7 +404,7 @@ begin
     chkPartialTaxonSearch.Checked      := PartialTaxonSearch;
     chkAutoCompleteSearch.Checked      := AutoCompleteSearch;
     chkIncludeLocationSpatialRef.Checked := IncludeLocationSpatialRef;
-    chkIncludeLocationFileCode.Checked := IncludeLocationFileCode;        
+    chkIncludeLocationFileCode.Checked := IncludeLocationFileCode;
     eRapidEntryDelimiter.Text          := RapidEntryDelimiter;
     chkOrganiseSurveysByTag.Checked    := OrganiseSurveysByTag;
     chkUseOldImportWizard.Checked      := UseOldImportWizard;
@@ -460,6 +469,8 @@ begin
   tsSpatialRef.HelpContext    := IDH_OPTIONSSPATIAL;
   tsFileLocations.HelpContext := IDH_OPTIONSFILES;
   pcOptionsPages.HelpContext  := tsGeneral.HelpContext;
+
+
 end;  // FormCreate
 
 //==============================================================================
@@ -1122,7 +1133,7 @@ begin
       ShowWelcomeAtStart      := cbShowWelcomeAtStart.Checked;
       DisplayTaxonCommonNames := cbShowCommonNames.Checked;
       DisplayTaxonEnteredNames:= cbShowNamesAsEntered.Checked;
-      DisplayTaxonAuthors     := cbShowAuthors.Checked;      
+      DisplayTaxonAuthors     := cbShowAuthors.Checked;
       UseRecommendedTaxaNames := cbFullTranslation.Checked;
       AutoSchemeEmail         := cbAutoEmail.Checked;
       DateCutYear             := StrToInt(eDateCutYear.Text);
@@ -1395,7 +1406,7 @@ end;
 
 {-------------------------------------------------------------------------------
   Display the dialog allowing the user to select the extra columns that are
-  to be displayed when searching for locations.  
+  to be displayed when searching for locations.
 }
 procedure TdlgOptions.btnExtraLocationSearchColumnsClick(Sender: TObject);
 var
@@ -1476,5 +1487,93 @@ begin
   eExternalFiles.Text := SelectFolder(eExternalFiles.Text, ResStr_ExternalFilePath);
 end;
 
+
+procedure TdlgOptions.btnMasterClick(Sender: TObject);
+var rs : _Recordset;
+begin
+  rs := dmDatabase.ExecuteSQL('Select * From Computer_Map WHERE Computer_id = ''' +
+        lblThisWorkStation.Caption + '''', true);
+  if not rs.Eof then
+    edMaster.Text := lblThisWorkStation.Caption
+  else
+    MessageDlg(Restr_Master_Workstation,mtConfirmation, [mbOk], 0);
+
+end;
+
+procedure TdlgOptions.PopulateSettingFields;
+var rs : _recordset;
+begin
+  rs := dmDatabase.ExecuteSQL('Select host_name() as hostname', true);
+  lblThisWorkstation.caption := rs.Fields['hostname'].Value;
+  rs.close;
+
+  rs := dmDatabase.ExecuteSQL('Select * From Setting', true);
+  while not rs.Eof do begin
+    if rs.Fields['Name'].Value = 'GatewayURL' then  edGatewayURL.text := rs.Fields['Data'].Value
+      else if rs.Fields['Name'].Value = 'HelpURL' then  edHelpURL.text := rs.Fields['Data'].Value
+      else if rs.Fields['Name'].Value = 'PrefLocs' then  edPreLocs.text := rs.Fields['Data'].Value
+      else if rs.Fields['Name'].Value = 'PrefNames' then  edPrefNames.text := rs.Fields['Data'].Value
+      else if rs.Fields['Name'].Value = 'SortMethod' then  edSortMethod.text := rs.Fields['Data'].Value
+      else if rs.Fields['Name'].Value = 'TaxDesList' then  edTaxDesList.text := rs.Fields['Data'].Value
+      else if rs.Fields['Name'].Value = 'TempMedia' then  edTempMedia.text := rs.Fields['Data'].Value
+      else if rs.Fields['Name'].Value = 'TempName' then  edTempNames.text := rs.Fields['Data'].Value
+      else if rs.Fields['Name'].Value = 'Competency' then  edCompetency.text := rs.Fields['Data'].Value;
+   rs.MoveNext
+  end;
+  rs.close;
+  rs := dmDatabase.ExecuteSQL('Select Computer_Id  From Computer_Map WHERE Master = 1', true);
+    if not rs.eof then edMaster.text := rs.Fields['Computer_Id'].Value
+      else  edMaster.text := '';
+  rs.close;
+end;
+
+procedure TdlgOptions.btnSaveSettingClick(Sender: TObject);
+var sql : string;
+begin
+ If MessageDlg(Restr_Confirm_Change,mtConfirmation, [mbYes,MbNo], 0) = MrYes then
+   if AppSettings.UserAccessLevel = ualAdmin then begin
+     if edMaster.Text <> lblThisWorkStation.caption then begin
+       dmDatabase.ExecuteSQL ('Update Computer_Map set Object_Sheet_Folder = ''' +
+           appsettings.ObjectSheetFilePath + ''' WHERE Computer_Id = ''' +
+           lblThisWorkStation.caption + '''',false);
+       dmDatabase.ExecuteSQL ('Update Computer_Map set master = 0 WHERE ' +
+           ' EXISTS (SELECT * FROM Computer_Map ' +
+           ' WHERE Computer_Id = ''' + lblThisWorkStation.caption  + ''')',false);
+       dmDatabase.ExecuteSQL ('Update Computer_Map set master = 1 WHERE Computer_Id = ''' +
+            lblThisWorkStation.caption  + '''',false);
+      end;
+
+      if edCompetency.text = '' then edcompetency.text := '0';
+      sql := 'Update Setting SET [Data] = ''%s'' where [Name] = ''%s''';
+
+      dmDatabase.ExecuteSQL(Format(sql,[edGatewayURL.text,'GatewayURL']),false);
+      dmDatabase.ExecuteSQL(Format(sql,[edHelpURL.text,'HelpURL']),false);
+      dmDatabase.ExecuteSQL(Format(sql,[edPreLocs.text,'PrefLocs']),false);
+      dmDatabase.ExecuteSQL(Format(sql,[edPrefNames.text,'PrefNames']),false);
+      dmDatabase.ExecuteSQL(Format(sql,[edSortMethod.text,'SortMethod']),false);
+      dmDatabase.ExecuteSQL(Format(sql,[edTaxDesList.text,'TaxDesList']),false);
+      dmDatabase.ExecuteSQL(Format(sql,[edTempMedia.text,'TempMedia']),false);
+      dmDatabase.ExecuteSQL(Format(sql,[edTempNames.text,'TempName']),false);
+      dmDatabase.ExecuteSQL(Format(sql,[edCompetency.text,'Competency']),false);
+
+      PopulateSettingFields;
+      MessageDlg(Restr_Settings_Changed,mtInformation, [mbOk], 0);
+   end else
+     MessageDlg(Restr_Admin_Permission,mtInformation, [mbOk], 0);
+end;
+
+procedure TdlgOptions.edCompetencyKeyPress(Sender: TObject; var Key: Char);
+begin
+   if not (Key in [#8, '0'..'9']) then Key := #0;
+end;
+
+procedure TdlgOptions.FormActivate(Sender: TObject);
+begin
+  // Setting table
+ PopulateSettingFields;
+end;
+
 end.
+
+
 

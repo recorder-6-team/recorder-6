@@ -1,6 +1,6 @@
 object dlgOptions: TdlgOptions
-  Left = 375
-  Top = 291
+  Left = 446
+  Top = 355
   BorderStyle = bsDialog
   Caption = 'Options'
   ClientHeight = 449
@@ -14,6 +14,7 @@ object dlgOptions: TdlgOptions
   OldCreateOrder = False
   Position = poOwnerFormCenter
   ShowHint = True
+  OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
@@ -135,7 +136,7 @@ object dlgOptions: TdlgOptions
         object lblCenturyCutOffInfo: TLabel
           Left = 8
           Top = 136
-          Width = 217
+          Width = 248
           Height = 33
           Caption = 
             'This value will be used to automatically work out the century fo' +
@@ -194,7 +195,7 @@ object dlgOptions: TdlgOptions
           TabOrder = 1
         end
         object eRapidEntryDelimiter: TEdit
-          Left = 136
+          Left = 120
           Top = 174
           Width = 33
           Height = 21
@@ -219,7 +220,7 @@ object dlgOptions: TdlgOptions
         end
         object chkUseOldImportWizard: TCheckBox
           Left = 8
-          Top = 204
+          Top = 196
           Width = 245
           Height = 17
           Alignment = taLeftJustify
@@ -1115,6 +1116,211 @@ object dlgOptions: TdlgOptions
         Caption = '...'
         TabOrder = 5
         OnClick = btnExportTemplateBrowseClick
+      end
+    end
+    object tsSettingTable: TTabSheet
+      Caption = 'Setting Table'
+      ImageIndex = 5
+      object lblSetting1: TLabel
+        Left = 8
+        Top = 40
+        Width = 150
+        Height = 13
+        Caption = 'Master Workstation for mapping'
+      end
+      object lblMapMaster: TLabel
+        Left = 424
+        Top = 0
+        Width = 99
+        Height = 33
+        Caption = 'Makes this workstation the master for managing mapping.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -9
+        Font.Name = 'Small Fonts'
+        Font.Style = []
+        ParentFont = False
+        WordWrap = True
+      end
+      object lblThisWorkStation: TLabel
+        Left = 168
+        Top = 8
+        Width = 153
+        Height = 17
+        AutoSize = False
+        Caption = 'Current Workstation'
+        Color = clWindow
+        ParentColor = False
+      end
+      object lblSetting2: TLabel
+        Left = 8
+        Top = 72
+        Width = 145
+        Height = 13
+        Caption = 'Competency Level for Review '
+      end
+      object lblSetting3: TLabel
+        Left = 8
+        Top = 296
+        Width = 56
+        Height = 13
+        Caption = 'Gateway url'
+      end
+      object lblSetting4: TLabel
+        Left = 8
+        Top = 328
+        Width = 85
+        Height = 13
+        Caption = 'R6 on line help url'
+      end
+      object lblSetting5: TLabel
+        Left = 8
+        Top = 104
+        Width = 98
+        Height = 13
+        Caption = 'Preferred Locations  '
+      end
+      object lblSetting6: TLabel
+        Left = 8
+        Top = 136
+        Width = 79
+        Height = 13
+        Caption = 'Preferred Names'
+      end
+      object lblSetting7: TLabel
+        Left = 8
+        Top = 168
+        Width = 58
+        Height = 13
+        Caption = 'Sort Method'
+      end
+      object lblSetting8: TLabel
+        Left = 8
+        Top = 200
+        Width = 127
+        Height = 13
+        Caption = 'Taxon Designmation Lists  '
+      end
+      object lblSetting10: TLabel
+        Left = 8
+        Top = 232
+        Width = 85
+        Height = 13
+        Caption = 'Temp Media Keys'
+      end
+      object lblSetting11: TLabel
+        Left = 8
+        Top = 272
+        Width = 90
+        Height = 13
+        Caption = 'Temp Name Keys  '
+      end
+      object lblWorksattion: TLabel
+        Left = 8
+        Top = 8
+        Width = 94
+        Height = 13
+        Caption = 'Current Workstation'
+      end
+      object edMaster: TEdit
+        Left = 168
+        Top = 38
+        Width = 153
+        Height = 21
+        ReadOnly = True
+        TabOrder = 0
+      end
+      object btnMaster: TButton
+        Left = 336
+        Top = 6
+        Width = 81
+        Height = 25
+        Caption = 'Make Master'
+        TabOrder = 1
+        OnClick = btnMasterClick
+      end
+      object edCompetency: TEdit
+        Left = 168
+        Top = 70
+        Width = 41
+        Height = 21
+        MaxLength = 1
+        TabOrder = 2
+        OnKeyPress = edCompetencyKeyPress
+      end
+      object edPreLocs: TEdit
+        Left = 168
+        Top = 102
+        Width = 353
+        Height = 21
+        MaxLength = 250
+        TabOrder = 3
+      end
+      object edPrefnames: TEdit
+        Left = 168
+        Top = 134
+        Width = 353
+        Height = 21
+        Color = clCaptionText
+        MaxLength = 250
+        TabOrder = 4
+      end
+      object edSortMethod: TEdit
+        Left = 168
+        Top = 166
+        Width = 89
+        Height = 21
+        MaxLength = 250
+        TabOrder = 5
+      end
+      object edTaxDesList: TEdit
+        Left = 168
+        Top = 198
+        Width = 353
+        Height = 21
+        MaxLength = 250
+        TabOrder = 6
+      end
+      object edTempMedia: TEdit
+        Left = 168
+        Top = 230
+        Width = 353
+        Height = 21
+        MaxLength = 250
+        TabOrder = 7
+      end
+      object edTempNames: TEdit
+        Left = 168
+        Top = 262
+        Width = 353
+        Height = 21
+        MaxLength = 250
+        TabOrder = 8
+      end
+      object edGatewayURL: TEdit
+        Left = 168
+        Top = 294
+        Width = 353
+        Height = 21
+        MaxLength = 250
+        TabOrder = 9
+      end
+      object edHelpUrl: TEdit
+        Left = 168
+        Top = 326
+        Width = 353
+        Height = 21
+        MaxLength = 250
+        TabOrder = 10
+      end
+      object btnSaveSetting: TButton
+        Left = 448
+        Top = 352
+        Width = 73
+        Height = 25
+        Caption = 'Save Settings'
+        TabOrder = 11
+        OnClick = btnSaveSettingClick
       end
     end
   end
