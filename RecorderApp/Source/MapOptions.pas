@@ -291,12 +291,12 @@ resourcestring
   ResStr_Continue_Recover = 'This process will copy the maps files from the latest backup and ' +
                             'use these to replace the existing mapping for the selected base map.'#13#10 +
                              #13#10  +
-                             'Do you wish to proceed' ;
+                             'Do you wish to proceed?' ;
 
   ResStr_Continue_Refresh = 'This process will refresh the links for the maps file  ' +
                             'by creating replacement database entries for the map sheets.'#13#10 +
                              #13#10  +
-                             'Do you wish to proceed' ;
+                             'Do you wish to proceed?' ;
 
 
   ResStr_RecoverComplete = 'Restore complete';
