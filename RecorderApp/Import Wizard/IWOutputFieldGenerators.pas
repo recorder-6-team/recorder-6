@@ -104,7 +104,7 @@ type
   {-----------------------------------------------------------------------------
     Vague date. If the user put an empty value for the import, will take
     the vague date from the date column instead.
-    }
+  }
   TDeterminationDateFieldGenerator = class(TOutputFieldGenerator)
   public
     function Value(Fields: Fields; FieldIndex: Integer): OLEVariant; override;
