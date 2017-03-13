@@ -333,7 +333,7 @@ resourcestring
   ResStr_Backup = 'Backup';
 
   ResStr_Archive = 'Archive';
-  ResStr_Failed = '''%s'' did not fully complete '+
+  ResStr_Failed = '''%s'' did not fully complete as '+
                    'there may be no files to backup or you may not have the required permissions.';
 
   ResStr_DoArchive = 'Backup of %s base map complete. Do you wish to archive your map file backups now ?';
