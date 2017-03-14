@@ -32,30 +32,27 @@ GO
     $Author: Michael Weideli $
 
 \*===========================================================================*/
+If EXISTS (SELECT * FROM SysObjects WHERE Id = OBJECT_ID(N'[dbo].[ufn_GetLocationAndLocationName]') AND OBJECTPROPERTY(Id, N'IsScalarFunction') = 1)
+   DROP FUNCTION [dbo].[ufn_GetLocationAndLocationName]
+
+GO
+
+
 CREATE FUNCTION [dbo].[ufn_GetLocationAndLocationName]
 (
-	@Sample_Key		CHAR(16)
+	@LocationName varchar(100),@Location varchar(100)
 )
 RETURNS	VARCHAR(202)
 
 AS
 BEGIN
-   DECLARE	@LocationName 			VARCHAR(100)
-   DECLARE	@Location 			    VARCHAR(100)
-   DECLARE  @ResultString           VARCHAR(202)
-	
-   SET @LocationName  = (Select Location_Name from Sample where sample_key = @Sample_key) 
-   Set @Location	= (Select Item_Name From Location_Name INNER JOIN Sample ON Sample.Location_Key 
-   = Location_Name.Location_key and Location_Name.Preferred = 1 and sample_key = @sample_key)
-    		
-   If @Location = @LocationName Set @Location =''
-      
-   Set @ResultString = ISNULL(@Location,'') + '. ' + ISNULL(@LocationName,'')    
-	
-   if Left (@ResultString,2) = '. ' SET @ResultString = LTRIM(Right(@ResultString,len(@ResultString)-1))
-   
-   RETURN @ResultString;
-        
+  DECLARE  @ResultString VARCHAR(202),@Delimeter varChar(2)
+  
+  set @Delimeter = '. '
+  If @Location = @LocationName Set @Location = ''
+  if Isnull(@Location,'') = '' OR  ISNULL(@LocationName,'') = '' Set @Delimeter = ''
+  Set @ResultString = ISNULL(@Location,'') + @Delimeter + ISNULL(@LocationName,'')    
+  RETURN @ResultString;
 END
 
 GO
@@ -86,8 +83,8 @@ VALUES ('LCA0002300000601','Sample End Date','Sample','SAMPLE','#REPORT_OUTPUT.[
 
 INSERT INTO REPORT_ATTRIBUTE (REPORT_ATTRIBUTE_KEY,ITEM_NAME,ITEM_GROUP,SOURCE_TABLE,ATTRIBUTE_SQL,REPORT_JOIN_KEY,ENTERED_BY,
 ENTRY_DATE,SYSTEM_SUPPLIED_DATA)
-VALUES ('LCA0002300000602','Sample Location Info','Sample','SAMPLE','#REPORT_OUTPUT.[Sample_Location_Info] = [dbo].[ufn_GetLocationAndLocationName](sample.sample_key)',
-'NBNSYS0000000007','TESTDATA00000001',getdate(),1)
+VALUES ('LCA0002300000602','Sample Location Info','Sample','SAMPLE','#REPORT_OUTPUT.[Sample_Location_Info] = [dbo].[ufn_GetLocationAndLocationName](sample.Location_Name,Location_Name.Item_Name)',
+'NBNSYS0000000008','TESTDATA00000001',getdate(),1)
 
 GO
 
