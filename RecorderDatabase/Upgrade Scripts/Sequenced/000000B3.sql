@@ -1,5 +1,8 @@
-/****** Remove UDF before recreating/
+/****** Calculates a R6 date type from a start date/end date and type of DD******/
 
+/*===========================================================================*\
+  Drop udf before re-creating.
+\*===========================================================================*/
 
 If EXISTS (SELECT * FROM SysObjects WHERE Id = OBJECT_ID(N'[dbo].[LCReturnMonthEndDay]') AND OBJECTPROPERTY(Id, N'IsScalarFunction') = 1)
    DROP FUNCTION [dbo].[LCReturnMonthEndDay]
