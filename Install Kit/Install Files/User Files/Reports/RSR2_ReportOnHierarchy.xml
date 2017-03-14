@@ -1,0 +1,92 @@
+<?xml version='1.0' ?>
+
+
+<!-- Review System Generate report For Checking 
+     XML Report by Mike Weideli of Littlefield Consultancy for 
+     http://www.lfield.co.uk
+     Version 1 January 2017 
+     Menupath 
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="RSR2_ReportOnHierarchy" menupath="System Supplied\Review System"  
+
+description="Creates a file for checking based on the Taxonomic Hierarchy. Select the start taxon from Organism View" >
+
+
+
+<SQL>
+
+<Where keytype="Default">
+             Select TOCC.Taxon_Occurrence_key as TOK, S.Spatial_Ref, 
+              dbo.FormatEventRecorders(s.sample_key) as Recorder,
+              dbo.LCReturnVagueDateShort(s.Vague_date_start,s.Vague_date_end,s.vague_date_type) As Recorder_Date, 
+              ITN3.Actual_name,ITN3.Common_Name, DT.Short_Name as Original_Determination_TYpe,  Null as Determination_Type, Null as SCientific_name, Null as Verifier_Comments
+              FROM 
+              INDEX_TAXON_NAME ITN 
+              INNER JOIN INDEX_TAXON_GROUP ITG ON
+              ITG.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+              INNER JOIN INDEX_TAXON_NAME ITN2 ON ITN2.TAXON_LIST_ITEM_KEY =
+              ITG.CONTAINED_LIST_ITEM_KEY
+              INNER JOIN INDEX_TAXON_NAME ITN3 ON ITN3.RECOMMENDED_TAXON_LIST_ITEM_KEY =
+              ITN2.RECOMMENDED_TAXON_LIST_ITEM_KEY 
+              INNER JOIN TAXON_DETERMINATION TDET ON TDET.TAXON_LIST_ITEM_KEY = 
+              ITN3.TAXON_LIST_ITEM_KEY
+              INNER JOIN TAXON_OCCURRENCE TOCC ON TOCC.TAXON_OCCURRENCE_KEY
+              = TDET.TAXON_OCCURRENCE_KEY
+              INNER JOIN Sample S ON S.Sample_key = TOCC.SAMPLE_Key
+              INNER JOIN Determination_Type DT
+              ON DT.Determination_Type_key =  TDET.DeterminatioN_type_Key 
+              WHERE
+              <Condition field="ITN.Taxon_LIst_Item_Key" operator="equal" type="Taxon" name="Taxon"  entrycount="1" />
+              AND [dbo].[ufn_ReturnReviewStatus](TOCC.Taxon_Occurrence_key) &#60; 2   
+   
+</Where>
+<Where keytype="Survey">
+              Select TOCC.Taxon_Occurrence_key as TOK, S.Spatial_Ref, 
+              dbo.FormatEventRecorders(s.sample_key) as Recorder,
+              dbo.LCReturnVagueDateShort(s.Vague_date_start,s.Vague_date_end,s.vague_date_type) As Recorder_Date, 
+              ITN3.Actual_name,ITN3.Common_Name, DT.Short_Name as Original_Determination_TYpe,  Null as Determination_Type, Null as SCientific_name, Null as               Reviewers_Comments
+              FROM 
+              INDEX_TAXON_NAME ITN 
+              INNER JOIN INDEX_TAXON_GROUP ITG ON
+              ITG.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+              INNER JOIN INDEX_TAXON_NAME ITN2 ON ITN2.TAXON_LIST_ITEM_KEY =
+              ITG.CONTAINED_LIST_ITEM_KEY
+              INNER JOIN INDEX_TAXON_NAME ITN3 ON ITN3.RECOMMENDED_TAXON_LIST_ITEM_KEY =
+              ITN2.RECOMMENDED_TAXON_LIST_ITEM_KEY 
+              INNER JOIN TAXON_DETERMINATION TDET ON TDET.TAXON_LIST_ITEM_KEY = 
+              ITN3.TAXON_LIST_ITEM_KEY
+              INNER JOIN TAXON_OCCURRENCE TOCC ON TOCC.TAXON_OCCURRENCE_KEY
+              = TDET.TAXON_OCCURRENCE_KEY
+              INNER JOIN Sample S ON S.Sample_key = TOCC.SAMPLE_Key
+              INNER JOIN Determination_Type DT
+              ON DT.Determination_Type_key =  TDET.DeterminatioN_type_Key 
+              WHERE   [dbo].[ufn_ReturnReviewStatus](TOCC.Taxon_Occurrence_key) &#60; 2 AND
+              <Condition field="ITN.Taxon_List_Item_Key" operator="equal" type="Taxon" name="Taxon"  entrycount="1" />
+              AND SE.Survey_key= '%s'
+
+                  
+</Where>
+
+</SQL>
+<Columns>
+ 
+   <Column name="TOK" visible="True" Caption = "TOK" position ="1" />
+   <Column name="Spatial_ref" width="60" position="2" caption="Spatial_Ref" />   
+   <Column name="Recorder" width="200" position="3" caption="Recorder" /> 
+   <Column name="Recorder_Date" width="100" position="4" caption="Recorder_Date" /> 
+   <Column name="Actual_Name" width="200" position="5" caption="Actual_Name" /> 
+   <Column name="Common_Name" width="200" position="6" caption="Common_Name" /> 
+   <Column name="Original_Determination_TYpe" width="100" position="7" caption="Orig_Det_Type" /> 
+   <Column name="Determination_TYpe" width="100" position="8" caption="Determination_Type" />   
+   <Column name="Scientific_name" width="200" position="9" caption="Scientific_Name" /> 
+   <Column name="Reviewers_comments" width="200" position="10" caption="Verifier_Comments" /> 
+   
+
+</Columns>
+
+</CustomReport>

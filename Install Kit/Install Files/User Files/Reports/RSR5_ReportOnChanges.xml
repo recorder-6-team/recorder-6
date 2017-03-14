@@ -1,0 +1,83 @@
+<?xml version='1.0' ?>
+
+
+<!--  LC Check Changes 
+     XML Report by Mike Weideli of Littlefield Consultancy for 
+     http://www.lfield.co.uk
+     Version 1 January 2017
+     Menupath 
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="RSR5_ReportOnChanges" menupath="System Supplied\Review System"  
+
+description="Validates a csv file ready for adding new determinations. All entries should have Y in the OK column" >
+
+<CSVTables>
+          <CSVTable name="#CSV1">
+          <CSVFile description="Validation file" />
+          <CSVColumn name = "TOK" datatype="Char" size="16" />
+          <CSVColumn name = "Determination_Type" datatype="VarChar" size="30"   />
+          <CSVColumn name = "Scientific_name" datatype="VarChar" size="255"   />
+          <CSVColumn name = "Reviewers_Comments" datatype="VarChar" size="255"   />
+          
+</CSVTable>
+
+</CSVTables>
+
+
+<SQL>
+
+<Where keytype="Default">
+
+	Create Table #Temp1 (FieldType varchar(20) COLLATE SQL_Latin1_General_CP1_CI_AS ,
+                     Item_Name varchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS ,
+                     IsOK char(1) COLLATE SQL_Latin1_General_CP1_CI_AS, Count_Of_Taxa Integer)
+       
+        Insert into #temp1 (FieldType,Item_Name,IsOk,Count_Of_Taxa )
+        SELECT DISTINCT 'SCI_Name', #csv1.Scientific_name,'N',0
+        FROM #CSV1  WHERE len(isNull(SCientific_name,'')) >0     
+        
+        Insert into #temp1 (FieldType,Item_name,IsOk )
+        SELECT DISTINCT 'Det_Type', #csv1.Determination_type,'N'
+        FROM #CSV1 
+
+       
+        UPDATE #TEMP1 SET Count_Of_Taxa = (SELECT COUNT(*) FROM INDEX_TAXON_NAME ITN INNER JOIN #TEMP1 T ON T.Item_Name = 
+               Rtrim(ITN.ACtual_Name + ' ' + ISNULL(ITN.Actual_name_Attribute,''))
+               WHERE #Temp1.Item_Name = T.Item_Name AND ITN.Preferred_Taxa =1) WHERE #TeMp1.FieldType = 'SCi_Name'
+      
+        UPDATE #TEMP1 SET Count_Of_Taxa = 1 FROM #CSV1 INNER JOIN #TEMP1 
+            ON #CSV1.TOK = #TEMP1.Taxon_Occurrence_Key INNER JOIN Index_Taxon_Name ON ITN.Taxon_List_Item_Key = 
+        #CSV1.Scientific_name  
+   
+      
+                  
+        
+        UPDATE #TEMp1 set IsOk = 'Y'
+        FROM #TEMP1 WHERE Count_Of_Taxa = 1
+
+        UPDATE #TEMP1 set IsOk = 'Y'
+        FROM #TEMP1 
+        INNER JOIN  DeterminatioN_type DT 
+        ON DT.Short_NAME = #TEMP1.Item_Name
+        WHERE #TeMp1.FieldType = 'Det_Type' 
+
+        UPDATE #TEMp1 set IsOk = 'Y'
+        FROM
+        #TEMP1 
+        WHERE #TeMp1.FieldType = 'Det_Type' AND Item_Name = 'c'
+
+        Select * FROM #Temp1 ORDER BY FieldType, IsOK 
+                         
+DROP TABLE #TEMP1
+
+</Where>
+
+
+</SQL>
+
+</CustomReport>
