@@ -195,8 +195,8 @@ type
     edTempNames: TEdit;
     edGatewayURL: TEdit;
     edHelpUrl: TEdit;
-    btnSaveSetting: TButton;
     lblWorksattion: TLabel;
+    lblSettingWarning: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DrawListItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
@@ -247,7 +247,6 @@ type
     procedure btnExternalFilePathClick(Sender: TObject);
     procedure btnExportTemplateBrowseClick(Sender: TObject);
     procedure btnMasterClick(Sender: TObject);
-    procedure btnSaveSettingClick(Sender: TObject);
     procedure edCompetencyKeyPress(Sender: TObject; var Key: Char);
     procedure FormActivate(Sender: TObject);
 
@@ -266,7 +265,7 @@ type
     procedure InitCOMSpatialSystems;
     function CheckFileLocation(AEdit: TEdit): boolean;
     function SelectFolder(const AFolder, AMsg: String): String;
-    procedure PopulateSettingFields;
+    procedure PopulateSettingFields(const AField: String);
     procedure ResetDefaultPaths;
     procedure AddAddinPage(APage: IOptionsPage);
     procedure SetAddinPagesToDefault;
@@ -275,6 +274,7 @@ type
     procedure SetExtraLocationSearchColumns(Selection: TLocationSearchColumns);
     property ExtraLocationSearchColumns: TLocationSearchColumns
         read FExtraLocationSearchColumns write SetExtraLocationSearchColumns;
+    procedure SaveSettingTable;
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
@@ -305,10 +305,8 @@ resourcestring
   ResStr_None           = '(none)';
   ResStr_ExternalFilePath = 'External Files:';
   Restr_Master_Workstation = 'The map on this workstation must be reset before it can be made the master';
-  Restr_Admin_Permission  = 'Administrator permission is required to make these changes';
-  Restr_Settings_Changed = 'Change complete';
-  Restr_Confirm_Change = 'Are you sure you wish to change these settings ?';
-
+  Restr_Admin_Permission  = 'Changes to the Setting table have not been made as they require Administrator permission';
+  ResStr_Setting_Warning = 'WARNING - do NOT change any of these settings unless you fully understand the implications.';
 const
   BAD_DELIMITERS = ['a'..'z', '0'..'9', 'A'..'Z', '<', '>', '~', '-', '/', ' '];
 
@@ -979,6 +977,7 @@ begin
   if pcOptionsPages.ActivePage=tsFileLocations then
     ResetDefaultPaths;
   SetAddinPagesToDefault;
+  PopulateSettingFields('Data_default');
 end;  // btnDefaultClick
 
 
@@ -1086,6 +1085,8 @@ var
     end;
 
 begin
+  SaveSettingTable;
+
   ValidateDelimiter;
 
   if cmbTaxonRestriction.ItemIndex = -1 then cmbTaxonRestriction.ItemIndex := 0;
@@ -1212,6 +1213,9 @@ begin
       BatchUpdatePath    := Path(eBatchUpdates,   PATH_BATCH_UPDATES);
       ExternalFilePath   := Path(eExternalFiles,  PATH_EXTERNAL_FILES);
     end; // with AppSettings
+
+
+
     SaveAddinPages;
     ModalResult := mrOk;
     AppSettings.WriteRegistrySettings;
@@ -1500,24 +1504,26 @@ begin
 
 end;
 
-procedure TdlgOptions.PopulateSettingFields;
+procedure TdlgOptions.PopulateSettingFields(const AField: String);
 var rs : _recordset;
 begin
+  lblSettingWarning.Caption := ResStr_Setting_Warning;
+
   rs := dmDatabase.ExecuteSQL('Select host_name() as hostname', true);
   lblThisWorkstation.caption := rs.Fields['hostname'].Value;
   rs.close;
 
   rs := dmDatabase.ExecuteSQL('Select * From Setting', true);
   while not rs.Eof do begin
-    if rs.Fields['Name'].Value = 'GatewayURL' then  edGatewayURL.text := rs.Fields['Data'].Value
-      else if rs.Fields['Name'].Value = 'HelpURL' then  edHelpURL.text := rs.Fields['Data'].Value
-      else if rs.Fields['Name'].Value = 'PrefLocs' then  edPreLocs.text := rs.Fields['Data'].Value
-      else if rs.Fields['Name'].Value = 'PrefNames' then  edPrefNames.text := rs.Fields['Data'].Value
-      else if rs.Fields['Name'].Value = 'SortMethod' then  edSortMethod.text := rs.Fields['Data'].Value
-      else if rs.Fields['Name'].Value = 'TaxDesList' then  edTaxDesList.text := rs.Fields['Data'].Value
-      else if rs.Fields['Name'].Value = 'TempMedia' then  edTempMedia.text := rs.Fields['Data'].Value
-      else if rs.Fields['Name'].Value = 'TempName' then  edTempNames.text := rs.Fields['Data'].Value
-      else if rs.Fields['Name'].Value = 'Competency' then  edCompetency.text := rs.Fields['Data'].Value;
+    if rs.Fields['Name'].Value = 'GatewayURL' then  edGatewayURL.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'HelpURL' then  edHelpURL.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'PrefLocs' then  edPreLocs.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'PrefNames' then  edPrefNames.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'SortMethod' then  edSortMethod.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'TaxDesList' then  edTaxDesList.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'TempMedia' then  edTempMedia.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'TempName' then  edTempNames.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'Competency' then  edCompetency.text := rs.Fields[AField].Value;
    rs.MoveNext
   end;
   rs.close;
@@ -1525,41 +1531,6 @@ begin
     if not rs.eof then edMaster.text := rs.Fields['Computer_Id'].Value
       else  edMaster.text := '';
   rs.close;
-end;
-
-procedure TdlgOptions.btnSaveSettingClick(Sender: TObject);
-var sql : string;
-begin
- If MessageDlg(Restr_Confirm_Change,mtConfirmation, [mbYes,MbNo], 0) = MrYes then
-   if AppSettings.UserAccessLevel = ualAdmin then begin
-     if edMaster.Text <> lblThisWorkStation.caption then begin
-       dmDatabase.ExecuteSQL ('Update Computer_Map set Object_Sheet_Folder = ''' +
-           appsettings.ObjectSheetFilePath + ''' WHERE Computer_Id = ''' +
-           lblThisWorkStation.caption + '''',false);
-       dmDatabase.ExecuteSQL ('Update Computer_Map set master = 0 WHERE ' +
-           ' EXISTS (SELECT * FROM Computer_Map ' +
-           ' WHERE Computer_Id = ''' + lblThisWorkStation.caption  + ''')',false);
-       dmDatabase.ExecuteSQL ('Update Computer_Map set master = 1 WHERE Computer_Id = ''' +
-            lblThisWorkStation.caption  + '''',false);
-      end;
-
-      if edCompetency.text = '' then edcompetency.text := '0';
-      sql := 'Update Setting SET [Data] = ''%s'' where [Name] = ''%s''';
-
-      dmDatabase.ExecuteSQL(Format(sql,[edGatewayURL.text,'GatewayURL']),false);
-      dmDatabase.ExecuteSQL(Format(sql,[edHelpURL.text,'HelpURL']),false);
-      dmDatabase.ExecuteSQL(Format(sql,[edPreLocs.text,'PrefLocs']),false);
-      dmDatabase.ExecuteSQL(Format(sql,[edPrefNames.text,'PrefNames']),false);
-      dmDatabase.ExecuteSQL(Format(sql,[edSortMethod.text,'SortMethod']),false);
-      dmDatabase.ExecuteSQL(Format(sql,[edTaxDesList.text,'TaxDesList']),false);
-      dmDatabase.ExecuteSQL(Format(sql,[edTempMedia.text,'TempMedia']),false);
-      dmDatabase.ExecuteSQL(Format(sql,[edTempNames.text,'TempName']),false);
-      dmDatabase.ExecuteSQL(Format(sql,[edCompetency.text,'Competency']),false);
-
-      PopulateSettingFields;
-      MessageDlg(Restr_Settings_Changed,mtInformation, [mbOk], 0);
-   end else
-     MessageDlg(Restr_Admin_Permission,mtInformation, [mbOk], 0);
 end;
 
 procedure TdlgOptions.edCompetencyKeyPress(Sender: TObject; var Key: Char);
@@ -1570,7 +1541,40 @@ end;
 procedure TdlgOptions.FormActivate(Sender: TObject);
 begin
   // Setting table
- PopulateSettingFields;
+ PopulateSettingFields('Data');
+end;
+
+procedure TdlgOptions.SaveSettingTable;
+var sql : string;
+begin
+  if AppSettings.UserAccessLevel = ualAdmin then begin
+    if edMaster.Text <> lblThisWorkStation.caption then begin
+      dmDatabase.ExecuteSQL ('Update Computer_Map set Object_Sheet_Folder = ''' +
+         appsettings.ObjectSheetFilePath + ''' WHERE Computer_Id = ''' +
+         lblThisWorkStation.caption + '''',false);
+      dmDatabase.ExecuteSQL ('Update Computer_Map set master = 0 WHERE ' +
+         ' EXISTS (SELECT * FROM Computer_Map ' +
+         ' WHERE Computer_Id = ''' + lblThisWorkStation.caption  + ''')',false);
+      dmDatabase.ExecuteSQL ('Update Computer_Map set master = 1 WHERE Computer_Id = ''' +
+          lblThisWorkStation.caption  + '''',false);
+    end;
+
+    if edCompetency.text = '' then edcompetency.text := '0';
+    sql := 'Update Setting SET [Data] = ''%s'' where [Name] = ''%s''';
+
+    dmDatabase.ExecuteSQL(Format(sql,[edGatewayURL.text,'GatewayURL']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edHelpURL.text,'HelpURL']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edPreLocs.text,'PrefLocs']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edPrefNames.text,'PrefNames']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edSortMethod.text,'SortMethod']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edTaxDesList.text,'TaxDesList']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edTempMedia.text,'TempMedia']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edTempNames.text,'TempName']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edCompetency.text,'Competency']),false);
+    PopulateSettingFields('Data');
+  end else
+    MessageDlg(Restr_Admin_Permission,mtInformation, [mbOk], 0);
+
 end;
 
 end.

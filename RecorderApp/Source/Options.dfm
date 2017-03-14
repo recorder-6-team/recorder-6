@@ -59,7 +59,7 @@ object dlgOptions: TdlgOptions
     Top = 0
     Width = 545
     Height = 409
-    ActivePage = tsGeneral
+    ActivePage = tsSettingTable
     Align = alTop
     TabOrder = 1
     OnChange = pcOptionsPagesChange
@@ -1222,6 +1222,21 @@ object dlgOptions: TdlgOptions
         Height = 13
         Caption = 'Current Workstation'
       end
+      object lblSettingWarning: TLabel
+        Left = 8
+        Top = 360
+        Width = 53
+        Height = 13
+        Caption = 'WARNING'
+        Color = clBtnHighlight
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentColor = False
+        ParentFont = False
+      end
       object edMaster: TEdit
         Left = 168
         Top = 38
@@ -1312,15 +1327,6 @@ object dlgOptions: TdlgOptions
         Height = 21
         MaxLength = 250
         TabOrder = 10
-      end
-      object btnSaveSetting: TButton
-        Left = 448
-        Top = 352
-        Width = 73
-        Height = 25
-        Caption = 'Save Settings'
-        TabOrder = 11
-        OnClick = btnSaveSettingClick
       end
     end
   end

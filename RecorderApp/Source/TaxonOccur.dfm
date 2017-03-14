@@ -53,7 +53,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
         Top = 24
         Width = 373
         Height = 301
-        ActivePage = tsSources
+        ActivePage = tsGeneral
         Anchors = [akLeft, akTop, akRight, akBottom]
         ParentShowHint = False
         ShowHint = True
@@ -555,7 +555,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
                 Width = 129
                 Height = 21
                 Style = csDropDownList
-                ItemHeight = 13
+                ItemHeight = 0
                 Sorted = True
                 TabOrder = 3
                 ListField = 'SHORT_NAME'
@@ -572,7 +572,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
                 Height = 21
                 Style = csDropDownList
                 Anchors = [akLeft, akTop, akRight]
-                ItemHeight = 13
+                ItemHeight = 0
                 Sorted = True
                 TabOrder = 5
                 ListField = 'SHORT_NAME'
@@ -838,7 +838,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
                 Height = 21
                 Style = csDropDownList
                 Anchors = [akLeft, akTop, akRight]
-                ItemHeight = 13
+                ItemHeight = 0
                 Sorted = True
                 TabOrder = 1
                 ListField = 'SHORT_NAME'
@@ -979,7 +979,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
               Height = 21
               Style = csDropDownList
               Anchors = [akLeft, akTop, akRight]
-              ItemHeight = 13
+              ItemHeight = 0
               Sorted = True
               TabOrder = 2
               ListField = 'SHORT_NAME'
