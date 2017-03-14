@@ -224,10 +224,10 @@ type
     procedure PopulateMapFileMff(const AFilePath : string; ASheetTypes:string; ACheckExists: Boolean; CompId : string);
     function CheckComputerMap: Boolean;
     function CheckObjectSheet : Boolean;
-    function ArchiveBackup: Boolean;
+    function ArchiveBackup: string;
     function ExecuteArchivebackup : string;
     function UserFilePath: string;
-    function DeleteSpecifiedFiles(AFilename : string) : Boolean;
+    function DeleteSpecifiedFiles(Apath, AFilename : string) : Boolean;
     function BaseMapWidowOpen: Boolean;
   public
     constructor Create(AOwner: TComponent); override;
@@ -291,12 +291,12 @@ resourcestring
   ResStr_Continue_Recover = 'This process will copy the maps files from the latest backup and ' +
                             'use these to replace the existing mapping for the selected base map.'#13#10 +
                              #13#10  +
-                             'Do you wish to proceed' ;
+                             'Do you wish to proceed?' ;
 
   ResStr_Continue_Refresh = 'This process will refresh the links for the maps file  ' +
                             'by creating replacement database entries for the map sheets.'#13#10 +
                              #13#10  +
-                             'Do you wish to proceed' ;
+                             'Do you wish to proceed?' ;
 
 
   ResStr_RecoverComplete = 'Restore complete';
@@ -328,15 +328,21 @@ resourcestring
 
   ResStr_Complete = '%s Complete';
 
+  ResStr_Archive_Complete = 'Archived to path %s';
+
   ResStr_Restore = 'Restore';
 
   ResStr_Backup = 'Backup';
 
   ResStr_Archive = 'Archive';
-  ResStr_Failed = '''%s'' did not fully complete '+
+  ResStr_Failed = '''%s'' did not fully complete as '+
                    'there may be no files to backup or you may not have the required permissions.';
 
-  ResStr_DoArchive = 'Backup of %s base map complete do you wish to archive your map file backups now ?';
+<<<<<<< HEAD
+  ResStr_DoArchive = 'Backup of %s complete do you wish to archive your map file backups now ?';
+=======
+  ResStr_DoArchive = 'Backup of %s base map complete. Do you wish to archive your map file backups now ?';
+>>>>>>> 64306165487ac2db6736450c3f4e2be1c46ad838
 
   // rgButton captions
 
@@ -2026,9 +2032,8 @@ lMSFileName : string;
 lString : TStringList;
 begin
   if ASheetTypes <> '1' then
-    DeleteSpecifiedFiles(AppSettings.ObjectSheetFilePath + '*.mff')
-  else DeleteSpecifiedFiles(AppSettings.MapFilePath + '*.mff');
-
+    DeleteSpecifiedFiles(AppSettings.ObjectSheetFilePath, '*.mff')
+  else DeleteSpecifiedFiles(AppSettings.MapFilePath, '*.mff');
   with dmDatabase.ExecuteSQL(Format('SELECT MS.*,BM.SPATIAL_SYSTEM ' +
                                    ' FROM Map_Sheet MS INNER JOIN ' +
                                    ' BASE_MAP BM ON BM.BASE_MAP_KEY = MS.BASE_MAP_KEY' +
@@ -2108,7 +2113,7 @@ begin
 
   {Allow for the fact that links may have been deleted so that a .rbd may be there, but not
   required, so delete all a start again}
-  DeleteSpecifiedFiles(appsettings.ObjectSheetFilePath + '*.rbd');
+  DeleteSpecifiedFiles(appsettings.ObjectSheetFilePath, '*.rbd');
 
   With dmDatabase.ExecuteSQL('SELECT MS.DATASET_SHEET_FILENAME ' +
                              'FROM LOCATION_BOUNDARY LB INNER JOIN Map_Sheet MS ' +
@@ -2470,10 +2475,10 @@ begin
     lRow:= Row;
     lItem := TSavedMap(Objects[COL_OBJECT,lRow]);
   end;
-  //Check that there is something to copy if not do nothing on a restore
-  if (Not DirectoryExists(RemovePathDelim(AFromFolder))) or
-     (FindFirst(AFromFolder + '*.*', 0, lSearchRec) <> 0) then Result:=False;
-  if Result then begin
+  //Check that there is something to copy if not do nothing on a restore do not return an error
+  if (DirectoryExists(RemovePathDelim(AFromFolder))) and
+     (FindFirst(AFromFolder + '*.*', 0, lSearchRec) = 0) then
+  begin
     {Keeplist will contain the base maps files plus those relating to
      spatial systems other then the one are restoring. Everthing else will be deleted to keep things tidy}
     with dmDatabase.ExecuteSQL(Format('Select DATASET_SHEET_FILENAME FROM MAP_SHEET MS ' +
@@ -2507,7 +2512,9 @@ begin
         end;
       end;
     end;
-  end;
+  end else // if OS and no files then return false as there are no backups
+    If AType = 'OS' then Result := false;
+
   lFileList.Free;
   lKeepList.Free;
 end;
@@ -2582,13 +2589,14 @@ begin
    Result := leftstr(AppSettings.ReportPath,pos('\Reports\',AppSettings.ReportPath));
 end;
 
-function TdlgMapOptions.ArchiveBackup: Boolean;
+function TdlgMapOptions.ArchiveBackup: String;
 var
   lArchiveSuffix: string;
   lFileList: TStringList;
   lFolderList: TStringList;
   lSearchRec: TSearchRec;
   lFromFile: string;
+  lResult: boolean;
   lToFile: string;
   i,lRow: integer;
   lItem: TSavedMap;
@@ -2597,7 +2605,8 @@ begin
     lRow := Row;
     lItem:= TSavedMap(Objects[COL_OBJECT, lRow]);
   end;
-  Result := True;
+  Result := '';
+  lResult := True;
   lFolderList := TStringList.Create;
   lFileList := TStringList.Create;
   // Find all the folder we need
@@ -2623,8 +2632,8 @@ begin
   for i := 0 to lFolderList.count-1 do begin
      lArchiveSuffix := FloatToStr(round(now*10000));
      if Not DirectoryExists(Format(lFolderList[i],[lArchiveSuffix])) then
-       Result :=  ForceDirectories(Format(lFolderList[i],[lArchiveSuffix]));
-     if (Result = True) and (FindFirst(Format(lFolderList[i],[''])+'\*.*', 0, lSearchRec) = 0) then begin
+       lResult :=  ForceDirectories(Format(lFolderList[i],[lArchiveSuffix]));
+     if (lResult = True) and (FindFirst(Format(lFolderList[i],[''])+'\*.*', 0, lSearchRec) = 0) then begin
        lFileList.add (lFolderList[i] + '\' + lSearchRec.Name);
        while FindNext(lSearchRec) = 0 do begin
         lFileList.add (lFolderList[i] + '\' + lSearchRec.Name);
@@ -2635,20 +2644,24 @@ begin
   for i := 0 to lFileList.count -1 do begin
     lFromFile := Format(lFilelist[i],['']);
     lToFile :=  format(lFilelist[i],[lArchiveSuffix]);
-    Result := Result AND CopyFile(PChar(lFromFile), PChar(lToFile), True);
+    lResult := lResult AND CopyFile(PChar(lFromFile), PChar(lToFile), True);
   end;
+  if lResult then Result := UserFilePath + 'Security' + lArchiveSuffix;
   lFileList.Free;
   lFolderList.Free;
 end;
 
 function TdlgMapOptions.ExecuteArchiveBackup: string;
+var
+lArchiveResult: string;
 begin
-  if ArchiveBackup then
-    MessageDlg(Format(ResStr_Complete,[ResStr_Archive]), mtInformation, [mbOK], 0)
+  lArchiveResult := ArchiveBackup;
+  if lArchiveResult  <> '' then
+    MessageDlg(Format(ResStr_Archive_Complete,[lArchiveResult]), mtInformation, [mbOK], 0)
   else MessageDlg(Format(ResStr_Failed,[ResStr_Archive]), mtInformation, [mbOK], 0);
 end;
 
-function TdlgMapOptions.DeleteSpecifiedFiles(AFilename: string): Boolean;
+function TdlgMapOptions.DeleteSpecifiedFiles(Apath, AFilename: string): Boolean;
 var
  lSearchRec: TSearchRec;
  lFileList: TStringList;
@@ -2656,10 +2669,10 @@ var
 begin
   Result := True;
   lFileList := TStringList.Create;
-  if FindFirst(AFileName, 0, lSearchRec) = 0 then begin
-    lFileList.add (appsettings.ObjectSheetFilePath + lSearchRec.Name);
+  if FindFirst(APath + AFileName, 0, lSearchRec) = 0 then begin
+    lFileList.add (APath + lSearchRec.Name);
     while FindNext(lSearchRec) = 0 do
-      lFileList.add (appsettings.ObjectSheetFilePath + lSearchRec.Name);
+      lFileList.add (Apath + lSearchRec.Name);
     FindClose(lSearchRec);
   end;
   for i := 0 to lFileList.count-1 do

@@ -1,6 +1,6 @@
 object dlgMapOptions: TdlgMapOptions
-  Left = 555
-  Top = 316
+  Left = 707
+  Top = 339
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Map Options'
@@ -115,7 +115,7 @@ object dlgMapOptions: TdlgMapOptions
         Height = 21
         AutoCloseUp = True
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         Sorted = True
         TabOrder = 1
         Visible = False
@@ -276,11 +276,11 @@ object dlgMapOptions: TdlgMapOptions
       end
     end
     object tsRecover: TTabSheet
-      Caption = 'Security'
+      Caption = 'Admin'
       ImageIndex = 3
       object lblCurrentObjectSheet: TLabel
         Left = 104
-        Top = 168
+        Top = 176
         Width = 59
         Height = 13
         Caption = 'ObjectSheet'
@@ -289,7 +289,7 @@ object dlgMapOptions: TdlgMapOptions
       end
       object lblCurrentMapSheetPath: TLabel
         Left = 8
-        Top = 192
+        Top = 200
         Width = 80
         Height = 13
         Caption = 'Map Sheet Path '
@@ -298,7 +298,7 @@ object dlgMapOptions: TdlgMapOptions
       end
       object lblMapSheet: TLabel
         Left = 104
-        Top = 192
+        Top = 200
         Width = 52
         Height = 13
         Caption = 'Map Sheet'
@@ -307,7 +307,7 @@ object dlgMapOptions: TdlgMapOptions
       end
       object lblObjectSheetPath: TLabel
         Left = 8
-        Top = 168
+        Top = 176
         Width = 90
         Height = 13
         Caption = 'Object Sheet Path '
@@ -323,14 +323,14 @@ object dlgMapOptions: TdlgMapOptions
       end
       object lblUserFile: TLabel
         Left = 8
-        Top = 216
+        Top = 224
         Width = 74
         Height = 13
         Caption = 'User Files Path '
       end
       object lblUserFilePath: TLabel
         Left = 104
-        Top = 216
+        Top = 224
         Width = 60
         Height = 13
         Caption = 'UserFilePath'
@@ -358,7 +358,7 @@ object dlgMapOptions: TdlgMapOptions
         Top = 32
         Width = 425
         Height = 97
-        Caption = 'Options'
+        Caption = 'Actions'
         Color = clBtnFace
         Columns = 2
         ItemIndex = 0
@@ -374,11 +374,11 @@ object dlgMapOptions: TdlgMapOptions
         OnClick = rgSecureClick
       end
       object btnSecure: TButton
-        Left = 336
-        Top = 232
-        Width = 95
+        Left = 360
+        Top = 136
+        Width = 73
         Height = 25
-        Caption = 'Action'
+        Caption = 'Go'
         TabOrder = 1
         OnClick = btnSecureClick
       end
@@ -392,9 +392,9 @@ object dlgMapOptions: TdlgMapOptions
         Text = 'edWorkstation'
       end
       object cbRetain: TCheckBox
-        Left = 272
+        Left = 264
         Top = 136
-        Width = 73
+        Width = 65
         Height = 25
         Caption = 'Retain'
         TabOrder = 3

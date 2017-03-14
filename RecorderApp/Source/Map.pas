@@ -863,7 +863,7 @@ resourcestring
 
   ResStr_UseNewPolygon =
       'A corrupt import file may result in all data attached to a polygon being lost.'#13#10 +
-      'Please ensure that you have a a backup of yout map data before proceeding - see Map Options'#13#10#13#10 +
+      'Please ensure that you have a a backup of your map data before proceeding - see Map Options'#13#10#13#10 +
       'Do you wish to continue ';
 
   //used in FilterDropped procedure
