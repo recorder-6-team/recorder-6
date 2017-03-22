@@ -2,7 +2,7 @@
 
 
 IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[NATIVE_VIEW]') AND type in (N'V'))
-DROP PROCEDURE [dbo].[NATIVE_VIEW] 
+DROP VIEW [dbo].[NATIVE_VIEW] 
 
 GO
 
