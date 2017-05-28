@@ -485,10 +485,11 @@ begin
   MapCheck(ImportFileName(AItem, AppSettings.BaseMapPath + AItem.OriginalFileName),
            ResStr_CannotImportBaseMap);
 
+  //Changed here for 6.27
   try
     lKey := dmGeneralData.GetNextKey('MAP_SHEET', 'Map_Sheet_Key');
     dmDatabase.ExecuteSQL(Format('Delete From Map_Sheet where Base_map_key = ''%s''' +
-                          ' and Sheet_Type = 0',
+                          ' and Sheet_Type = 0 AND Computer_Id = Host_Name()',
                           [AItem.BaseMapKey]));
     lQuery:=Format(
                 'INSERT INTO Map_Sheet (Map_Sheet_Key, Sheet_Name, Sheet_Type, File_Name, ' +
