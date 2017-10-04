@@ -362,11 +362,17 @@ begin
       with dmGeneralData.qryAllPurpose do begin
         if Active then Close;
         SQL.Text := 'SELECT TOP 0 * FROM "' + dmGeneralData.TableList[i] + '"';
-        Open;
-        ltfDoEntered := Assigned(FindField('ENTERED_BY'));
-        ltfDoChanged := Assigned(FindField('CHANGED_BY'));
-        ltfDoChecked := Assigned(FindField('CHECKED_BY'));
-        Close;
+        Try
+          Open;
+          ltfDoEntered := Assigned(FindField('ENTERED_BY'));
+          ltfDoChanged := Assigned(FindField('CHANGED_BY'));
+          ltfDoChecked := Assigned(FindField('CHECKED_BY'));
+          Close;
+         Except
+          ltfDoEntered := false;
+          ltfDoChanged := false;
+          ltfDoChecked := false;
+         end;
       end;
       if ltfDoEntered then
         FixupJoin(dmGeneralData.TableList[i], 'ENTERED_BY', iSourceKey, iDestKey);
