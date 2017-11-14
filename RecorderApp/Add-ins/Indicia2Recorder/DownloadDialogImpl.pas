@@ -1145,7 +1145,6 @@ begin
   result := EscapeSqlLiteral(literal);
 end;
 
-
 procedure TDownloadDialog.CreateData(thisrec: TStringList; table, key, prefix, fieldTag: string);
 var i: integer;
   dataKey, def, attrId, mu_key, mq_key, val: string;
@@ -1163,6 +1162,7 @@ begin
             val:=thisrec.values['attr_'+fieldTag+'_term_'+attrId]
           else
             val:=thisrec.values['attr_'+fieldTag+'_'+attrId];
+          val := EscapeSqlLiteral(val, 20);
           dataKey := FRemoteSiteID + IdToKey(StrToInt(thisrec.values['attr_id_'+fieldTag+'_'+attrId]));
           temp.CommaText := FAttrs.Values[FAttrs.Names[i]];
           mu_key := temp[0];
