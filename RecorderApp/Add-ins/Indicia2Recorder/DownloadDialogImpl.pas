@@ -40,6 +40,7 @@ type
     lblLoginInstruct: TLabel;
     cbLimitToAccepted: TCheckBox;
     procedure btnLoginClick(Sender: TObject);
+    procedure cmbSurveyChange(Sender: TObject);
   private
     { Private declarations }
     FEvents: IDownloadDialogEvents;
@@ -78,7 +79,7 @@ type
     function GetDownloadType: string;
     function DateToIsoStr(date: TDateTime): string;
     procedure Log(msg: string);
-    procedure ImportRecords(records: TlkJSONbase);
+    procedure ImportRecords(records: TlkJSONbase; surveyKey: string);
     procedure ConnectToDb;
     procedure DisconnectFromDb;
     procedure CreateTempTables;
@@ -86,12 +87,13 @@ type
     procedure EmptyTempTables;
     procedure ExecuteSql(sql: string);
     function IdToKey(id: variant): string;
-    procedure CreateSample(sampleKey: String; thisrec: TStringList);
+    procedure CreateSample(sampleKey: string; surveyKey: string; thisrec: TStringList);
     procedure CreateOccurrence(occKey, sampleKey: String; thisrec: TStringList);
     function GetIndividual(indiciaId: string; name: string): string;
     procedure eachSurvey(ElName: string; Elem: TlkJSONbase; data: pointer;
       var Continue: Boolean);
     procedure PopulateRecorderSurveys;
+    procedure LoadSurveyBatches;
     procedure GetStringsFromJsonRec(thisrec: TStringList;
       rec: TlkJSONbase);
     function ConvertSrefSystem(input: string): string;
@@ -106,6 +108,7 @@ type
     function EscapeSqlLiteral(literal: string): string; overload;
     function EscapeSqlLiteral(literal: string; maxlen: integer): string; overload;
     procedure LoadKnownPeople;
+    procedure ImportSurvey(indiciaSurveyId: integer; surveyKey, quality: string);
   protected
     { Protected declarations }
     procedure DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); override;
@@ -570,12 +573,11 @@ end;
 
 function TDownloadDialog.DoOk: WordBool;
 var
-  request: TIdMultiPartFormDataStream;
-  response, signature, quality: string;
-  records, responseObj: TlkJSONbase;
+  quality, signature: string;
+  batch: TStringList;
   i: integer;
-const
-  LIMIT=100;
+  indiciaSurveyId: integer;
+  surveyKey: string;
 begin
   result:=false;
   if (self.ActiveControl=eEmail) or (self.ActiveControl=ePassword) then begin
@@ -597,7 +599,7 @@ begin
     ShowMessage(ResStr_SelectSurveyToImport);
     cmbSurvey.SetFocus;
   end
-  else if cmbIntoSurvey.ItemIndex=-1 then begin
+  else if cmbIntoSurvey.enabled and (cmbIntoSurvey.ItemIndex=-1) then begin
     ShowMessage(ResStr_SelectSurveyToImportInto);
     cmbIntoSurvey.SetFocus;
   end
@@ -606,7 +608,8 @@ begin
     quality := '!R';
     if cbLimitToAccepted.Checked then
       quality := 'V';
-    signature := IntToStr(integer(cmbSurvey.Items.Objects[cmbSurvey.ItemIndex])) + '|'
+
+    signature := cmbSurvey.Items[cmbSurvey.ItemIndex] + '|'
         + DateToIsoStr(dtpStartDate.Date) + '|' + DateToIsoStr(dtpEndDate.Date) + '|'
         + FSurveys[cmbIntoSurvey.ItemIndex] + '|' + quality;
     if FDoneSignatures.IndexOf(signature)>=0 then
@@ -622,56 +625,40 @@ begin
     FRunning := true;
     SaveSettings;
     FDoneSignatures.Add(signature);
-    FDone := 0;
     ConnectToDb;
     CreateTempTables;
     LoadAttrConfig;
     LoadKnownPeople;
-    records := nil;
     try
-      repeat
-        Log(ResStr_FetchingRecords);
-        request := TIdMultiPartFormDataStream.Create;
-        try
-          request.AddFormField('email', FEmail);
-          request.AddFormField('appsecret', FAppSecret);
-          request.AddFormField('usersecret', FSecret);
-          request.AddFormField('type', GetDownloadType);
-          request.AddFormField('date_from', DateToIsoStr(dtpStartDate.Date));
-          request.AddFormField('date_to', DateToIsoStr(dtpEndDate.Date));
-          request.AddFormField('limit', IntToStr(LIMIT));
-          request.AddFormField('smpAttrs', FSmpAttrs);
-          request.AddFormField('occAttrs', FOccAttrs);
-          request.AddFormField('quality', quality);
-          if FDone=0 then
-            // first time through, so get the grand total
-            request.AddFormField('wantCount', '1')
-          else
-            request.AddFormField('offset', IntToStr(FDone));
-          if cmbSurvey.itemIndex > 0 then
-            request.AddFormField('survey_id', IntToStr(integer(cmbSurvey.Items.Objects[cmbSurvey.ItemIndex])));
-          response := idHttp1.Post(FURL + '/?q=user/remote_download/download', request);
-        finally
-          request.Free;
-        end;
-        Log(ResStr_ParsingRecords);
-        responseObj := TlkJSON.ParseText(response);
-        if FDone=0 then begin
-          for i := 0 to responseObj.Count-1 do begin
-            if responseObj.Child[i] is TlkJSONobjectmethod then begin
-              if TlkJSONobjectmethod(responseObj.Child[i]).Name='records' then
-                records := TlkJSONobjectmethod(responseObj.Child[i]).ObjValue
-              else if TlkJSONobjectmethod(responseObj.Child[i]).Name='count' then
-                FTotal := StrToInt(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+      if cmbSurvey.ItemIndex > 0 then
+      begin
+        if cmbSurvey.Items.Objects[cmbSurvey.ItemIndex] = nil then
+        begin
+          batch := TStringList.Create;
+          try
+            // single a batch of surveys
+            batch.LoadFromFile(FSettingsFolder + cmbSurvey.Items[cmbSurvey.ItemIndex]);
+            for i :=0 to batch.Count - 1 do
+            begin
+              indiciaSurveyId := StrToInt(batch.names[i]);
+              surveyKey := batch.values[batch.names[i]];
+              ImportSurvey(indiciaSurveyId, surveyKey, quality);
             end;
+          finally
+            batch.free;
           end;
-        end else
-          records := responseObj;
-        if assigned(records) then
-          Log(Format(ResStr_ReceivedNRecords, [records.Count]));
-        ImportRecords(records);
-        FDone := FDone + records.Count;
-      until FDone>=FTotal;
+        end
+        else
+          // single selected survey
+          ImportSurvey(
+            integer(cmbSurvey.Items.Objects[cmbSurvey.ItemIndex]),
+            FSurveys[cmbIntoSurvey.ItemIndex],
+            quality
+          );
+        end
+      else
+        // all surveys
+        ImportSurvey(0, FSurveys[cmbIntoSurvey.ItemIndex], quality);
       Log(ResStr_Done);
     finally
       FAttrs.Free;
@@ -680,6 +667,61 @@ begin
       FRunning := false;
     end;
   end;
+end;
+
+procedure TDownloadDialog.ImportSurvey(indiciaSurveyId: integer; surveyKey, quality: string);
+var records, responseObj: TlkJSONbase;
+  request: TIdMultiPartFormDataStream;
+  response: string;
+  i: integer;
+const
+  LIMIT=100;
+begin
+  records := nil;
+  FDone := 0;
+  repeat
+    Log(ResStr_FetchingRecords);
+    request := TIdMultiPartFormDataStream.Create;
+    try
+      request.AddFormField('email', FEmail);
+      request.AddFormField('appsecret', FAppSecret);
+      request.AddFormField('usersecret', FSecret);
+      request.AddFormField('type', GetDownloadType);
+      request.AddFormField('date_from', DateToIsoStr(dtpStartDate.Date));
+      request.AddFormField('date_to', DateToIsoStr(dtpEndDate.Date));
+      request.AddFormField('limit', IntToStr(LIMIT));
+      request.AddFormField('smpAttrs', FSmpAttrs);
+      request.AddFormField('occAttrs', FOccAttrs);
+      request.AddFormField('quality', quality);
+      if FDone=0 then
+        // first time through, so get the grand total
+        request.AddFormField('wantCount', '1')
+      else
+        request.AddFormField('offset', IntToStr(FDone));
+      if indiciaSurveyId<>0 then
+        request.AddFormField('survey_id', IntToStr(indiciaSurveyId));
+      response := idHttp1.Post(FURL + '/?q=user/remote_download/download', request);
+    finally
+      request.Free;
+    end;
+    Log(ResStr_ParsingRecords);
+    responseObj := TlkJSON.ParseText(response);
+    if FDone=0 then begin
+      for i := 0 to responseObj.Count-1 do begin
+        if responseObj.Child[i] is TlkJSONobjectmethod then begin
+          if TlkJSONobjectmethod(responseObj.Child[i]).Name='records' then
+            records := TlkJSONobjectmethod(responseObj.Child[i]).ObjValue
+          else if TlkJSONobjectmethod(responseObj.Child[i]).Name='count' then
+            FTotal := StrToInt(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+        end;
+      end;
+    end else
+      records := responseObj;
+    if assigned(records) then
+      Log(Format(ResStr_ReceivedNRecords, [records.Count]));
+    ImportRecords(records, surveyKey);
+    FDone := FDone + records.Count;
+  until FDone>=FTotal;
 end;
 
 (**
@@ -801,7 +843,7 @@ begin
   result := true;
 end;
 
-procedure TDownloadDialog.ImportRecords(records: TlkJSONbase);
+procedure TDownloadDialog.ImportRecords(records: TlkJSONbase; surveyKey: string);
 var i: integer;
   rec: TlkJSONbase;
   doneSamples, thisrec: TStringList;
@@ -819,7 +861,7 @@ begin
       if not VarIsNull(rec.Field['sample_id'].Value) then begin
         sampleKey := FRemoteSiteID + IdToKey(rec.Field['sample_id'].Value);
         if (doneSamples.IndexOf(sampleKey)=-1) then
-          CreateSample(sampleKey, thisrec);
+          CreateSample(sampleKey, surveyKey, thisrec);
         doneSamples.Add(sampleKey);
         occKey := FRemoteSiteID + IdToKey(rec.Field['occurrence_id'].Value);
         CreateOccurrence(occKey, sampleKey, thisrec);
@@ -852,7 +894,7 @@ end;
  * @todo: set a location and vice county admin area??
  * @todo: intelligently set the determination date
  *}
-procedure TDownloadDialog.CreateSample(sampleKey: String; thisrec: TStringList);
+procedure TDownloadDialog.CreateSample(sampleKey: string; surveyKey: string; thisrec: TStringList);
 var
   existing: _Recordset;
   vd: TVagueDate;
@@ -914,7 +956,7 @@ begin
         thisrec.values['long'] + ',' +
         '''Imported'',' +
         '''' + EscapeSqlLiteral(locationName, 100) + ''',' +
-        '''' + FSurveys[cmbIntoSurvey.ItemIndex] + ''',' +
+        '''' + surveyKey + ''',' +
         '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
@@ -931,7 +973,7 @@ begin
         'long=' + thisrec.values['long'] + ', ' +
         'spatial_ref_qualifier=''Imported'', ' +
         'location_name=''' + EscapeSqlLiteral(locationName, 100) + ''', ' +
-        'survey_key=''' + FSurveys[cmbIntoSurvey.ItemIndex] + ''', ' +
+        'survey_key=''' + surveyKey + ''', ' +
         'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
         'WHERE survey_event_key=''' + sampleKey + '''');
@@ -1572,7 +1614,10 @@ begin
         remoteSurvey := reg.ReadInteger('Remote Survey');
         for i:=0 to cmbSurvey.Items.Count-1 do begin
           if integer(cmbSurvey.Items.Objects[i])=remoteSurvey then
+          begin
             cmbSurvey.ItemIndex := i;
+            cmbSurveyChange(nil);
+          end;
         end;
       end;
       if reg.ValueExists('Local Survey') then begin
@@ -1638,6 +1683,7 @@ begin
   try
     ConnectToDb;
     PopulateRecorderSurveys;
+    LoadSurveyBatches;
   except
     on E:EDownloadDialogConfigException do begin
       ShowMessage(E.Message);
@@ -1688,6 +1734,25 @@ begin
     cmbIntoSurvey.ItemIndex:=0;
 end;
 
+(**
+ * Any .batch files in the configuration directory are loaded. Contains sets of
+ * mappings from remote surveys to local ones which can be used to import
+ * multiple datasets at onces.
+ *)
+procedure TDownloadDialog.LoadSurveyBatches;
+var sr: TSearchRec;
+begin
+  if FindFirst(FSettingsFolder + '*.batch', 0, sr) = 0 then
+  begin
+    cmbSurvey.Items.Add(sr.name);
+    while FindNext(sr) = 0 do
+    begin
+      cmbSurvey.Items.Add(sr.name);
+    end;
+  end;
+  FindClose(sr);
+end;
+
 procedure TDownloadDialog.eachSurvey(ElName: string; Elem: TlkJSONbase;
     data: pointer; var Continue: Boolean);
 begin
@@ -1702,6 +1767,14 @@ begin
   inherited;
 end;
 
+(**
+ * Change handler for the Indicia survey selection drop down.
+ * Disables the recorder survey drop down if a batch chosen.
+ *)
+procedure TDownloadDialog.cmbSurveyChange(Sender: TObject);
+begin
+  cmbIntoSurvey.Enabled := (cmbSurvey.ItemIndex = 0) or (cmbSurvey.Items.Objects[cmbSurvey.ItemIndex] <> nil);
+end;
 
 initialization
   TActiveFormFactory.Create(
