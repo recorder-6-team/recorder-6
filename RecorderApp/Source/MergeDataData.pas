@@ -27,7 +27,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   DataClasses, Db, GeneralFunctions, JNCCDatasets, ComCtrls, HierarchyNodes,
-  ImgList, BaseData, ExceptionForm, ADODB, DatabaseAccessADO;
+  ImgList, BaseData, ExceptionForm, ADODB, DatabaseAccessADO,ComObj;
 
 type
   EMergeDataError = class(TExceptionPath);
@@ -369,6 +369,9 @@ begin
   begin
     if TableExists(dmGeneralData.TableList[i]) then
     begin
+      ltfDoEntered := false;
+      ltfDoChanged := false;
+      ltfDoChecked := false;
       with dmGeneralData.qryAllPurpose do begin
         if Active then Close;
         SQL.Text := 'SELECT TOP 0 * FROM "' + dmGeneralData.TableList[i] + '"';
@@ -378,10 +381,8 @@ begin
           ltfDoChanged := Assigned(FindField('CHANGED_BY'));
           ltfDoChecked := Assigned(FindField('CHECKED_BY'));
           Close;
-         Except
-          ltfDoEntered := false;
-          ltfDoChanged := false;
-          ltfDoChecked := false;
+         Except on EOleException do;
+
          end;
       end;
       if ltfDoEntered then
