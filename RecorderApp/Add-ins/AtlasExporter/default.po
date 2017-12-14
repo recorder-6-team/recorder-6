@@ -1,0 +1,375 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2011-06-08 09:00\n"
+"PO-Revision-Date: 2011-06-08 09:00\n"
+"Last-Translator: Somebody <your.email@address.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: dxgettext 1.2.2\n"
+
+#. ReportButton..Caption
+#: ReportButtonImpl.dfm:7
+msgid "ReportButton"
+msgstr ""
+
+#. ReportButton..Font.Name
+#: ReportButtonImpl.dfm:12
+msgid "MS Sans Serif"
+msgstr ""
+
+#. ReportButton..btnAtlasExporter..Caption
+#: ReportButtonImpl.dfm:22
+msgid "Atlas Exporter"
+msgstr ""
+
+#. Programmer's name for it: ResStr_TagUnknown
+#: ApiUtils.pas:265
+msgid "Unknown Thread Tag."
+msgstr ""
+
+#. Programmer's name for it: ResStr_TagMax
+#: ApiUtils.pas:266
+msgid "Maximum Tag Limit."
+msgstr ""
+
+#. Programmer's name for it: ResStr_InvalidHandle
+#: ApiUtils.pas:267
+msgid "Invalid API Handle"
+msgstr ""
+
+#. Programmer's name for it: ResStr_APIError
+#: ApiUtils.pas:268
+msgid "Error %d: %s"
+msgstr ""
+
+#. Programmer's name for it: dtlServerPage
+#: AtlasExporter_TLB.pas:296
+msgid "Servers"
+msgstr ""
+
+#. Programmer's name for it: dtlOcxPage
+#: AtlasExporter_TLB.pas:298
+#. Programmer's name for it: dtlServerPage
+#: MSScriptControl_TLB.pas:470
+#. Programmer's name for it: dtlOcxPage
+#: MSScriptControl_TLB.pas:472
+msgid "ActiveX"
+msgstr ""
+
+#. Messages used by the message dialog boxes.
+#. Programmer's name for it: ResStr_Deletion
+#: GeneralFunctions.pas:223
+msgid "Are you sure you want to delete %s?"
+msgstr ""
+
+#. Programmer's name for it: ResStr_TooManyDigits
+#: GeneralFunctions.pas:224
+msgid "The number supplied is too big to round into the specified number of "
+"characters"
+msgstr ""
+
+#. Programmer's name for it: ResStr_ErrorOccured
+#: GeneralFunctions.pas:225
+msgid "An error occurred whilst %s the %s."
+msgstr ""
+
+#. Programmer's name for it: ResStr_PersonalDocsFolderNotFound
+#: GeneralFunctions.pas:226
+msgid "Cannot find personal documents folder"
+msgstr ""
+
+#. Programmer's name for it: ResStr_OSOutOfMemory
+#: GeneralFunctions.pas:227
+msgid "The operating system is out of memory or "
+"resources."
+msgstr ""
+
+#. Programmer's name for it: ResStr_FileNotFound
+#: GeneralFunctions.pas:228
+msgid "The specified file was not found."
+msgstr ""
+
+#. Programmer's name for it: ResStr_PathNotFound
+#: GeneralFunctions.pas:229
+msgid "The specified path was not found."
+msgstr ""
+
+#. Programmer's name for it: ResStr_BadFormat
+#: GeneralFunctions.pas:230
+msgid "The .EXE file is invalid (non-Win32 .EXE or error in .EXE "
+"image)."
+msgstr ""
+
+#. Programmer's name for it: ResStr_AccessDenied
+#: GeneralFunctions.pas:231
+msgid "The operating system denied access to the specified "
+"file."
+msgstr ""
+
+#. Programmer's name for it: ResStr_AssocIncomplete
+#: GeneralFunctions.pas:232
+msgid "The filename association is incomplete or "
+"invalid."
+msgstr ""
+
+#. Programmer's name for it: ResStr_DDEBusy
+#: GeneralFunctions.pas:233
+msgid "The DDE transaction could not be completed because other DDE "
+"transactions were being processed."
+msgstr ""
+
+#. Programmer's name for it: ResStr_DDEFail
+#: GeneralFunctions.pas:234
+msgid "The DDE transaction failed."
+msgstr ""
+
+#. Programmer's name for it: ResStr_DDETimeout
+#: GeneralFunctions.pas:235
+msgid "The DDE transaction could not be completed because the request timed "
+"out."
+msgstr ""
+
+#. Programmer's name for it: ResStr_DLLNotFound
+#: GeneralFunctions.pas:236
+msgid "The specified dynamic-link library was not "
+"found."
+msgstr ""
+
+#. Programmer's name for it: ResStr_ErrOOM
+#: GeneralFunctions.pas:237
+msgid "There was not enough memory to complete the "
+"operation."
+msgstr ""
+
+#. Programmer's name for it: ResStr_ErrShare
+#: GeneralFunctions.pas:238
+msgid "A sharing violation occurred."
+msgstr ""
+
+#. Programmer's name for it: ResStr_FileNotFound
+#: ListDlls.pas:20
+msgid "File not found"
+msgstr ""
+
+#. Programmer's name for it: ResStr_FileNotExe
+#: ListDlls.pas:21
+msgid "File is not a Windows 16-bit (NE) or 32-bit (PE) "
+"executable"
+msgstr ""
+
+#. Programmer's name for it: ResStr_InvalidGridPrecision
+#: SpatialRefFuncs.pas:70
+msgid "Invalid grid cell precision %d."
+msgstr ""
+
+#. Programmer's name for it: ResStr_SystemNotAGridSystem
+#: SpatialRefFuncs.pas:71
+msgid "The spatial reference system is not a grid "
+"system."
+msgstr ""
+
+#. Programmer's name for it: ResStr_BeyondSystemLimits
+#: SpatialRefFuncs.pas:72
+msgid "Beyond System Limits."
+msgstr ""
+
+#. Programmer's name for it: ResStr_LatLongTitle
+#: SpatialRefFuncs.pas:73
+msgid "Latitude and Longitude"
+msgstr ""
+
+#. Programmer's name for it: ResStr_GBTitle
+#: SpatialRefFuncs.pas:74
+msgid "Ordnance Survey - GB Grid"
+msgstr ""
+
+#. Programmer's name for it: ResStr_NITitle
+#: SpatialRefFuncs.pas:75
+msgid "Ordnance Survey - Irish Grid"
+msgstr ""
+
+#. Programmer's name for it: ResStr_SystemUnknown
+#: SpatialRefFuncs.pas:76
+msgid "Grid System Unknown"
+msgstr ""
+
+#. Programmer's name for it: ResStr_UTMTitle
+#: SpatialRefFuncs.pas:77
+msgid "UTM"
+msgstr ""
+
+#. Programmer's name for it: ResStr_InvalidSpRefFormat
+#: SpatialRefFuncs.pas:80
+msgid "The spatial reference is not recognised."
+msgstr ""
+
+#. Programmer's name for it: ResStr_ConvertStringError
+#: SpatialRefFuncs.pas:81
+msgid "The string passed to this function cannot be converted to an "
+"integer"
+msgstr ""
+
+#. Programmer's name for it: ResStr_OutsideSystem
+#: SpatialRefFuncs.pas:82
+msgid "The spatial reference lies beyond the limits of the current spatial "
+"reference system"
+msgstr ""
+
+#. Programmer's name for it: ResStr_NoComInterfaces
+#: SpatialRefFuncs.pas:83
+msgid "COM inteface list not initialised."
+msgstr ""
+
+#. Programmer's name for it: ResStr_NoComSystems
+#: SpatialRefFuncs.pas:84
+msgid "COM systems list not initialised."
+msgstr ""
+
+#. Programmer's name for it: ResStr_UnrecognisedSystem
+#: SpatialRefFuncs.pas:85
+msgid "The spatial reference system cannot be "
+"recognised."
+msgstr ""
+
+#. Programmer's name for it: ResStr_BoundingBoxInvalid
+#: SpatialRefFuncs.pas:86
+msgid "One or both bounding box corners is an invalid spatial reference : "
+msgstr ""
+
+#. Programmer's name for it: ResStr_SameSpatialRef
+#: SpatialRefFuncs.pas:87
+msgid "The spatial reference of the sample must be identical to that of the "
+"survey event."
+msgstr ""
+
+#. Programmer's name for it: ResStr_UTMBaseMap
+#: SpatialRefFuncs.pas:88
+msgid "UTM cannot be used as a base map system, please reset your "
+"map."
+msgstr ""
+
+#. Programmer's name for it: ResStr_NoBasemapSystemAddin
+#: SpatialRefFuncs.pas:92
+msgid "The base map uses a coordinate system %s  for which there is no "
+"conversion addin available.  Please either  install the appropriate "
+"addin, or reset your base map."
+msgstr ""
+
+#. Programmer's name for it: ResStr_CannotConvertEN
+#: SpatialRefFuncs.pas:94
+msgid "Conversion from Easting and Northing is not possible for this spatial "
+"reference system."
+msgstr ""
+
+#. Programmer's name for it: ResStr_SouthWest
+#: SpatialRefFuncs.pas:96
+msgid "The SouthWest "
+msgstr ""
+
+#. Programmer's name for it: ResStr_NorthEast
+#: SpatialRefFuncs.pas:97
+msgid "The NorthEast "
+msgstr ""
+
+#. Programmer's name for it: ResStr_SRSystemLimit
+#: SpatialRefFuncs.pas:98
+msgid "%s spatial reference is beyond the limits of the current "
+"system."
+msgstr ""
+
+#. Programmer's name for it: ResStr_SameSRSystem
+#: SpatialRefFuncs.pas:99
+msgid "Please enter both spatial references in the same spatial reference "
+"system."
+msgstr ""
+
+#. Programmer's name for it: ResStr_SW
+#: SpatialRefFuncs.pas:100
+msgid "SouthWest"
+msgstr ""
+
+#. Programmer's name for it: ResStr_AndNE
+#: SpatialRefFuncs.pas:101
+msgid " and NorthEast"
+msgstr ""
+
+#. Programmer's name for it: ResStr_NE
+#: SpatialRefFuncs.pas:102
+msgid "NorthEast"
+msgstr ""
+
+#. Programmer's name for it: ResStr_DirCornerPositions
+#: SpatialRefFuncs.pas:105
+msgid "The SouthWest corner is not to the southwest of the NorthEast "
+"corner.Please enter a valid bounding "
+"box."
+msgstr ""
+
+#. Programmer's name for it: ResStr_AddinReduceNotImp
+#: SpatialRefFuncs.pas:107
+msgid "Addin Reduce Grid Precision support not implemented "
+"yet"
+msgstr ""
+
+#. Programmer's name for it: ResStr_FailedToInit
+#: XMLSystemsImpl.pas:31
+msgid "Failed to initialise XML Systems addin. Error:\n"
+"%s"
+msgstr ""
+
+#. Programmer's name for it: ResStr_FailedToInit
+#: XMLSystemsImpl.pas:34
+msgid "Addin providing support for reading XML documents containing spatial "
+"reference systems.\n"
+"Version %s"
+msgstr ""
+
+#. Programmer's name for it: ResStr_XMLSystemsAddinName
+#: XMLSystemsImpl.pas:35
+msgid "Multiple Spatial Reference System Add-in"
+msgstr ""
+
+#. Programmer's name for it: ResStr_XMLSystemsAddinName
+#: XMLSystemsImpl.pas:37
+msgid "The spatial reference \"%s\" is not of a recognised format for this "
+"system."
+msgstr ""
+
+#. Programmer's name for it: ResStr_XMLSystemsAddinName
+#: XMLSystemsImpl.pas:40
+msgid "The addin folder you are installing from does not contain the "
+"required GeoDLL deployment files."
+msgstr ""
+
+#. Programmer's name for it: ResStr_XMLSystemsAddinName
+#: XMLSystemsImpl.pas:42
+msgid "An error of type \"%s\" occurred in the script defining the %s "
+"system."
+msgstr ""
+
+#. Programmer's name for it: ResStr_XMLSystemsAddinName
+#: XMLSystemsImpl.pas:45
+msgid "The XML file for reference system %s specifies a custom calculation "
+"method with a name %s which is invalid."
+msgstr ""
+
+#. Programmer's name for it: ResStr_XMLSystemsAddinName
+#: XMLSystemsImpl.pas:48
+msgid "The XML file for reference system %s specifies a %s parameter value "
+"of %s which is invalid."
+msgstr ""
+
+#. Programmer's name for it: ResStr_FailedRegistryAccess
+#: XMLSystemsImpl.pas:49
+msgid "Failed to access Recorder 6 registry "
+"settings"
+msgstr ""
+

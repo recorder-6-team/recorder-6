@@ -9,7 +9,7 @@ uses
   ActiveX, AxCtrls, Indicia2Recorder_TLB, StdVcl, ComCtrls, StdCtrls,
   ExtCtrls, Recorder2000_TLB, IdBaseComponent, IdComponent, uLkJSON,
   IdTCPConnection, IdTCPClient, IdHTTP, IdMultipartFormData, AdoDb, Variants,
-  SHFolder;
+  SHFolder, IdSSLOpenSSL;
 
 type
   EDownloadDialogConfigException = class(Exception);
@@ -40,6 +40,7 @@ type
     lblLoginInstruct: TLabel;
     cbLimitToAccepted: TCheckBox;
     procedure btnLoginClick(Sender: TObject);
+    procedure cmbSurveyChange(Sender: TObject);
   private
     { Private declarations }
     FEvents: IDownloadDialogEvents;
@@ -78,7 +79,7 @@ type
     function GetDownloadType: string;
     function DateToIsoStr(date: TDateTime): string;
     procedure Log(msg: string);
-    procedure ImportRecords(records: TlkJSONbase);
+    procedure ImportRecords(records: TlkJSONbase; surveyKey: string);
     procedure ConnectToDb;
     procedure DisconnectFromDb;
     procedure CreateTempTables;
@@ -86,12 +87,13 @@ type
     procedure EmptyTempTables;
     procedure ExecuteSql(sql: string);
     function IdToKey(id: variant): string;
-    procedure CreateSample(sampleKey: String; thisrec: TStringList);
+    procedure CreateSample(sampleKey: string; surveyKey: string; thisrec: TStringList);
     procedure CreateOccurrence(occKey, sampleKey: String; thisrec: TStringList);
     function GetIndividual(indiciaId: string; name: string): string;
     procedure eachSurvey(ElName: string; Elem: TlkJSONbase; data: pointer;
       var Continue: Boolean);
     procedure PopulateRecorderSurveys;
+    procedure LoadSurveyBatches;
     procedure GetStringsFromJsonRec(thisrec: TStringList;
       rec: TlkJSONbase);
     function ConvertSrefSystem(input: string): string;
@@ -106,6 +108,7 @@ type
     function EscapeSqlLiteral(literal: string): string; overload;
     function EscapeSqlLiteral(literal: string; maxlen: integer): string; overload;
     procedure LoadKnownPeople;
+    procedure ImportSurvey(indiciaSurveyId: integer; surveyKey, quality: string);
   protected
     { Protected declarations }
     procedure DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); override;
@@ -177,6 +180,52 @@ implementation
 uses ComObj, ComServ, Math, VagueDate, DECUtil, DECCipher, DECHash, DECFmt,
     registry;
 
+resourcestring
+  ResStr_AddinDescription = 'Download records you have access to in iRecord or a Drupal Indicia website.';
+  ResStr_AddinHint = 'Download records you have access to in iRecord.';
+  ResStr_AddinTitle = 'Indicia2Recorder';
+  ResStr_CouldNotFindTVK = 'Could not find a taxon version key for %s (%s) in the Name Server.';
+  ResStr_DeterminedByComment = 'Determined by person named %s';
+  ResStr_Done = 'Done';
+  ResStr_DownloadStarting = 'Download starting';
+  ResStr_FetchingRecords = 'Fetching some records';
+  ResStr_InvalidConfigLine = 'Invalid config setting on line %d.';
+  ResStr_InvalidData = 'Invalid data';
+  ResStr_InvalidResponse = 'Invalid response: %s';  
+  ResStr_LoggedInAs = 'Logged in as %s %s';
+  ResStr_NoConfigFile = 'There is no configuration file available to define connection settings for the remote site. ' +
+      'If you are an administrator wanting to create a connection then please answer the following questions.';
+  ResStr_NoConnectionAvailable =
+      'No connection available. Please contact an administrator who can help you set up the connection details.';
+  ResStr_ParsingRecords = 'Parsing records';
+  ResStr_ProcessedNRecords = 'Processed %d records';
+  ResStr_ProvideSharedSecret =
+      'Please provide the Shared App Secret of the website you want to download records from';
+  ResStr_ProvideSiteID =
+      'Please provide the Site ID for records created in Recorder from the website you want to download records from';
+  ResStr_ProvideUrl = 'Please provide the URL of the website you want to download records from';      
+  ResStr_ProvideWebsiteTitle = 'Please provide the title of the website you want to download records from';
+  ResStr_PleaseLogInIrecord = 'Please log in to iRecord before downloading any records.';
+  ResStr_ReceivedNRecords = 'Received %d records';
+  ResStr_RecordedByComment = 'Recorded by person named %s';
+  ResStr_RecordsICanCollate = 'Records I can collate';
+  ResStr_RecordsICanVerify = 'Records I can verify';
+  ResStr_RejectedStatusFromIndicia = 'Rejected';
+  ResStr_SameSettingsRepeat =
+      'You just downloaded records using exactly these settings. Are you sure you want to do it again?';
+  ResStr_SelectDownloadType = 'Please select a download type.';
+  ResStr_SelectSurveyToImport = 'Please select a survey to import.';
+  ResStr_SelectSurveyToImportInto = 'Please select a survey to import into.';
+  ResStr_SettingsFolderMissing = 'The Indicia2Recorder folder does not exist in My Documents or Public Documents';
+  ResStr_SensitiveLocationNameFromIndicia = 'Sensitive';
+  ResStr_SkippingSensitiveRecord = 'Skipping sensitive record %s';
+  ResStr_SpecifyEmailAddress = 'Please specify your email address registered against your %d account.';
+  ResStr_SpecifyPassword = 'Please specify the password for your %s account.';
+  ResStr_SurveyTypeTermlistRequired = 'Please create a Survey Type termlist entry called Indicia ' +
+      'and at least one survey of this type to import into';
+  ResStr_ToolsMenuName = 'Tools';
+  ResStr_VerifiedStatusFromIndicia = 'Verified';
+
 var
   ACipherClass: TDECCipherClass = TCipher_Rijndael;
   ACipherMode: TCipherMode = cmCBCx;
@@ -228,7 +277,7 @@ begin
     SetLength(Result, ALen div SizeOf(AText[1]));
     Decode(AData[1], Result[1], ALen);
     if ACheck <> CalcMAC then
-      raise Exception.Create('Invalid data');
+      raise Exception.Create(ResStr_InvalidData);
   finally
     Free;
     ProtectBinary(ASalt);
@@ -524,12 +573,11 @@ end;
 
 function TDownloadDialog.DoOk: WordBool;
 var
-  request: TIdMultiPartFormDataStream;
-  response, signature, quality: string;
-  records, responseObj: TlkJSONbase;
+  quality, signature: string;
+  batch: TStringList;
   i: integer;
-const
-  LIMIT=100;
+  indiciaSurveyId: integer;
+  surveyKey: string;
 begin
   result:=false;
   if (self.ActiveControl=eEmail) or (self.ActiveControl=ePassword) then begin
@@ -540,19 +588,19 @@ begin
   if FRunning then
     exit;
   if pnlLogin.Enabled then begin
-    ShowMessage('Please log in to iRecord before downloading any records.');
+    ShowMessage(ResStr_PleaseLogInIrecord);
     eEmail.SetFocus;
   end
   else if rgDownloadType.ItemIndex=-1 then begin
-    ShowMessage('Please select a download type.');
+    ShowMessage(ResStr_SelectDownloadType);
     rgDownloadType.SetFocus;
   end
   else if cmbSurvey.ItemIndex=-1 then begin
-    ShowMessage('Please select a survey to import .');
+    ShowMessage(ResStr_SelectSurveyToImport);
     cmbSurvey.SetFocus;
   end
-  else if cmbIntoSurvey.ItemIndex=-1 then begin
-    ShowMessage('Please select a survey to import into.');
+  else if cmbIntoSurvey.enabled and (cmbIntoSurvey.ItemIndex=-1) then begin
+    ShowMessage(ResStr_SelectSurveyToImportInto);
     cmbIntoSurvey.SetFocus;
   end
   else
@@ -560,15 +608,15 @@ begin
     quality := '!R';
     if cbLimitToAccepted.Checked then
       quality := 'V';
-    signature := IntToStr(integer(cmbSurvey.Items.Objects[cmbSurvey.ItemIndex])) + '|'
+
+    signature := cmbSurvey.Items[cmbSurvey.ItemIndex] + '|'
         + DateToIsoStr(dtpStartDate.Date) + '|' + DateToIsoStr(dtpEndDate.Date) + '|'
         + FSurveys[cmbIntoSurvey.ItemIndex] + '|' + quality;
     if FDoneSignatures.IndexOf(signature)>=0 then
-      if MessageDlg('You just downloaded records using exactly these settings. Are you sure you want to do it again?',
-          mtConfirmation, [mbYes, mbNo], 0) = mrNo then
+      if MessageDlg(ResStr_SameSettingsRepeat, mtConfirmation, [mbYes, mbNo], 0) = mrNo then
         exit;
     Log('---------------------------------');
-    Log('Download starting');
+    Log(ResStr_DownloadStarting);
     Log('---------------------------------');
     // Get a short date format for iso dates returned from the Indicia reports
     GetLocaleFormatSettings(LOCALE_SYSTEM_DEFAULT, Ffsiso);
@@ -577,57 +625,41 @@ begin
     FRunning := true;
     SaveSettings;
     FDoneSignatures.Add(signature);
-    FDone := 0;
     ConnectToDb;
     CreateTempTables;
     LoadAttrConfig;
     LoadKnownPeople;
-    records := nil;
     try
-      repeat
-        Log('Fetching some records');
-        request := TIdMultiPartFormDataStream.Create;
-        try
-          request.AddFormField('email', FEmail);
-          request.AddFormField('appsecret', FAppSecret);
-          request.AddFormField('usersecret', FSecret);
-          request.AddFormField('type', GetDownloadType);
-          request.AddFormField('date_from', DateToIsoStr(dtpStartDate.Date));
-          request.AddFormField('date_to', DateToIsoStr(dtpEndDate.Date));
-          request.AddFormField('limit', IntToStr(LIMIT));
-          request.AddFormField('smpAttrs', FSmpAttrs);
-          request.AddFormField('occAttrs', FOccAttrs);
-          request.AddFormField('quality', quality);
-          if FDone=0 then
-            // first time through, so get the grand total
-            request.AddFormField('wantCount', '1')
-          else
-            request.AddFormField('offset', IntToStr(FDone));
-          if cmbSurvey.itemIndex > 0 then
-            request.AddFormField('survey_id', IntToStr(integer(cmbSurvey.Items.Objects[cmbSurvey.ItemIndex])));
-          response := idHttp1.Post(FURL + '/?q=user/remote_download/download', request);
-        finally
-          request.Free;
-        end;
-        Log('Parsing records');
-        responseObj := TlkJSON.ParseText(response);
-        if FDone=0 then begin
-          for i := 0 to responseObj.Count-1 do begin
-            if responseObj.Child[i] is TlkJSONobjectmethod then begin
-              if TlkJSONobjectmethod(responseObj.Child[i]).Name='records' then
-                records := TlkJSONobjectmethod(responseObj.Child[i]).ObjValue
-              else if TlkJSONobjectmethod(responseObj.Child[i]).Name='count' then
-                FTotal := StrToInt(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+      if cmbSurvey.ItemIndex > 0 then
+      begin
+        if cmbSurvey.Items.Objects[cmbSurvey.ItemIndex] = nil then
+        begin
+          batch := TStringList.Create;
+          try
+            // single a batch of surveys
+            batch.LoadFromFile(FSettingsFolder + cmbSurvey.Items[cmbSurvey.ItemIndex]);
+            for i :=0 to batch.Count - 1 do
+            begin
+              indiciaSurveyId := StrToInt(batch.names[i]);
+              surveyKey := batch.values[batch.names[i]];
+              ImportSurvey(indiciaSurveyId, surveyKey, quality);
             end;
+          finally
+            batch.free;
           end;
-        end else
-          records := responseObj;
-        if assigned(records) then
-          Log('Received ' + IntToStr(records.Count) + ' records');
-        ImportRecords(records);
-        FDone := FDone + records.Count;
-      until FDone>=FTotal;
-      Log('Done');
+        end
+        else
+          // single selected survey
+          ImportSurvey(
+            integer(cmbSurvey.Items.Objects[cmbSurvey.ItemIndex]),
+            FSurveys[cmbIntoSurvey.ItemIndex],
+            quality
+          );
+        end
+      else
+        // all surveys
+        ImportSurvey(0, FSurveys[cmbIntoSurvey.ItemIndex], quality);
+      Log(ResStr_Done);
     finally
       FAttrs.Free;
       CleanupTempTables;
@@ -635,6 +667,61 @@ begin
       FRunning := false;
     end;
   end;
+end;
+
+procedure TDownloadDialog.ImportSurvey(indiciaSurveyId: integer; surveyKey, quality: string);
+var records, responseObj: TlkJSONbase;
+  request: TIdMultiPartFormDataStream;
+  response: string;
+  i: integer;
+const
+  LIMIT=100;
+begin
+  records := nil;
+  FDone := 0;
+  repeat
+    Log(ResStr_FetchingRecords);
+    request := TIdMultiPartFormDataStream.Create;
+    try
+      request.AddFormField('email', FEmail);
+      request.AddFormField('appsecret', FAppSecret);
+      request.AddFormField('usersecret', FSecret);
+      request.AddFormField('type', GetDownloadType);
+      request.AddFormField('date_from', DateToIsoStr(dtpStartDate.Date));
+      request.AddFormField('date_to', DateToIsoStr(dtpEndDate.Date));
+      request.AddFormField('limit', IntToStr(LIMIT));
+      request.AddFormField('smpAttrs', FSmpAttrs);
+      request.AddFormField('occAttrs', FOccAttrs);
+      request.AddFormField('quality', quality);
+      if FDone=0 then
+        // first time through, so get the grand total
+        request.AddFormField('wantCount', '1')
+      else
+        request.AddFormField('offset', IntToStr(FDone));
+      if indiciaSurveyId<>0 then
+        request.AddFormField('survey_id', IntToStr(indiciaSurveyId));
+      response := idHttp1.Post(FURL + '/?q=user/remote_download/download', request);
+    finally
+      request.Free;
+    end;
+    Log(ResStr_ParsingRecords);
+    responseObj := TlkJSON.ParseText(response);
+    if FDone=0 then begin
+      for i := 0 to responseObj.Count-1 do begin
+        if responseObj.Child[i] is TlkJSONobjectmethod then begin
+          if TlkJSONobjectmethod(responseObj.Child[i]).Name='records' then
+            records := TlkJSONobjectmethod(responseObj.Child[i]).ObjValue
+          else if TlkJSONobjectmethod(responseObj.Child[i]).Name='count' then
+            FTotal := StrToInt(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+        end;
+      end;
+    end else
+      records := responseObj;
+    if assigned(records) then
+      Log(Format(ResStr_ReceivedNRecords, [records.Count]));
+    ImportRecords(records, surveyKey);
+    FDone := FDone + records.Count;
+  until FDone>=FTotal;
 end;
 
 (**
@@ -669,7 +756,7 @@ begin
           FOccAttrs := FOccAttrs + Copy(def, 9, 255);
         end
         else
-          raise EDownloadDialogConfigException.Create('Invalid config setting on line ' + IntToStr(i+1) + '.');
+          raise EDownloadDialogConfigException.Create(Format(ResStr_InvalidConfigLine, [i+1]));
       end;
     end;
   end;
@@ -692,15 +779,15 @@ procedure TDownloadDialog.GetConnectionToIndicia();
 var
   connectionFile, tokens: TStringList;
   encrypted, decrypted: string;
+  sslSocket: TIdSSLIOHandlerSocket;
 begin
-//  Log(Encrypt('http://localhost/instant|lAdy_b1rd|BRC00000|iRecord', 'brim5tone'));
   connectionFile := TStringList.Create;
   tokens := TStringList.Create;
   if not FileExists(FSettingsFolder + 'indiciaConnection.txt') then
     if not CreateConnectionFile then begin
       pnlLogin.Enabled := false;
       pnlSelectDownload.Enabled := false;
-      ShowMessage('No connection available. Please contact an administrator who can help you set up the connection details.');
+      ShowMessage(ResStr_NoConnectionAvailable);
       // lock the dialog out
       FRunning := true;
       exit;
@@ -715,6 +802,13 @@ begin
     FAppSecret := tokens[1];
     FRemoteSiteID := tokens[2];
     FRemoteSite := tokens[3];
+    // if https, then set up the IO Handler. See
+    // http://stackoverflow.com/questions/11554003/tidhttp-get-eidiohandlerpropinvalid-error
+    if Copy(FUrl, 1, 5) = 'https' then begin
+      sslSocket := TIdSSLIOHandlerSocket.Create(nil);
+      sslSocket.SSLOptions.Method := sslvSSLv23;//, sslvSSLv3, sslvTLSv1 
+      idHttp1.IOHandler := sslSocket;
+    end;
     lblLoginInstruct.Caption := StringReplace(lblLoginInstruct.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
     lblEmail.Caption := StringReplace(lblEmail.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
     lblPassword.Caption := StringReplace(lblPassword.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
@@ -729,17 +823,15 @@ var
   connectionFile: TStringList;
 begin
   result := false;
-  if MessageDlg('There is no configuration file available to define connection settings for the remote site. '+
-      'If you are an administrator wanting to create a connection then please answer the following questions.',
-          mtConfirmation, [mbOk, mbCancel], 0) = mrCancel then
+  if MessageDlg(ResStr_NoConfigFile, mtConfirmation, [mbOk, mbCancel], 0) = mrCancel then
     exit;
-  if not InputQuery('Remote Site', 'Please provide the URL of the website you want to download records from', FURL) then
+  if not InputQuery('Remote Site', ResStr_ProvideUrl, FURL) then
     exit;
-  if not InputQuery('Remote Site', 'Please provide the Shared App Secret of the website you want to download records from', FAppSecret) then
+  if not InputQuery('Remote Site', ResStr_ProvideSharedSecret, FAppSecret) then
     exit;
-  if not InputQuery('Remote Site', 'Please provide the Site ID for records created in Recorder from the website you want to download records from', FRemoteSiteID) then
+  if not InputQuery('Remote Site', ResStr_ProvideSiteID, FRemoteSiteID) then
     exit;
-  if not InputQuery('Remote Site', 'Please provide the title of the website you want to download records from', FRemoteSite) then
+  if not InputQuery('Remote Site', ResStr_ProvideWebsiteTitle, FRemoteSite) then
     exit;
   connectionFile := TStringList.Create;
   try
@@ -751,7 +843,7 @@ begin
   result := true;
 end;
 
-procedure TDownloadDialog.ImportRecords(records: TlkJSONbase);
+procedure TDownloadDialog.ImportRecords(records: TlkJSONbase; surveyKey: string);
 var i: integer;
   rec: TlkJSONbase;
   doneSamples, thisrec: TStringList;
@@ -769,7 +861,7 @@ begin
       if not VarIsNull(rec.Field['sample_id'].Value) then begin
         sampleKey := FRemoteSiteID + IdToKey(rec.Field['sample_id'].Value);
         if (doneSamples.IndexOf(sampleKey)=-1) then
-          CreateSample(sampleKey, thisrec);
+          CreateSample(sampleKey, surveyKey, thisrec);
         doneSamples.Add(sampleKey);
         occKey := FRemoteSiteID + IdToKey(rec.Field['occurrence_id'].Value);
         CreateOccurrence(occKey, sampleKey, thisrec);
@@ -777,9 +869,9 @@ begin
         Application.ProcessMessages;
       end
       else
-        log('Skipping sensitive record '+rec.Field['recordkey'].Value);
+        log(Format(ResStr_SkippingSensitiveRecord, [rec.Field['recordkey'].Value]));
       end;
-    Log('Processed ' + IntToStr(records.Count) + ' records');
+    Log(Format(ResStr_ProcessedNRecords, [records.Count]));
   finally
     doneSamples.Free;
     thisrec.free;
@@ -802,7 +894,7 @@ end;
  * @todo: set a location and vice county admin area??
  * @todo: intelligently set the determination date
  *}
-procedure TDownloadDialog.CreateSample(sampleKey: String; thisrec: TStringList);
+procedure TDownloadDialog.CreateSample(sampleKey: string; surveyKey: string; thisrec: TStringList);
 var
   existing: _Recordset;
   vd: TVagueDate;
@@ -848,7 +940,7 @@ begin
   comment := thisrec.values['sample_comment'];
   if (recorder = 'NBNSYS0000000004') and (thisrec.values['recorder']<>'') then
     // since we couldn't resolve the name key, don't lose the recorder name data
-    comment := 'Recorded by person named ' + thisrec.values['recorder'] + #13#10 + comment;
+    comment := Format(ResStr_RecordedByComment, [thisrec.values['recorder']]) + #13#10 + comment;
   if existing.RecordCount=0 then begin
     // Insert new event
     FConnection.Execute('INSERT INTO survey_event (survey_event_key, vague_date_start, vague_date_end, vague_date_type, '+
@@ -864,7 +956,7 @@ begin
         thisrec.values['long'] + ',' +
         '''Imported'',' +
         '''' + EscapeSqlLiteral(locationName, 100) + ''',' +
-        '''' + FSurveys[cmbIntoSurvey.ItemIndex] + ''',' +
+        '''' + surveyKey + ''',' +
         '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
@@ -881,7 +973,7 @@ begin
         'long=' + thisrec.values['long'] + ', ' +
         'spatial_ref_qualifier=''Imported'', ' +
         'location_name=''' + EscapeSqlLiteral(locationName, 100) + ''', ' +
-        'survey_key=''' + FSurveys[cmbIntoSurvey.ItemIndex] + ''', ' +
+        'survey_key=''' + surveyKey + ''', ' +
         'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
         'WHERE survey_event_key=''' + sampleKey + '''');
@@ -980,7 +1072,7 @@ begin
   tli := FConnection.Execute('SELECT recommended_taxon_list_item_key FROM nameserver ' +
       'WHERE input_taxon_version_key=''' + thisrec.values['taxonversionkey'] + ''' AND recommended_taxon_list_item_key IS NOT NULL');
   if tli.RecordCount=0 then begin
-    Log('Could not find a taxon version key for ' + thisrec.values['taxonversionkey'] + ' (' + thisrec.values['taxon'] + ') in the Name Server.');
+    Log(Format(ResStr_CouldNotFindTVK, [thisrec.values['taxonversionkey'], thisrec.values['taxon']]));
     exit;
   end;
   vd.StartDate := StrToDate(thisrec.values['date_start'], Ffsiso);
@@ -991,18 +1083,19 @@ begin
   determiner := GetIndividual(thisrec.values['determiner_person_id'], thisrec.values['determiner']);
   if (determiner = 'NBNSYS0000000004') and (thisrec.values['determiner']<>'') then
     // since we couldn't resolve the name key, don't lose the determiner name data
-    comment := 'Determined by person named ' + thisrec.values['determiner'] + #13#10 + comment;
+    comment := Format(ResStr_DeterminedByComment, [thisrec.values['determiner']])
+        + #13#10 + comment;
   if thisrec.values['zeroabundance']='T' then
     zeroAbundance := '1'
   else
     zeroAbundance := '0';
-  if copy(thisrec.values['location_name'], 1, 9)='Sensitive' then
+  if copy(thisrec.values['location_name'], 1, 9)=ResStr_SensitiveLocationNameFromIndicia then
     confidential := '1'
   else
     confidential := '0';
-  if thisrec.values['record_status']='Verified' then
+  if thisrec.values['record_status']=ResStr_VerifiedStatusFromIndicia then
     verified := '2'
-  else if thisrec.values['record_status']='Rejected' then
+  else if thisrec.values['record_status']=ResStr_RejectedStatusFromIndicia then
     verified := '1'
   else
     verified := '0';
@@ -1094,7 +1187,6 @@ begin
   result := EscapeSqlLiteral(literal);
 end;
 
-
 procedure TDownloadDialog.CreateData(thisrec: TStringList; table, key, prefix, fieldTag: string);
 var i: integer;
   dataKey, def, attrId, mu_key, mq_key, val: string;
@@ -1112,6 +1204,7 @@ begin
             val:=thisrec.values['attr_'+fieldTag+'_term_'+attrId]
           else
             val:=thisrec.values['attr_'+fieldTag+'_'+attrId];
+          val := EscapeSqlLiteral(val, 20);
           dataKey := FRemoteSiteID + IdToKey(StrToInt(thisrec.values['attr_id_'+fieldTag+'_'+attrId]));
           temp.CommaText := FAttrs.Values[FAttrs.Names[i]];
           mu_key := temp[0];
@@ -1328,9 +1421,9 @@ function TDownloadDialog.GetDownloadType: string;
 var caption: string;
 begin
   caption := rgDownloadType.Items[rgDownloadType.ItemIndex];
-  if caption='Records I can verify' then
+  if caption=ResStr_RecordsICanVerify then
     result := 'expert-records'
-  else if caption='Records I can collate' then
+  else if caption=ResStr_RecordsICanCollate then
     result := 'collate-records'
   else
     result := 'my-records';
@@ -1348,7 +1441,7 @@ end;
 
 function TDownloadDialog.Get_Description: WideString;
 begin
-  result := 'Download records you have access to in iRecord or a Drupal Indicia website.';
+  result := ResStr_AddinDescription;
 end;
 
 function TDownloadDialog.Get_DimmedImageFilename: WideString;
@@ -1368,7 +1461,7 @@ end;
 
 function TDownloadDialog.Get_Hint: WideString;
 begin
-  result := 'Download records you have access to in iRecord.';
+  result := ResStr_AddinHint;
 end;
 
 function TDownloadDialog.Get_ImageFileName: WideString;
@@ -1378,12 +1471,12 @@ end;
 
 function TDownloadDialog.Get_Name: WideString;
 begin
-  result := 'Indicia2Recorder';
+  result := ResStr_AddinTitle;
 end;
 
 function TDownloadDialog.Get_ParentMenu: WideString;
 begin
-  result := 'Tools';
+  result := ResStr_ToolsMenuName;
 end;
 
 function TDownloadDialog.Get_Width: Integer;
@@ -1396,7 +1489,7 @@ begin
       CreateDir(FSettingsFolder);
     end;
     if not DirectoryExists(FSettingsFolder) then
-      raise Exception.Create('The Indicia2Recorder folder does not exist in My Documents or Public Documents');
+      raise Exception.Create(ResStr_SettingsFolderMissing);
     GetConnectionToIndicia;
     LoadSettings(true);
   end;
@@ -1413,9 +1506,9 @@ var
 begin
   errorMsg := '';
   if eEmail.Text='' then
-    errorMsg := 'Please specify your email address registered against your ' + FRemoteSite + ' account.'#13#10;
+    errorMsg := Format(ResStr_SpecifyEmailAddress, [FRemoteSite]) + #13#10;
   if ePassword.Text='' then
-    errorMsg := errorMsg + 'Please specify the password for your ' + FRemoteSite + ' account.'#13#10;
+    errorMsg := errorMsg + Format(ResStr_SpecifyPassword, [FRemoteSite]) + #13#10;
   if errorMsg<>'' then begin
     ShowMessage(errorMsg);
     exit;
@@ -1447,6 +1540,9 @@ begin
   end;
   tokens := TStringList.Create;
   try
+    // If the response has a UTF8 BOM at the start, we need a hack to strip that.
+    if copy(response, 1, 3)='﻿' then
+      response := copy(response, 4, 255);
     tokens.text := response;
     if (tokens.Count = 1) then
       // single line indicates an error message
@@ -1458,13 +1554,13 @@ begin
       FFirstName := tokens[1];
       FSurname := tokens[2];
       FEmail := eEmail.Text;
-      lblLoggedInAs.Caption := 'Logged in as ' + FFirstName + ' ' + FSurname;
+      lblLoggedInAs.Caption := Format(ResStr_LoggedInAs, [FFirstName, FSurname]);;
       EnableDownloadControls;
       FetchDownloadOptions;
       LoadSettings(false);
     end
     else
-      raise Exception.Create('Invalid response: ' + response);
+      raise Exception.Create(Format(ResStr_InvalidResponse, [response]));
   finally
     tokens.free;
   end;
@@ -1518,7 +1614,10 @@ begin
         remoteSurvey := reg.ReadInteger('Remote Survey');
         for i:=0 to cmbSurvey.Items.Count-1 do begin
           if integer(cmbSurvey.Items.Objects[i])=remoteSurvey then
+          begin
             cmbSurvey.ItemIndex := i;
+            cmbSurveyChange(nil);
+          end;
         end;
       end;
       if reg.ValueExists('Local Survey') then begin
@@ -1584,6 +1683,7 @@ begin
   try
     ConnectToDb;
     PopulateRecorderSurveys;
+    LoadSurveyBatches;
   except
     on E:EDownloadDialogConfigException do begin
       ShowMessage(E.Message);
@@ -1603,9 +1703,9 @@ begin
 
     for i:=0 to types.count - 1 do begin
       if types.Child[i].value='expert-records' then
-        rgDownloadType.Items.Add('Records I can verify')
+        rgDownloadType.Items.Add(ResStr_RecordsICanVerify)
       else if types.Child[i].value='collate-records' then
-        rgDownloadType.Items.Add('Records I can collate');
+        rgDownloadType.Items.Add(ResStr_RecordsICanCollate);
     end;
   finally
     request.free;
@@ -1623,8 +1723,7 @@ begin
       'JOIN survey_type st on st.survey_type_key=s.survey_type_key '+
       'WHERE st.short_name=''Indicia''');
   if rs.RecordCount=0 then
-    raise EDownloadDialogConfigException.Create('Please create a Survey Type termlist entry called Indicia and at least one ' +
-        'survey of this type to import into');
+    raise EDownloadDialogConfigException.Create(ResStr_SurveyTypeTermlistRequired);
   while not rs.EOF do begin
     cmbIntoSurvey.Items.Add(rs.Fields['item_name'].value);
     FSurveys.Add(rs.Fields['survey_key'].value);
@@ -1633,6 +1732,25 @@ begin
   // Autoselect if only one survey
   if cmbIntoSurvey.Items.Count=1 then
     cmbIntoSurvey.ItemIndex:=0;
+end;
+
+(**
+ * Any .batch files in the configuration directory are loaded. Contains sets of
+ * mappings from remote surveys to local ones which can be used to import
+ * multiple datasets at onces.
+ *)
+procedure TDownloadDialog.LoadSurveyBatches;
+var sr: TSearchRec;
+begin
+  if FindFirst(FSettingsFolder + '*.batch', 0, sr) = 0 then
+  begin
+    cmbSurvey.Items.Add(sr.name);
+    while FindNext(sr) = 0 do
+    begin
+      cmbSurvey.Items.Add(sr.name);
+    end;
+  end;
+  FindClose(sr);
 end;
 
 procedure TDownloadDialog.eachSurvey(ElName: string; Elem: TlkJSONbase;
@@ -1649,6 +1767,14 @@ begin
   inherited;
 end;
 
+(**
+ * Change handler for the Indicia survey selection drop down.
+ * Disables the recorder survey drop down if a batch chosen.
+ *)
+procedure TDownloadDialog.cmbSurveyChange(Sender: TObject);
+begin
+  cmbIntoSurvey.Enabled := (cmbSurvey.ItemIndex = 0) or (cmbSurvey.Items.Objects[cmbSurvey.ItemIndex] <> nil);
+end;
 
 initialization
   TActiveFormFactory.Create(

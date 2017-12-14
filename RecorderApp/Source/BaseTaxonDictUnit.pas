@@ -274,8 +274,11 @@ var
   lPreferred : TKeyString;
   lChecklist : TKeyString;
 begin
+  // This sets the checklist.
   if AItemKey <> '' then begin
-    if not DictionaryData.ListIsVirtual(ListKeyData.ItemKey) then begin
+    if (not DictionaryData.ListIsVirtual(ListKeyData.ItemKey)) or
+      ((AppSettings.SessionTaxonomicSearchRestriction <> ResStr_Recommended_Full)
+       and (AppSettings.SessionTaxonomicSearchRestriction <> ResStr_CurrentChecklist)) then begin
       lPreferred := dmGeneralData.GetTaxonPreferredKey( AItemKey );
       lChecklist := dmGeneralData.GetTaxonChecklistKey( AItemKey );
     end else begin

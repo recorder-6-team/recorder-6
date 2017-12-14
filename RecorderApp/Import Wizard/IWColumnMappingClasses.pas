@@ -32,6 +32,7 @@ uses
 resourcestring
   ResStr_DateNotValid = 'Date supplied is not recognised as a valid date or vague date.';
   ResStr_DeterminationDateNotValid = 'Determination date supplied is not recognised as a valid date or vague date.';
+  ResStr_ReviewDateNotValid = 'Review date supplied is not recognised as a valid date or vague date.';
   ResStr_FieldRequired =
       'A value is specified in the %s column, so an associated value is required in the %s column.';
   ResStr_OneFieldRequired =
@@ -40,6 +41,8 @@ resourcestring
       'A value is required in the %s column';
   ResStr_DeterminationDateBeforeSampleDate =
       'The determination date cannot be before the sample date.';
+  ResStr_ReviewDateBeforeSampleDate =
+      'The review date cannot be before the sample date.';
   ResStr_ClassNotParser = 'Class %s is does not implement IImportWizardParser.';
   ResStr_ColumnConflict =
       'Column type %s cannot be selected at the same time as column type %s.';
@@ -1654,7 +1657,7 @@ var
   lValue: String;
   lRelatedColumn: TColumnType;
   lRelatedValue: String;
-  lDeterminationDate: TVagueDate;
+  lDeterminationDate,lReviewDate: TVagueDate;
   lDate: TVagueDate;
 
   function GetValue(key: String): String;
@@ -1674,19 +1677,37 @@ begin
       lRelType := AType.RelatedTypes[i];
       lRelatedColumn := ColumnTypeByKey(lRelType.ColumnTypeKey);
       lColIdx := FColumns.IndexOfObject(lRelatedColumn);
-
       if lColIdx > -1 then begin
         lRelatedValue := ADataset.FieldByName(FColumns[lColIdx]).AsString;
-
+        //workinghere
         if (lRelType.RelationshipType in
             [rtRequires, rtFieldDependencyColumnRequired, rtFieldDependency]) then
         begin
           // A value is require in the other field, so check it exists
           if (lValue <> '') and (lRelatedValue = '') then
             Result := Format(ResStr_FieldRequired, [AType.Name, lRelatedColumn.Name])
+          else if (AType.Key = CT_KEY_REVIEW_DATE) and (lRelType.RelationshipType = rtFieldDependencyColumnRequired) then
+          begin
+            if (Trim(lValue) = '') then
+              lValue := lRelatedValue;
+            if not IsVagueDate(lRelatedValue) then
+              Result := ''
+            else if not IsVagueDate(lValue) then
+              Result := ResStr_ReviewDateNotValid
+            else begin
+              lReviewDate := StringToVagueDate(lValue);
+              lDate := StringToVagueDate(lRelatedValue);
+              if IsVagueDateInVagueDate(lDate, lReviewDate) then
+                Result := ResStr_ReviewDateBeforeSampleDate
+              else if AreVagueDatesEqual(lDate, lReviewDate) then
+              else if (CompareVagueDateToVagueDate(lReviewDate, lDate) < 0) then
+                Result := ResStr_ReviewDateBeforeSampleDate;
+            end;
+          end
           // Validates the Determination Date column against the Date column
           // If the determination date is empty but the date isn't, not invalid -
           // we copy from the date column later in IWOutputFieldGenerators
+
           else if (AType.Key = CT_KEY_DETERMINATION_DATE) then
           begin
             if (Trim(lValue) = '') then
@@ -1741,7 +1762,7 @@ begin
                    (GetValue(CT_KEY_LOCATION)= '') then
                     Result := Format(ResStr_ValueRequired,
                     [ColumnTypeByKey(CT_KEY_GRID_REFERENCE).Name])
-          
+
               end;
             end; // end of with
            end else

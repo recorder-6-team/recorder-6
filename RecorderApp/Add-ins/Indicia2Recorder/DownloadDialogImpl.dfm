@@ -107,6 +107,7 @@ object DownloadDialog: TDownloadDialog
         Enabled = False
         ItemHeight = 13
         TabOrder = 1
+        OnChange = cmbSurveyChange
         Items.Strings = (
           '<all surveys>')
       end

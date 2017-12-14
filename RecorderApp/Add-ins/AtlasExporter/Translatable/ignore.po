@@ -1,0 +1,14 @@
+#  Doesn't have any letters
+#. dlgExportWizard..pcWizard..tsOutput..btnSelectDir..Caption
+#: ExportWizard.dfm:97
+msgid "..."
+msgstr ""
+
+#  Seems like a Font.Name extract
+#. dlgExportWizard..Font.Name
+#: ExportWizard.dfm:11
+#. ReportButton..Font.Name
+#: ReportButtonImpl.dfm:12
+msgid "MS Sans Serif"
+msgstr ""
+

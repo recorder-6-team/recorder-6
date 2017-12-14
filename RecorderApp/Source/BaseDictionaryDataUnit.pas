@@ -171,12 +171,13 @@ begin
       // Get the parent key for the current one
       Parameters.ParamByName('Key').Value := AKey;
       Open;
+        lParentkey := FieldbyName('Parent').AsString;
       Close;
     end;
     // now checks that there isn't a self-parented node, as this would cause an infinite recursion
     if (lParentKey <> '') and (lParentKey <> AKey) then begin
       BuildAncestryList(lParentKey, AList, ADistinctList);  // Get the parent location
-      AList.Add(lParentKey);  // Add this locaiton to list
+      AList.Add(lParentKey);  // Add this location to list
     end;
   end;
 end;  // BuildAncestryList

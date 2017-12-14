@@ -36,7 +36,7 @@ type
     lbMaps: TListBox;
     Label2: TLabel;
     lbLayers: TListBox;
-    procedure lbLayersDrawItem(Control: TWinControl; Index: Integer; ARect: TRect; State: 
+    procedure lbLayersDrawItem(Control: TWinControl; Index: Integer; ARect: TRect; State:
         TOwnerDrawState);
     procedure lbMapsClick(Sender: TObject);
     procedure lbMapsDrawItem(Control: TWinControl; Index: Integer; Rect: TRect; State:
@@ -50,7 +50,7 @@ type
     destructor Destroy; override;
     property BaseMapKey: TKeyString read GetBaseMapKey;
   end;
-  
+
 //==============================================================================
 implementation
 
@@ -74,7 +74,7 @@ begin
   // Force label to resize, for internationalisation or different pixels per inch
   lblInstruct.AutoSize := False;
   lblInstruct.AutoSize := True;
-end;  // TdlgMapSelection.Create 
+end;  // TdlgMapSelection.Create
 
 {-------------------------------------------------------------------------------
 }
@@ -84,14 +84,14 @@ begin
   FLayerLegend := nil;
 
   inherited;
-end;  // TdlgMapSelection.Destroy 
+end;  // TdlgMapSelection.Destroy
 
 {-------------------------------------------------------------------------------
 }
 function TdlgMapSelection.GetBaseMapKey: TKeyString;
 begin
   Result := AppSettings.AvailableMaps[lbMaps.ItemIndex].BaseMapKey;
-end;  // TdlgMapSelection.GetBaseMapKey 
+end;  // TdlgMapSelection.GetBaseMapKey
 
 {-------------------------------------------------------------------------------
 }
@@ -104,7 +104,7 @@ begin
   // Select first one.
   lbMaps.ItemIndex := 0;
   lbMapsClick(nil);
-end;  // TdlgMapSelection.GetBaseMaps 
+end;  // TdlgMapSelection.GetBaseMaps
 
 {-------------------------------------------------------------------------------
 }
@@ -118,7 +118,7 @@ begin
                Rect(ARect.Left + 2, ARect.Top, ARect.Left + 18, ARect.Bottom));
     lbLayers.Canvas.TextOut(ARect.Left + 22, ARect.Top + 2, Title);
   end;
-end;  // TdlgMapSelection.lbLayersDrawItem 
+end;  // TdlgMapSelection.lbLayersDrawItem
 
 {-------------------------------------------------------------------------------
 }
@@ -129,11 +129,11 @@ begin
   FLayerLegend.BaseMapKey := AppSettings.AvailableMaps[lbMaps.ItemIndex].BaseMapKey;
   lbLayers.Clear;
   for i := 0 to FLayerLegend.Count - 1 do lbLayers.Items.Add('');
-end;  // TdlgMapSelection.lbMapsClick 
+end;  // TdlgMapSelection.lbMapsClick
 
 {-------------------------------------------------------------------------------
 }
-procedure TdlgMapSelection.lbMapsDrawItem(Control: TWinControl; Index: Integer; Rect: TRect; 
+procedure TdlgMapSelection.lbMapsDrawItem(Control: TWinControl; Index: Integer; Rect: TRect;
     State: TOwnerDrawState);
 begin
   with lbMaps do begin
@@ -141,6 +141,6 @@ begin
     dmFormActions.ilMenuOn.Draw(Canvas, Rect.Left + 2, Rect.Top, 21);
     Canvas.TextOut(Rect.Left + 22, Rect.Top + 2, Items[Index]);
   end;
-end;  // TdlgMapSelection.lbMapsDrawItem 
+end;  // TdlgMapSelection.lbMapsDrawItem
 
 end.

@@ -1,4 +1,8 @@
-# All files under Third Party are not part of the Recorder 6 open source repository.
+# All files under Third Party except DSS are not part of the Recorder 6 open source repository.
 *
 
 !.gitignore
+!Dorset Software Services/
+!Dorset Software Services/*
+!Dorset Software Services/*/*
+!Dorset Software Services/*/*/*

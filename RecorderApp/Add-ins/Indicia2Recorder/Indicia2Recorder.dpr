@@ -2,6 +2,7 @@ library Indicia2Recorder;
 
 uses
   madExcept,
+  LocOnFly,
   madLinkDisAsm,
   madListHardware,
   madListProcesses,
@@ -17,6 +18,8 @@ uses
   GeneralFunctions in '..\..\..\Third Party\Dorset Software Services\DssVcl32\GeneralFunctions.pas',
   ListDlls in '..\..\..\Third Party\Dorset Software Services\DssVcl32\ListDlls.pas',
   ApiUtils in '..\..\..\Third Party\Dorset Software Services\DssVcl32\ApiUtils.pas';
+
+{$R Indicia2Recorder.KLR}
 
 {$E ocx}
 

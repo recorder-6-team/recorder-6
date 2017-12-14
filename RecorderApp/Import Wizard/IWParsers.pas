@@ -11,7 +11,7 @@
                    TMapMateKeyParser
                    TNonRequiredDateParser
                      TDateParser
-                   TDeterminationDateParser  
+                   TDeterminationDateParser
                    TObserverParser
                    TRecordIDParser
                    TSiteIDParser

@@ -75,6 +75,8 @@ implementation
 
 {$R *.dfm}
 
+uses TextMessages;
+
 {-==============================================================================
     TBasePage
 ===============================================================================}
@@ -169,7 +171,7 @@ end;  // TBasePage.GetNext
 }
 function TBasePage.GetNextCaption: String;
 begin
-  Result := '&Next >';
+  Result := ResStr_NextCaption;
 end;  // TBasePage.GetNextCaption
 
 {-------------------------------------------------------------------------------

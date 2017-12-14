@@ -1,0 +1,171 @@
+<?xml version="1.0" ?>
+<!--     
+  
+     XML Batch Update by Mike Weideli of Littlefield Consultancy
+     http://www.lfield.co.uk
+     Version 1 - Jan 2016 
+     Allows for longer comments and also for matching of new names on name + attribute
+    
+-->
+     		
+<batchupdate menupath="System Supplied\Review System" title="RSU9_Update_Review.xml"
+
+description="Uses information contained in a spreadsheet to add a new determination to a Taxon_Occurrence. 
+Take care with entering the Determination date (format is dd/mm/yyyy) as it has limited validation and dates after today will be teated as todays date. 
+Auto preferred will make the new determination the preferred if the taxon has change or if the verified indicator has changed to or from invalid.     
+">
+
+<CSVTables>
+          <CSVTable name="#CSV1">
+          <CSVFile description="Validation file" />
+          <CSVColumn name = "TOK" datatype="Char" size="16" />
+          <CSVColumn name = "Determination_Type" datatype="VarChar" size="30"   />
+          <CSVColumn name = "Scientific_name" datatype="VarChar" size="255"   />
+          <CSVColumn name = "Reviewers_Comments" datatype="VarChar" size="255"   />
+          </CSVTable>
+
+</CSVTables>
+
+
+ 
+<SQL>
+
+
+<Where keytype="Default">
+
+DECLARE
+@occurrence_key char(16),
+@Entry_date DateTime,
+@Entered_by char(16),
+@Vague_Date_Start int,
+@Vague_Date_End int,
+@Vague_Date_Type varchar(2),
+@Determiner char(16),
+@Det_role_key char(16),
+@Custodian char(8),
+@Determination_Date varchAR(10),
+@AutoPreferred int,  
+@Tdet_Key char(16),
+@NowAsR6Date int
+
+Create table #Temp1  (Taxon_Occurrence_Key Char(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+                     TAXON_LIST_ITEM_KEY Char(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+                     TAXON_Determination_KEY Char(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+                     DETERMINATION_TYPE_KEY Char(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+                     PREFERRED Bit,
+                     New_TDET_Key Char(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+                     New_TLI_Key Char(16) COLLATE SQL_Latin1_General_CP1_CI_AS,
+                     New_DT_Key Char(16) COLLATE SQL_Latin1_General_CP1_CI_AS) 
+
+
+Insert Into #Temp1 (Taxon_Occurrence_Key,Taxon_List_Item_Key,TAXON_Determination_KEY,DETERMINATION_TYPE_KEY,
+       New_TLI_Key,New_DT_key)        
+       SELECT Taxon_Occurrence_Key,        Taxon_List_Item_Key,TAXON_Determination_KEY,DETERMINATION_TYPE_KEY,
+       Taxon_List_Item_Key,Determination_Type_key FROM Taxon_Determination TDET INNER JOIN #CSV1 ON #CSV1.TOK = TDET.Taxon_Occurrence_Key and TDET.Preferred  =1
+
+
+    
+Set @AutoPreferred
+ <Condition field= "" operator="equal" type="OptionSet"  name="Make Preferred" >
+       <Option name="Auto" value = "1" />
+       <Option name="Never" value = "2" />
+       <Option name="Always" value = "3" />
+ </Condition>  
+
+Set @Entry_Date = Getdate(); 
+
+set @Custodian = (SELECT Data from Setting where Name = 'SiteID')
+
+SET @Entered_By = (SELECT NAME_KEY FROM NAME WHERE
+   <Condition field="Name.Name_Key" type="CurrentUserID" name="Current User ID"     operator="equal" /> )
+
+SET @Determination_date   <Condition field= "" operator="equal" type="Text" entrycount= "1"  name="Determination date (dd/mm/yyyy)" /> 
+
+set @NowAsR6Date = (select datediff(day,'30 Dec 1899',getdate()))
+
+SET @vague_date_type = ('D')
+
+
+SET @vague_date_start = [dbo].[LCToRataDie](@Determination_date)
+
+If @vague_Date_Start &#62; @NowAsR6Date Set @vague_Date_Start = @NowAsR6Date 
+
+SET @vague_date_end = @vague_date_start 
+
+
+SET @Det_role_key = ( SELECT determiner_role_key from determiner_role where 
+
+	<Condition field= "determiner_role.determiner_role_key" operator="equal" type="OptionSet"  name="Determiner role:" >
+	        <Option name="County recorder" value = "'NBNSYS0000000004'" />
+	        <Option name="Specialist" value = "'NBNSYS0000000001'" />
+	        <Option name="Reviewer" value = "'NBNSYS0000000005'" />
+
+        </Condition>
+)
+
+
+set @Determiner = (SELECT Name_key from name where 
+<Condition field= "Name_key" operator="equal" type="Individual" entrycount="1"  name="Determiner" /> 
+)
+
+   
+
+DECLARE Temp_Cursor CURSOR FOR 
+  (  SELECT Taxon_Occurrence_Key From #Temp1
+    )
+
+OPEN Temp_Cursor
+
+FETCH NEXT FROM Temp_Cursor
+ INTO @Occurrence_key
+
+  -- Loops through the temp data and adds a new key 
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+    EXECUTE spNextKey 'Taxon_Determination', @tdet_key OUTPUT 
+    UPdate #Temp1 Set New_TDET_Key = @TDET_key WHERE #Temp1.Taxon_Occurrence_Key = @Occurrence_key   
+    
+    FETCH NEXT FROM Temp_Cursor
+          INTO @occurrence_key
+
+  END
+
+  CLOSE Temp_Cursor
+  
+  UPDATE #TEMP1 SET New_TLI_Key =  #CSV1.Scientific_name FROM #CSV1 INNER JOIN #TEMP1 
+  ON #CSV1.TOK = #TEMP1.Taxon_Occurrence_Key INNER JOIN Index_Taxon_Name ON ITN.Taxon_List_Item_Key = 
+  #CSV1.Scientific_name  
+   
+
+  UPDATE #TEMP1 SET New_TLI_Key = ITN.Taxon_List_Item_Key FROM #TEMP1 T INNER JOIN #CSV1 ON #CSV1.TOK =
+  T.Taxon_Occurrence_Key INNER JOIN Index_Taxon_Name ITN ON Rtrim(ITN.ACtual_Name + ' ' + ISNULL      (ITN.Actual_name_Attribute,'')) =
+  #CSV1.Scientific_name AND ITN.Preferred_Taxa = 1 
+
+
+  UPDATE #TEMP1 SET New_DT_KEY = DT.Determination_Type_Key FROM #Temp1 T INNER JOIN #CSV1 ON #CSV1.TOK =     T.Taxon_Occurrence_Key INNER JOIN DeterminatIon_Type DT ON DT.Short_Name = #CSV1.Determination_Type 
+    
+  
+  UPDATE #TEMP1 SET PREFERRED = 0 
+  UPDATE #TEMP1 SET PREFERRED = 1 from #Temp1 WHERE @AutoPreferred = 3
+  UPDATE #TEMP1 SET PREFERRED = 1 WHERE @Autopreferred = 1 AND New_TLI_KEY &#60;&#62; Taxon_List_Item_Key
+  UPDATE #TEMP1 SET PREFERRED = 1 FROM #Temp1 INNER JOIN DETERMINATION_TYPE DT oN DT.Determination_Type_Key =       #Temp1.Determination_Type_Key INNER JOIN DETERMINATION_TYPE DT1 oN DT1.Determination_Type_Key =     #Temp1.New_DT_Key WHERE  (DT1.Verified &#60;&#62; DT.Verified) AND (DT1.Verified = 1 OR DT.Verified = 1) AND     @AutoPreferred = 1  
+    
+
+  INSERT INTO TAXON_DETERMINATION  (TAXON_DETERMINATION_KEY,TAXON_LIST_ITEM_KEY,TAXON_OCCURRENCE_KEY,VAGUE_DATE_START,VAGUE_DATE_END,
+                                    VAGUE_DATE_TYPE,COMMENT,PREFERRED,DETERMINER,DETERMINATION_TYPE_KEY,DETERMINER_ROLE_KEY,
+                                   ENTERED_BY,ENTRY_DATE,CUSTODIAN)
+                                   SELECT T.New_Tdet_Key,T.New_TLI_Key,T.Taxon_Occurrence_Key,
+                                   @vague_date_start, @vague_date_end,   @vague_date_type,#CSV1.Reviewers_Comments,T.Preferred,@Determiner,          
+				   T.Determination_Type_Key, @Det_role_key, @Entered_by, @Entry_date,@Custodian
+                                   FROM #TEmp1 T INNER JOIN #CSV1 ON #CSV1.TOK = T.Taxon_Occurrence_Key 
+
+  UPDATE Taxon_Determination SET Preferred = 0 FROM Taxon_Determination INNER JOIN  #Temp1 ON   #Temp1.Taxon_Determination_key 
+  = Taxon_Determination.Taxon_Determination_key Where #Temp1.Preferred = 1 
+  
+
+</Where>
+
+
+</SQL>
+
+</batchupdate>

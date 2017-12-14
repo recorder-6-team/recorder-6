@@ -27,7 +27,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   DataClasses, Db, GeneralFunctions, JNCCDatasets, ComCtrls, HierarchyNodes,
-  ImgList, BaseData, ExceptionForm, ADODB, DatabaseAccessADO;
+  ImgList, BaseData, ExceptionForm, ADODB, DatabaseAccessADO, ComObj;
 
 type
   EMergeDataError = class(TExceptionPath);
@@ -170,11 +170,11 @@ procedure TdmMergeData.ProcessMerge(const iTable: String; const iSourceKey,
   iDestKey: TKeyString);
 var
   lCursor: TCursor;
-  lTaskIndex: Integer;
+  lTaskIndex, lInnerTaskIndex: Integer;
 begin
   lCursor := HourglassCursor;
   frmMain.SetStatus(Format(ResStr_MergingItemsInTable,[iTable]));
-  lTaskIndex := frmMain.ProgressBar.EmbedTask(0, 80);
+  lTaskIndex := frmMain.ProgressBar.EmbedTask(0, 95);
   frmMain.ProgressBar.TaskPosition := 0;
   { start a transaction }
   dmDatabase.dbLocal.Execute('Set xact_abort off');
@@ -182,18 +182,30 @@ begin
   try
     try
       PrepareMerge(iTable, iSourceKey, iDestKey);
+      // If updating name or individual tables, then we need to split the progress bar into the
+      // initial merge task and the subsequent task of checking ALL tables for the metadata
+      // joins (entered/updated by) which don't exist as physical db relationships.
+      if (CompareText(iTable, ST_NAME_TABLE)=0) or (CompareText(iTable, ST_INDIVIDUAL)=0) then
+        lInnerTaskIndex := frmMain.ProgressBar.EmbedTask(0, 40);
       { ensure related one to one records processed for certain tables }
       if    (CompareText(iTable, ST_NAME_TABLE)=0) or
             (CompareText(iTable, ST_INDIVIDUAL)=0) or
-            (CompareText(iTable, ST_ORGANISATION)=0) then
-        ProcessThreeTableMerge(ST_INDIVIDUAL, ST_ORGANISATION, ST_NAME_TABLE, iSourceKey, iDestKey)
+            (CompareText(iTable, ST_ORGANISATION)=0) then begin
+        ProcessThreeTableMerge(ST_INDIVIDUAL, ST_ORGANISATION, ST_NAME_TABLE, iSourceKey, iDestKey);
+      end
       else if (CompareText(iTable, ST_SOURCE)=0) or
               (CompareText(iTable, ST_SOURCE_FILE)=0) or
               (CompareText(iTable, ST_REFERENCE)=0) then
         ProcessThreeTableMerge(ST_SOURCE_FILE, ST_REFERENCE, ST_SOURCE, iSourceKey, iDestKey)
       else
         ProcessSingleTableMerge(iTable, iSourceKey, iDestKey);
-      lTaskIndex := frmMain.ProgressBar.FinishAndEmbedNext(lTaskIndex, 80, 100);
+      if (CompareText(iTable, ST_NAME_TABLE)=0) or (CompareText(iTable, ST_INDIVIDUAL)=0) then begin
+        // Switch to the next sub-task as non-physical metadata joins also need to be updated.
+        frmMain.ProgressBar.FinishAndEmbedNext(lInnerTaskIndex, 40, 100);
+        UpdateNameTable(iSourceKey, iDestKey);
+        frmMain.ProgressBar.FinishTask(lInnerTaskIndex);
+      end;
+      lTaskIndex := frmMain.ProgressBar.FinishAndEmbedNext(lTaskIndex, 95, 100);
       { All work done OK, so commit }
       dmDatabase.dbLocal.CommitTrans;
     except
@@ -325,9 +337,6 @@ begin
           end;
       end; // with
     end;
-    { handle non-physical metadata joins }
-    if (iTable = ST_NAME_TABLE) or (iTable = ST_INDIVIDUAL) then
-      UpdateNameTable(iSourceKey, iDestKey);
     if FDeleteSources then
       DeleteSource(iTable, iSourceKey);
   end; // if tableexists
@@ -352,21 +361,29 @@ end;  // CheckSingleFieldKey
      which also need fixing }
 procedure TdmMergeData.UpdateNameTable(const iSourceKey, iDestKey: String);
 var
-  i: Integer;
+  i, tableCount: Integer;
   ltfDoEntered, ltfDoChecked, ltfDoChanged: Boolean;
 begin
-  for i := 0 to dmGeneralData.TableList.Count-1 do
+  tableCount := dmGeneralData.TableList.Count;
+  for i := 0 to tableCount - 1 do
   begin
     if TableExists(dmGeneralData.TableList[i]) then
     begin
+      ltfDoEntered := false;
+      ltfDoChanged := false;
+      ltfDoChecked := false;
       with dmGeneralData.qryAllPurpose do begin
         if Active then Close;
         SQL.Text := 'SELECT TOP 0 * FROM "' + dmGeneralData.TableList[i] + '"';
-        Open;
-        ltfDoEntered := Assigned(FindField('ENTERED_BY'));
-        ltfDoChanged := Assigned(FindField('CHANGED_BY'));
-        ltfDoChecked := Assigned(FindField('CHECKED_BY'));
-        Close;
+        Try
+          Open;
+          ltfDoEntered := Assigned(FindField('ENTERED_BY'));
+          ltfDoChanged := Assigned(FindField('CHANGED_BY'));
+          ltfDoChecked := Assigned(FindField('CHECKED_BY'));
+          Close;
+         Except on EOleException do;
+
+         end;
       end;
       if ltfDoEntered then
         FixupJoin(dmGeneralData.TableList[i], 'ENTERED_BY', iSourceKey, iDestKey);
@@ -374,9 +391,7 @@ begin
         FixupJoin(dmGeneralData.TableList[i], 'CHANGED_BY', iSourceKey, iDestKey);
       if ltfDoChecked then
         FixupJoin(dmGeneralData.TableList[i], 'CHECKED_BY', iSourceKey, iDestKey);
-      Inc(FWorkDone);
-      if FWorkToDo <> 0 then
-        frmMain.ProgressBar.TaskPosition := ((FWorkDone * 100) div FWorkToDo);
+      frmMain.ProgressBar.TaskPosition := ((i+1) * 100) div tableCount;
     end;
   end;
 end;  // UpdateNameTable

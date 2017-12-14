@@ -130,6 +130,7 @@ type
     bbSpecimenEdit: TImageListButton;
     bbSpecimenDel: TImageListButton;
     splSpecimens: TSplitter;
+    lblReviewSummary: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbSpecimenAddClick(Sender: TObject);
     procedure bbSpecimenAcceptClick(Sender: TObject);
@@ -246,6 +247,9 @@ type
     procedure ValidateDeterminationDate;
     procedure ValidateSpecimenDate;
     property Verified: Byte read FVerified write SetVerified;
+    function GetReviewStatusCode :integer;
+    function GetReviewStatus (const statuscode : integer) : String;
+    function GetReviewStatusSummary(const statuscode : integer) : String;
   protected
     procedure SetupDestinationControls; override;
   public
@@ -283,6 +287,7 @@ const
   VERIFIED_FAILED = 1;
   VERIFIED_PASSED = 2;
 
+
 resourcestring
   ResStr_DeterminationRequired =  'At least one Determination is required. Enter at least one determination.';
   ResStr_NotVerified = 'Not verified';
@@ -304,6 +309,12 @@ resourcestring
   ResStr_DeleteSpecimen = 'Are you sure you want to delete this Specimen?';
   ResStr_SpecimenNumRequired =  'A Specimen Number is required for every Specimen.';
   ResStr_SpecimenTypeRequired = 'A Specimen Type is required for every Specimen. Select one from the list.';
+  ResStr_Not_Reviewed = 'Not Reviewed';
+  ResStr_Reviewed = 'Review Complete';
+  ResStr_Review_Unactioned = 'Review Unactioned';
+  ResStr_Not_Reviewed_Summary = 'Not Reviewed';
+  ResStr_Reviewed_Summary = 'Reviewed';
+  ResStr_Review_Unactioned_Summary = 'Review Unactioned';
 
 //==============================================================================
 constructor TfrmTaxonOccurrences.Create(AOwner:TComponent);
@@ -736,7 +747,7 @@ begin
             // Verified Indicator of 0  confidential but not zero abundance = 6 +(0 *4) + 1 + (2 * 0) = 7
             // Verified Indicator of 0  not confidential but zero abundance = 6 +(0 *4) + 0 + (2 * 1) = 8
             // Verified Indicator of 0  confidential and zero abundance = 6 +(0 *4) + 1 + (2 * 1) = 9
-            
+
             if Not AppSettings.UseOriginalIcons then
             TTaxonOccNode(SelectedItem.Data).ImageIndex :=  6 + (verified * 4) + ord(dbcbConfidential.Checked) + (2 *ord(ZeroAbundance));
 
@@ -841,14 +852,20 @@ end;
 
 //==============================================================================
 procedure TfrmTaxonOccurrences.UpdateVerificationStatus;
-begin
-  case FVerified  of
-    NOT_VERIFIED:    lblVerificationStatus.Caption := ResStr_NotVerified;
-    VERIFIED_FAILED: lblVerificationStatus.Caption := ResStr_FailedVerification;
-    VERIFIED_PASSED: lblVerificationStatus.Caption := ResStr_PassedVerification;
-  end;
-end;  // UpdateVerificationStatus
 
+var
+  lReviewStatusCode :integer;
+begin
+  lReviewStatusCode := getReviewStatusCode;
+  case FVerified  of
+    NOT_VERIFIED:    lblVerificationStatus.Caption := ResStr_NotVerified + getReviewStatus(lReviewStatusCode) ;
+    VERIFIED_FAILED: lblVerificationStatus.Caption := ResStr_FailedVerification + getReviewStatus(lReviewStatusCode);
+    VERIFIED_PASSED: lblVerificationStatus.Caption := ResStr_PassedVerification + getReviewStatus(lReviewStatusCode);
+  end;
+  lblReviewSummary.Caption :=  getReviewStatusSummary(lReviewStatusCode);
+
+end;  // UpdateVerificationStatus
+  
 //==============================================================================
 function TfrmTaxonOccurrences.CheckValidation: Byte;
 begin
@@ -1874,8 +1891,53 @@ begin
   TfrmMap.CentreOnPlace(lLocationKey, lblTaxonName.Caption, lSpatialRef, lSRefSys);
 end;
 
+{ Description : Gets the Review Status Code }
+
+function TfrmTaxonOccurrences.GetReviewStatusCode : integer;
+
+begin
+  with dmDatabase.ExecuteSQL('SELECT  [dbo].[ufn_ReturnReviewStatus](''' + FTaxonOccKey  + ''') AS ReviewStatus',True) do
+  begin
+    if not Eof then
+        Result := Fields['ReviewStatus'].Value
+    else
+      Result :=  0;
+    Close;
+  end;
+end;
 {-------------------------------------------------------------------------------
 }
+ { Description : Gets the review status given the code}
+function TfrmTaxonOccurrences.GetReviewStatus(const statuscode : integer) : String;
+
+begin
+   case StatusCode of
+      0:  Result:= '';
+      1:  Result:=  '/' + ResStr_Not_Reviewed;
+      2:  Result := '/' + ResStr_Review_Unactioned;
+      3:  Result := '/' + ResStr_Reviewed;
+   end;
+end;
+{-------------------------------------------------------------------------------
+}
+
+{ Description : Gets the review status summary given the code}
+function TfrmTaxonOccurrences.GetReviewStatusSummary (const statuscode : integer) : String;
+
+begin
+   case StatusCode of
+      0:  Result := '';
+      1:  Result :=  ResStr_Not_Reviewed_Summary;
+      2:  Result := ResStr_Review_Unactioned_Summary;
+      3:  Result := ResStr_Reviewed_Summary ;
+   end;
+end;
+{-------------------------------------------------------------------------------
+}
+
+
+
+
 procedure TfrmTaxonOccurrences.eWorkDblClick(Sender: TObject);
 begin
   inherited;
