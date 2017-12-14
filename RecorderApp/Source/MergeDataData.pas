@@ -27,7 +27,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   DataClasses, Db, GeneralFunctions, JNCCDatasets, ComCtrls, HierarchyNodes,
-  ImgList, BaseData, ExceptionForm, ADODB, DatabaseAccessADO,ComObj;
+  ImgList, BaseData, ExceptionForm, ADODB, DatabaseAccessADO, ComObj;
 
 type
   EMergeDataError = class(TExceptionPath);
