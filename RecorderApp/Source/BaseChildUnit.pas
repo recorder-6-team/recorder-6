@@ -283,7 +283,6 @@ var
   lChildMenuIndex : Integer;
 begin
   with frmMain do begin
-    SetMDIButtonVisible(False);
     { Hide the non-standard toolbuttons }
     tbtnMnuMerge1.Visible := False;
     tbtnMnuMerge2.Visible := False;
