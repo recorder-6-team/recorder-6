@@ -105,6 +105,8 @@ type
     function CheckDeterminationDateAgainstSample(const iSampleKey : TKeyString;
         const iDeterminationDate : TVagueDate; iUseCachedSampleDate:
         boolean=false): boolean;
+    function CheckDeterminationDateAgainstSampleDate(
+        const sampleDate, determinationDate : TVagueDate): boolean;
     function CheckDeterminationDate(const sampleKey, determinationKey: TKeyString;
         sampleDate, determinationDate: TVagueDate): TValidOccDates;
   end;
@@ -141,7 +143,6 @@ resourcestring
   ResStr_EventInSurvey  = 'The event is not in the bounding box of its survey.';
   ResStr_SystemUnknown  = 'The Spatial Reference system is not recognised.';
   ResStr_InvalidSpatialRef = 'The spatial reference is invalid or cannot be recognised.';
-  ResStr_SampleDate = 'The Sample Date '+ 'must be a valid vague date and it cannot be after today''s date of %s.';
   ResStr_SampleInEvent  = 'The Spatial Reference or location entered is not '+
                           'within that of the survey event.';
   ResStr_LocNotInList = 'The specified location was not found in the list of Locations. ' +
@@ -411,7 +412,12 @@ begin
   Result.Valid := Result.Message = '';
 end;  // CheckDeterminationDate
 
-//==============================================================================
+//=============================================================================
+// Checks that a determination date is valid for a given sample.
+//
+// Loads the sample from the database (with caching option) then checks the
+// determination date is on or after the sample date, returning true if it is.
+//
 function TdmValidation.CheckDeterminationDateAgainstSample(const iSampleKey :
     TKeyString; const iDeterminationDate : TVagueDate; iUseCachedSampleDate:
     boolean=false): boolean;
@@ -429,13 +435,25 @@ begin
       end;
     end;
 
-  if IsVagueDateInVagueDate(FSampleDateToTest, iDeterminationDate) then
-    Result := False
-  else if AreVagueDatesEqual(FSampleDateToTest, iDeterminationDate) then
-    Result := True
-  else
-    Result := CompareVagueDateToVagueDate(iDeterminationDate, FSampleDateToTest) >= 0;
+  Result := CheckDeterminationDateAgainstSampleDate(FSampleDateToTest, iDeterminationDate);
 end;  // CheckDeterminationDateAgainstSample
+
+//=============================================================================
+// Checks that a determination date is valid for a given sample date.
+//
+// Checks the determination date is on or after the given sample date,
+// returning true if it is.
+//
+function TdmValidation.CheckDeterminationDateAgainstSampleDate(
+        const sampleDate, determinationDate : TVagueDate): boolean;
+begin
+  if IsVagueDateInVagueDate(sampleDate, determinationDate) then
+    Result := false
+  else if AreVagueDatesEqual(sampleDate, determinationDate) then
+    Result := true
+  else
+    Result := CompareVagueDateToVagueDate(determinationDate, sampleDate) >= 0;
+end;
 
 //==============================================================================
 function TdmValidation.CheckEventDateAgainstSurvey(iSurveyKey: TKeyString;

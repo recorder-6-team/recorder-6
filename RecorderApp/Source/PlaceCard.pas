@@ -306,7 +306,7 @@ type
     function ValidExactMeasurement(measurementKeys: TMeasurementKeys; const AValue: String): Boolean;
     function ValidRestrictedData(measurementKeys: TMeasurementKeys; const AValue: String): Boolean;
     function CheckGridDeterminers(const ColIdx:integer): Boolean;
-    function CheckGridVagueDates(const ColIdx:integer): Boolean;
+    function CheckGridDeterminationDates(const ColIdx:integer): Boolean;
     function CheckCount: Boolean;
     function CheckGridBiotope(const ColIdx: Integer): Boolean;
     function CheckGridMeasurementColumns: Boolean;
@@ -462,8 +462,9 @@ resourcestring
       + 'the existing names, or leave blank.';
 
   ResStr_InvalidDerterminationDate =
-      'The Dates of Determination must be valid vague dates and must '
-      + 'occur on or after the date of recording.';
+      'The Dates of Determination must be valid vague dates and must occur on or after the date of recording. If a ' +
+      'vague determination date has been entered, note that the start of this vague date must not precede the start ' +
+      'of the observation date.';
 
   ResStr_SettingCount =
       '"Count" and "Count Of" must both be set when either one is set. There is some data missing.' ;
@@ -3891,43 +3892,44 @@ begin
     end;
 end;  // CheckGridDeterminers
 
-{-------------------------------------------------------------------------------
-  Description : Validates that all vague dates in the grid are acceptable
-  Created : 25/04/2003 }
-function TfrmPlaceCard.CheckGridVagueDates(const ColIdx: Integer): Boolean;
+//=============================================================================
+// Validates that all determination vague dates in the grid are acceptable.
+//
+function TfrmPlaceCard.CheckGridDeterminationDates(const ColIdx: Integer): Boolean;
 var lRowIdx: Integer;
-    lVDateGrid: TVagueDate;
+    determinationDate: TVagueDate;
 begin
   Result := True;
-  with sgSpecies do
+  with sgSpecies do begin
     for lRowIdx := FixedRows to RowCount - 1 do begin
       // Trim spaces
       Cells[ColIdx, lRowIdx] := Trim(Cells[ColIdx, lRowIdx]);
       // if nothing in cell, do nothing, all OK
-      if (Cells[ColIdx, lRowIdx] <> '') and not IsReadOnlyCell(ColIdx, lRowIdx) then
+      if (Cells[ColIdx, lRowIdx] <> '') and not IsReadOnlyCell(ColIdx, lRowIdx) then begin
         // If cell content is valid vague date, carry on with further checks
         if IsVagueDate(Cells[ColIdx, lRowIdx]) then begin
-          lVDateGrid := StringToVagueDate(Cells[ColIdx, lRowIdx]);
+          determinationDate := StringToVagueDate(Cells[ColIdx, lRowIdx]);
           // Check vague date is correct and display properly in grid
-          if CheckVagueDate(Cells[ColIdx, lRowIdx]) and
-             IsVagueDateInVagueDate(eDate.VagueDate, lVDateGrid) or
-             (not IsVagueDateInVagueDate(eDate.VagueDate, lVDateGrid) and
-              (CompareVagueDateToVagueDate(lVDateGrid, eDate.VagueDate) >= 0)) then
-            Cells[ColIdx, lRowIdx] := VagueDateToString(lVDateGrid)
+          if dmValidation.CheckDeterminationDateAgainstSampleDate(eDate.VagueDate, determinationDate) then begin
+            Cells[ColIdx, lRowIdx] := VagueDateToString(determinationDate);
+          end
           else begin
             // Not a good vague date
             Result := False;
             Row    := lRowIdx;
             Break;
           end;
-        end else begin
+        end
+        else begin
           // Cell content isn't a proper vague date
           Result := False;
           Row    := lRowIdx;
           Break;
         end;
+      end;
     end;
-end;  // CheckGridVagueDates
+  end;
+end;  // CheckGridDeterminationDates
 
 function TfrmPlaceCard.CheckCount: Boolean;
 var lRowIdx, lCountIdx, lCountOfIdx: Integer;
@@ -4088,8 +4090,6 @@ end;  // CheckGridSpatialRef
   Created : 25/04/2003 }
 procedure TfrmPlaceCard.ValidateCard;
 begin
-  ValidateCardDate;
-
   ValidateValue(cmbSurvey.Text <> '', ResStr_UnableToSave + SPlaceCard_SelectSurvey, cmbSurvey);
   ValidateValue(TotalSpecies > 0, ResStr_SelectTaxaToSave, sgSpecies);
 
@@ -4097,8 +4097,7 @@ begin
 
   // Check the date and ensure a proper format
   ValidateValue(eDate.Text <> '', ResStr_ObservationDateMissing, eDate);
-  ValidateValue(CheckVagueDate(eDate.Text), InvalidDate(ResStr_SampleDate, true, false), eDate);
-  eDate.Text := VagueDateToString(eDate.VagueDate);
+  ValidateCardDate;
   ValidateValue(
       dmValidation.CheckEventDateAgainstSurvey(cmbSurvey.KeyValue, eDate.VagueDate),
       ResStr_DataOutsideSurvey,
@@ -4126,7 +4125,7 @@ begin
         sgSpecies);
   if ColByName(COL_DATE_OF_DETERMINATION) <> -1 then
     ValidateValue(
-        CheckGridVagueDates(ColByName(COL_DATE_OF_DETERMINATION)),
+        CheckGridDeterminationDates(ColByName(COL_DATE_OF_DETERMINATION)),
         ResStr_InvalidDerterminationDate + #13#10#13#10 + SPlaceCard_ValidVagueDates,
         sgSpecies);
   if ColByName(COL_COUNT) <> -1 then
