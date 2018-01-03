@@ -221,7 +221,7 @@ var
   rs: _Recordset;
   allDefaultPwd, isFirstRun: Boolean;
   defaultUser, otherUser: TKeyString;
-  AdminUsers: integer;
+  userCount, adminUserCount: integer;
 begin
   defaultUser := '';
   isFirstRun  := False;
@@ -232,11 +232,12 @@ begin
     defaultUser := rs.Fields['Name_Key'].Value;
   // Get the users who are not default users and have a security level of 5
   rs := dmDatabase.GetRecordset('usp_Users_Select_Admin', ['@default_User_key', DefaultUser ]);
-  AdminUsers := rs.RecordCount;
+  adminUserCount := rs.RecordCount;
   // Check how many users there are.
   rs := dmDatabase.GetRecordset('usp_Users_Select', []);
+  userCount := rs.RecordCount;
   // No records, or Default User is the only record found. Show First Run screen.
-  if ((defaultUser <> '') and (rs.RecordCount = 1)) or (rs.RecordCount = 0) then
+  if ((defaultUser <> '') and (userCount = 1)) or (userCount = 0) then
   begin
     with TdlgFirstRun.Create(nil) do
       try
@@ -252,7 +253,7 @@ begin
       end;
   end else
   // Only 2 records, with Default User being one of them, check both for default password.
-  if (defaultUser <> '') and (rs.RecordCount = 2) then
+  if (defaultUser <> '') and (userCount = 2) then
   begin
     allDefaultPwd := True;
     while not rs.Eof do
@@ -267,7 +268,7 @@ begin
   end;
   // If only two records and one is the default, but there are no other admin users then
   // We need to show the login screen
-  if (defaultUser <> '') and (rs.RecordCount = 2) and (adminusers = 0) then
+  if (defaultUser <> '') and (userCount = 2) and (adminUserCount = 0) then
     FBypassLogin := false;
 
   if FBypassLogin then
