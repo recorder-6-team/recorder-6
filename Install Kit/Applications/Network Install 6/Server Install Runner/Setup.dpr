@@ -4,7 +4,7 @@ program Setup;
 
 uses
   Forms,
-  EasyShell;
+  EasyShell in '..\..\..\..\Third Party\Dorset Software Services\DssVcl32\EasyShell.pas';
 
 {$E .ex_}
 
