@@ -1,4 +1,6 @@
-# All files under Third Party except DSS are not part of the Recorder 6 open source repository.
+# All files under Third Party are not part of the Recorder 6 open source repository, except for:
+# * Dorset Software Services - licence granted
+# * L David Baldwin - now in public domain
 *
 
 !.gitignore
@@ -6,3 +8,8 @@
 !Dorset Software Services/*
 !Dorset Software Services/*/*
 !Dorset Software Services/*/*/*
+!L David Baldwin/
+!L David Baldwin/*
+!L David Baldwin/*/*
+!L David Baldwin/*/*/*
+!L David Baldwin/*/*/*/*

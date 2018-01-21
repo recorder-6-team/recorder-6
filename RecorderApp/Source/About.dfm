@@ -4,8 +4,8 @@ object dlgAbout: TdlgAbout
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'About'
-  ClientHeight = 297
-  ClientWidth = 351
+  ClientHeight = 320
+  ClientWidth = 413
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,13 +15,17 @@ object dlgAbout: TdlgAbout
   OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
+  DesignSize = (
+    413
+    320)
   PixelsPerInch = 96
   TextHeight = 13
   object btnOk: TImageListButton
-    Left = 270
-    Top = 263
+    Left = 332
+    Top = 288
     Width = 75
-    Height = 25
+    Height = 23
+    Anchors = [akTop, akRight, akBottom]
     Cancel = True
     Caption = 'OK'
     Default = True
@@ -33,16 +37,17 @@ object dlgAbout: TdlgAbout
   object pcAbout: TPageControl
     Left = 4
     Top = 8
-    Width = 341
-    Height = 248
+    Width = 403
+    Height = 271
     ActivePage = tsVersion
+    Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     object tsVersion: TTabSheet
       Caption = 'Version'
       object Bevel2: TBevel
         Left = 4
         Top = 139
-        Width = 325
+        Width = 389
         Height = 9
         Shape = bsTopLine
       end
@@ -210,7 +215,7 @@ object dlgAbout: TdlgAbout
       end
       object Label8: TLabel
         Left = 8
-        Top = 205
+        Top = 223
         Width = 51
         Height = 13
         Caption = 'Username:'
@@ -223,7 +228,7 @@ object dlgAbout: TdlgAbout
       end
       object lblUsername: TLabel
         Left = 96
-        Top = 205
+        Top = 223
         Width = 50
         Height = 13
         Caption = 'UserName'
@@ -312,6 +317,19 @@ object dlgAbout: TdlgAbout
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object Label12: TLabel
+        Left = 96
+        Top = 205
+        Width = 295
+        Height = 13
+        Caption = 'Shape Viewer Objects GIS from  Ecological Software Solutions'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+      end
       object StaticText1: TStaticText
         Left = 8
         Top = 102
@@ -346,8 +364,8 @@ object dlgAbout: TdlgAbout
       object mmMoreInfo: TMemo
         Left = 0
         Top = 0
-        Width = 333
-        Height = 220
+        Width = 395
+        Height = 243
         Align = alClient
         Color = clBtnFace
         Font.Charset = ANSI_CHARSET
