@@ -75,6 +75,7 @@ type
     FResourcesLib: THandle;
     FInstalledInstanceName: String;
     FSkipToUninstall: Boolean;
+    FRemoveSystemComponents: boolean;
     procedure CheckForExistingSiteID;
     function GetAvailableSpatialRefSystems: TStringList;
     function GetDatabaseSetupCommand: String;
@@ -88,6 +89,7 @@ type
     procedure SetMode(const Value: TMode);
     procedure SetTrustedLogin(Value: Boolean);
     function GetRegistryInstanceName: string;
+    procedure SetRemoveSystemComponents(const Value: boolean);
   public
     constructor Create(AInstallType: TInstallType); reintroduce; overload;
     destructor Destroy; override;
@@ -105,6 +107,7 @@ type
     function RequiredDiskSpace: Int64;
     function RequiredApplicationDiskSpace: Int64;
     function RequiredDatabaseDiskSpace: Int64;
+    function SystemComponentsInstalled: Boolean;
     procedure SetAnimationFromResource(ctrl: TAnimate; const resName: String);
     procedure SaveLogToDisk;
     procedure SaveToIniFile;
@@ -147,6 +150,7 @@ type
     property TrustedLogin: Boolean read FTrustedLogin write SetTrustedLogin;
     property UserName: String read FUserName write FUserName;
     property VerificationKey: String read FVerificationKey write FVerificationKey;
+    property RemoveSystemComponents: boolean read FRemoveSystemComponents write SetRemoveSystemComponents;
   end;
   
 //==============================================================================
@@ -808,6 +812,43 @@ begin
     finally
       Free;
     end;
+end;
+
+{-------------------------------------------------------------------------------
+}
+function TSettings.SystemComponentsInstalled: Boolean;
+var
+  i: Integer;
+  lKeys: TStringList;
+begin
+  Result := False;
+  lKeys := nil;
+  with TRegistry.Create() do
+    try
+      lKeys := TStringList.Create;
+      RootKey := HKEY_CLASSES_ROOT;
+      OpenKeyReadOnly('Installer\Products');
+      GetKeyNames(lKeys);
+      CloseKey;
+      for i := 0 to lKeys.Count - 1 do begin
+        OpenKeyReadOnly('Installer\Products\' + lKeys[i]);
+        if ValueExists('ProductName') then
+          if ReadString('ProductName') = STR_SYSCOMP_DISPLAY_NAME then begin
+            Result := True;
+            Break;
+          end;
+        CloseKey;
+      end;
+      CloseKey;
+    finally
+      Free;
+      lKeys.Free;
+    end;
+end;  // TSettings.SystemComponentsInstalled
+
+procedure TSettings.SetRemoveSystemComponents(const Value: boolean);
+begin
+  FRemoveSystemComponents := Value;
 end;
 
 end.

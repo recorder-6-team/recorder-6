@@ -91,10 +91,10 @@ ImageBase=4194304
 ExeDescription=
 [Directories]
 OutputDir=C:\Localsource\Recorder disk images\Network\System
-UnitOutputDir=c:\temp\dcu
+UnitOutputDir=c:\localsource\
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=..\..\..\..\..\Third Party\Kevin Boylan\VCLZip\;C:\Localsource\Recorder\Third Party\Graticule
+SearchPath=..\..\..\..\Third Party\Graticule;..\..\..\..\Third Party\Kevin Boylan\VCLZip\
 Packages=adortl;bdertl;dbrtl;dsnap;rtl;vcl;vclactnband;vcldb;vcljpg;vclx
 Conditionals=madExcept
 DebugSourceDirs=
@@ -134,8 +134,6 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[Excluded Packages]
-c:\program files (x86)\borland\delphi7\Projects\BPL\dclqrd_d7.bpl=QRDesign
 [HistoryLists\hlConditionals]
 Count=1
 Item0=madExcept
@@ -143,17 +141,20 @@ Item0=madExcept
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=7
-Item0=..\..\..\..\..\Third Party\Kevin Boylan\VCLZip\;C:\Localsource\Recorder\Third Party\Graticule
-Item1=..\..\..\..\..\Third Party\Kevin Boylan\VCLZip\
-Item2=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Development\Build\Source;R:\Projects\JNCC\Development\Install Kit\Applications\Common;M:\MapSvrTurbo5\VCL\Delphi5;M:\MapSvrTurbo5\MapUser5\MapUser\Dll\Lib;M:\Delphi 3rdParty\VCLZip
-Item3=M:\Delphi 3rdParty\VCLZip;R:\Projects\JNCC\Development\Build\Source
-Item4=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Build\Components;R:\Projects\JNCC\Development\Install Kit\Applications\Common
-Item5=M:\Delphi 3rdParty\VCLZip;M:\DssVcl32;R:\Projects\JNCC\Development\Build\Components
-Item6=M:\Delphi 3rdParty\VCLZip;M:\DssVcl32
+Count=9
+Item0=..\..\..\..\Third Party\Graticule;..\..\..\..\Third Party\Kevin Boylan\VCLZip\
+Item1=..\..\..\..\..\Third Party\Kevin Boylan\VCLZip\;C:\Localsource\Recorder\Third Party\Graticule;..\..\..\..\Third Party\Kevin Boylan\VCLZip\
+Item2=..\..\..\..\..\Third Party\Kevin Boylan\VCLZip\;C:\Localsource\Recorder\Third Party\Graticule
+Item3=..\..\..\..\..\Third Party\Kevin Boylan\VCLZip\
+Item4=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Development\Build\Source;R:\Projects\JNCC\Development\Install Kit\Applications\Common;M:\MapSvrTurbo5\VCL\Delphi5;M:\MapSvrTurbo5\MapUser5\MapUser\Dll\Lib;M:\Delphi 3rdParty\VCLZip
+Item5=M:\Delphi 3rdParty\VCLZip;R:\Projects\JNCC\Development\Build\Source
+Item6=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Build\Components;R:\Projects\JNCC\Development\Install Kit\Applications\Common
+Item7=M:\Delphi 3rdParty\VCLZip;M:\DssVcl32;R:\Projects\JNCC\Development\Build\Components
+Item8=M:\Delphi 3rdParty\VCLZip;M:\DssVcl32
 [HistoryLists\hlUnitOutputDirectory]
-Count=1
-Item0=c:\temp\dcu
+Count=2
+Item0=c:\localsource\
+Item1=c:\temp\dcu
 [HistoryLists\hlOutputDirectorry]
 Count=11
 Item0=C:\Localsource\Recorder disk images\Network\System

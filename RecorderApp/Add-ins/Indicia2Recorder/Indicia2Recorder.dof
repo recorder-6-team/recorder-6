@@ -83,15 +83,15 @@ UnsafeCast=0
 MapFile=3
 OutputObjs=0
 ConsoleApp=1
-DebugInfo=0
-RemoteSymbols=0
+DebugInfo=1
+RemoteSymbols=1
 MinStackSize=16384
 MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
 OutputDir=C:\Program Files (x86)\Recorder 6\Addins
-UnitOutputDir=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU
+UnitOutputDir=c:\localsource\dcu
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=C:\Localsource\recorder-6\Third Party\dec\Part_I
@@ -152,8 +152,6 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 OleSelfRegister=1
-[Excluded Packages]
-c:\program files (x86)\borland\delphi7\Projects\BPL\dclqrd_d7.bpl=QRDesign
 [HistoryLists\hlConditionals]
 Count=1
 Item0=madExcept
@@ -168,9 +166,10 @@ Item2=$(DELPHI)\Lib\Debug
 Item3=$(DELPHI)\Lib\Debug;C:\Localsource\Recorder\RecorderApp\trunk\Add-ins\Indicia2Recorder\dec\Part_I
 Item4=..\..\..\Third Party\Kevin Boylan\VCLZip
 [HistoryLists\hlUnitOutputDirectory]
-Count=2
-Item0=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU
-Item1=c:\tmp\dcu
+Count=3
+Item0=c:\localsource\dcu
+Item1=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU
+Item2=c:\tmp\dcu
 [HistoryLists\hlOutputDirectorry]
 Count=3
 Item0=C:\Program Files (x86)\Recorder 6\Addins

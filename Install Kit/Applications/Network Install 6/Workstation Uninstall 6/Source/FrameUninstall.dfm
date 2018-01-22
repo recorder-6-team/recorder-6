@@ -24,7 +24,7 @@ inherited fraUninstall: TfraUninstall
     object lblUninstallInfo: TLabel
       Left = 20
       Top = 64
-      Width = 274
+      Width = 273
       Height = 48
       Caption = 
         'All installed Recorder files and settings have been removed. You' +
