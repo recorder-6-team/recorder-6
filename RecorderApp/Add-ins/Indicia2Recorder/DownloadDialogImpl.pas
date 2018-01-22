@@ -65,6 +65,14 @@ type
     FRunning: boolean;
     Ffsiso: TFormatSettings;
     FKnownPeople: TStringList;
+    FFileLog: TStringList;
+    FEventsCreated: integer;
+    FEventsUpdated: integer;
+    FSamplesCreated: integer;
+    FSamplesUpdated: integer;
+    FOccurrencesCreated: integer;
+    FOccurrencesUpdated: integer;
+    FOccurrencesRejected: integer;
     procedure ActivateEvent(Sender: TObject);
     procedure ClickEvent(Sender: TObject);
     procedure CreateEvent(Sender: TObject);
@@ -78,7 +86,10 @@ type
     procedure FetchDownloadOptions;
     function GetDownloadType: string;
     function DateToIsoStr(date: TDateTime): string;
-    procedure Log(msg: string);
+    procedure Log(const msg: string);
+    procedure LogFile(const msg: string);
+    procedure ResetLogFile;
+    procedure SaveLogFile;
     procedure ImportRecords(records: TlkJSONbase; surveyKey: string);
     procedure ConnectToDb;
     procedure DisconnectFromDb;
@@ -326,6 +337,8 @@ begin
   FKnownPeople := TStringList.Create;
   FRunning := false;
   FSecret := '';
+  // A log file that contains useful information on the sync results.
+  FFileLog := TStringList.Create;
 end;
 
 function TDownloadDialog.Get_Active: WordBool;
@@ -618,6 +631,7 @@ begin
     Log('---------------------------------');
     Log(ResStr_DownloadStarting);
     Log('---------------------------------');
+    ResetLogFile;
     // Get a short date format for iso dates returned from the Indicia reports
     GetLocaleFormatSettings(LOCALE_SYSTEM_DEFAULT, Ffsiso);
     Ffsiso.DateSeparator := '-';
@@ -662,6 +676,7 @@ begin
       Log(ResStr_Done);
     finally
       FAttrs.Free;
+      SaveLogFile;
       CleanupTempTables;
       DisconnectFromDb;
       FRunning := false;
@@ -717,8 +732,11 @@ begin
       end;
     end else
       records := responseObj;
-    if assigned(records) then
+    LogFile('Survey: ' + surveyKey);
+    if assigned(records) then begin
       Log(Format(ResStr_ReceivedNRecords, [records.Count]));
+      LogFile(Format(ResStr_ReceivedNRecords, [records.Count]));
+    end;
     ImportRecords(records, surveyKey);
     FDone := FDone + records.Count;
   until FDone>=FTotal;
@@ -960,6 +978,7 @@ begin
         '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
+    Inc(FEventsCreated);
   end else
   begin
     // Update existing event
@@ -977,6 +996,7 @@ begin
         'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
         'WHERE survey_event_key=''' + sampleKey + '''');
+    Inc(FEventsUpdated);
   end;
   // Add a survey event recorder
   existing := FConnection.Execute('SELECT se_recorder_key FROM survey_event_recorder WHERE se_recorder_key=''' + sampleKey + '''');
@@ -1023,6 +1043,7 @@ begin
         '''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
+    Inc(FSamplesCreated);
   end else
   begin
     FConnection.Execute('UPDATE sample SET '+
@@ -1041,6 +1062,7 @@ begin
         'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
         'WHERE sample_key=''' + sampleKey + '''');
+    Inc(FSamplesUpdated);
   end;
   // sample recorders table
   existing := FConnection.Execute('SELECT sample_key FROM sample_recorder WHERE sample_key=''' + sampleKey +
@@ -1073,6 +1095,9 @@ begin
       'WHERE input_taxon_version_key=''' + thisrec.values['taxonversionkey'] + ''' AND recommended_taxon_list_item_key IS NOT NULL');
   if tli.RecordCount=0 then begin
     Log(Format(ResStr_CouldNotFindTVK, [thisrec.values['taxonversionkey'], thisrec.values['taxon']]));
+    LogFile('Record was not imported. TVK ' + thisrec.values['taxonversionkey']
+      + ' could not be found for record ' + VarToStr(thisrec.values['occurrence_id']) + '.');
+    Inc(FOccurrencesRejected);
     exit;
   end;
   vd.StartDate := StrToDate(thisrec.values['date_start'], Ffsiso);
@@ -1120,6 +1145,7 @@ begin
         '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
+    Inc(FOccurrencesCreated);
   end
   else begin
     // update existing taxon occurrence
@@ -1133,6 +1159,7 @@ begin
         'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
         'WHERE taxon_occurrence_key=''' + occKey + '''');
+    Inc(FOccurrencesUpdated);
   end;
   // Create a 1:1 relationship with a determination. At the moment we are not doing anything with the log of determinations, just the latest.
   existing := FConnection.Execute('SELECT taxon_determination_key FROM taxon_determination WHERE taxon_determination_key=''' + occKey + '''');
@@ -1396,10 +1423,56 @@ begin
   FConnection.Execute(sql, rows);
 end;
 
-procedure TDownloadDialog.Log(msg: string);
+procedure TDownloadDialog.Log(const msg: string);
 begin
   mmLog.Lines.Add(msg);
   Application.ProcessMessages;
+end;
+
+(**
+ * Logs a message to add to a log file.
+ *
+ * Keeps information useful regarding the history of Indicia2Recorder runs.
+ *)
+procedure TDownloadDialog.LogFile(const msg: string);
+begin
+  FFileLog.Add(msg);
+end;
+
+(**
+ * Clears the stringlist used to capture messages for the file log.
+ *)
+procedure TDownloadDialog.ResetLogFile;
+begin
+  FFileLog.Clear;
+  LogFile('Indicia2Recorder starts at ' + FormatDateTime('yyyy/mm/dd hh:mm:ss', Date));
+  FEventsCreated := 0;
+  FEventsUpdated := 0;
+  FSamplesCreated := 0;
+  FSamplesUpdated := 0;
+  FOccurrencesCreated := 0;
+  FOccurrencesUpdated := 0;
+  FOccurrencesRejected := 0;
+end;
+
+(**
+ * Saves the file log.
+ *)
+procedure TDownloadDialog.SaveLogFile;
+var ds: string;
+begin
+  LogFile('Summary');
+  LogFile('-------');
+  LogFile('Survey events created: ' + IntToStr(FEventsCreated));
+  LogFile('Survey events updated: ' + IntToStr(FEventsUpdated));
+  LogFile('Samples created: ' + IntToStr(FEventsUpdated));
+  LogFile('Samples updated: ' + IntToStr(FSamplesCreated));
+  LogFile('Taxon occurrences created: ' + IntToStr(FOccurrencesCreated));
+  LogFile('Taxon occurrences updated: ' + IntToStr(FOccurrencesUpdated));
+  LogFile('Taxon occurrences rejected: ' + IntToStr(FOccurrencesRejected));
+  ds := FormatDateTime('yyyy-mm-dd-hh-mm-ss', Date);
+  ForceDirectories(FSettingsFolder + 'Log');
+  FFileLog.SaveToFile(FSettingsFolder + 'Log/log-' + ds + '.txt');
 end;
 
 {*
@@ -1764,6 +1837,7 @@ begin
   FSurveys.Free;
   FDoneSignatures.Free;
   FKnownPeople.Free;
+  FFileLog.Free;
   inherited;
 end;
 

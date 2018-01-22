@@ -29,7 +29,7 @@ exports
   DllRegisterServer,
   DllUnregisterServer;
 
-{$R *.TLB}
+{$R *.tlb}
 
 {$R *.RES}
 

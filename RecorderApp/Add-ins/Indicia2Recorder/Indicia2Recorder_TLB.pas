@@ -12,10 +12,10 @@ unit Indicia2Recorder_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 04/12/2017 15:57:04 from Type Library described below.
+// File generated on 22/01/2018 13:01:52 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\Indicia2Recorder.tlb (1)
+// Type Lib: C:\localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\Indicia2Recorder.tlb (1)
 // LIBID: {50F9696E-9529-44B4-97D4-6EC8F4F8A9D2}
 // LCID: 0
 // Helpfile: 
@@ -255,21 +255,6 @@ type
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
   published
     property Anchors;
-    property  ParentColor;
-    property  ParentFont;
-    property  Align;
-    property  DragCursor;
-    property  DragMode;
-    property  ParentShowHint;
-    property  PopupMenu;
-    property  ShowHint;
-    property  TabOrder;
-    property  OnDragDrop;
-    property  OnDragOver;
-    property  OnEndDrag;
-    property  OnEnter;
-    property  OnExit;
-    property  OnStartDrag;
     property AutoScroll: WordBool index 202 read GetWordBoolProp write SetWordBoolProp stored False;
     property AutoSize: WordBool index 203 read GetWordBoolProp write SetWordBoolProp stored False;
     property AxBorderStyle: TOleEnum index 204 read GetTOleEnumProp write SetTOleEnumProp stored False;
@@ -313,7 +298,7 @@ const
     EventIID: '{AAC2E6CA-75E1-47C2-969C-B016891AD271}';
     EventCount: 8;
     EventDispIDs: @CEventDispIDs;
-    LicenseKey: nil (*HR:$00000000*);
+    LicenseKey: nil (*HR:$80040154*);
     Flags: $0000001D;
     Version: 401;
     FontCount: 1;
