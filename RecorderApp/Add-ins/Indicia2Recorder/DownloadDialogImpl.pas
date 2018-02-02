@@ -73,6 +73,7 @@ type
     FOccurrencesCreated: integer;
     FOccurrencesUpdated: integer;
     FOccurrencesRejected: integer;
+    FPeopleRecordInfo: TStringList;
     procedure ActivateEvent(Sender: TObject);
     procedure ClickEvent(Sender: TObject);
     procedure CreateEvent(Sender: TObject);
@@ -339,6 +340,7 @@ begin
   FSecret := '';
   // A log file that contains useful information on the sync results.
   FFileLog := TStringList.Create;
+  FPeopleRecordInfo := TStringList.Create;
 end;
 
 function TDownloadDialog.Get_Active: WordBool;
@@ -764,6 +766,7 @@ begin
     FAttrs.LoadFromFile(FSettingsFolder + 'config.txt');
     for i:=0 to FAttrs.Count-1 do begin
       def:=trim(FAttrs.Names[i]);
+      // Skip comments and blank lines in the attrs config file.
       if (Copy(def, 1, 1)<>'#') and (def<>'') then begin
         if CompareStr(Copy(def, 1, 8), 'smpAttr:')=0 then begin
           if FSmpAttrs<>'' then FSmpAttrs := FSmpAttrs+',';
@@ -1291,8 +1294,10 @@ begin
     end
     else
       result := 'NBNSYS0000000004';
+  end
+  else begin
+    FPeopleRecordInfo.Values[result] := 'Using configured known person with name ' + name;
   end;
-
 end;
 
 procedure TDownloadDialog.CreateIndividual(indkey: string; name: string);
@@ -1325,6 +1330,12 @@ begin
         '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
+    FPeopleRecordInfo.Values[indkey] := 'New person created for name ' + name;
+  end
+  else begin
+    if FPeopleRecordInfo.Values[indkey] = '' then begin
+      FPeopleRecordInfo.Values[indkey] := 'Existing person used for name ' + name;
+    end;
   end;
 end;
 
@@ -1445,7 +1456,7 @@ end;
 procedure TDownloadDialog.ResetLogFile;
 begin
   FFileLog.Clear;
-  LogFile('Indicia2Recorder starts at ' + FormatDateTime('yyyy/mm/dd hh:mm:ss', Date));
+  LogFile('Indicia2Recorder started at ' + FormatDateTime('yyyy/mm/dd hh:mm:ss', Date));
   FEventsCreated := 0;
   FEventsUpdated := 0;
   FSamplesCreated := 0;
@@ -1453,6 +1464,7 @@ begin
   FOccurrencesCreated := 0;
   FOccurrencesUpdated := 0;
   FOccurrencesRejected := 0;
+  FPeopleRecordInfo.Clear;
 end;
 
 (**
@@ -1470,6 +1482,9 @@ begin
   LogFile('Taxon occurrences created: ' + IntToStr(FOccurrencesCreated));
   LogFile('Taxon occurrences updated: ' + IntToStr(FOccurrencesUpdated));
   LogFile('Taxon occurrences rejected: ' + IntToStr(FOccurrencesRejected));
+  // Add the information about people linked to
+  LogFile('Person records');
+  FFileLog.AddStrings(FPeopleRecordInfo);
   ds := FormatDateTime('yyyy-mm-dd-hh-mm-ss', Date);
   ForceDirectories(FSettingsFolder + 'Log');
   FFileLog.SaveToFile(FSettingsFolder + 'Log/log-' + ds + '.txt');
