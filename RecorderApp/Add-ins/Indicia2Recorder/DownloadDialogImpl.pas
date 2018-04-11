@@ -60,6 +60,7 @@ type
     FTotal: integer;
     FSettingsFolder: string;
     FAttrs: TStringList;
+    FAttrTermMappings: TStringList;
     FSmpAttrs: string;
     FOccAttrs: string;
     FRunning: boolean;
@@ -678,6 +679,10 @@ begin
       Log(ResStr_Done);
     finally
       FAttrs.Free;
+      for i := 0 to FAttrTermMappings.Count-1 do begin
+        FAttrTermMappings.Objects[i].Free;
+      end;
+      FAttrTermMappings.Free;
       SaveLogFile;
       CleanupTempTables;
       DisconnectFromDb;
@@ -734,6 +739,7 @@ begin
       end;
     end else
       records := responseObj;
+    LogFile('');
     LogFile('Survey: ' + surveyKey);
     if assigned(records) then begin
       Log(Format(ResStr_ReceivedNRecords, [records.Count]));
@@ -758,8 +764,11 @@ procedure TDownloadDialog.LoadAttrConfig;
 var
   i: integer;
   def: string;
+  termMappingsFileName: string;
+  termMappings: TStringList;
 begin
   FAttrs := TStringList.Create;
+  FAttrTermMappings := TStringList.Create;
   FSmpAttrs := '';
   FOccAttrs := '';
   if FileExists(FSettingsFolder + 'config.txt') then begin
@@ -778,6 +787,13 @@ begin
         end
         else
           raise EDownloadDialogConfigException.Create(Format(ResStr_InvalidConfigLine, [i+1]));
+        // Is there a config file for mapping terms for this attribute?
+        termMappingsFileName := StringReplace(def, ':', '', []) + 'TermMappings.txt';
+        if FileExists(FSettingsFolder + termMappingsFileName) then begin
+          termMappings := TStringList.Create;
+          termMappings.LoadFromFile(FSettingsFolder + termMappingsFileName);
+          FAttrTermMappings.AddObject(def, termMappings);
+        end;
       end;
     end;
   end;
@@ -1092,13 +1108,22 @@ var
   existing, tli: _Recordset;
   zeroAbundance, confidential, verified, tlikey, determiner, comment: string;
   vd: TVagueDate;
+  nameInfo: string;
 begin
   existing := FConnection.Execute('SELECT taxon_occurrence_key FROM taxon_occurrence WHERE taxon_occurrence_key=''' + occKey + '''');
+
+  {*******************************************}
+  if thisrec.values['taxonversionkey'] = 'DSS0043900189B61' then begin
+    thisrec.values['taxonversionkey'] := 'NBNSYS0000009391';
+  end;
+  {*******************************************}
+
+
   tli := FConnection.Execute('SELECT recommended_taxon_list_item_key FROM nameserver ' +
       'WHERE input_taxon_version_key=''' + thisrec.values['taxonversionkey'] + ''' AND recommended_taxon_list_item_key IS NOT NULL');
   if tli.RecordCount=0 then begin
     Log(Format(ResStr_CouldNotFindTVK, [thisrec.values['taxonversionkey'], thisrec.values['taxon']]));
-    LogFile('Record was not imported. TVK ' + thisrec.values['taxonversionkey']
+    LogFile('Indicia record ' + thisrec.values['occurrence_id'] + ' was not imported. TVK ' + thisrec.values['taxonversionkey']
       + ' could not be found for record ' + VarToStr(thisrec.values['occurrence_id']) + '.');
     Inc(FOccurrencesRejected);
     exit;
@@ -1127,6 +1152,12 @@ begin
     verified := '1'
   else
     verified := '0';
+  if thisrec.values['recorder']='' then
+    nameInfo := 'Recorder: <not specified>'
+  else
+    nameInfo := 'Recorder: ' + thisrec.values['recorder'];
+  if thisrec.values['determiner']<>'' then
+    nameInfo := nameInfo + ', determiner: ' + thisrec.values['determiner'];
   if existing.RecordCount=0 then begin
     // insert new taxon occurrence
     FConnection.Execute('INSERT INTO taxon_occurrence (taxon_occurrence_key, comment, zero_abundance, confidential, verified, '+
@@ -1149,6 +1180,8 @@ begin
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
     Inc(FOccurrencesCreated);
+    LogFile('Taxon occurrence ' + occKey + ' was created from Indicia record ' + thisrec.values['occurrence_id'] + '. '+
+      nameInfo);
   end
   else begin
     // update existing taxon occurrence
@@ -1163,6 +1196,8 @@ begin
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
         'WHERE taxon_occurrence_key=''' + occKey + '''');
     Inc(FOccurrencesUpdated);
+    LogFile('Existing taxon occurrence ' + occKey + ' was updated from Indicia record ' +
+      thisrec.values['occurrence_id'] + '. ' + nameInfo);
   end;
   // Create a 1:1 relationship with a determination. At the moment we are not doing anything with the log of determinations, just the latest.
   existing := FConnection.Execute('SELECT taxon_determination_key FROM taxon_determination WHERE taxon_determination_key=''' + occKey + '''');
@@ -1220,7 +1255,7 @@ end;
 procedure TDownloadDialog.CreateData(thisrec: TStringList; table, key, prefix, fieldTag: string);
 var i: integer;
   dataKey, def, attrId, mu_key, mq_key, val: string;
-  temp: TStringList;
+  temp, mappings: TStringList;
   existing: _Recordset;
 begin
   temp := TStringList.Create;
@@ -1235,6 +1270,12 @@ begin
           else
             val:=thisrec.values['attr_'+fieldTag+'_'+attrId];
           val := EscapeSqlLiteral(val, 20);
+          // Allow configuration to map the value
+          if FAttrTermMappings.IndexOf(def) > -1 then begin
+            mappings := TStringList(FAttrTermMappings.Objects[FAttrTermMappings.IndexOf(def)]);
+            if mappings.IndexOfName(val) > -1 then
+              val := mappings.Values[val];
+          end;
           dataKey := FRemoteSiteID + IdToKey(StrToInt(thisrec.values['attr_id_'+fieldTag+'_'+attrId]));
           temp.CommaText := FAttrs.Values[FAttrs.Names[i]];
           mu_key := temp[0];
@@ -1473,19 +1514,22 @@ end;
 procedure TDownloadDialog.SaveLogFile;
 var ds: string;
 begin
+  LogFile('');
   LogFile('Summary');
   LogFile('-------');
   LogFile('Survey events created: ' + IntToStr(FEventsCreated));
   LogFile('Survey events updated: ' + IntToStr(FEventsUpdated));
-  LogFile('Samples created: ' + IntToStr(FEventsUpdated));
-  LogFile('Samples updated: ' + IntToStr(FSamplesCreated));
+  LogFile('Samples created: ' + IntToStr(FSamplesCreated));
+  LogFile('Samples updated: ' + IntToStr(FSamplesUpdated));
   LogFile('Taxon occurrences created: ' + IntToStr(FOccurrencesCreated));
   LogFile('Taxon occurrences updated: ' + IntToStr(FOccurrencesUpdated));
   LogFile('Taxon occurrences rejected: ' + IntToStr(FOccurrencesRejected));
   // Add the information about people linked to
+  LogFile('');
   LogFile('Person records');
+  LogFile('--------------');
   FFileLog.AddStrings(FPeopleRecordInfo);
-  ds := FormatDateTime('yyyy-mm-dd-hh-mm-ss', Date);
+  ds := FormatDateTime('yyyy-mm-dd-hh-mm-ss', Now);
   ForceDirectories(FSettingsFolder + 'Log');
   FFileLog.SaveToFile(FSettingsFolder + 'Log/log-' + ds + '.txt');
 end;
