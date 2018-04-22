@@ -434,7 +434,6 @@ begin
     // Pass it to UpdateEvent - True means to set all the samples under that event
     UpdateEvent(eventKey, sampleKey, newValues, oldValues, True);
     UpdateDeterminations(sampleKey, newValues, nil);
-
     if updateSiblings then
       UpdateSamples(eventKey, sampleKey, newValues, oldValues, True);
   end else
@@ -501,17 +500,18 @@ begin
                '@PreviousTypeValue',  oldValues.ValueFromIndex[i + 2]]);
           next := i + 3;
         end else
-        if AnsiSameText(newValues.Names[i], 'Spatial_Ref') then
+          if AnsiSameText(newValues.Names[i], 'Spatial_Ref') then
           dmDatabase.RunStoredProc(
               'usp_Event_Cascade_Spatial_Ref_FromSample',
               ['@SampleKey',     sampleKey,
                '@PreviousValue', oldValues.ValueFromIndex[i]])
         else
           dmDatabase.RunStoredProc(
-              'usp_Event_Cascade_' + newValues.Names[i] + '_FromSample',
-              ['@EventKey',      eventKey,
+               'usp_Event_Cascade_' + newValues.Names[i] + '_FromSample',
+               ['@EventKey',      eventKey,
                '@Value',         newValues.ValueFromIndex[i],
-               '@PreviousValue', oldValues.ValueFromIndex[i]]);
+               '@PreviousValue', NULL]);
+          end;
   end;    // if (setAll)
 end;  // UpdateEvent
 

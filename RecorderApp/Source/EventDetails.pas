@@ -50,7 +50,7 @@ resourcestring
   ResStr_SpatialRef = 'Spatial Reference';
   ResStr_LocationName = 'Location Name';
   ResStr_Location = 'Location';
-  
+
 
 type
   EEventDetailsError = class(TExceptionPath);
@@ -99,12 +99,14 @@ type
     bbRecorderAdd: TImageListButton;
     bbRecorderRemove: TImageListButton;
     cmbRecorderRole: TComboBox;
+    bbRecorderReplace: TImageListButton;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbSaveClick(Sender: TObject);
     procedure bbCancelClick(Sender: TObject);
     procedure bbRecorderFindClick(Sender: TObject);
     procedure bbRecorderAddClick(Sender: TObject);
     procedure bbRecorderRemoveClick(Sender: TObject);
+    procedure bbRecorderReplaceClick(Sender: TObject);
     procedure sgRecordersDrawCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);
     procedure cmbRecorderRoleExit(Sender: TObject);
@@ -139,12 +141,17 @@ type
     procedure SetupObjects;
     procedure FreeObjects;
     procedure UpdateRecorders(KeyList: TKeyList);
+    procedure ChangeRecorders(KeyList: TKeyList);
     procedure UpdateEventOwner(KeyList: TKeyList);
     procedure AddRecorder(const ANameKey: TKeyString);
+    procedure ModifyRecorder(const ANameKey: TKeyString);
     procedure DropRecorder(const Sender: TObject; const iFormat: integer;
       const iSourceData: TKeyList; const iTextStrings: TStringList;
       var ioHandled: boolean);
     function RecorderUsedInSample(const AKey: TKeyString): boolean;
+    function MultipleRecordersInSample(const AKey: TKeyString): boolean;
+    function Survey_Event_Recorder_Name_Changed(const ASERKey,ANameKey: string ): boolean;
+    function Survey_Event_Recorder_Name_Added(const ASEKey: string; AStringList: TStringList): boolean;
     procedure DeleteOwnership(ioRowKey: string);
     procedure UpdateOwnership(var ioRowKey: string; iData: TStringList);
     procedure FindSurveyEventOwnerName(const AInitialText: string;
@@ -152,7 +159,8 @@ type
     procedure GetSurveyEventOwnerName;
     procedure ValidateOwnershipNames;
     procedure CascadeEventChanges(AChanges, APreviousValues : TStringList; EventKey: TKeyString);
-
+    procedure CascadeRecorderToSamples(const ASEKey : string);
+    procedure CascadeDeterminer(const AKeyList:TStringList);
     procedure UpdateSamples(AChanges, AChangeValues, APreviousValues: TStringList; ASetAll: boolean);
     function GetEventValue(aKey: string): string;
     procedure UpdateSamplesInInterface;
@@ -284,18 +292,19 @@ procedure TfrmEventDetails.Refreshlists;
 var iCount :integer;
     lNewKey:TKeyData;
 begin
-  // Objects in Role list
+  // Objects in Role list sorted by long_name
   with cmbRecorderRole.Items do begin
     for iCount:=0 to Count-1 do Objects[iCount].Free;
     Clear;
-    with FdmEvent.tblRole do begin
-      First;
+    with FdmEvent.qryRole do begin
+      open;
       while not Eof do begin
         lNewKey:=TKeyData.Create;
         lNewKey.ItemKey:=FieldByName('Recorder_Role_Key').AsString;
         AddObject(FieldByName('Short_Name').AsString,lNewKey);
         Next;
       end;
+      close;
     end;
   end;
   //Need to refresh role list if not in edit mode
@@ -446,6 +455,8 @@ var lCurrentTab : TTabSheet;
     lCursor     : TCursor;
     lCustodian  : String;
     lChangedED  : TStringList; //Stores the list of changes made to the event
+    lPreviousSR  : TStringList; //Stores the list of previous Sample Recorder key
+    lPreviousSER  : TStringList; //Stores the list of previous Survey Event Recorder Key
     lPreviousValues: TStringList; //Stores the previous values of the changed fields
 begin
   inherited;
@@ -486,6 +497,8 @@ begin
   lCursor:=HourglassCursor;
   lChangedED := TStringList.Create;
   lPreviousValues := TStringList.Create;
+  lPreviousSR := TStringList.Create;
+  lPreviousSER := TStringList.Create;
   try
     lCustodian := dmGeneralData.Custodian('Survey_Event', 'Survey_Event_Key', EventKey);
     if ((AppSettings.UserAccessLevel>ualAddOnly) and (lCustodian = AppSettings.SiteID))
@@ -548,7 +561,6 @@ begin
             FieldByName('Survey_Event_Key').AsString := EventKey;   // New Event key
           end;
           Post;
-
           //Cascade changes with user permission if not in add mode
           if not (EditMode = emAdd) then
             if (lChangedED.Count > 0) then
@@ -560,9 +572,42 @@ begin
       FdmEvent.qryEvent.Cancel;
       MessageDlg(Format(ResStr_CustodyChanged, [ResStr_SurveyEvent]), mtWarning, [mbOk], 0);
     end;
+    //Store Sample Recorder (SER Key and the Name key)
+    with dmGeneralData.qryAllPurpose do begin
+      SQL.Text := ' SELECT Distinct SR.SE_Recorder_Key,SER.Name_Key ' +
+                  ' FROM Sample_Recorder SR ' +
+                  ' INNER JOIN Survey_Event_Recorder SER  ON ' +
+                  ' SR.SE_Recorder_Key = SEr.SE_Recorder_Key ' +
+                  ' WHERE SER.Survey_Event_Key = ''' + EventKey +'''';
+      Open;
+        While not eof do begin
+          lPreviousSR.Add(Fields[0].Value + '=' + Fields[1].Value);
+          lPreviousSER.Add(Fields[0].Value);
+        next;
+        end;
+      Close;
+    end;
     // Event recorder
     FEventRecorderList.EventKey := EventKey;
     FEventRecorderList.Update;
+    //Checks to see if any new Recorders. If so ask user if wishes to cascade these to the Sample Recorder
+    //If option is chosen then all Recorders will be added to all samples not just the new Recorders.
+    if Survey_Event_Recorder_Name_Added(EventKey,lPreviousSER) then begin
+      if MessageDlg(ResStr_AddSampleRecorders, mtConfirmation,[mbNo,mbYes],0)=mrYes then
+        CascadeRecorderToSamples(EventKey);
+    end;
+    //Cascade Determiner
+    // Check to see if any changes have been made to Names for a SER key
+    // If so then user may opt to Cascade these changes to the Determiner
+    for i := 0 to lPreviousSR.Count-1 do
+    begin
+      if Survey_Event_Recorder_Name_Changed(lPreviousSR.Names[i],lPreviousSR.ValueFromIndex[i]) then begin
+        if MessageDlg(ResStr_CascadeDeterminer, mtConfirmation,[mbNo,mbYes],0)=mrYes then
+          CascadeDeterminer(lPreviousSR);
+        break;
+      end;
+    end;
+
     // ownership tab
     if Assigned(FOwnershipGridManager) then
       FOwnershipGridManager.Save;
@@ -582,6 +627,8 @@ begin
     DefaultCursor(lCursor);
     FreeAndNil(lChangedED);
     FreeAndNil(lPreviousValues);
+    FreeAndNil (lPreviousSR);
+    FreeAndNil (lPreviousSER);
   end;
 end;  // bbSaveClick
 {-------------------------------------------------------------------------------
@@ -747,6 +794,7 @@ begin
             else Options:=Options+[goRowSelect];
   bbRecorderFind.Enabled  :=tfOn;
   bbRecorderAdd.Enabled   :=tfOn;
+  bbRecorderReplace.Enabled :=tfOn;
   sgRecordersClick(nil);
   Sources.EditMode        :=NewMode;
 
@@ -838,7 +886,20 @@ begin
   else if lstItem='' then // organisation so show message
     MessageDlg(ResStr_NoOrgRecorders, mtInformation, [mbOk], 0);
 end;  // AddRecorder
-
+//------------------------------------------------------------------------------
+procedure TfrmEventDetails.ModifyRecorder(const ANameKey:TKeyString);
+var lstItem   :string;
+     var lDataItem:TEventRecorderItem;
+ begin
+  inherited;
+  lstItem:=dmGeneralData.GetIndividualName(ANameKey);
+  if (sgRecorders.Cols[0].IndexOf(lstItem)=-1) and (lstItem<>'') then begin
+    lDataItem:=TEventRecorderItem(sgRecorders.Rows[sgRecorders.Row].Objects[0]);
+    lDataItem.NameKey:=ANameKey;
+  end
+  else if lstItem='' then // organisation so show message
+    MessageDlg(ResStr_NoOrgRecorders, mtInformation, [mbOk], 0);
+end;  // AddRecorder
 //------------------------------------------------------------------------------
 procedure TfrmEventDetails.bbRecorderAddClick(Sender: TObject);
 var
@@ -869,6 +930,38 @@ begin
     Close;
   end;
 end;  // RecorderUsedInSample
+//------------------------------------------------------------------------------
+function TfrmEventDetails.MultipleRecordersInSample(const AKey:TKeyString):boolean;
+// Determine if all Sample with this Recorder have mutiple entries
+// If not we can't delete the Recorder
+var
+  sampleKeys : TStringList;
+  i : integer;
+begin
+  sampleKeys := TStringList.Create;
+  with dmGeneralData.qryAllPurpose do begin
+    SQL.Text := 'Select Sample_Key from Sample_Recorder WHERE SE_Recorder_Key = '''+AKey+'''';
+    Open;
+    While not eof do begin
+      sampleKeys.Add(('''' + Fields[0].Value + ''''));
+      Next;
+    end;
+    Close;
+  end;
+  Result := true;
+  for i := 0 to sampleKeys.Count -1 do begin
+    with dmGeneralData.qryAllPurpose do begin
+      SQL.Text := 'Select count(*) as SRCount from Sample_Recorder WHERE ' +
+                  ' Sample_Key = ' + sampleKeys[i] + ' AND SE_Recorder_Key <>  ''' + AKey+'''';
+      Open;
+      If Fields[0].Value = 0 then  Result := false;
+      Close;
+    end;
+    if Result = false then Break
+  end;
+  sampleKeys.Free;
+
+end;  // Multiple Sample
 
 //------------------------------------------------------------------------------
 procedure TfrmEventDetails.bbRecorderRemoveClick(Sender: TObject);
@@ -885,10 +978,31 @@ begin
         sgRecordersClick(nil);
       end;
     end else
-      MessageDlg(ResStr_UncheckRecorder, mtInformation, [mbOk], 0);
+      If MultipleRecordersInSample(TEventRecorderItem(Objects[0,Row]).ItemKey) then begin
+        if MessageDlg(ResStr_DeleteRecord,
+                    mtConfirmation,[mbNo,mbYes],0)=mrYes then begin
+          FEventRecorderList.DeleteItem(Row);
+          cmbRecorderRole.Visible:=false;
+          sgRecordersClick(nil);
+        end;
+      end
+      else
+        MessageDlg(ResStr_SampleNoRecorders, mtInformation, [mbOK], 0);
+
   end;
 end;  // bbRecorderRemoveClick
 
+//---------------------------------------------------------------------------
+procedure TfrmEventDetails.bbRecorderReplaceClick(Sender: TObject);
+begin
+  inherited;
+  with sgRecorders do begin
+    if not TEventRecorderItem(Objects[0,Row]).CanDelete then
+      raise EEventDetailsError.CreateNonCritical(ResStr_NotAllowedToDeleteOtherPersonsData);
+  end;
+  dmFormActions.actNames.Execute;
+  SetupLink(TBaseForm(frmMain.ActiveMDIChild), Self, ChangeRecorders);
+end;  // bbRecorderReplaceClick
 
 //------------------------------------------------------------------------------
 procedure TfrmEventDetails.bbRecorderFindClick(Sender: TObject);
@@ -904,6 +1018,16 @@ begin
   try
     if (KeyList<>nil) and (KeyList.Header.ItemCount>0) then
       AddRecorder(KeyList.Items[0].KeyField1);
+  finally
+    KeyList.Free;
+  end;
+end;  // UpdateRecorders
+//------------------------------------------------------------------------------
+procedure TfrmEventDetails.ChangeRecorders(KeyList:TKeyList);
+begin
+  try
+    if (KeyList<>nil) and (KeyList.Header.ItemCount>0) then
+      ModifyRecorder(KeyList.Items[0].KeyField1);
   finally
     KeyList.Free;
   end;
@@ -977,7 +1101,7 @@ begin
 end;  // ExitRTF
 
 //==============================================================================
-procedure TfrmEventDetails.pnlDetailsResize(Sender: TObject); 
+procedure TfrmEventDetails.pnlDetailsResize(Sender: TObject);
 var
   deltaWidth, deltaHeight, availableHeight, thirdHeight : Integer;
 begin
@@ -1322,4 +1446,56 @@ begin
     AddRecorder(AppSettings.UserId);
 end;
 
+{-------------------------------------------------------------------------------
+  Cascades a Survey Event Recorders into all samples for the event
+}
+procedure TfrmEventDetails.CascadeRecorderToSamples(const ASEKey: string);
+begin
+ dmDatabase.RunStoredProc('usp_Cascade_Sample_Recorders', ['@Key', ASEKey]);
+end;
+{-------------------------------------------------------------------------------
+  Cascades any changed Survey Event Recorders into the TDET determiner
+}
+procedure TfrmEventDetails.CascadeDeterminer(const AKeyList: TStringList );
+var i:integer;
+begin
+  for i := 0 to AKeYList.Count-1 do
+    dmDatabase.RunStoredProc('usp_Cascade_To_Determination', ['@SERKey', AKeyList.Names[i],'@NameKey',AKeyList.ValueFromIndex[i]]);
+end;
+//==============================================================================
+function TfrmEventDetails.Survey_Event_Recorder_Name_Changed(const ASERKey,ANameKey: string ): boolean;
+begin
+  // A bit of a fudge here to avoid using 'EXISTS' so that dmGeneralData.qryAllPurpose can be used
+  with dmGeneralData.qryAllPurpose do begin
+    SQL.Text := ' SELECT * FROM Survey_Event_Recorder SER ' +
+                ' WHERE SER.SE_Recorder_Key = ''' + ASERKey +'''' +
+                ' AND SER.Name_key <> ''' + ANameKey + '''' +
+                ' AND 1 = (Select 1 from Survey_Event_Recorder WHERE ' +
+                ' SE_Recorder_Key = ''' + ASERKey + ''')';
+    Open;
+      Result := not eof;
+    Close;
+  end;
+end;
+
+//==============================================================================
+function TfrmEventDetails.Survey_Event_Recorder_Name_Added(const ASEKey: string; AStringList:TStringList): boolean;
+begin
+  // Dont offer option if there are no samples
+  Result := false;
+  with dmGeneralData.qryAllPurpose do begin
+    SQL.Text := ' SELECT SE_Recorder_Key FROM Survey_Event_Recorder  ' +
+                ' INNER JOIN SAMPLE  on SAMPLE.Survey_Event_Key' +
+                ' = Survey_Event_Recorder.Survey_Event_Key ' +
+                ' WHERE Survey_Event_Recorder.Survey_Event_key = ''' + ASEKey +'''';
+    Open;
+      while not eof do begin
+       if AStringList.IndexOf(Fields[0].Value) = -1 then begin
+         Result:=true;
+       end;
+       next;
+      end;
+    Close;
+  end;
+end;
 end.

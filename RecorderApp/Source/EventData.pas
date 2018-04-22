@@ -54,6 +54,8 @@ type
     qryOwnershipDisplayName: TStringField;
     qryOwnershipShort_Name: TStringField;
     qryOwnershipEntered_By: TStringField;
+    qrySampleRecorder: TJNCCQuery;
+    qryRole: TJNCCQuery;
   private
     { Private declarations }
   public
@@ -138,6 +140,7 @@ begin
   qryEvent.Close;
   qryRecorder.Close;
   qryLocationName.Close;
+  qrySampleRecorder.Close;
   inherited Destroy;
 end;  // Destroy
 
@@ -268,6 +271,7 @@ begin
   qrySER:=TJnccQuery.Create(nil);
   try
     dmDatabase.SetDatabaseLocal([qrySER]);
+    DeleteFromTable(qrySER,'Sample_Recorder','SE_Recorder_Key');
     DeleteFromTable(qrySER,'Survey_Event_Recorder','SE_Recorder_Key');
   finally
     qrySER.Free;
@@ -280,7 +284,7 @@ constructor TEventRecorderItem.CreateFromRecord(aOwner: TCacheDataList; iDataSet
 begin
   inherited;
   FCanDelete := (AppSettings.UserAccessLevel >= ualFullUser) and
-             (Custodian = AppSettings.SiteID) and  
+             (Custodian = AppSettings.SiteID) and
              ((not AppSettings.RestrictFullEdit) or
              (iDataset.FieldByName('Entered_By').AsString=AppSettings.UserID));
   FCanEdit := FCanDelete;

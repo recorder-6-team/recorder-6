@@ -334,6 +334,7 @@ type
     procedure GetSpatialRefForEvent(const AKey: TKeyString;
       out SRef, sRefSys, LocName: String);
     function CheckRecordersInEvent(const ASampleKey, AnEventKey: TKeyString): Boolean;
+    procedure AddRecordersToNewEvent(const ASampleKey, AnEventKey: TKeyString);
     procedure ReSortSurvey(const ASort: String);
     function CheckedSelectedNode(ANode: TFlyNode; NodeType: TNodeType;
       const AKey: TKeyString): TFlyNode;
@@ -2495,9 +2496,13 @@ begin
         lValidResult := dmValidation.CheckSampleInEvent(lDestData.ItemKey, sRef, LocKey, sRefSys);
         ValidateValue(lValidResult.Success, ResStr_SampleCannotMove + lValidResult.Message);
       end;
+     //Mike
+      If Not CheckRecordersInEvent(AKey, lDestData.ItemKey) then begin
+        if MessageDlg(ResStr_RecorderNotInSample, mtConfirmation,[mbNo, mbYes], 0) = mrYes then
+          AddRecordersToNewEvent(AKey, lDestData.ItemKey);
+      end;
+      ValidateValue(CheckRecordersInEvent(AKey, lDestData.ItemKey),ResStr_SampleCannotMove+ResStr_RecorderNotInEvent);
 
-      ValidateValue(CheckRecordersInEvent(AKey, lDestData.ItemKey),
-                    ResStr_SampleCannotMove + ResStr_RecorderNotInEvent);
       //All validation complete move the Sample
       if MessageDlg(Format(AMsg, [GetSampleName(AKey), ADestNode.Text]),
                     mtConfirmation, [mbOK, mbCancel], 0) = idOK then
@@ -4364,6 +4369,7 @@ begin
            (pcTaxonOccurrence.ActivePage = tsRelatedOccurrences) or
            (pcTaxonOccurrence.ActivePage = tsSpecimens) or
            (pcTaxonOccurrence.ActivePage = tsSources) or
+           (pcTaxonOccurrence.ActivePage = tsPrivate) or
            (pcTaxonOccurrence.ActivePage = tsMeasurements)then
           Result:= emNone;
 
@@ -5456,7 +5462,7 @@ begin
   BringToFront; // in case popup activated when not the active mdi child, which can happen
   frmMain.PopulateBatchUpdateSubMenu(tvObservations.Selected, pmHBatchUpdate);
 end;
-    
+
 {-------------------------------------------------------------------------------
 }
 procedure TfrmObservations.ApplySecurity;
@@ -5562,7 +5568,7 @@ begin
 
     FDynamicMenuLists.Clear;
 
-    //Get the IDynamicMenuLists defined by each INodeMenuManager 
+    //Get the IDynamicMenuLists defined by each INodeMenuManager
     for i := 0 to Appsettings.ComAddins.NodeMenuManagers.Count - 1 do
     begin
       FDynamicMenuLists.Add(
@@ -5598,6 +5604,41 @@ begin
     SQL[SQL.Count-1]:='ORDER BY ITN.Sort_Order';
   UpdateOrder(tvObservations.Selected);
 end;
+
+{Adds the Recorders from the old event to the new event}
+Procedure TfrmObservations.AddRecordersToNewEvent(const ASampleKey, AnEventKey: TKeyString);
+var  AStringList:TStringList;
+     k :integer;
+begin
+  AStringList := TStringList.Create;
+  try
+    with dmGeneralData.qryAllPurpose do
+    try
+      //Get the recorders Name Keys
+      SQL.Text :=
+         'SELECT SER.Name_Key ' +
+         'FROM Sample_Recorder SR INNER JOIN Survey_Event_Recorder SER ' +
+         '     ON SR.SE_Recorder_Key = SER.SE_Recorder_Key ' +
+         'WHERE Sample_Key = ' + QuotedStr(ASampleKey);
+      Open;
+      while not Eof do begin
+        AStringList.Add(FieldByName('Name_Key').AsString);
+        Next;
+      end;
+      Close;
+
+      for k := AStringList.Count - 1 downto 0 do
+        dmDatabase.RunStoredProc('usp_SER_Sample_Recorder_Insert',
+        ['@SampleKey', ASampleKey, '@NameKey', AStringList.strings[k], '@SEKey', AnEventKey]);
+
+    finally
+      Close;
+    end;
+  finally
+    AStringList.Free;
+  end;
+end;
+
 
 end.
 
