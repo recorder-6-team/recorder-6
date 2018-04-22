@@ -6,7 +6,9 @@
 //               TRelOccList
 //               TSpecimenItem
 //               TSpecimenList
-//
+//               TPrivateDataItem
+//               TPrivateDataList
+
 //  Description: Implements data access functionality for the taxon occurrence
 //               screen.
 //
@@ -14,8 +16,8 @@
 //               Helper classes used on the Related Occurrences tab of the
 //               details screen.
 //
-//               TSpecimenItem and TSpecimenList
-//               Helper classes used on the Specimen tab of the details screen.
+//               TPrivateDataItem and TPrivateDataList
+//               Helper classes used on the External Ref tab of the details screen.
 //
 //  Author:      Paul Thomas
 //  Created:     23 April 1999
@@ -60,6 +62,9 @@ type
     qrySpecType: TJNCCQuery;
     dsSpecType: TDataSource;
     qryNameFromOcc: TJNCCQuery;
+    qryTaxonPrivateDetail: TJNCCQuery;
+    dsPrivateType: TDataSource;
+    qryPrivateType: TJNCCQuery;
   private
     { Private declarations }
   public
@@ -153,7 +158,50 @@ type
     property OccKey:TKeyString read FOccKey write FOccKey;
   end;  // TSpecimenList
 
-//==============================================================================
+ //============================================================================
+  TPrivateDataItem = class(TGridDataItem)
+  private
+    FPrivateComment: TMemoryStream;
+    FPrivateItemName: string;
+    FPrivateDate: string;
+    FPrivateValue:string;
+    FPrivateDetail: string;
+    FPrivateTypeKey: TKeyString;
+    FPrivateType: string;
+    procedure SetPrivateItemName(const Value: string);
+    procedure SetPrivateDate(const Value: string);
+    procedure SetPrivateValue(const Value: string);
+    procedure SetPrivateDetail(const Value: string);
+    procedure SetPrivateTypeKey(const Value: TKeyString);
+    procedure SetPrivateType(const Value: string);
+  protected
+    procedure InitFromRecord( iDataset : TDataset ); override;
+    procedure WriteToRecord( iDataset : TDataset ); override;
+    function GetCell( const iX : integer ): string; override;
+  public
+    constructor CreateNew(AOwner:TCacheDataList); override;
+    destructor Destroy; override;
+    property PrivateItemName:string read FPrivateItemName write SetPrivateItemName;
+    property PrivateDate:string read FPrivateDate write SetPrivateDate;
+    property PrivateValue:string read FPrivateValue write SetPrivateValue;
+    property PrivateDetail:string read FPrivateDetail write SetPrivateDetail;
+    property PrivateTypeKey:TKeyString read FPrivateTypeKey write SetPrivateTypeKey;
+    property PrivateType:string read FPrivateType write SetPrivateType;
+    property PrivateComment:TMemoryStream read FPrivateComment;
+  end;  // TPrivateDataItem
+
+//----------------------------------------------------------------------------
+  TPrivateDataList = class(TGridDataList)
+  private
+    FOccKey: TKeyString;
+  protected
+    function ItemsDisplayName: String; override;
+    procedure DoAdditions;
+    procedure ProcessUpdate; override;
+  public
+    property OccKey:TKeyString read FOccKey write FOccKey;
+  end;  // TPrivateDataList
+
 implementation
 
 {$R *.DFM}
@@ -245,10 +293,11 @@ end;  // TdmTaxonOccurrences.GetNameFromOcc
 procedure TdmTaxonOccurrences.DeleteRecord(const ATaxOccKey: TKeyString);
 begin
   with dmGeneralData do begin
+    ExecuteSQL('DELETE FROM Taxon_Private_Data WHERE Taxon_Occurrence_Key = '''+ATaxOccKey+'''',
+               ResStr_DelFail+' - TAXON_PRIVATE_DATA');
     ExecuteSQL('DELETE FROM Taxon_Occurrence_Relation WHERE Taxon_Occurrence_Key_1 = '''+ATaxOccKey+'''',
                ResStr_DelFail+' - TAXON_OCCURRENCE_RELATION');
     DelSources('Taxon_Occurrence_Sources','Taxon_Occurrence_Key',ATaxOccKey);
-
     ExecuteSQL('DELETE FROM Taxon_Occurrence_Data WHERE Taxon_Occurrence_Key = '''+ATaxOccKey+'''',
                ResStr_DelFail+' - TAXON_OCCURRENCE_DATA');
     ExecuteSQL('DELETE FROM Taxon_Determination WHERE Taxon_Occurrence_Key = '''+ATaxOccKey+'''',
@@ -564,4 +613,167 @@ begin
 end;  // TSpecimenList.ProcessUpdate
 
 //==============================================================================
+//==============================================================================
+{ TPrivateDataItem }
+constructor TPrivateDataItem.CreateNew(AOwner: TCacheDataList);
+begin
+  inherited CreateNew(AOwner);
+  FPrivateComment:=TMemoryStream.Create;
+end;  // TPrivateDataItem.CreateNew
+
+//------------------------------------------------------------------------------
+destructor TPrivateDataItem.Destroy;
+begin
+  FPrivateComment.Free;
+  inherited Destroy;
+end;  // TPrivateDataItem.Destroy
+
+//------------------------------------------------------------------------------
+function TPrivateDataItem.GetCell(const iX: integer): string;
+begin
+  case iX of
+    0 : Result:=FPrivateType;
+    1 : Result:=FPrivateItemName;
+    2 : Result:=FPrivateDetail;
+
+  end;
+end;  // TPrivateDataItem.GetCell
+
+//------------------------------------------------------------------------------
+procedure TPrivateDataItem.InitFromRecord(iDataset: TDataset);
+begin
+  with iDataSet do
+    try
+      FItemKey        :=FieldByName('Taxon_Private_Data_Key').AsString;
+      FPrivateItemName    :=FieldByName('Item_Name').AsString;
+      FPrivateDetail  :=FieldByName('Detail').Text;
+      FPrivateType :=FieldByName('short_name').Text;
+      FPrivateTypeKey  :=FieldByName('Taxon_Private_Type_Key').AsString;
+      FPrivateDate := FieldByName('Item_Date').AsString;
+      FPrivateValue := FieldByName('Item_Value').AsString;
+      FPrivateComment:=TMemoryStream.Create;
+		  TMemoField(FieldByName('Comment')).SaveToStream(FPrivateComment);
+    except on E:Exception do
+      raise ETaxonOccurrenceError.Create(ResStr_InitRecFail+' - PRIVATE',E);
+    end;
+end;  // TPrivateDataItem.InitFromRecord
+//------------------------------------------------------------------------------
+procedure TPrivateDataItem.WriteToRecord(iDataset: TDataset);
+begin
+  with iDataSet do
+    try
+      FieldByName('Item_Name').AsString:=FPrivateItemName;
+      FieldByName('Item_Date').AsString:=FPrivateDate;
+      FieldByName('Item_Value').AsString:=FPrivateValue;
+      FieldByName('Detail').Text:= FPrivateDetail;
+      FieldByName('Taxon_Private_Type_Key').AsString     :=FPrivateTypeKey;
+      FPrivateComment.Position:= 0;
+      TMemoField(FieldByName('Comment')).LoadFromStream(FPrivateComment);
+      FieldByName('Changed_By').AsString    :=AppSettings.UserID;
+      FieldByName('Changed_Date').AsDateTime:=Now;
+    except on E:Exception do
+      raise ETaxonOccurrenceError.Create(ResStr_WriteRecFail+' - PRIVATE ',E);
+    end;
+end;  // TPrivateDataItem.WriteToRecord
+
+//------------------------------------------------------------------------------
+procedure TPrivateDataItem.SetPrivateItemName(const Value: string);
+begin
+  FPrivateItemName := Value;
+  SetModified;
+end;  // TPrivateDataItem.SetDetail
+
+//------------------------------------------------------------------------------
+procedure TPrivateDataItem.SetPrivateDate(const Value: string);
+begin
+  FPrivateDate := Value;
+  SetModified;
+end;  // TPrivateDataItem.SetDetail
+//------------------------------------------------------------------------------
+procedure TPrivateDataItem.SetPrivateValue(const Value: string);
+begin
+  FPrivateValue := Value;
+  SetModified;
+end;  // TPrivateDataItem.SetDetail
+//------------------------------------------------------------------------------
+
+procedure TPrivateDataItem.SetPrivateDetail (const Value: string);
+begin
+  FPrivateDetail := Value;
+  Setmodified;
+end;  // TPrivateDataItem.SetDetail
+
+//==============================================================================
+{ TPrivateDataList }
+function TPrivateDataList.ItemsDisplayName: String;
+begin
+  Result := ResStr_TaxonPrivate;
+end;
+
+//------------------------------------------------------------------------------
+procedure TPrivateDataList.DoAdditions;
+var lqryAddition: TJnccQuery;
+    i           : integer;
+    lDataItem   : TPrivateDataItem;
+begin
+  lqryAddition := TJnccQuery.Create(nil);
+  try
+    dmDatabase.SetDatabaseLocal([lqryAddition]);
+    with lqryAddition do
+      try
+        SQL.Text := 'SELECT * FROM Taxon_Private_Data WHERE Taxon_Private_Data_Key = ''''';
+        Open;
+        for i := 0 to ItemsToAdd.Count - 1 do begin
+          lDataItem := TPrivateDataItem(ItemsToAdd[i]);
+          Append;
+          FieldByName('Taxon_Private_Data_Key').AsString           :=
+              dmGeneralData.GetNextKey('Taxon_Private_Data', 'Taxon_Private_Data_Key');
+          FieldByName('Taxon_Occurrence_Key').AsString   := OccKey;
+          FieldByName('Item_Name').AsString        := lDataItem.PrivateItemName;
+          FieldByName('Item_Date').AsString        := lDataItem.PrivateDate;
+          FieldByName('Item_Value').AsString        := lDataItem.PrivateValue;
+          FieldByName('Detail').Text := lDataItem.PrivateDetail;
+          FieldByName('Taxon_Private_Type_Key').AsString      := lDataItem.PrivateTypeKey;
+          lDataItem.PrivateComment.Position:= 0;
+            TMemoField(FieldByName('Comment')).LoadFromStream(lDataItem.PrivateComment);
+          FieldByName('Entered_By').AsString := AppSettings.UserID;
+          Post;
+        end;
+        Close;
+      except on E:Exception do
+        raise ETaxonOccurrenceError.Create(Format(ResStr_AddFail, ['Private']), E);
+      end;
+  finally
+    lqryAddition.Free;
+  end;
+end;  // TPrivateDataList.DoAdditions
+
+//------------------------------------------------------------------------------
+procedure TPrivateDataList.ProcessUpdate;
+var qryDel:TJnccQuery;
+begin
+  DoAdditions;
+  DoModifications;
+  qryDel:=TJnccQuery.Create(nil);
+  try
+    dmDatabase.SetDatabaseLocal([qryDel]);
+    DeleteFromTable(qryDel,'Taxon_Private_Data','Taxon_Private_Data_Key');
+  finally
+    qryDel.Free;
+  end;
+end;  // TPrivateDataList.ProcessUpdate
+
+//==============================================================================
+procedure TPrivateDataItem.SetPrivateType(const Value: string);
+begin
+  FPrivateType := Value;
+  SetModified;
+end;  // TPrivateDataItem.SetPrivateType
+
+procedure TPrivateDataItem.SetPrivateTypeKey(const Value: TKeyString);
+begin
+  FPrivateTypeKey := Value;
+  SetModified;
+end;  // TPrivateDataItem.SetPrivateTypeKey
+
 end.
