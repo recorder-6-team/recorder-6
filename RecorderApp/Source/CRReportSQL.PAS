@@ -712,6 +712,7 @@ begin
     if HasAttribute(AT_NAME) then FName := Attributes[AT_NAME];
     if HasAttribute(AT_FIELD) then FField := Attributes[AT_FIELD];
     if HasAttribute(AT_OPERATOR) then FOperator := ReadOperator(ANode);
+
     // Create input parameter using 'type' value obtained earlier
     if not Assigned(FInputParam) then
     begin
@@ -753,7 +754,9 @@ begin
     if (not HasAttribute(AT_FIELD)) and (ADataType <> dtVagueDate) then
       raise EReportSQLException.CreateNonCritical(ResStr_XMLReportDefProblem +
           Format(ResStr_ParameterMissing, ['Field', 'Condition']));
-
+    if  HasAttribute(AT_Default) and  (not (ADataType in [dtText,dtOptionSet,dtTrueFalse])) then
+        raise EReportSQLException.CreateNonCritical(ResStr_XMLReportDefProblem +
+          Format(ResStr_ParameterNotSupported, ['Default', 'Condition']));
   end;
 end;  // TClauseCondition.Validate
 
