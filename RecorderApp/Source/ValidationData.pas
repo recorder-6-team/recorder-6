@@ -130,9 +130,11 @@ resourcestring
   ResStr_InvalidVagueDateBlank = 'must be a valid vague date and it cannot be after today''s date of %s.' +
                                  ' Enter a valid vague date or leave blank.';
 
-  ResStr_InvalidDate = 'must be a valid standard date and it cannot be after today''s date of %s.';
+  ResStr_InvalidDate = 'must be a valid standard date and cannot be after today ''s date of %s.';
   ResStr_InvalidDateBlank = 'must be a valid standard date and it cannot be after today''s date of %s.' +
                             ' Enter a valid standard date or leave blank.';
+  ResStr_InvalidStandardDate = ' must be a valid standard date and cannot be blank.';
+  ResStr_InvalidStandardDateBlank = ' must be a valid standard date. Enter a valid standard date or leave blank.';
 
   ResStr_FromDate = 'The Start Date '+ 'must be a valid vague date and it cannot be after today''s date of %s.';
   ResStr_ToDate = 'The End Date ' + 'must be a valid vague date and it cannot be after today''s date of %s.';
@@ -170,6 +172,8 @@ var
   dmValidation: TdmValidation;
 
 function InvalidDate(const AQualifier:string; const IsVague, IsBlank:boolean):string;
+function InvalidStandardDate(const AQualifier:string; IsBlank:boolean):string;
+
 function ValidateFromToVagueDates(const iFromDateStart, iToDateStart : string;
          var ioError : string; const iDateError : TDateError) : boolean;
 function ValidateFromToRealDates(const iFromDateStart, iToDateStart : string;
@@ -200,6 +204,16 @@ begin
     else
       Result:=AQualifier+Format(ResStr_InvalidDate,[DateString]);
 end;  // InvalidDate
+
+//==============================================================================
+function InvalidStandardDate(const AQualifier:string; IsBlank:boolean):string;
+
+begin
+ if IsBlank then
+   Result:=AQualifier + ResStr_InvalidStandardDateBlank
+ else
+   Result:=AQualifier + ResStr_InvalidStandardDate;
+end;  // InvalidStandardDate
 
 //==============================================================================
 function IsDate(const DateString:string):boolean;
