@@ -54,23 +54,21 @@ ALTER PROCEDURE [dbo].[usp_Index_Taxon_Designation_Rebuild]
                     AND    TDES.Date_To IS NULL
        GROUP BY      ITN.TAXON_LIST_ITEM_KEY,
                            TDES.TAXON_DESIGNATION_TYPE_KEY
+       INSERT INTO Index_Taxon_Designation
+   
 
-       Create Table #Temp (taxon_List_Item_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS ,Taxon_Designation_Type_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS )
-       INSERT INTO #Temp SELECT Distinct iTN3.Taxon_List_Item_Key, ITD.Taxon_Designation_Type_Key from  Index_taxon_Name ITN
+
+ SELECT  D.Taxon_List_Item_Key, D.Taxon_Designation_Type_Key FROM 
+    (SELECT Distinct iTN3.Taxon_List_Item_Key, ITD.Taxon_Designation_Type_Key from  Index_taxon_Name ITN
     INNER JOin Index_taxon_Group ITG ON ITG.Contained_List_Item_Key = ITN.Recommended_Taxon_List_Item_Key
-    INNER JOIn INdex_Taxon_name ITN2 On ITN2.Taxon_List_Item_Key = ITG.Taxon_List_Item_Key AND ITN2.Actual_Name = 'Chiroptera'
+    INNER JOIn INdex_Taxon_name ITN2 On ITN2.Taxon_List_Item_Key = ITG.Taxon_List_Item_Key AND ITN2.Actual_Name =     'Chiroptera'
     INNER JOIN Index_Taxon_Group ITG2 ON ITG2.Contained_List_Item_Key = ITn.Taxon_List_Item_Key
     INNER JOiN Index_Taxon_Designation ITD ON ITD.Taxon_List_Item_key = ITN.Taxon_List_Item_Key 
     INNER JOIN Index_taxon_Group ITG3 ON ITG3.Contained_List_Item_Key = ITN.Taxon_List_Item_Key
-    INNER JOIN Index_taxon_Name ITN3 ON ITN3.RECOMMENDED_TAXON_LIST_ITEM_KEY = ITG3.TAXON_LIST_ITEM_KEY
-       
-       INSERT INTO Index_Taxon_Designation
-    select #Temp.Taxon_List_Item_Key, #Temp.Taxon_Designation_Type_Key FROM #TEMP 
-       INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key = #TEMP.Taxon_List_Item_Key
+    INNER JOIN Index_taxon_Name ITN3 ON ITN3.RECOMMENDED_TAXON_LIST_ITEM_KEY = ITG3.TAXON_LIST_ITEM_KEY) AS D
+       INNER JOIN    Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key = D.Taxon_List_Item_Key
     INNER JOIN Taxon_Rank TR ON TR.TAXON_RANK_KEY = TLI.TAXON_RANK_KEY AND TR.Sequence > 99  
     AND NOT EXists (Select * FRom Index_taxon_Designation where Index_Taxon_Designation.Taxon_List_Item_Key 
-        = #Temp.Taxon_List_Item_Key and Index_Taxon_Designation.Taxon_Designation_Type_Key = #Temp.Taxon_Designation_Type_Key)
-       
-       
-       Drop Table #Temp
+    =D.Taxon_List_Item_Key and Index_Taxon_Designation.Taxon_Designation_Type_Key = D.Taxon_Designation_Type_Key)
+
 
