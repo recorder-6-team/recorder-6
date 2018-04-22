@@ -486,7 +486,7 @@ begin
                '@Value',         newValues.ValueFromIndex[i],
                '@PreviousValue', NULL]);
   end else begin
-    for i:= 0 to newValues.Count - 1 do
+    for i:= 0 to newValues.Count - 1 do begin
       // Vague dates use three fields to store their data - set them all at once
       if i >= next then
         if AnsiSameText(newValues.Names[i], 'Vague_Date_Start') then begin
