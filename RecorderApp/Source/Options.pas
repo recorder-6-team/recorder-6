@@ -197,6 +197,11 @@ type
     edHelpUrl: TEdit;
     lblWorksattion: TLabel;
     lblSettingWarning: TLabel;
+    tsSundry: TTabSheet;
+    gbPlaceSpecies: TGroupBox;
+    cbPlaceCardDocs: TCheckBox;
+    btnFixObjectSheet: TButton;
+    lblFixOS: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DrawListItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
@@ -275,6 +280,7 @@ type
     property ExtraLocationSearchColumns: TLocationSearchColumns
         read FExtraLocationSearchColumns write SetExtraLocationSearchColumns;
     procedure SaveSettingTable;
+
   public
     constructor Create(AOwner : TComponent); override;
     destructor Destroy; override;
@@ -455,6 +461,10 @@ begin
     ePolygonFilters.Text := AppSettings.PolygonFilterPath;
     eBatchUpdates.Text   := AppSettings.BatchUpdatePath;
     eExternalFiles.Text  := AppSettings.ExternalFilePath;
+
+    //Sundry
+     cbPlaceCardDocs.Checked :=  AppSettings.AddDocsToOccurrence;
+
   end;  // with AppSettings
 
   //Help Setup
@@ -918,13 +928,15 @@ begin
     cbShowWelcomeAtStart.Checked      := DEFAULT_SHOW_WELCOME_AT_START;
     cbShowCommonNames.Checked         := DEFAULT_SHOW_COMMON_NAMES;
     cbShowNamesAsEntered.Checked      := DEFAULT_SHOW_ENTERED_NAMES;
-    cbShowAuthors.Checked             := DEFAULT_SHOW_AUTHORS;    
+    cbShowAuthors.Checked             := DEFAULT_SHOW_AUTHORS;
     cbFullTranslation.Checked         := DEFAULT_FULL_TRANSLATION;
     cbAutoEmail.Checked               := DEFAULT_AUTO_SCHEME_EMAIL;
+    cbPlaceCardDocs.Checked           := DEFAULT_ADD_DOCS_TO_OCCURRENCE;
     eDateCutYear.Text                 := RightStr('0' + IntToStr(DEFAULT_CUT_YEAR), 2);
     chkRememberFilters.Checked        := DEFAULT_REMEMBER_FILTERS;
     chkPartialTaxonSearch.Checked     := DEFAULT_PARTIAL_TAXON_SEARCH;
     chkPartialTaxonSearch.Checked     := DEFAULT_AUTO_COMPLETE_SEARCH;
+
     if AppSettings.UserAccessLevel = ualAdmin then
     begin
       cmbConfAccessLevel.ItemIndex    := ConfidentialLevelToIndex(DEFAULT_CONFIDENTIAL_ACCESS_LEVEL);
@@ -1127,6 +1139,7 @@ begin
     with AppSettings do begin
       // General Options
       ShowLastSessionWindows  := cbShowLastSessionWindows.Checked;
+      AddDocsToOccurrence   := cbPlaceCardDocs.checked;
       ShowMenuIcons           := cbShowMenuIcons.Checked;
       GraduatedMenus          := cbGraduatedMenus.Checked;
       ShowMainToolbar         := cbShowMainToolbar.Checked;
@@ -1521,7 +1534,7 @@ begin
       else if rs.Fields['Name'].Value = 'PrefNames' then  edPrefNames.text := rs.Fields[AField].Value
       else if rs.Fields['Name'].Value = 'SortMethod' then  edSortMethod.text := rs.Fields[AField].Value
       else if rs.Fields['Name'].Value = 'TaxDesList' then  edTaxDesList.text := rs.Fields[AField].Value
-      else if rs.Fields['Name'].Value = 'TempMedia' then  edTempMedia.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'TempMedia ' then  edTempMedia.text := rs.Fields[AField].Value
       else if rs.Fields['Name'].Value = 'TempName' then  edTempNames.text := rs.Fields[AField].Value
       else if rs.Fields['Name'].Value = 'Competency' then  edCompetency.text := rs.Fields[AField].Value;
    rs.MoveNext
