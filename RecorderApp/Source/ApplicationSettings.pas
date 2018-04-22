@@ -143,7 +143,7 @@ type
   TPathCreateRules = (pcrNoCreate, pcrCreateAny, pcrIgnore);
 
   // additional columns that may be displayed when searching for locations
-  TLocationSearchColumn = (lscLocationType, lscSpatialReference, lscFileCode);  
+  TLocationSearchColumn = (lscLocationType, lscSpatialReference, lscFileCode);
   TLocationSearchColumns = set of TLocationSearchColumn;
 
   TApplicationSettings = class
@@ -156,6 +156,7 @@ type
     FShowMainToolbar: Boolean;
     FShowWelcomeAtStart: Boolean;
     FLastSessionWindows: Boolean;
+    FDocsToOccurrence: Boolean;
     FDateCutYear:Integer;
     FIgnoreRememberedMatches: Boolean;
     FDragDestColour: TColor;
@@ -173,7 +174,7 @@ type
     FUserID: TKeyString;
     FSiteID: String;
     FDictionaryVersion: String;
-    FDatabaseVersion: String; 
+    FDatabaseVersion: String;
     FRecordingCards: TPopupMenu;
     FRecordingCardPath: String;
     FCustomSpeciesCardPath: string;
@@ -183,14 +184,14 @@ type
     FCutOffDate: TDateTime;
     FMapFilePath: String;
     FReportTemplatePath: String;
-    FExportTemplatePath: String;    
+    FExportTemplatePath: String;
     FReportPath: String;
     FBaseMapPath: String;
     FLocalImagesPath: String;
     FHelpPath: String;
     FPolygonFilterPath: String;
     FBatchUpdatePath: String;
-    FExternalFilePath: String;    
+    FExternalFilePath: String;
     FSnapshotPath: String;
     FRucksack: TRucksack;
     FUserAccessLevel: TUserAccessLevel;
@@ -245,7 +246,7 @@ type
     FPartialTaxonSearch: boolean;
     FAutoCompleteSearch: boolean;
     FIncludeLocationSpatialRef: boolean;
-    FIncludeLocationFileCode: boolean;    
+    FIncludeLocationFileCode: boolean;
     FRapidEntryDelimiter: String;
     FExternalFilters: TStringList;
     FHasUncommittedUpdates: Boolean;
@@ -271,11 +272,12 @@ type
     procedure SetMenuIcons(const Value: Boolean);
     procedure SetDragColoursEverywhere;
     procedure CleanupOldImportDatabases;
+
     { procedures for dealing with COM objects }
 //    procedure CreateObjectsToTest;
     procedure SetRecordingCards(const Value: TPopupMenu);
     procedure SetRecordingCardPath(const Value: String);
-    procedure SetCustomSpeciesCardPath(const Value: String);    
+    procedure SetCustomSpeciesCardPath(const Value: String);
     procedure SetRucksackPath(const Value: String);
     procedure SetMapFilePath(const Value: String);
 
@@ -285,7 +287,7 @@ type
     procedure SetBatchUpdatePath(const Value: String);
     procedure SetExternalFilePath(const Value: String);
     procedure SetReportTemplatePath(const Value: String);
-    procedure SetExportTemplatePath(const Value: String);    
+    procedure SetExportTemplatePath(const Value: String);
     function GetMapDatasetPresent: Boolean;
     procedure SetUserID(const AID:TKeyString);
     procedure SetObjectSheetFilePath(const Value: String);
@@ -300,7 +302,7 @@ type
     procedure SetCanExportSystemSupplied(const Value: Boolean);
     procedure SetDisplayCommonNames(const Value: Boolean);
     procedure SetDisplayEnteredNames(const Value: Boolean);
-    procedure SetDisplayAuthors(const Value: Boolean);        
+    procedure SetDisplayAuthors(const Value: Boolean);
     procedure SetExpandTaxaInWizard(const Value: Boolean);
     procedure SetUseRecommendedTaxaNames(const Value: Boolean);
     procedure SetTaxonomicSearchRestriction(const Value: String);
@@ -340,7 +342,7 @@ type
     procedure SetPartialTaxonSearch(const Value: boolean);
     procedure SetAutoCompleteSearch(const Value: boolean);
     procedure SetIncludeLocationFileCode(const Value: boolean);
-    procedure SetIncludeLocationSpatialRef(const Value: boolean);    
+    procedure SetIncludeLocationSpatialRef(const Value: boolean);
     procedure SetRapidEntryDelimiter(const Value: String);
     procedure ReadHelpFilePath(AReg: TRegistry);
     function HelpFileFound(AHelpPath: string): boolean;
@@ -376,7 +378,7 @@ type
     function ReadSort(Sender: TBaseForm; const ListName: String;
       out FieldName: String; out Ascending: Boolean): Boolean;
     procedure WriteSort(Sender: TBaseForm; const ListName, FieldName: String;
-      Ascending: Boolean); 
+      Ascending: Boolean);
 
     procedure DisplayDataForList(const ADataType: string; AItems: TKeyList; AComItems: IKeyList=nil);
     procedure TryCOMActiveFormDisplayData(const ADataType: WideString;
@@ -396,6 +398,7 @@ type
     property MainWindowPos: TRect read FMainWindowPos write FMainWindowPos;
     property MaximizedChildWindows: Boolean read FMaximizedChildWindows write FMaximizedChildWindows;
     property ShowLastSessionWindows: Boolean read FLastSessionWindows write FLastSessionWindows;
+    property AddDocsToOccurrence: Boolean read FDocsToOccurrence write FDocsToOccurrence;
     property ShowMenuIcons: Boolean read FShowMenuIcons write SetMenuIcons;
     property GraduatedMenus: Boolean read FGraduatedMenus write SetGraduatedMenus;
     property ShowMainToolbar: Boolean read FShowMainToolbar write FShowMainToolbar;
@@ -426,8 +429,8 @@ type
     property CustomSpeciesCardPath: String read FCustomSpeciesCardPath write SetCustomSpeciesCardPath;
     property DictImagesPath: String read FDictImagesPath write FDictImagesPath;
     property SiteID: String read GetSiteID;
-    property DictionaryVersion: String read GetDictionaryVersion;
     property DatabaseVersion: String read GetDatabaseVersion;
+    property DictionaryVersion: String read GetDictionaryVersion;
     property UserID: TKeyString read FUserID write SetUserID;
     property UserAccessLevel: TUserAccessLevel read FUserAccessLevel write SetUserAccessLevel;
     property UserAccessLevelAsString: String read GetUserAccessLevelAsString;
@@ -438,8 +441,9 @@ type
     property MapFilePath: String read FMapFilePath write SetMapFilePath;
     property ObjectSheetFilePath: String read FObjectSheetFilePath write SetObjectSheetFilePath;
     property ReportTemplatePath: String read FReportTemplatePath write SetReportTemplatePath;
-    property ExportTemplatePath: String read FExportTemplatePath write SetExportTemplatePath;    
+    property ExportTemplatePath: String read FExportTemplatePath write SetExportTemplatePath;
     property ReportPath: String read FReportPath write SetReportPath;
+    property Standalone: Boolean read FStandalone;
     property BaseMapPath: String read FBaseMapPath;
     property SnapshotPath: String read FSnapshotPath write SetSnapshotPath;
     property LocalImagesPath: String read FLocalImagesPath write FLocalImagesPath;
@@ -829,6 +833,7 @@ end;  // Destroy
 //==============================================================================
 procedure TApplicationSettings.ResetGeneralOptions;
 begin
+  AddDocsToOccurrence := DEFAULT_ADD_DOCS_TO_OCCURRENCE;
   ShowLastSessionWindows := DEFAULT_SHOW_LAST_SESSION_WINDOWS;
   ShowMenuIcons          := DEFAULT_SHOW_MENU_ICONS;
   GraduatedMenus         := DEFAULT_GRADUATED_MENUS;
@@ -944,6 +949,7 @@ begin
         else
           FMainWindowPos := Rect(50, 50, Screen.Width - 100, Screen.Height - 100);
         ShowLastSessionWindows := ReadBoolDefault(lReg, 'Last Session Windows', DEFAULT_SHOW_LAST_SESSION_WINDOWS);
+        AddDocsToOccurrence := ReadBoolDefault(lReg, 'Add Docs To Occurrence', DEFAULT_ADD_DOCS_TO_OCCURRENCE);
         ShowMenuIcons          := ReadBoolDefault(lReg, 'ShowMenuIcons', DEFAULT_SHOW_MENU_ICONS);
         GraduatedMenus         := ReadBoolDefault(lReg, 'Graduated Menus', DEFAULT_GRADUATED_MENUS);
         ShowWelcomeAtStart     := ReadBoolDefault(lReg, 'ShowWelcomeAtStart', DEFAULT_SHOW_WELCOME_AT_START);
@@ -1022,7 +1028,7 @@ begin
         CloseKey;
 
         ReadExtraLocationSearchColumns;
-        
+
         // Initialisation required according to settings obtained
         if not FileExists(BackBitmapName) then PlainBackground := True;
         { Dict Images path doesn't need a slash }
@@ -1130,6 +1136,7 @@ begin
 
         // General Options
         WriteBool('Last Session Windows',            ShowLastSessionWindows);
+        WriteBool('Add Docs To Occurrence',         AddDocsToOccurrence);
         WriteBool('ShowMenuIcons',                   ShowMenuIcons);
         WriteBool('Graduated Menus',                 GraduatedMenus);
         WriteBool('ShowWelcomeAtStart',              ShowWelcomeAtStart);
