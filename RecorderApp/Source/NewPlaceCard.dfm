@@ -5,7 +5,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   BorderStyle = bsDialog
   Caption = 'Add or Edit Recording Card'
   ClientHeight = 605
-  ClientWidth = 399
+  ClientWidth = 391
   Color = clBtnFace
   Constraints.MinHeight = 452
   Constraints.MinWidth = 400
@@ -22,12 +22,12 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   OnDestroy = FormDestroy
   OnResize = FormResize
   DesignSize = (
-    399
+    391
     605)
   PixelsPerInch = 96
   TextHeight = 13
   object bbCancel: TImageListButton
-    Left = 319
+    Left = 311
     Top = 575
     Width = 75
     Height = 25
@@ -41,7 +41,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
     ImageIndex = 1
   end
   object bbOK: TImageListButton
-    Left = 239
+    Left = 231
     Top = 575
     Width = 75
     Height = 25
@@ -56,12 +56,12 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   object gbStep2: TGroupBox
     Left = 4
     Top = 76
-    Width = 391
+    Width = 383
     Height = 89
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
     DesignSize = (
-      391
+      383
       89)
     object lblSpeciesList: TLabel
       Left = 8
@@ -93,7 +93,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
     object cmbRucksack: TComboBox
       Left = 132
       Top = 58
-      Width = 239
+      Width = 231
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
@@ -108,7 +108,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
     object cmbTaxonDictionary: TDBListCombo
       Left = 132
       Top = 34
-      Width = 239
+      Width = 231
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
@@ -150,12 +150,12 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   object gbStep3: TGroupBox
     Left = 4
     Top = 288
-    Width = 391
+    Width = 383
     Height = 281
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 1
     DesignSize = (
-      391
+      383
       281)
     object lblAddColumns: TLabel
       Left = 8
@@ -325,11 +325,12 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   object gbStep2a: TGroupBox
     Left = 4
     Top = 170
-    Width = 385
+    Width = 383
     Height = 49
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 5
     DesignSize = (
-      385
+      383
       49)
     object Label2: TLabel
       Left = 8
@@ -341,7 +342,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
     object cmbSurveyList: TDBListCombo
       Left = 132
       Top = 12
-      Width = 232
+      Width = 230
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
@@ -368,12 +369,12 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   object gbStep1: TGroupBox
     Left = 4
     Top = 1
-    Width = 391
+    Width = 383
     Height = 70
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 6
     DesignSize = (
-      391
+      383
       70)
     object lblistName: TLabel
       Left = 8
@@ -390,7 +391,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
       Caption = 'Name:'
     end
     object bbListRemove: TImageListButton
-      Left = 295
+      Left = 287
       Top = 34
       Width = 75
       Height = 25
@@ -404,7 +405,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
     object cmbListNames: TComboBox
       Left = 60
       Top = 36
-      Width = 228
+      Width = 220
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       ItemHeight = 13
@@ -414,13 +415,14 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
     end
   end
   object gbStep2b: TGroupBox
-    Left = 6
+    Left = 4
     Top = 228
-    Width = 385
+    Width = 383
     Height = 49
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 7
     DesignSize = (
-      385
+      383
       49)
     object Label1: TLabel
       Left = 8
@@ -432,7 +434,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
     object cmbTaxonGroupList: TDBListCombo
       Left = 132
       Top = 12
-      Width = 232
+      Width = 230
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
