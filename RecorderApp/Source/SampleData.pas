@@ -456,11 +456,10 @@ var
   i, next: Integer;
 begin
   next := 0;
-  if setAll then
-  begin
-    for i:= 0 to newValues.Count - 1 do
+  if setAll then begin
+    for i:= 0 to newValues.Count - 1 do begin
       // Vague dates use three fields to store their data - set them all at once
-      if i >= next then
+      if i >= next then begin
         if AnsiSameText(newValues.Names[i], 'Vague_Date_Start') then begin
           dmDatabase.RunStoredProc(
               'usp_Event_Cascade_Vague_Date_Start_FromSample',
@@ -472,8 +471,7 @@ begin
                '@TypeValue',          newValues.ValueFromIndex[i + 2],
                '@PreviousTypeValue',  NULL]);
           next := i + 3;
-        end else
-        if AnsiSameText(newValues.Names[i], 'Spatial_Ref') then
+        end else if AnsiSameText(newValues.Names[i], 'Spatial_Ref') then
           dmDatabase.RunStoredProc(
               'usp_Event_Cascade_Spatial_Ref_FromSample',
               ['@SampleKey',     sampleKey,
@@ -484,10 +482,12 @@ begin
               ['@EventKey',      eventKey,
                '@Value',         newValues.ValueFromIndex[i],
                '@PreviousValue', NULL]);
+      end;
+    end;
   end else begin
     for i:= 0 to newValues.Count - 1 do begin
       // Vague dates use three fields to store their data - set them all at once
-      if i >= next then
+      if i >= next then begin
         if AnsiSameText(newValues.Names[i], 'Vague_Date_Start') then begin
           dmDatabase.RunStoredProc(
               'usp_Event_Cascade_Vague_Date_Start_FromSample',
@@ -511,7 +511,8 @@ begin
                ['@EventKey',      eventKey,
                '@Value',         newValues.ValueFromIndex[i],
                '@PreviousValue', NULL]);
-          end;
+      end;
+    end;
   end;    // if (setAll)
 end;  // UpdateEvent
 
