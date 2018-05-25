@@ -12,8 +12,8 @@ inherited frmEventDetails: TfrmEventDetails
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 396
-    Height = 419
+    Width = 388
+    Height = 407
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
@@ -248,7 +248,7 @@ inherited frmEventDetails: TfrmEventDetails
                 Top = 85
                 Width = 24
                 Height = 23
-                Hint = 'Remove the selected name(s)'
+                Hint = 'Replace the selected name(s) with another person.'
                 Anchors = [akTop, akRight]
                 TabOrder = 5
                 OnClick = bbRecorderReplaceClick
