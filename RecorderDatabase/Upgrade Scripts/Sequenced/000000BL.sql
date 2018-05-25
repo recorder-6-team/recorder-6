@@ -19,6 +19,7 @@ GO
 
 \*===========================================================================*/
 ALTER PROCEDURE [dbo].[usp_Index_Taxon_Designation_Rebuild]
+AS
        DECLARE       @KeyList      VARCHAR(250)
        
        SET          @KeyList      =      ''
