@@ -20,6 +20,7 @@ const
   AT_CAPTION = 'caption';
   AT_DATASIZE = 'size';
   AT_DATATYPE = 'datatype';
+  AT_DEFAULT = 'default';
   AT_DESCRIPTION = 'description';
   AT_ENTRYCOUNT = 'entrycount';
   AT_FIELD = 'field';

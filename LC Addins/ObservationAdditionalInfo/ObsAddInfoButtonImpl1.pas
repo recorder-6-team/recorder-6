@@ -450,9 +450,11 @@ begin
       end;
 
       Try
-         IResult:= IConn.Execute('Select External_Key FROM  '  +
-        ' Taxon_Occurrence_Ext_Ref ' +
-        ' WHERE Taxon_Occurrence_Ext_Ref.Taxon_Occurrence_Key = ''' + FKeyValue + '''' , cmdText,[]);
+         IResult:= IConn.Execute('Select Detail FROM  '  +
+        ' Taxon_Private_Data ' +
+        ' WHERE Taxon_Private_Data.Taxon_Private_Type_Key = ' +
+        '''R6TEAM1800000001''' +
+        ' AND Taxon_Private_Data.Taxon_Occurrence_Key = ''' + FKeyValue + '''' , cmdText,[]);
         if Iresult.EOF = false then
           ExternalKey :=  'External Key = ' + vartostr(Iresult.Fields.Item[0].value) +  #13#10
         else

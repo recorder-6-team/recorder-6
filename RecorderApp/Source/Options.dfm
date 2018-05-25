@@ -1,6 +1,6 @@
 object dlgOptions: TdlgOptions
-  Left = 446
-  Top = 355
+  Left = 643
+  Top = 277
   BorderStyle = bsDialog
   Caption = 'Options'
   ClientHeight = 449
@@ -1237,6 +1237,22 @@ object dlgOptions: TdlgOptions
         ParentColor = False
         ParentFont = False
       end
+      object lblFixOS: TLabel
+        Left = 424
+        Top = 40
+        Width = 76
+        Height = 44
+        Caption = 
+          'Brings the object sheet path for this workstation in line with M' +
+          'aster '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -9
+        Font.Name = 'Small Fonts'
+        Font.Style = []
+        ParentFont = False
+        WordWrap = True
+      end
       object edMaster: TEdit
         Left = 168
         Top = 38
@@ -1246,9 +1262,9 @@ object dlgOptions: TdlgOptions
         TabOrder = 0
       end
       object btnMaster: TButton
-        Left = 336
+        Left = 328
         Top = 6
-        Width = 81
+        Width = 89
         Height = 25
         Caption = 'Make Master'
         TabOrder = 1
@@ -1327,6 +1343,35 @@ object dlgOptions: TdlgOptions
         Height = 21
         MaxLength = 250
         TabOrder = 10
+      end
+      object btnFixObjectSheet: TButton
+        Left = 328
+        Top = 40
+        Width = 89
+        Height = 25
+        Caption = 'Fix Object Sheet'
+        TabOrder = 11
+      end
+    end
+    object tsSundry: TTabSheet
+      Caption = 'Sundry'
+      ImageIndex = 6
+      object gbPlaceSpecies: TGroupBox
+        Left = 12
+        Top = 12
+        Width = 257
+        Height = 61
+        Caption = 'Place and Species Card Options'
+        TabOrder = 0
+        object cbPlaceCardDocs: TCheckBox
+          Left = 6
+          Top = 22
+          Width = 243
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'Documents - add to Taxon Occurrence'
+          TabOrder = 0
+        end
       end
     end
   end

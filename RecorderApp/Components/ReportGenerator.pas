@@ -413,7 +413,7 @@ begin
                                 true);
   //Populate dataset with sql data
   FAttributes := TStringList.Create;
-  FAttributes.Sorted := true;
+  FAttributes.Sorted := false;
   FAttributes.Duplicates := dupAccept;
 
   //Add each attribute to the FAttributes Object along with field metadata

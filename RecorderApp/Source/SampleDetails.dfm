@@ -1,6 +1,6 @@
 inherited frmSampleDetails: TfrmSampleDetails
-  Left = 867
-  Top = 238
+  Left = 632
+  Top = 226
   Width = 393
   Height = 395
   Caption = 'Sample Details'
@@ -12,8 +12,8 @@ inherited frmSampleDetails: TfrmSampleDetails
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 377
-    Height = 357
+    Width = 385
+    Height = 368
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
@@ -75,7 +75,7 @@ inherited frmSampleDetails: TfrmSampleDetails
         Top = 24
         Width = 373
         Height = 301
-        ActivePage = tsAdminAreas
+        ActivePage = tsSources
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 2
         OnChange = pcSampleDetailsChange

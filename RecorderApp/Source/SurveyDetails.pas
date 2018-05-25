@@ -94,6 +94,8 @@ type
     dbreAttribution: TDBRichEdit;
     lblNotes: TLabel;
     dbreNotes: TDBRichEdit;
+    Label2: TLabel;
+    eImportDate: TEdit;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbSaveClick(Sender: TObject);
     procedure bbCancelClick(Sender: TObject);
@@ -120,6 +122,7 @@ type
     procedure TagColumnResize(Sender: TObject);
     procedure btnAddTagClick(Sender: TObject);
     procedure btnRemoveTagClick(Sender: TObject);
+    procedure eImportDateExit(Sender: TObject);
   private
     FValidEnteredSW : string;
     FValidEnteredNE : String;
@@ -155,6 +158,7 @@ type
     procedure SurveyTagUpdateRow(var rowKey: String; data: TStringList);
     procedure UpdateSurveyTag(keylist: TKeylist);
     procedure ValidateSurveyTags;
+    procedure ValidateImportDate;
   protected
     procedure SetupDestinationControls; override;
   public
@@ -206,6 +210,8 @@ resourcestring
   ResStr_SpecifyValidSurveyTag = 'Please specify a valid survey tag.';
   ResStr_InvalidSurveyTag='The term you have selected is not from the list of tags so cannot be used '+
       'as a survey tag.';
+  ResStr_TheImportDate = 'The import data must be a valid date and not in the future';
+
 
 //==============================================================================
 constructor TfrmSurveyDetails.Create(AOwner: TComponent);
@@ -329,7 +335,7 @@ begin
         eSurveyTo.Text     := FieldByName('To_Vague_Date_Start').Text;
         eSurveyOpFrom.Text := FieldByName('Op_From_Vague_Date_Start').Text;
         eSurveyOpTo.Text   := FieldByName('Op_To_Vague_Date_Start').Text;
-
+        eImportDate.Text           := FieldByName('Import_Date').Text;
         FValidEnteredSW := FieldByName('SW_Spatial_Ref').AsString;
         eSWCorner.Text := LocaliseSpatialRef(GetDisplaySpatialRef(
             AppSettings.SpatialRefSystem,
@@ -493,6 +499,7 @@ begin
         FieldByName('To_Vague_Date_Start').Text      := eSurveyTo.Text;
         FieldByName('Op_From_Vague_Date_Start').Text := eSurveyOpFrom.Text;
         FieldByName('Op_To_Vague_Date_Start').Text   := eSurveyOpTo.Text;
+        FieldByName('Import_Date').Text   := eImportDate.Text;
         if EditMode = emAdd then
         begin
           FieldByName('Survey_Key').AsString := SurveyKey;
@@ -572,6 +579,7 @@ begin
   eSurveyOpTo.ReadOnly   := eSurveyFrom.ReadOnly;
   eNECorner.ReadOnly     := eSurveyFrom.ReadOnly;
   eSWCorner.ReadOnly     := eSurveyFrom.ReadOnly;
+  eImportDate.ReadOnly   := eSurveyFrom.ReadOnly;
   if eSurveyFrom.ReadOnly then
     eSurveyRunBy.EditMode := emBrowse
   else
@@ -1206,6 +1214,28 @@ begin
   inherited;
   FSurveyTagsGridManager.DeleteFromGrid(nil);
   TagColumnResize(nil);
+end;
+
+procedure TfrmSurveyDetails.ValidateImportDate;
+begin
+  if eImportDate.Text<>'' then begin
+    try
+      // Use VagueDate functions to deal with other date separators, like "."
+      // If conversion fails, not a valid date and trapped after handler
+      eImportDate.Text := VagueDateToString(StringToVagueDate(eImportDate.Text));
+    except
+    end;
+    // And validate
+    ValidateValue(IsDate(eImportDate.Text) and (StrToDate(eImportDate.Text)<=Date),
+                  InvalidDate(ResStr_TheImportDate,false,false),eImportDate);
+    eImportDate.Text:=DateToStr(StrToDate(eImportDate.Text));
+  end;
+end;  // eImportDateExit
+procedure TfrmSurveyDetails.eImportDateExit(Sender: TObject);
+begin
+  inherited;
+  if not FClosingForm then
+    ValidateImportDate;
 end;
 
 end.

@@ -1745,7 +1745,19 @@ begin
         end;
       end;
     end; // with qryInsertTaxonOccur
+
   end;  // with FdmPlaceCard
+  // Now insert the documents if AddDocsToOccurrence is set to true
+  If (AppSettings.AddDocsToOccurrence) then begin;
+    try
+      dmDatabase.RunStoredProc('usp_TaxonOccurrenceSource_Insert',
+         ['@TaxonOccurrenceKey', FTaxonOccKey]);
+    except
+      on E:Exception do
+        Raise EDatabaseWriteError.Create(ResStr_WriteRecFail + ' ' + E.Message + ' [Taxon Occurrence Sources]');
+      end;
+  end;
+
 end;  // CreateSpeciesOccurrence
 
 (*******************************************************************************

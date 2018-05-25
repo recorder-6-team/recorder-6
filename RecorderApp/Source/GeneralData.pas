@@ -286,6 +286,7 @@ type
     function GetVagueDateFromRecordset(rs: ADODB._Recordset; const prefix: String = ''): TVagueDate;
     function DropLinkedEditText(ctrl: TAddinLinkedEdit; format: Integer; data: TKeyList;
         getName: TGetName; text: TStringList): Boolean;
+    function IsGroupCorrect(const ATLIKey:string; AGroupKey: string): Boolean;
   end;
 
 //----------------------------------------------------------------------------
@@ -2985,5 +2986,22 @@ begin
     ctrl.Modified := True;
   end;
 end;  // DropLinkedEditText
+{-------------------------------------------------------------------------------
+  Checks if the supplied group key is the same as that on the supplied tli key
+}
+function TdmGeneralData.IsGroupCorrect(const ATLIKey: string; AGroupKey: string): Boolean;
+var Sql : string;
+begin
+  Sql := Format('Select * from Taxon_List_Item INNER JOIN Taxon_Version ' +
+      'ON Taxon_List_Item.Taxon_Version_Key = Taxon_Version.Taxon_Version_Key ' +
+      'WHERE Taxon_List_Item_Key = ''%s'' AND Output_Group_Key = ''%s''' ,[ATLIKey,AGroupKey]);
+
+  with dmDatabase.ExecuteSQL(Sql,True) Do
+    if not (EOF or BOF) then
+      Result := True
+    else
+      Result := False;
+  end;
 
 end.
+

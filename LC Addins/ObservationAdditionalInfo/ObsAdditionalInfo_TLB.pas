@@ -12,7 +12,7 @@ unit ObsAdditionalInfo_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 29/09/2015 14:45:12 from Type Library described below.
+// File generated on 02/04/2018 14:59:34 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\localsource\recorder-6\LC Addins\ObservationAdditionalInfo\ObsAdditionalInfo.tlb (1)
@@ -213,6 +213,19 @@ type
     property VisibleDockClientCount: Integer index 209 read GetIntegerProp;
   published
     property Anchors;
+    property  ParentFont;
+    property  TabStop;
+    property  Align;
+    property  ParentShowHint;
+    property  PopupMenu;
+    property  ShowHint;
+    property  TabOrder;
+    property  OnDragDrop;
+    property  OnDragOver;
+    property  OnEndDrag;
+    property  OnEnter;
+    property  OnExit;
+    property  OnStartDrag;
     property Cancel: WordBool index 201 read GetWordBoolProp write SetWordBoolProp stored False;
     property Caption: WideString index -518 read GetWideStringProp write SetWideStringProp stored False;
     property Default: WordBool index 202 read GetWordBoolProp write SetWordBoolProp stored False;
@@ -248,7 +261,7 @@ const
     EventIID: '{3765BB4F-890B-4118-A1AD-E27E4B0D4212}';
     EventCount: 2;
     EventDispIDs: @CEventDispIDs;
-    LicenseKey: nil (*HR:$80040154*);
+    LicenseKey: nil (*HR:$8007007E*);
     Flags: $0000001C;
     Version: 401;
     FontCount: 1;

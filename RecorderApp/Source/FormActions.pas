@@ -193,7 +193,7 @@ resourcestring
   ResStr_NoMapsSetup =
       'Cannot display a map as you have not configured any base maps';
   ResStr_ObjectSheetFolderError =
-      ' The object sheet path on this workstation is not as expected.'#13#10
+      'The object sheet path on this workstation is not as expected.'#13#10
       + 'Go to Map Options to correct this.';
 
 type
@@ -291,6 +291,8 @@ type
     actRunBatchUpdates: TAction;
     actCommitUpdates: TAction;
     actCancelUpdates: TAction;
+    qryTaxonGroup: TJNCCQuery;
+    dsTaxonGroup: TDataSource;
     procedure alFormsExecute(Action: TBasicAction; var Handled: Boolean);
     procedure actAboutExecute(Sender: TObject);
     procedure actAdminAreaDictionExecute(Sender: TObject);

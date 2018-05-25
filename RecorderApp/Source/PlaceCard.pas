@@ -53,7 +53,7 @@ uses
   DataClasses, DBListCombo, DropStruct, DropSource, DropTarget, ValidationData,
   Exceptionform, OLETools, DBGlyphCtrls, PlaceCardData, VagueDate, OnlineHelp,
   Constants, GeneralFunctions, ImageListButton, DB, Variants, ADODB, Measurements,
-  LocationInfoFrame, Cascade, Contnrs;
+  LocationInfoFrame, Cascade, Contnrs, ActnList;
 
 type
   EPlacesError = class(TExceptionPath);
@@ -139,6 +139,7 @@ type
     lblAdminArea: TLabel;
     lblDate: TLabel;
     eDate: TVagueDateEdit;
+    ActionList1: TActionList;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure bbRecorderFindClick(Sender: TObject);
@@ -232,6 +233,8 @@ type
     FLoadedFromSample: Boolean;
     FLoadedSampleValues: TStringList;
     FColsResized: Boolean;
+    FDefaultSurveyKey: string;
+    FDefaultTaxonGroupKey: string;
     procedure WMTransferDone(var Msg:TMessage); message WM_TRANSFER_DONE;
     procedure WMRefreshTermLists(var Msg: TMessage); message WM_REFRESH_TERM_LISTS;
     procedure WMRefreshSpatialRefSystem(var Msg: TMessage); message WM_REFRESH_SPATIAL_REF_SYSTEM;
@@ -283,6 +286,8 @@ type
         const ADefault: String = ''): String;
     procedure MoveGridCell(const iToTheRight: Boolean);
     procedure ReadRecordingCard;
+    procedure ReadSurveyForCard;
+    procedure ReadTaxonGroupForCard;
     procedure RetrieveTaxa(iTaxaKeys: TStringList);
     function ReturnKeyDown : boolean;
     procedure ReSortGrid;
@@ -450,6 +455,12 @@ resourcestring
   ResStr_SelectTaxaToSave =
       'Before saving the information on this card, please select one or more '
       + 'taxa from the list to create observations for.';
+  ResStr_SurveyNotEqualDefaultConfirm =
+      'The survey selected is not the same as the default. Continue with save ?';
+  Restr_SurveyNotEqualDefault =
+       'Not saved. The survey selected is not the same as the default';
+  ResStr_TaxonGroupNotEqualDefaultConfirm =
+      'The taxon slected is not in the default taxon group. Continue with save ?';
 
   ResStr_ObservationDateMissing = 'The Observation Date is missing. Enter a vague date value.';
   ResStr_DataOutsideSurvey      = 'The Date is outside the selected Survey''s range. ';
@@ -746,7 +757,78 @@ begin
   Caption := Copy(cardName, 1, Length(cardName) - Length(ExtractFileExt(cardName)));
   Refresh;
   ReadRecordingCard;
+  ReadSurveyForCard;
+  ReadTaxonGroupForCard;
 end;  // SetRecordingCardPath
+//==============================================================================
+procedure TfrmPlaceCard.ReadSurveyForCard;
+var lCardFile: TextFile;
+    lCardName: String;
+    lCurrent : String;
+    lCursor  : TCursor;
+begin
+  lCursor    := HourglassCursor;
+  FLoading   := True;
+  //Open file
+  lCardName := ExtractWithoutExt(FRecordingCardPath);
+  AssignFile(lCardFile, FRecordingCardPath);
+  try
+    Reset(lCardFile);
+    //Read general
+    while not eof(lCardFile) do begin
+      ReadLn(lCardFile, lCurrent);
+        If lCurrent = '<Survey>' then begin
+          ReadLn(lCardFile, lCurrent);
+          FDefaultSurveyKey := lCurrent;
+          ReadLn(lCardFile, lCurrent);
+          if lCurrent <> '</Survey>' then
+            raise ECRDError.CreateNonCritical(Format(ResStr_BadRecCard, [lCardName]));
+          cmbSurvey.KeyValue := FDefaultSurveyKey;
+        end;
+    end;
+
+  finally
+    //Close file
+    CloseFile(lCardFile);
+    DefaultCursor(lCursor);
+    FLoading := False;
+  end;
+
+end;
+//==============================================================================
+procedure TfrmPlaceCard.ReadTaxonGroupForCard;
+var lCardFile: TextFile;
+    lCardName: String;
+    lCurrent : String;
+    lCursor  : TCursor;
+begin
+  lCursor    := HourglassCursor;
+  FLoading   := True;
+  //Open file
+  lCardName := ExtractWithoutExt(FRecordingCardPath);
+  AssignFile(lCardFile, FRecordingCardPath);
+  try
+    Reset(lCardFile);
+    //Read general
+    while not eof(lCardFile) do begin
+      ReadLn(lCardFile, lCurrent);
+        If lCurrent = '<TaxonGroup>' then begin
+          ReadLn(lCardFile, lCurrent);
+          FDefaultTaxonGroupKey := lCurrent;
+          ReadLn(lCardFile, lCurrent);
+          if lCurrent <> '</TaxonGroup>' then
+            raise ECRDError.CreateNonCritical(Format(ResStr_BadRecCard, [lCardName]));
+        end;
+    end;
+
+  finally
+    //Close file
+    CloseFile(lCardFile);
+    DefaultCursor(lCursor);
+    FLoading := False;
+  end;
+
+end;
 
 //==============================================================================
 //    Procedure Name: SetColWidth    Author: GAD    Date: 2/8/99
@@ -821,7 +903,7 @@ end;  // AddTaxonToGrid
  * Checks that the record card *.crd file can be written to. If so, then checks
  * if either the column widths or the species on the list have been changed,
  * and gives the user the chance to save these changes.
- *) 
+ *)
 procedure TfrmPlaceCard.SaveGridLayout;
 var lFileLines: TStringList;
     lIdx, i   : Integer;
@@ -3444,7 +3526,11 @@ begin
   try
     if (KeyList<>nil) and (KeyList.Header.ItemCount>0) then begin
       lTaxonKey:=KeyList.Items[0].KeyField1;
-      GotAddedTaxon(lTaxonKey);
+      //check to see if taxon is in group
+      If (Not dmGeneralData.IsGroupCorrect(ltaxonkey,FDefaultTaxonGroupKey))
+        and (FDefaultTaxonGroupKey <> 'All') then
+        if MessageDlg(ResStr_TaxonGroupNotEqualDefaultConfirm, mtInformation, [mbYes, mbNo], 0) = mrYes then
+          GotAddedTaxon(lTaxonKey);
     end;
   finally
     KeyList.Free;
@@ -4092,7 +4178,11 @@ procedure TfrmPlaceCard.ValidateCard;
 begin
   ValidateValue(cmbSurvey.Text <> '', ResStr_UnableToSave + SPlaceCard_SelectSurvey, cmbSurvey);
   ValidateValue(TotalSpecies > 0, ResStr_SelectTaxaToSave, sgSpecies);
+  If cmbSurvey.KeyValue <> FDefaultSurveyKey then
+     If MessageDlg(ResStr_SurveyNotEqualDefaultConfirm, mtConfirmation, [mbYes,mbNo], 0)=mrNo then
+       ValidateValue(cmbSurvey.KeyValue = FDefaultSurveyKey,Restr_SurveyNotEqualDefault, cmbSurvey);
 
+  ValidateValue(TotalSpecies > 0, ResStr_SelectTaxaToSave, sgSpecies);
   fraLocationInfo.Validate(cmbSurvey.KeyValue);
 
   // Check the date and ensure a proper format

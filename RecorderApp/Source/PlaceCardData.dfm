@@ -1,7 +1,7 @@
 inherited dmPlaceCard: TdmPlaceCard
   OldCreateOrder = True
-  Left = 457
-  Top = 227
+  Left = 99
+  Top = 134
   Height = 301
   Width = 540
   object qryCheckEvent: TJNCCQuery

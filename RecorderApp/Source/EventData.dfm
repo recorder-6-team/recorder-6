@@ -1,8 +1,8 @@
 inherited dmEvent: TdmEvent
   Left = 669
   Top = 130
-  Height = 265
-  Width = 205
+  Height = 373
+  Width = 232
   object qryEvent: TJNCCQuery
     CommandTimeout = 0
     Parameters = <
@@ -146,5 +146,40 @@ inherited dmEvent: TdmEvent
     DisplayCommonNames = False
     Left = 120
     Top = 180
+  end
+  object qrySampleRecorder: TJNCCQuery
+    CommandTimeout = 0
+    Parameters = <
+      item
+        Name = 'KeyParameter'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        'SELECT Sample_Recorder.SE_Recorder_Key,Survey_Event_Recorder.Nam' +
+        'e_Key  '
+      'FROM Sample_Recorder'
+      'INNER JOIN Survey_Event_Recorder  ON '
+      'Sample_Recorder.SE_Recorder_Key ='
+      'Survey_Event_Recorder.SE_Recorder_Key'
+      'WHERE Survey_Event_Recorder.Survey_Event_Key = :KeyParameter')
+    ParseSQL = True
+    Left = 36
+    Top = 248
+  end
+  object qryRole: TJNCCQuery
+    CommandTimeout = 0
+    Parameters = <
+      item
+        Name = 'KeyParameter'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT * FROM Recorder_Role Order By Long_Name ')
+    ParseSQL = True
+    Left = 132
+    Top = 256
   end
 end

@@ -11,8 +11,8 @@ inherited frmPlaceCard: TfrmPlaceCard
   TextHeight = 13
   object pnlButtons: TPanel [0]
     Left = 0
-    Top = 428
-    Width = 620
+    Top = 440
+    Width = 628
     Height = 34
     Align = alBottom
     BevelOuter = bvNone
@@ -50,7 +50,7 @@ inherited frmPlaceCard: TfrmPlaceCard
       Caption = 'Add Species:'
     end
     object pnlButtons2: TPanel
-      Left = 442
+      Left = 450
       Top = 0
       Width = 178
       Height = 34
@@ -117,13 +117,13 @@ inherited frmPlaceCard: TfrmPlaceCard
   object pnlHeader: TPanel [1]
     Left = 0
     Top = 0
-    Width = 620
+    Width = 628
     Height = 238
     Align = alTop
     TabOrder = 0
     OnResize = pnlHeaderResize
     DesignSize = (
-      620
+      628
       238)
     object shpReference: TShape
       Tag = 2
@@ -327,6 +327,7 @@ inherited frmPlaceCard: TfrmPlaceCard
           Width = 228
         end
         inherited pmMaps: TPopupMenu
+          Left = 42
           Top = 37
         end
       end
@@ -451,8 +452,8 @@ inherited frmPlaceCard: TfrmPlaceCard
     Tag = 2
     Left = 0
     Top = 238
-    Width = 620
-    Height = 190
+    Width = 628
+    Height = 202
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 1
@@ -461,8 +462,8 @@ inherited frmPlaceCard: TfrmPlaceCard
     object sgSpecies: TStringGrid
       Left = 1
       Top = 1
-      Width = 618
-      Height = 188
+      Width = 626
+      Height = 200
       Align = alClient
       ColCount = 3
       Constraints.MinHeight = 40
@@ -654,5 +655,9 @@ inherited frmPlaceCard: TfrmPlaceCard
       Caption = 'Remove Row'
       OnClick = mnuRemoveRowClick
     end
+  end
+  object ActionList1: TActionList
+    Left = 304
+    Top = 456
   end
 end

@@ -158,9 +158,9 @@ object dlgAbout: TdlgAbout
       object Label6: TLabel
         Left = 8
         Top = 87
-        Width = 108
+        Width = 49
         Height = 14
-        Caption = 'Built to NBN standards'
+        Caption = 'Based on '
         Font.Charset = ANSI_CHARSET
         Font.Color = clBlue
         Font.Height = -11
@@ -171,9 +171,9 @@ object dlgAbout: TdlgAbout
       object Label5: TLabel
         Left = 8
         Top = 63
-        Width = 67
+        Width = 66
         Height = 14
-        Caption = #169' JNCC, 2006'
+        Caption = #169' biodiverseit'
         Font.Charset = ANSI_CHARSET
         Font.Color = clBlue
         Font.Height = -11
@@ -333,9 +333,9 @@ object dlgAbout: TdlgAbout
       object StaticText1: TStaticText
         Left = 8
         Top = 102
-        Width = 100
+        Width = 61
         Height = 18
-        Caption = 'by Dorset Software'
+        Caption = 'Recorder 6 '
         Font.Charset = ANSI_CHARSET
         Font.Color = clBlue
         Font.Height = -11
@@ -347,9 +347,9 @@ object dlgAbout: TdlgAbout
       object StaticText2: TStaticText
         Left = 8
         Top = 118
-        Width = 68
+        Width = 31
         Height = 18
-        Caption = 'Services Ltd.'
+        Caption = 'v6.28'
         Font.Charset = ANSI_CHARSET
         Font.Color = clBlue
         Font.Height = -11
