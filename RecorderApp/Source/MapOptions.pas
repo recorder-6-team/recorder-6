@@ -1183,7 +1183,6 @@ procedure TdlgMapOptions.pcMapOptionsChanging(Sender: TObject; var AllowChange: 
 var
   i: Integer;
   lItem: TSavedMap;
-  lObjectSheetOk: Boolean;
 begin
   if not Assigned(sgMaps.Objects[COL_OBJECT, sgMaps.Row])  then
     AllowChange := False
@@ -1229,7 +1228,7 @@ begin
       end;
     end;
   end;
-  if (not AllowChange) and (lObjectSheetOk) then
+  if not AllowChange then
     MessageDlg(ResStr_NeedOneMapReset, mtInformation, [mbOk], 0);
 end;  // TdlgMapOptions.pcMapOptionsChanging
 
