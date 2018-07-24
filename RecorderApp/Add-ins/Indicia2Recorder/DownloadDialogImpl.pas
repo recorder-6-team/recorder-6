@@ -15,7 +15,6 @@ type
   EDownloadDialogConfigException = class(Exception);
 
   TDownloadDialog = class(TActiveForm, IDownloadDialog, IRecorderAddin, IDialog, INewAction)
-    IdHTTP1: TIdHTTP;
     pnlInfo: TPanel;
     ProgressBar: TProgressBar;
     mmLog: TMemo;
@@ -39,6 +38,7 @@ type
     btnLogin: TButton;
     lblLoginInstruct: TLabel;
     cbLimitToAccepted: TCheckBox;
+    IdHTTP1: TIdHTTP;
     procedure btnLoginClick(Sender: TObject);
     procedure cmbSurveyChange(Sender: TObject);
   private
@@ -800,7 +800,6 @@ procedure TDownloadDialog.GetConnectionToIndicia();
 var
   connectionFile, tokens: TStringList;
   encrypted, decrypted: string;
-  sslSocket: TIdSSLIOHandlerSocket;
 begin
   connectionFile := TStringList.Create;
   tokens := TStringList.Create;
@@ -826,9 +825,7 @@ begin
     // if https, then set up the IO Handler. See
     // http://stackoverflow.com/questions/11554003/tidhttp-get-eidiohandlerpropinvalid-error
     if Copy(FUrl, 1, 5) = 'https' then begin
-      sslSocket := TIdSSLIOHandlerSocket.Create(nil);
-      sslSocket.SSLOptions.Method := sslvSSLv23;//, sslvSSLv3, sslvTLSv1 
-      idHttp1.IOHandler := sslSocket;
+      idHttp1.IOHandler := TIdSSLIOHandlerSocketOpenSSL.Create();
     end;
     lblLoginInstruct.Caption := StringReplace(lblLoginInstruct.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
     lblEmail.Caption := StringReplace(lblEmail.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
