@@ -103,6 +103,7 @@ type
     procedure CreateSample(sampleKey: string; surveyKey: string; thisrec: TStringList);
     procedure CreateOccurrence(occKey, sampleKey: String; thisrec: TStringList);
     function GetIndividual(indiciaId: string; name: string): string;
+    function GetSampleTypeKey(sampleTypeLabel: string): string;
     procedure eachSurvey(ElName: string; Elem: TlkJSONbase; data: pointer;
       var Continue: Boolean);
     procedure PopulateRecorderSurveys;
@@ -923,7 +924,6 @@ end;
  * Nice to have:
  * @todo: progressBar
  * @todo: logs of taxon determinations?
- * @todo: sample_type_key = load from Indicia's sample method or default to field observation
  * @todo: remember previous settings
  * @todo: set a location and vice county admin area??
  * @todo: intelligently set the determination date
@@ -932,7 +932,7 @@ procedure TDownloadDialog.CreateSample(sampleKey: string; surveyKey: string; thi
 var
   existing: _Recordset;
   vd: TVagueDate;
-  locationName, recorder, comment: string;
+  locationName, recorder, comment, sampleTypeKey: string;
   sref: string;
 begin
   existing := FConnection.Execute('SELECT survey_event_key FROM survey_event WHERE survey_event_key=''' + sampleKey + '''');
@@ -972,6 +972,7 @@ begin
   locationName := locationName + thisrec.values['vicecounty'];
   recorder := GetIndividual(thisrec.values['recorder_person_id'], thisrec.values['recorder']);
   comment := thisrec.values['sample_comment'];
+  sampleTypeKey := GetSampleTypeKey(thisrec.values['sample_method']);
   if (recorder = 'NBNSYS0000000004') and (thisrec.values['recorder']<>'') then
     // since we couldn't resolve the name key, don't lose the recorder name data
     comment := Format(ResStr_RecordedByComment, [thisrec.values['recorder']]) + #13#10 + comment;
@@ -1054,7 +1055,7 @@ begin
         '''Imported'', ' +
         '''' + EscapeSqlLiteral(locationName, 100) + ''',' +
         '''' + sampleKey + ''', ' +
-        '''NBNSYS0000000001'', ' +   // field observation
+        '''' + sampleTypeKey + ''', ' +
         '''' + EscapeSqlLiteral(comment) + ''',' +
         '''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
@@ -1073,7 +1074,7 @@ begin
         'spatial_ref_qualifier=''Imported'', ' +
         'location_name=''' + EscapeSqlLiteral(locationName, 100) + ''', ' +
         'survey_event_key=''' + sampleKey + ''', ' +
-        'sample_type_key=''NBNSYS0000000001'', ' +   // field observation
+        'sample_type_key=''' + sampleTypeKey + ''', ' + 
         'comment=''' + EscapeSqlLiteral(comment) + ''', ' +
         'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
@@ -1336,6 +1337,39 @@ begin
   else begin
     FPeopleRecordInfo.Values[result] := 'Using configured known person with name ' + name;
   end;
+end;
+
+function TDownloadDialog.GetSampleTypeKey(sampleTypeLabel: string): string;
+var
+  existing, newKey: _Recordset;
+  sampleTypeKey: string;
+begin
+  if sampleTypeLabel = '' then
+    sampleTypeKey := 'NBNSYS0000000001' // field observation
+  else begin
+    existing := FConnection.Execute(
+      'SELECT sample_type_key FROM sample_type WHERE short_name=''' + sampleTypeLabel + ''''
+    );
+    if existing.RecordCount=0 then begin
+      FConnection.Execute(
+        'DECLARE @key CHAR(16); ' +
+        'EXEC spNextKey ''sample_type'', @key OUTPUT;'
+      );
+      newKey := FConnection.Execute('SELECT last_key_text FROM last_key WHERE table_name=''sample_type''');
+      sampleTypeKey := FRemoteSiteId + newKey.fields['last_key_text'].value;
+      FConnection.Execute('INSERT INTO sample_type ' +
+        '(sample_type_key, short_name, entered_by, entry_date, system_supplied_data) ' +
+        'VALUES (''' + sampleTypeKey + ''',' +
+        '''' + sampleTypeLabel + ''',' +
+        '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
+        '''' + FormatDateTime('yyyy-mm-dd', Date) + ''',' +
+        '0)');
+    end
+    else begin
+      sampleTypeKey := existing.fields['sample_type_key'].value;
+    end;
+  end;
+  result := sampleTypeKey;
 end;
 
 procedure TDownloadDialog.CreateIndividual(indkey: string; name: string);

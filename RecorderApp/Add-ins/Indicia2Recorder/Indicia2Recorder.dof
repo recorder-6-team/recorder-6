@@ -130,7 +130,7 @@ TimestampServer=
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=6
+MinorVer=7
 Release=0
 Build=0
 Debug=0
@@ -143,7 +143,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=1.6.0.0
+FileVersion=1.7.0.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -152,8 +152,6 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 OleSelfRegister=1
-[Excluded Packages]
-c:\program files (x86)\borland\delphi7\Projects\BPL\dclqrd_d7.bpl=QRDesign
 [HistoryLists\hlConditionals]
 Count=1
 Item0=madExcept
