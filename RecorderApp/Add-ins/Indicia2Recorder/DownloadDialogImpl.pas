@@ -56,6 +56,7 @@ type
     FAppSecret: string;
     FRemoteSiteID: string;
     FRemoteSite: string;
+    FDrupalVersion: string;
     FDone: integer;
     FTotal: integer;
     FSettingsFolder: string;
@@ -123,6 +124,7 @@ type
     function EscapeSqlLiteral(literal: string; maxlen: integer): string; overload;
     procedure LoadKnownPeople;
     procedure ImportSurvey(indiciaSurveyId: integer; surveyKey, quality: string);
+    function GetUrl(const endpoint: string): string;
   protected
     { Protected declarations }
     procedure DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); override;
@@ -219,7 +221,8 @@ resourcestring
       'Please provide the Site ID for records created in Recorder from the website you want to download records from';
   ResStr_ProvideUrl = 'Please provide the URL of the website you want to download records from';      
   ResStr_ProvideWebsiteTitle = 'Please provide the title of the website you want to download records from';
-  ResStr_PleaseLogInIrecord = 'Please log in to iRecord before downloading any records.';
+  ResStr_ProvideDrupalVersion = 'Please provide the Drupal version, either 7 or 8';
+  ResStr_PleaseLogInIrecord = 'Please log in before downloading any records.';
   ResStr_ReceivedNRecords = 'Received %d records';
   ResStr_RecordedByComment = 'Recorded by person named %s';
   ResStr_RecordsICanCollate = 'Records I can collate';
@@ -714,7 +717,7 @@ begin
       request.AddFormField('date_to', DateToIsoStr(dtpEndDate.Date));
       request.AddFormField('limit', IntToStr(LIMIT));
       request.AddFormField('smpAttrs', FSmpAttrs);
-      request.AddFormField('occAttrs', FOccAttrs);
+      request.AddFormField('occAttrs', FOccAttrs).ContentTransfer := '';
       request.AddFormField('quality', quality);
       if FDone=0 then
         // first time through, so get the grand total
@@ -723,7 +726,7 @@ begin
         request.AddFormField('offset', IntToStr(FDone));
       if indiciaSurveyId<>0 then
         request.AddFormField('survey_id', IntToStr(indiciaSurveyId));
-      response := idHttp1.Post(FURL + '/?q=user/remote_download/download', request);
+      response := idHttp1.Post(GetUrl('download'), request);
     finally
       request.Free;
     end;
@@ -735,7 +738,13 @@ begin
           if TlkJSONobjectmethod(responseObj.Child[i]).Name='records' then
             records := TlkJSONobjectmethod(responseObj.Child[i]).ObjValue
           else if TlkJSONobjectmethod(responseObj.Child[i]).Name='count' then
-            FTotal := StrToInt(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+            FTotal := StrToInt(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value)
+          else if TlkJSONobjectmethod(responseObj.Child[i]).Name='error' then begin
+            LogFile('Error in response from Indicia web services');
+            LogFile(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+            Log('Error in response from Indicia web services');
+            Log(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+          end;
         end;
       end;
     end else
@@ -745,10 +754,32 @@ begin
     if assigned(records) then begin
       Log(Format(ResStr_ReceivedNRecords, [records.Count]));
       LogFile(Format(ResStr_ReceivedNRecords, [records.Count]));
+      ImportRecords(records, surveyKey);
+      FDone := FDone + records.Count;
     end;
-    ImportRecords(records, surveyKey);
-    FDone := FDone + records.Count;
   until FDone>=FTotal;
+end;
+
+function TDownloadDialog.GetUrl(const endpoint: string): string;
+begin
+  if FDrupalVersion = '7' then begin
+    if endpoint = 'login' then
+      result := FUrl + '/?q=user/mobile/register'
+    else if endpoint = 'privileges' then
+      result := FUrl + '/?q=user/remote_download/privileges'
+    else if endpoint = 'download' then
+      result := FUrl + '/?q=user/remote_download/download'
+  end
+  else if FDrupalVersion = '8' then begin
+    if endpoint = 'login' then
+      result := FUrl + '/remote_download/login'
+    else if endpoint = 'privileges' then
+      result := FUrl + '/remote_download/privileges'
+    else if endpoint = 'download' then
+      result := FUrl + '/remote_download/download'
+  end
+  else
+    raise Exception.Create('Unknown Drupal version in indicia connection info');
 end;
 
 (**
@@ -839,6 +870,10 @@ begin
     FAppSecret := tokens[1];
     FRemoteSiteID := tokens[2];
     FRemoteSite := tokens[3];
+    if tokens.count > 4 then
+      FDrupalVersion := tokens[4]
+    else
+      FDrupalVersion := '7';
     // if https, then set up the IO Handler. See
     // http://stackoverflow.com/questions/11554003/tidhttp-get-eidiohandlerpropinvalid-error
     if Copy(FUrl, 1, 5) = 'https' then begin
@@ -868,9 +903,14 @@ begin
     exit;
   if not InputQuery('Remote Site', ResStr_ProvideWebsiteTitle, FRemoteSite) then
     exit;
+  repeat
+    if not InputQuery('Drupal version (7 or 8)', ResStr_ProvideDrupalVersion, FDrupalVersion) then
+      exit;
+    FDrupalVersion := trim(FDrupalVersion);
+  until (FDrupalVersion = '7') or (FDrupalVersion = '8');
   connectionFile := TStringList.Create;
   try
-    connectionFile.Add(Encrypt(FURL+'|'+FAppSecret+'|'+FRemoteSiteID+'|'+FRemoteSite, 'brim5tone'));
+    connectionFile.Add(Encrypt(FURL+'|'+FAppSecret+'|'+FRemoteSiteID+'|"'+FRemoteSite+'"|'+FDrupalVersion, 'brim5tone'));
     connectionFile.SaveToFile(FSettingsFolder + 'indiciaConnection.txt');
   finally
     connectionFile.Free;
@@ -1691,7 +1731,7 @@ begin
     request.AddFormField('password', ePassword.Text);
     request.AddFormField('appsecret', FAppSecret);
     try
-      response := idHttp1.Post(FURL + '/?q=user/mobile/register', request);
+      response := idHttp1.Post(GetUrl('login'), request);
     except
       on E:EIdHTTPProtocolException do begin
         ShowMessage(EIdHTTPProtocolException(E).ErrorMessage);
@@ -1858,7 +1898,7 @@ begin
     request.AddFormField('email', FEmail);
     request.AddFormField('appsecret', FAppSecret);
     request.AddFormField('usersecret', FSecret);
-    response := idHttp1.Post(FURL + '/?q=user/remote_download/privileges', request);
+    response := idHttp1.Post(GetUrl('privileges'), request);
     info := TlkJSON.ParseText(response);
     types := info.Field['types'];
     surveys := TlkJSONcustomlist(info.Field['surveys']);
