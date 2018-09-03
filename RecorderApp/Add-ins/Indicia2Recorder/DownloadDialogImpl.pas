@@ -760,6 +760,12 @@ begin
   until FDone>=FTotal;
 end;
 
+(**
+ * Gets a URL for accessing the web services on the Drupal site. Adapts to
+ * Drupal 7 or Drupal 8 to build correct URLs.
+ *
+ * Endpoint - parameter should be either 'login', 'privileges' or 'download'.
+ *)
 function TDownloadDialog.GetUrl(const endpoint: string): string;
 begin
   if FDrupalVersion = '7' then begin
