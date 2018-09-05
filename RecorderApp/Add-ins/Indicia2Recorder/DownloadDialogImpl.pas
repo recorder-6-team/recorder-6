@@ -870,8 +870,9 @@ begin
     connectionFile.LoadFromFile(FSettingsFolder + 'indiciaConnection.txt');
     encrypted := connectionFile.Text;
     decrypted := Decrypt(encrypted, 'brim5tone');
-    tokens.Delimiter := '|';
-    tokens.DelimitedText := decrypted;
+    // Split string on delimiter. Using delimitedText doesn't work as it always
+    // splits on spaces.
+    tokens.Text := StringReplace(decrypted, '|', sLineBreak, [rfReplaceAll]);
     FURL := tokens[0];
     FAppSecret := tokens[1];
     FRemoteSiteID := tokens[2];
@@ -916,7 +917,7 @@ begin
   until (FDrupalVersion = '7') or (FDrupalVersion = '8');
   connectionFile := TStringList.Create;
   try
-    connectionFile.Add(Encrypt(FURL+'|'+FAppSecret+'|'+FRemoteSiteID+'|"'+FRemoteSite+'"|'+FDrupalVersion, 'brim5tone'));
+    connectionFile.Add(Encrypt(FURL+'|'+FAppSecret+'|'+FRemoteSiteID+'|'+FRemoteSite+'|'+FDrupalVersion, 'brim5tone'));
     connectionFile.SaveToFile(FSettingsFolder + 'indiciaConnection.txt');
   finally
     connectionFile.Free;
