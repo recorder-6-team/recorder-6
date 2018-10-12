@@ -12,7 +12,7 @@ unit Indicia2Recorder_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 03/09/2018 10:40:48 from Type Library described below.
+// File generated on 08/10/2018 09:37:39 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\Indicia2Recorder.tlb (1)

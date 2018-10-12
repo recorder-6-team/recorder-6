@@ -1156,14 +1156,6 @@ var
   nameInfo: string;
 begin
   existing := FConnection.Execute('SELECT taxon_occurrence_key FROM taxon_occurrence WHERE taxon_occurrence_key=''' + occKey + '''');
-
-  {*******************************************}
-  if thisrec.values['taxonversionkey'] = 'DSS0043900189B61' then begin
-    thisrec.values['taxonversionkey'] := 'NBNSYS0000009391';
-  end;
-  {*******************************************}
-
-
   tli := FConnection.Execute('SELECT recommended_taxon_list_item_key FROM nameserver ' +
       'WHERE input_taxon_version_key=''' + thisrec.values['taxonversionkey'] + ''' AND recommended_taxon_list_item_key IS NOT NULL');
   if tli.RecordCount=0 then begin
@@ -1326,8 +1318,7 @@ begin
           mu_key := temp[0];
           mq_key := temp[1];
           existing := FConnection.Execute('SELECT ' + table + '_data_key FROM ' + table + '_data ' +
-              'WHERE measurement_unit_key=''' + mu_key + ''' AND measurement_qualifier_key=''' + mq_key +
-              ''' AND ' + table + '_key=''' + key + '''');
+              'WHERE ' + table + '_data_key=''' + dataKey + '''');
           if existing.RecordCount=0 then begin
             // insert new taxon determination
             FConnection.Execute('INSERT INTO ' + table + '_data (' + table + '_data_key, ' + table + '_key, data, accuracy, '+
@@ -1343,12 +1334,14 @@ begin
               ')');
           end
           else begin
-            FConnection.Execute('UPDATE ' + table + '_data SET '+
+            FConnection.Execute('UPDATE ' + table + '_data SET ' +
               'data=''' + val + ''', ' +
+              'accuracy=''Unknown'', ' +
+              'measurement_qualifier_key=''' + mq_key + ''', ' +
+              'measurement_unit_key=''' + mu_key + ''',
               'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
               'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
-              'WHERE measurement_unit_key=''' + mu_key + ''' AND measurement_qualifier_key=''' + mq_key +
-                  ''' AND ' + table + '_key=''' + key + '''');
+              'WHERE ' + table + '_data_key=''' + key + '''');
           end;
         end;
       end;
@@ -1390,12 +1383,23 @@ function TDownloadDialog.GetSampleTypeKey(sampleTypeLabel: string): string;
 var
   existing, newKey: _Recordset;
   sampleTypeKey: string;
+  shortName: string;
+  longName: string;
 begin
   if sampleTypeLabel = '' then
     sampleTypeKey := 'NBNSYS0000000001' // field observation
   else begin
+    // Trim long sample type labels.
+    if Length(sampleTypeLabel) > 20 then begin
+      shortName := Copy(sampleTypeLabel, 1, 18) + '..';
+      longName := ''' + sampleTypeLabel + ''';
+    end
+    else begin
+      shortName := sampleTypeLabel;
+      longName := 'null';
+    end;
     existing := FConnection.Execute(
-      'SELECT sample_type_key FROM sample_type WHERE short_name=''' + sampleTypeLabel + ''''
+      'SELECT sample_type_key FROM sample_type WHERE short_name=''' + shortName + ''''
     );
     if existing.RecordCount=0 then begin
       FConnection.Execute(
@@ -1405,9 +1409,10 @@ begin
       newKey := FConnection.Execute('SELECT last_key_text FROM last_key WHERE table_name=''sample_type''');
       sampleTypeKey := FRemoteSiteId + newKey.fields['last_key_text'].value;
       FConnection.Execute('INSERT INTO sample_type ' +
-        '(sample_type_key, short_name, entered_by, entry_date, system_supplied_data) ' +
+        '(sample_type_key, short_name, long_name, entered_by, entry_date, system_supplied_data) ' +
         'VALUES (''' + sampleTypeKey + ''',' +
-        '''' + sampleTypeLabel + ''',' +
+        '''' + shortName + ''',' +
+        longName + ',' +
         '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + ''',' +
         '0)');
