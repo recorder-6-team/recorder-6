@@ -212,7 +212,7 @@ begin
       on E:Exception do // any probs, then rollback
       begin
         dmDatabase.dbLocal.RollbackTrans;
-        raise EMergeDataError.Create(ResStr_MergeRollback, E);
+        raise E;
       end;
     end;
   finally
@@ -381,7 +381,7 @@ begin
           ltfDoChanged := Assigned(FindField('CHANGED_BY'));
           ltfDoChecked := Assigned(FindField('CHECKED_BY'));
           Close;
-         Except on EOleException do;
+         Except on Exception do;
 
          end;
       end;
