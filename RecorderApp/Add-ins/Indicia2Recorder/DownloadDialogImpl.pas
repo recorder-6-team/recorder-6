@@ -103,6 +103,7 @@ type
     function IdToKey(id: variant): string;
     procedure CreateSample(sampleKey: string; surveyKey: string; thisrec: TStringList);
     procedure CreateOccurrence(occKey, sampleKey: String; thisrec: TStringList);
+    procedure CreateMedia(occKey: String; thisrec: TStringList);
     function GetIndividual(indiciaId: string; name: string): string;
     function GetSampleTypeKey(sampleTypeLabel: string): string;
     procedure eachSurvey(ElName: string; Elem: TlkJSONbase; data: pointer;
@@ -1155,6 +1156,11 @@ var
   vd: TVagueDate;
   nameInfo: string;
 begin
+  // TESTING => swap to UK tvk for F. japonica.
+  if thisrec.values['taxonversionkey'] = 'MNHSYS0000100157' then
+    thisrec.values['taxonversionkey'] := 'NBNSYS0000003762';
+  if thisrec.values['media'] <> '' then
+    showMessage(thisrec.values['media'] + ' ' + thisrec.values['taxonversionkey']);
   existing := FConnection.Execute('SELECT taxon_occurrence_key FROM taxon_occurrence WHERE taxon_occurrence_key=''' + occKey + '''');
   tli := FConnection.Execute('SELECT recommended_taxon_list_item_key FROM nameserver ' +
       'WHERE input_taxon_version_key=''' + thisrec.values['taxonversionkey'] + ''' AND recommended_taxon_list_item_key IS NOT NULL');
@@ -1274,6 +1280,73 @@ begin
         'WHERE taxon_determination_key=''' + occKey + '''');
   end;
   CreateData(thisrec, 'Taxon_Occurrence', occKey, 'occ', 'occurrence');
+  CreateMedia(occKey, thisrec);
+end;
+
+procedure TDownloadDialog.CreateMedia(occKey: String; thisrec: TStringList);
+var
+  existing: _Recordset;
+  files, tokens: TStringList;
+  sourceKey: string;
+  i: integer;
+  title: string;
+begin
+  files := TStringList.Create;
+  tokens := TStringList.Create;
+  try
+    files.Text := StringReplace(thisrec.Values['media'], ';', sLineBreak, [rfReplaceAll]);
+    for i:=0 to files.Count-1 do begin
+      tokens.Text := StringReplace(files[i], '|', sLineBreak, [rfReplaceAll]);
+      sourceKey := FRemoteSiteID + IdToKey(tokens[0]);
+      existing := FConnection.Execute(
+        'SELECT source_key ' +
+        'FROM taxon_occurrence_sources ' +
+        'WHERE taxon_occurrence_key=''' + occKey + ''' ' +
+        'AND source_key=''' + sourceKey + ''''
+      );
+      // Title in caption [licence code] format.
+      if tokens.count > 2 then
+        title := tokens[2]
+      else
+        title := '';
+      if tokens.count > 3 then begin
+        if tokens[3] <> '' then begin
+          if title <> '' then
+            title := title + ' ';
+          title := title + '[' + tokens[3] + ']';
+        end;
+      end;
+      if existing.RecordCount > 0 then begin
+        // If existing then update fields.
+        FConnection.Execute(
+          'UPDATE source_file SET file_name=''' + tokens[1] + ''' and title=''' + title + ''' ' +
+          'WHERE source_file_key=''' + sourceKey + ''''
+        );
+      end
+      else begin
+        // else add new source_file, source and taxon_occurrence_sources records
+        FConnection.Execute(
+          'INSERT INTO source(source_key, internal) ' +
+             'VALUES(''' + sourceKey + ''', 0)'
+        );
+        FConnection.Execute(
+          'INSERT INTO source_file(source_key, file_name, title) ' +
+            'VALUES(''' + sourceKey + ''', ''' + tokens[1] + ''', ''' + title + ''')'
+        );
+        ShowMessage('Inserting tos ' + sourceKey);
+        ShowMessage(            'INSERT INTO taxon_occurrence_sources(source_link_key, taxon_occurrence_key, source_key, original) ' +
+            'VALUES(''' + sourceKey + ''', ''' + occKey + ''', ''' + sourceKey + ''', 0)' );
+
+        FConnection.Execute(
+          'INSERT INTO taxon_occurrence_sources(source_link_key, taxon_occurrence_key, source_key, original) ' +
+            'VALUES(''' + sourceKey + ''', ''' + occKey + ''', ''' + sourceKey + ''', 0)'
+        );
+      end;
+    end;
+  finally
+    files.Free;
+    tokens.Free;
+  end;
 end;
 
 function TDownloadDialog.EscapeSqlLiteral(literal: string): string;
@@ -1335,13 +1408,14 @@ begin
           end
           else begin
             FConnection.Execute('UPDATE ' + table + '_data SET ' +
+              table + '_key=''' + key + ''', ' +
               'data=''' + val + ''', ' +
               'accuracy=''Unknown'', ' +
               'measurement_qualifier_key=''' + mq_key + ''', ' +
-              'measurement_unit_key=''' + mu_key + ''',
+              'measurement_unit_key=''' + mu_key + ''', ' +
               'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
               'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
-              'WHERE ' + table + '_data_key=''' + key + '''');
+              'WHERE ' + table + '_data_key=''' + dataKey + '''');
           end;
         end;
       end;
