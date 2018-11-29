@@ -1156,11 +1156,6 @@ var
   vd: TVagueDate;
   nameInfo: string;
 begin
-  // TESTING => swap to UK tvk for F. japonica.
-  if thisrec.values['taxonversionkey'] = 'MNHSYS0000100157' then
-    thisrec.values['taxonversionkey'] := 'NBNSYS0000003762';
-  if thisrec.values['media'] <> '' then
-    showMessage(thisrec.values['media'] + ' ' + thisrec.values['taxonversionkey']);
   existing := FConnection.Execute('SELECT taxon_occurrence_key FROM taxon_occurrence WHERE taxon_occurrence_key=''' + occKey + '''');
   tli := FConnection.Execute('SELECT recommended_taxon_list_item_key FROM nameserver ' +
       'WHERE input_taxon_version_key=''' + thisrec.values['taxonversionkey'] + ''' AND recommended_taxon_list_item_key IS NOT NULL');
@@ -1305,22 +1300,20 @@ begin
         'AND source_key=''' + sourceKey + ''''
       );
       // Title in caption [licence code] format.
-      if tokens.count > 2 then
+      if (tokens.count > 2) and (tokens[2] <> '') then
         title := tokens[2]
       else
-        title := '';
+        title := tokens[1];
       if tokens.count > 3 then begin
         if tokens[3] <> '' then begin
-          if title <> '' then
-            title := title + ' ';
-          title := title + '[' + tokens[3] + ']';
+          title := title + ' [' + tokens[3] + ']';
         end;
       end;
       if existing.RecordCount > 0 then begin
         // If existing then update fields.
         FConnection.Execute(
-          'UPDATE source_file SET file_name=''' + tokens[1] + ''' and title=''' + title + ''' ' +
-          'WHERE source_file_key=''' + sourceKey + ''''
+          'UPDATE source_file SET file_name=''' + tokens[1] + ''', title=''' + title + ''' ' +
+          'WHERE source_key=''' + sourceKey + ''''
         );
       end
       else begin
@@ -1333,10 +1326,6 @@ begin
           'INSERT INTO source_file(source_key, file_name, title) ' +
             'VALUES(''' + sourceKey + ''', ''' + tokens[1] + ''', ''' + title + ''')'
         );
-        ShowMessage('Inserting tos ' + sourceKey);
-        ShowMessage(            'INSERT INTO taxon_occurrence_sources(source_link_key, taxon_occurrence_key, source_key, original) ' +
-            'VALUES(''' + sourceKey + ''', ''' + occKey + ''', ''' + sourceKey + ''', 0)' );
-
         FConnection.Execute(
           'INSERT INTO taxon_occurrence_sources(source_link_key, taxon_occurrence_key, source_key, original) ' +
             'VALUES(''' + sourceKey + ''', ''' + occKey + ''', ''' + sourceKey + ''', 0)'
