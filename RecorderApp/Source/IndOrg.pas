@@ -194,6 +194,11 @@ type
     mnuPlaceHolder: TMenuItem;
     pnlIndOrgDetails: TPanel;
     pnlInner: TPanel;
+    lblNamePrompt: TLabel;
+    lblSelectedName: TLabel;
+    bbSave: TImageListButton;
+    bbCancel: TImageListButton;
+    ilNames: TImageList;
     pcNameDetails: TPageControl;
     tsIndividual: TTabSheet;
     bvlIndividual: TBevel;
@@ -225,6 +230,7 @@ type
     dbreComment: TDBRichEdit;
     dblcOOrgType: TDBLookupComboBox;
     tsAddresses: TTabSheet;
+    splAddresses: TSplitter;
     gbAddressDetails: TGroupBox;
     Label19: TLabel;
     Label18: TLabel;
@@ -243,7 +249,13 @@ type
     bbAAccept: TImageListButton;
     bbACancel: TImageListButton;
     eAPostCode: TEdit;
+    pnlAddressesTop: TPanel;
+    sgAAddresses: TStringGrid;
+    bbAAdd: TImageListButton;
+    bbAEdit: TImageListButton;
+    bbADel: TImageListButton;
     tsContacts: TTabSheet;
+    splContactNos: TSplitter;
     gbContactDetails: TGroupBox;
     Label23: TLabel;
     Label24: TLabel;
@@ -256,7 +268,13 @@ type
     reCConstraints: TRichEdit;
     bbCAccept: TImageListButton;
     bbCCancel: TImageListButton;
+    pnlContactNosTop: TPanel;
+    sgCContactNumbers: TStringGrid;
+    bbCAdd: TImageListButton;
+    bbCEdit: TImageListButton;
+    bbCDel: TImageListButton;
     tsComms: TTabSheet;
+    splComms: TSplitter;
     gbCODetails: TGroupBox;
     Label27: TLabel;
     Label29: TLabel;
@@ -270,7 +288,14 @@ type
     bbCOAccept: TImageListButton;
     bbCOCancel: TImageListButton;
     eCOName: TNameLinkedEdit;
+    pnlCommsTop: TPanel;
+    Shape3: TShape;
+    sgCOComms: TStringGrid;
+    bbCOAdd: TImageListButton;
+    bbCOEdit: TImageListButton;
+    bbCODel: TImageListButton;
     tsAssoc: TTabSheet;
+    splAssocs: TSplitter;
     gbASDetails: TGroupBox;
     Label34: TLabel;
     Label37: TLabel;
@@ -286,6 +311,12 @@ type
     bbASAccept: TImageListButton;
     bbASCancel: TImageListButton;
     eASName: TNameLinkedEdit;
+    pnlAssocsTop: TPanel;
+    Shape4: TShape;
+    sgASAssocs: TStringGrid;
+    bbASDel: TImageListButton;
+    bbASEdit: TImageListButton;
+    bbASAdd: TImageListButton;
     tsBiography: TTabSheet;
     Bevel3: TBevel;
     lblHHonorifics: TLabel;
@@ -293,11 +324,13 @@ type
     lblHDateOfDeath: TLabel;
     lblHFloreat: TLabel;
     lblHGeneralComments: TLabel;
+    lblHActiveFrom: TLabel;
     dbeHHonorifics: TDBEdit;
     dbeHFloreat: TDBEdit;
     dbreComments: TDBRichEdit;
     eHDateOfBirth: TVagueDateEdit;
     eHDateOfDeath: TVagueDateEdit;
+    eHActivePeriod: TVagueDateEdit;
     tsDepartments: TTabSheet;
     Label2: TLabel;
     sgDepartments: TControlStringGrid;
@@ -305,37 +338,6 @@ type
     btnDeptAdd: TImageListButton;
     tsSources: TTabSheet;
     Sources: TSources;
-    lblNamePrompt: TLabel;
-    lblSelectedName: TLabel;
-    bbSave: TImageListButton;
-    bbCancel: TImageListButton;
-    splAddresses: TSplitter;
-    pnlAddressesTop: TPanel;
-    sgAAddresses: TStringGrid;
-    bbAAdd: TImageListButton;
-    bbAEdit: TImageListButton;
-    bbADel: TImageListButton;
-    splContactNos: TSplitter;
-    pnlContactNosTop: TPanel;
-    sgCContactNumbers: TStringGrid;
-    bbCAdd: TImageListButton;
-    bbCEdit: TImageListButton;
-    bbCDel: TImageListButton;
-    splComms: TSplitter;
-    pnlCommsTop: TPanel;
-    Shape3: TShape;
-    sgCOComms: TStringGrid;
-    bbCOAdd: TImageListButton;
-    bbCOEdit: TImageListButton;
-    bbCODel: TImageListButton;
-    splAssocs: TSplitter;
-    pnlAssocsTop: TPanel;
-    Shape4: TShape;
-    sgASAssocs: TStringGrid;
-    bbASDel: TImageListButton;
-    bbASEdit: TImageListButton;
-    bbASAdd: TImageListButton;
-    ilNames: TImageList;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbRelatedDataClick(Sender: TObject);
     procedure sbIndividualsClick(Sender: TObject);
@@ -404,6 +406,7 @@ type
     procedure dbeODateFoundedExit(Sender: TObject);
     procedure eCODateExit(Sender: TObject);
     procedure eHDateOfBirthExit(Sender: TObject);
+    procedure eHActivePeriodExit(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure mnuRelDocumentsClick(Sender: TObject);
     procedure mnuRelSurveysClick(Sender: TObject);
@@ -429,6 +432,7 @@ type
     procedure eASNameFindData(Sender: TObject);
     procedure sgDepartmentsClick(Sender: TObject);
     procedure pnlIndOrgDetailsResize(Sender: TObject);
+    procedure btnAdditionalInfoClick(Sender: TObject);
   private
     FdmName         :TdmName;
     FClosingForm    :boolean;
@@ -533,6 +537,7 @@ type
     procedure ValidateDateFounded;
     procedure ValidateDateOfBirth;
     procedure ValidateDateOfDeath;
+    procedure ValidateActivePeriod;
     procedure SetIndividualSort(const Value: string);
     procedure SetOrganisationSort(const Value: string);
     procedure PerformSort;
@@ -962,7 +967,6 @@ begin
     rbAHome.Visible:= (Value = nmIndividual);
     rbAWork.Visible:= (Value = nmIndividual);
     tsBiography.TabVisible:= (Value = nmIndividual);
-
     FCurrentItemType := Value;
     UpdateSubMenus;
   end;
@@ -1299,7 +1303,6 @@ begin
 
   SetRequiredFieldsColourState(tfOn, [dbeISurname,dbeOFullName]);
   SetOnePage(tsBiography);
-
   // Addresses
   bbAAdd.Enabled :=tfOn;
   sgAAddressesClick(nil);
@@ -1315,6 +1318,7 @@ begin
   // Biography
   eHDateOfBirth.ReadOnly := not (tfOn and HaveCustody);
   eHDateOfDeath.ReadOnly := eHDateOfBirth.ReadOnly;
+  eHActivePeriod.ReadOnly := eHDateOfBirth.ReadOnly;
   // Sources
   Sources.EditMode:=EditMode;
 
@@ -1762,7 +1766,7 @@ begin
   ValidateDateEnded;
   ValidateDateOfBirth;
   ValidateDateOfDeath;
-
+  ValidateActivePeriod;
   //Check required fields
   lCurrentPage:=pcNameDetails.ActivePage;
   if CurrentItemType = nmIndividual then
@@ -1841,6 +1845,7 @@ begin
         // Store biography dates
         lQuery.FieldByName('Born_Vague_Date_Start').Text := eHDateOfBirth.Text;
         lQuery.FieldByName('Died_Vague_Date_Start').Text := eHDateOfDeath.Text;
+        lQuery.FieldByName('Active_Vague_Date_Start').Text := eHActivePeriod.Text;
       end;
       //Save Changes
       lQuery.Post;
@@ -3114,13 +3119,24 @@ procedure TfrmIndOrg.eHDateOfBirthExit(Sender: TObject);
 var lCancelPos:TPoint;
 begin
   inherited;
-    lCancelPos:=bbCancel.ScreenToClient(Mouse.CursorPos);
+  lCancelPos:=bbCancel.ScreenToClient(Mouse.CursorPos);
   if (lCancelPos.X in [0..bbCancel.Width]) and (lCancelPos.Y in [0..bbCancel.Height]) then
     bbCancelClick(nil)
   else
     ValidateDateOfBirth;
 end;  // eHDateOfBirthExit
-
+//==============================================================================
+procedure TfrmIndOrg.eHActivePeriodExit(Sender: TObject);
+var lCancelPos:TPoint;
+begin
+  inherited;
+  lCancelPos:=bbCancel.ScreenToClient(Mouse.CursorPos);
+  if (lCancelPos.X in [0..bbCancel.Width]) and (lCancelPos.Y in [0..bbCancel.Height]) then
+    bbCancelClick(nil)
+  else
+    ValidateActivePeriod;
+end;  // eHActivePeriodExit
+//==============================================================================
 procedure TfrmIndOrg.ValidateDateOfBirth;
 begin
   ValidateValue(IsVagueDate(eHDateOfBirth.Text),
@@ -3129,8 +3145,14 @@ begin
     ValidateValue(CheckVagueDate(eHDateOfBirth.Text),
                   InvalidDate(ResStr_DateOfBirth,true,false),eHDateOfBirth);
 end;  // TfrmIndOrg.ValidateDateOfBirth
+//==============================================================================
+procedure TfrmIndOrg.ValidateActivePeriod;
+begin
+  ValidateValue(IsVagueDate(eHActivePeriod.Text),
+                ResStr_InvalidVagueDate, eHActivePeriod);
+end;  // TfrmIndOrg.ValidateDateOfBirth
 
-//------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 procedure TfrmIndOrg.eHDateOfDeathExit(Sender: TObject);
 var lCancelPos:TPoint;
 begin
@@ -4056,6 +4078,7 @@ procedure TfrmIndOrg.PopulateBiographyDates(AQuery: TJNCCQuery);
 begin
   eHDateOfBirth.Text := AQuery.FieldByName('Born_Vague_Date_Start').Text;
   eHDateOfDeath.Text := AQuery.FieldByName('Died_Vague_Date_Start').Text;
+  eHActivePeriod.Text := AQuery.FieldByName('Active_Vague_Date_Start').Text;
 end;
 
 {-------------------------------------------------------------------------------
@@ -4106,5 +4129,19 @@ begin
       MoveNext;
     end;
 end;
+
+procedure TfrmIndOrg.btnAdditionalInfoClick(Sender: TObject);
+var ExtraInfo : string;
+begin
+  inherited;
+  with dmDatabase.GetRecordset('usp_Names_Extra_Info', ['@key',FCurrentKey,'@Detail',1]) DO
+    begin
+      while not Eof do begin
+         ExtraInfo := Fields['DETAILS'].Value;
+         MessageDlg(ExtraInfo, MtInformation, [mbOk], 0);
+         movenext;
+       end;
+     end;
+   end;
 
 end.

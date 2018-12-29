@@ -1,6 +1,6 @@
 inherited frmIndOrg: TfrmIndOrg
-  Left = 371
-  Top = 300
+  Left = 270
+  Top = 266
   Width = 714
   Height = 455
   Caption = 'Names & Addresses'
@@ -29,15 +29,15 @@ inherited frmIndOrg: TfrmIndOrg
     BevelOuter = bvNone
     TabOrder = 0
     object pnlButtons2: TPanel
-      Left = 523
+      Left = 512
       Top = 0
-      Width = 183
+      Width = 194
       Height = 34
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 3
       object bbShowAll: TButton
-        Left = 4
+        Left = -4
         Top = 6
         Width = 75
         Height = 25
@@ -48,7 +48,7 @@ inherited frmIndOrg: TfrmIndOrg
         OnClick = bbShowAllClick
       end
       object bbRelatedData: TImageListButton
-        Left = 84
+        Left = 100
         Top = 6
         Width = 93
         Height = 25
@@ -367,14 +367,45 @@ inherited frmIndOrg: TfrmIndOrg
         Font.Style = []
         ParentFont = False
       end
+      object bbSave: TImageListButton
+        Left = 255
+        Top = 334
+        Width = 75
+        Height = 25
+        Hint = 'Save Individual/Organisation Details'
+        Anchors = [akRight, akBottom]
+        Caption = '&Save'
+        Enabled = False
+        ModalResult = 1
+        TabOrder = 0
+        OnClick = bbSaveClick
+        ImageList = dmFormActions.ilButtons
+        ImageIndex = 0
+      end
+      object bbCancel: TImageListButton
+        Left = 339
+        Top = 334
+        Width = 75
+        Height = 25
+        Hint = 'Cancel Changes'
+        Anchors = [akRight, akBottom]
+        Cancel = True
+        Caption = '&Cancel'
+        Enabled = False
+        ModalResult = 2
+        TabOrder = 1
+        OnClick = bbCancelClick
+        ImageList = dmFormActions.ilButtons
+        ImageIndex = 1
+      end
       object pcNameDetails: TPageControl
         Left = 8
         Top = 24
         Width = 405
         Height = 305
-        ActivePage = tsIndividual
+        ActivePage = tsBiography
         Anchors = [akLeft, akTop, akRight, akBottom]
-        TabOrder = 0
+        TabOrder = 2
         OnChange = pcNameDetailsChange
         OnChanging = pcNameDetailsChanging
         object tsIndividual: TTabSheet
@@ -503,7 +534,7 @@ inherited frmIndOrg: TfrmIndOrg
             Height = 21
             Style = csDropDownList
             Anchors = [akLeft, akRight, akBottom]
-            ItemHeight = 13
+            ItemHeight = 0
             TabOrder = 5
             OnPopulate = cmbDeptPopulate
           end
@@ -1433,7 +1464,7 @@ inherited frmIndOrg: TfrmIndOrg
               Top = 40
               Width = 121
               Height = 21
-              ItemHeight = 0
+              ItemHeight = 13
               Sorted = True
               TabOrder = 1
             end
@@ -1636,8 +1667,8 @@ inherited frmIndOrg: TfrmIndOrg
             Caption = 'Date of Birth:'
           end
           object lblHDateOfDeath: TLabel
-            Left = 12
-            Top = 82
+            Left = 204
+            Top = 50
             Width = 70
             Height = 13
             Caption = 'Date of Death:'
@@ -1655,6 +1686,13 @@ inherited frmIndOrg: TfrmIndOrg
             Width = 92
             Height = 13
             Caption = 'General Comments:'
+          end
+          object lblHActiveFrom: TLabel
+            Left = 12
+            Top = 82
+            Width = 66
+            Height = 13
+            Caption = 'Active Period:'
           end
           object dbeHHonorifics: TDBEdit
             Left = 88
@@ -1691,7 +1729,7 @@ inherited frmIndOrg: TfrmIndOrg
           object eHDateOfBirth: TVagueDateEdit
             Left = 88
             Top = 48
-            Width = 121
+            Width = 105
             Height = 21
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clBlack
@@ -1703,9 +1741,9 @@ inherited frmIndOrg: TfrmIndOrg
             OnExit = eHDateOfBirthExit
           end
           object eHDateOfDeath: TVagueDateEdit
-            Left = 88
-            Top = 80
-            Width = 121
+            Left = 280
+            Top = 48
+            Width = 105
             Height = 21
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clBlack
@@ -1715,6 +1753,20 @@ inherited frmIndOrg: TfrmIndOrg
             ParentFont = False
             TabOrder = 2
             OnExit = eHDateOfDeathExit
+          end
+          object eHActivePeriod: TVagueDateEdit
+            Left = 88
+            Top = 80
+            Width = 105
+            Height = 21
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlack
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 5
+            OnExit = eHActivePeriodExit
           end
         end
         object tsDepartments: TTabSheet
@@ -1794,37 +1846,6 @@ inherited frmIndOrg: TfrmIndOrg
               265)
           end
         end
-      end
-      object bbSave: TImageListButton
-        Left = 255
-        Top = 334
-        Width = 75
-        Height = 25
-        Hint = 'Save Individual/Organisation Details'
-        Anchors = [akRight, akBottom]
-        Caption = '&Save'
-        Enabled = False
-        ModalResult = 1
-        TabOrder = 1
-        OnClick = bbSaveClick
-        ImageList = dmFormActions.ilButtons
-        ImageIndex = 0
-      end
-      object bbCancel: TImageListButton
-        Left = 339
-        Top = 334
-        Width = 75
-        Height = 25
-        Hint = 'Cancel Changes'
-        Anchors = [akRight, akBottom]
-        Cancel = True
-        Caption = '&Cancel'
-        Enabled = False
-        ModalResult = 2
-        TabOrder = 2
-        OnClick = bbCancelClick
-        ImageList = dmFormActions.ilButtons
-        ImageIndex = 1
       end
     end
   end
