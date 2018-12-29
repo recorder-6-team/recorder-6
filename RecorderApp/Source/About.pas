@@ -121,7 +121,6 @@ type
     Label9: TLabel;
     Label10: TLabel;
     lblDatabaseVersion: TLabel;
-    StaticText2: TStaticText;
     Label12: TLabel;
     procedure FormCreate(Sender: TObject);
   private
