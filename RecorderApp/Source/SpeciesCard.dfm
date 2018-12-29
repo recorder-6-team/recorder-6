@@ -1,6 +1,6 @@
 inherited frmSpeciesCard: TfrmSpeciesCard
-  Left = 663
-  Top = 273
+  Left = 338
+  Top = 217
   Width = 678
   Height = 545
   BorderIcons = [biSystemMenu, biMinimize]
