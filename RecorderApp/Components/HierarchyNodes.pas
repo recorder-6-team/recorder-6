@@ -509,7 +509,7 @@ const
   DEF_SITE_IMAGE = 0;
 
   { TFeatureNode }
-  DEF_FEATURE_IMAGE = 3;
+  DEF_FEATURE_IMAGE = 5;
 
   { TTaxonDictionaryNode }
   INT_CRITICAL_VALIDATION_LEVEL = 3;
