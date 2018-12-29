@@ -1,5 +1,5 @@
 //==============================================================================
-//  Unit:        ValidationData
+//  Unit:        ValidationData                          
 //
 //  Implements:  TdmValidation
 //
@@ -66,6 +66,7 @@ type
   private
     FLastCheckedSample : TKeyString;  // Key of sample last checked by CheckDeterminationDateAgainstSample
     FSampleDateToTest: TVagueDate;
+    FSurveyIsTemp  : boolean;
     FLastCheckedSurvey : TKeyString; // Identified survey whose details are cached
     FLastCheckedSurveySW : TLatLong;
     FLastCheckedSurveyNE : TLatLong;
@@ -109,6 +110,7 @@ type
         const sampleDate, determinationDate : TVagueDate): boolean;
     function CheckDeterminationDate(const sampleKey, determinationKey: TKeyString;
         sampleDate, determinationDate: TVagueDate): TValidOccDates;
+    function CheckIsTemporary(const iSurveyKey : TKeyString) : TValidationResult;
   end;
 
 resourcestring
@@ -491,6 +493,18 @@ begin
 end;  // CheckEventDateAgainstSurvey
 
 //==============================================================================
+function TdmValidation.CheckIsTemporary(const iSurveyKey : TKeyString) :
+         TValidationResult;
+begin
+  ReadSurveyDetails(iSurveyKey);
+  if FSurveyIsTemp then
+    Result.Success := True
+  else
+    Result.Success := False;
+end;  // CheckIsTemporary
+
+
+//==============================================================================
 function TdmValidation.CheckEventInSurvey(const iSurveyKey : TKeyString;
       const iSpatialRef, iSpatialRefSystem, iLocationKey: string;
       iCacheData : boolean = false) : TValidationResult;
@@ -555,7 +569,7 @@ begin
 end;
 
 //==============================================================================
-{ Read the bounding box and date information for a survey, into the class
+{ Read the bounding box, date and temporary survey information for a survey, into the class
      data for this purpose }
 procedure TdmValidation.ReadSurveyDetails( const iSurveyKey : TKeyString );
 var
@@ -587,7 +601,7 @@ begin
           else
             raise;
       end;
-      
+
       if lFailed then
       begin
         Close;
@@ -595,7 +609,7 @@ begin
         Open;
       end;
 
-      if Eof then 
+      if Eof then
         raise EValidationDataError.Create(Format(ResStr_SurveyNotFound, [iSurveyKey]));
 
       First;
@@ -609,7 +623,7 @@ begin
                          StringToVagueDate(FieldByName('FROM_VAGUE_DATE_START').Text),
                          StringToVagueDate(FieldByName('TO_VAGUE_DATE_START').Text) );
       FLastCheckedSurvey := iSurveyKey;
-            
+      FSurveyIsTemp := FieldByName('TEMPORARY_SURVEY').AsBoolean;
     finally
       Close;
       Connection := lOldCon;
