@@ -90,6 +90,7 @@ type
     Label1: TLabel;
     cmbTaxonGroupList: TDBListCombo;
     cbTaxonGroup: TCheckBox;
+    Label4: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbAddClick(Sender: TObject);
     procedure bbRemoveClick(Sender: TObject);

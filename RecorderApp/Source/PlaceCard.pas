@@ -460,7 +460,7 @@ resourcestring
   Restr_SurveyNotEqualDefault =
        'Not saved. The survey selected is not the same as the default';
   ResStr_TaxonGroupNotEqualDefaultConfirm =
-      'The taxon slected is not in the default taxon group. Continue with save ?';
+      'The taxon selected is not in the default taxon group. Continue with save ?';
 
   ResStr_ObservationDateMissing = 'The Observation Date is missing. Enter a vague date value.';
   ResStr_DataOutsideSurvey      = 'The Date is outside the selected Survey''s range. ';
@@ -2596,7 +2596,16 @@ begin
           on E:Exception do
             Raise EDatabaseWriteError.Create(ResStr_CreateFail + ' ' + E.Message + ' [Taxon Occurrence]');
         end;
-
+        // Now insert the documents if AddDocsToOccurrence is set to true
+        If (AppSettings.AddDocsToOccurrence) then begin;
+        try
+           dmDatabase.RunStoredProc('usp_TaxonOccurrenceSource_Insert',
+           ['@TaxonOccurrenceKey', lTaxonOccKey]);
+        except
+          on E:Exception do
+           Raise EDatabaseWriteError.Create(ResStr_WriteRecFail + ' ' + E.Message + ' [Taxon Occurrence Sources]');
+      end;
+  end;
         //Now insert determination
         lVagueDate := StringToVagueDate(lstDate);
         lTaxonDeterminationKey :=
@@ -4294,6 +4303,9 @@ begin
         cmbSurvey.SetFocus;
         LastSurvey := cmbSurvey.KeyValue;
       end;
+
+
+
     except
       on E:EDatabaseWriteError do begin
         Cleanup;

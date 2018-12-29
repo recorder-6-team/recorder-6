@@ -8,7 +8,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   ClientWidth = 391
   Color = clBtnFace
   Constraints.MinHeight = 452
-  Constraints.MinWidth = 400
+  Constraints.MinWidth = 399
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -416,20 +416,36 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   end
   object gbStep2b: TGroupBox
     Left = 4
-    Top = 228
+    Top = 220
     Width = 383
-    Height = 49
+    Height = 69
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 7
     DesignSize = (
       383
-      49)
+      69)
     object Label1: TLabel
       Left = 8
       Top = 18
       Width = 66
       Height = 13
       Caption = 'Default Group'
+    end
+    object Label4: TLabel
+      Left = 8
+      Top = 40
+      Width = 369
+      Height = 22
+      Caption = 
+        'During data input this option will warn if an attempt is made to' +
+        ' add a taxon not in the default taxon group.'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -9
+      Font.Name = 'Small Fonts'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
     end
     object cmbTaxonGroupList: TDBListCombo
       Left = 132
