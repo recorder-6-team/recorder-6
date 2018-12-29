@@ -76,7 +76,7 @@ resourcestring
                               'you can choose to only contribute today''s data instead.'#13#10#13#10 +
                               'If you wish to only export today''s data, click <Yes>, otherwise click <No>.';
 
-  ResStr_RecordsAddedEdited = 'Records added or edited since %s';
+  ResStr_RecordsAddedEdited = 'Records extracted for %s';
   ResStr_RecordsSent        = 'Records added or edited since %s have been sent to %s';
   ResStr_CreatingNBNExportFile = 'Creating NBN Export file...';
   ResStr_InvalidExpFormat =   'Invalid Export Format (%s).';
@@ -164,8 +164,9 @@ begin
            AppSettings.AutoSchemeEmail then
         begin
           if ldtLastContribution > 0 then
-              confirmation := Format(ResStr_RecordsAddedEdited, []);
-          confirmation := Format(ResStr_RecordsSent, [DateTimeToStr(ldtLastContribution), lstSchemeName]);
+             confirmation := Format(ResStr_RecordsSent, [DateTimeToStr(ldtLastContribution), lstSchemeName])
+          else
+             confirmation := Format(ResStr_RecordsAddedEdited, [lstSchemeName]);
           MessageDlg(confirmation, mtInformation, [mbOk], 0);
         end;
       except
