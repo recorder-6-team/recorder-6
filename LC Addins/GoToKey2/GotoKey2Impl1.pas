@@ -7,7 +7,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ActiveX, AxCtrls, GotoKey2_TLB, StdVcl, Recorder2000_TLB, StdCtrls, ExtCtrls,
-  ADODB;
+  ADODB,variants;
 
 type
 
@@ -20,6 +20,7 @@ type
     CheckBox1: TCheckBox;
     procedure ComboBox1Click(Sender: TObject);
     procedure CheckBox1Click(Sender: TObject);
+   
   private
     { MY Private declarations }
     FSQL:  widestring;
@@ -384,31 +385,31 @@ begin
 end;
 
 function TGotoKey2X.DoOk: WordBool;
-Var        
+Var
 
 IMyRecorder6 : Irecorder6;
 FullSQL: string;
 begin
    if (length(edit1.Text) = 16) OR ((FIsExternalRef = true) AND (length(edit1.Text) > 1))   then
-   BEGIN
-    FullSQl := FSQL + ''''  + Edit1.Text + '''';
+   begin
+    if (pos(' ',edit1.Text) = 0) AND (FIsExternalRef) then
+      FullSQl := FSQL + 'TPD.ITEM_NAME + '' '' + ' + ''''  + Edit1.Text + ''''
+    else
+      FullSQl := FSQL + ''''  + Edit1.Text + '''';
 
     If RowNotExists(FullSQL) = false  then
-    BEGIN
-
-       IMyRecorder6 := CreateOlEobject('Recorder2000.AutoapplicationSettings') as IRecorder6;
-
-       IMyrecorder6.displaytab(FDataType,FullSQl,'','',FExpand,false);
-    END
-       Else
-       Result := false ;
+    begin
+      IMyRecorder6 := CreateOlEobject('Recorder2000.AutoapplicationSettings') as IRecorder6;
+      IMyrecorder6.displaytab(FDataType,FullSQl,'','',FExpand,false);
+      Result := true;
+    end else
+      Result := false ;
 
 
    end
-   else
-   Begin
-   MessageDlg  ('Not a valid key',mtCustom,[mbOK],0);
-   Result := false;
+   else begin
+     MessageDlg  ('Not a valid key',mtCustom,[mbOK],0);
+     Result := false;
    End;
 
 
@@ -502,12 +503,16 @@ begin
       IRecord := Fconn.Execute(NewQuery);
       if IRecord.eof  then
         Begin
-           Result := true;
            MessageDlg  ('Key not found',mtCustom,[mbOK],0);
-        End;
+           Result := true;
+        End
+      else begin
+        if vartostr(IRecord.Fields[0].Value) = ''  then begin
+          MessageDlg  ('Key not found',mtCustom,[mbOK],0);
+          Result := true;
+        end;
+      end
     end;
-
-
 end;
 
 // Ger current r6 version
@@ -585,7 +590,9 @@ begin
           FDataType   := 'Document';
         end;
     9:   begin
-          FSQL :=  'SELECT DISTINCT TAXON_LIST_ITEM_KEY FROM TAXON_LIST_ITEM WHERE TAXON_VERSION_KEY   = ';
+          FSQL :=  'SELECT ITN.TAXON_LIST_ITEM_KEY AS TAXON_LIST_ITEM_KEY ' +
+                   ' FROM INDEX_TAXON_NAME ITN  WHERE ' +
+                   ' ITN.PREFERRED_TAXA = 1 AND ITN.TAXON_VERSION_KEY = ';
           FDataType   := 'Taxon';
         end;
     10:   begin
@@ -601,7 +608,10 @@ begin
           FDataType   := 'Admin';;
          end;
      13: begin
-           FSQL :=  'SELECT TAXON_OCCURRENCE_KEY FROM Taxon_Occurrence_Ext_Ref WHERE EXTERNAL_KEY   = ';
+           FSQL := ' Select min(TPD.TAXON_OCCURRENCE_KEY) AS TAXON_OCCURRENCE_KEY ' +
+           ' FROM Taxon_Private_Data TPD ' +
+           ' WHERE TPD.TAXON_PRIVATE_TYPE_KEY = ''R6TEAM1800000001''  AND ' +
+           ' TPD.ITEM_NAME + '' '' + TPD.Detail  = ';
            FDataType   := 'Taxon_Occurrence';;
            FIsExternalRef := true;
          end;
@@ -649,6 +659,8 @@ begin
   end;
   inherited;
 end;
+
+
 initialization
   TActiveFormFactory.Create(
     ComServer,
