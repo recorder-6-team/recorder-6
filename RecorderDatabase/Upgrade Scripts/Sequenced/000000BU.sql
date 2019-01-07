@@ -316,7 +316,6 @@ AS
     EXEC [dbo].[usp_IWMatch_Location_Notes]
 
 GO
-GO
 /****** Object:  StoredProcedure [dbo].[usp_IWMatchNewEntry_Location]    Script Date: 12/10/2018 10:41:33 ******/
 SET ANSI_NULLS ON
 GO
@@ -521,7 +520,6 @@ AS
      
 EXEC dbo.usp_IWMatch_Location_Notes
 
-GO
 GO
 /****** Object:  StoredProcedure [dbo].[usp_IWNotes_Locations_Detail]    Script Date: 12/21/2018 20:04:15 ******/
 SET ANSI_NULLS ON

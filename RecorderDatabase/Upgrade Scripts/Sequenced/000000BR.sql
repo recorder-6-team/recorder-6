@@ -194,7 +194,6 @@ FROM     dbo.ORGANISM AS O INNER JOIN
                       AND O.PARENT_KEY IS NULL
                       
 GO
-GO
 /****** Object:  UserDefinedFunction [dbo].[LCUserAddedNames]    Script Date: 12/07/2018 17:03:40 ******/
 SET ANSI_NULLS ON
 GO
@@ -1211,8 +1210,6 @@ GO
 
 GRANT EXECUTE ON [dbo].[usp_IW_Names_Multi_Update] TO PUBLIC
  
-
-GO
 GO
 /****** Object:  StoredProcedure [dbo].[usp_IWNotes_Name_Detail]    Script Date: 12/21/2018 20:03:10 ******/
 SET ANSI_NULLS ON
@@ -2404,7 +2401,6 @@ AS
 EXEC dbo.usp_IWMatch_Species_Notes_Single @ImportValue
 EXEC  dbo.usp_IWMatch_Species_Order_Single @MatchKey
 
-GO
 GO
 /****** Object:  StoredProcedure [dbo].[usp_IWNotes_Species_Detail]    Script Date: 12/21/2018 20:00:20 ******/
 SET ANSI_NULLS ON
