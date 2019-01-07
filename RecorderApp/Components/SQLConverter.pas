@@ -63,6 +63,7 @@ type
 
     function SkipTo(const APosition: Integer; const ADelimiter: Char; const ANextClause: String;
       var AClauseFound: Boolean): Integer;
+    function SkipSqlString(APosition: integer): integer;
     procedure SkipBlanks(var APosition: Integer; const AString: String = '');
     procedure SkipToBlank(var APosition: Integer; const AString: String = '');
     procedure SkipAlphaNum(var APosition: Integer; const AString: String = '');
@@ -349,14 +350,18 @@ var lstWord: String;
 begin
   Result := APosition;
   while (Result <= Length(FParsedText)) and (FParsedText[Result] <> ADelimiter) do begin
+    // Skip SQL strings. Don't use normal SkipTo function as these don't contain normal SQL.
+    if (FParsedText[Result] = '''') then
+      Result := SkipSqlString(Result);
     // Skip whatever is inside a (...) block, so we don't get the wrong matching delimiter, if looking for ')'
-    if FParsedText[Result] = '(' then Result := SkipTo(Result + 1, ')', ANextClause, AClauseFound);
+    if FParsedText[Result] = '(' then
+      Result := SkipTo(Result + 1, ')', ANextClause, AClauseFound);
     // Skip whatever is inside a [...] block, so we don't get the wrong matching delimiter, if looking for ']'
-    if FParsedText[Result] = '[' then Result := SkipTo(Result + 1, ']', ANextClause, AClauseFound);
-    // Skip whatever is inside a "..."(#34) or '...'(#39) block.
-    if FParsedText[Result] = #34 then Result := SkipTo(Result + 1, #34, ANextClause, AClauseFound);
-    if FParsedText[Result] = #39 then Result := SkipTo(Result + 1, #39, ANextClause, AClauseFound);
-
+    if FParsedText[Result] = '[' then
+      Result := SkipTo(Result + 1, ']', ANextClause, AClauseFound);
+    // Skip whatever is inside a "..."(#34) block.
+    if FParsedText[Result] = #34 then
+      Result := SkipTo(Result + 1, #34, ANextClause, AClauseFound);
     // Make sure it's not the end of the SELECT, i.e. found FROM outside ' or " delimiter
     if not (ADelimiter in [#34, #39]) then begin
       lstWord := GetWord(Result, FParsedText, true);
@@ -375,6 +380,20 @@ begin
     SkipBlanks(Result, FParsedText);
   end;
 end;  // SkipTo
+
+//=============================================================================
+// Winds on from the start of a delimited string in SQL to the end.
+//
+function TSQLConverter.SkipSqlString(APosition: integer): Integer;
+begin
+  Result := APosition;
+  if (FParsedText[Result] = '''') and (Result < Length(FParsedText)-1) then begin
+    repeat
+      Inc(Result);
+    until (Result >= Length(FParsedText))
+      or ((FParsedText[Result] = '''') and (Copy(FParsedText, Result, 2) <> ''''''));
+  end;
+end;
 
 //==============================================================================
 // Break down the SELECT part of the query, until the start of the FROM clause is found.
@@ -632,10 +651,15 @@ begin
     liEndPos := liStartPos;
     if liStartPos <= Length(FParsedText) then
       // Skip bits surrounded by '/"
-      if FParsedText[liStartPos] in  [#34, #39] then begin
+      if FParsedText[liStartPos] = #34 then begin
         liEndPos := SkipTo(liStartPos + 1, FParsedText[liStartPos], '', ltfNothing);
         Inc(liEndPos);  // Skip found '/" for next round in loop
-      end else begin
+      end
+      else if FParsedText[liStartPos] = #39 then begin
+        liEndPos := SkipSqlString(liStartPos);
+        Inc(liEndPos);
+      end
+      else begin
         SkipToAlphaNum(liStartPos, FParsedText);
         liEndPos := liStartPos;
         // Make sure we're not going over

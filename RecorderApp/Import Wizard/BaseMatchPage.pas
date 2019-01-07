@@ -29,7 +29,8 @@ uses
 
 resourcestring
   ResStr_AllMatchRequired = 'All %s must be matched';
-  ResStr_MultipleMatches  = 'There are more than one possible match for the following item(s):';
+  ResStr_Matching = 'All matched';
+  ResStr_MultipleMatches = 'There are more than one possible match for the following item(s_:';
   ResStr_MoreUnmatched    = 'more items unmatched...';
   ResStr_ExcludeUnmatched = '%s that are not matched will be excluded from the import. ' +
                             'Are you sure?';
@@ -42,6 +43,11 @@ resourcestring
 const
   WM_AFTERSCROLL = WM_APP + 1;
 
+var
+  InputValue :string;
+  UpdateProcedure :string;
+  DisplayProcedure : string;
+  DetailsProcedure : string;
 type
   {-----------------------------------------------------------------------------
     Base class for import wizard pages that allow the user to match each unique instance of
@@ -168,7 +174,7 @@ uses
   ColumnTypes, MissingData, Import, GeneralFunctions, DatabaseAccessADO, IWConstants,
   IWSearchManager, AddinSearchManager, IWValidation, ProjectSpecificAccess,
   ApplicationSettings, BaseDictionaryUnit, GeneralData, FastColumnTypes,
-  TaxonDictBrowser, BaseTaxonDictUnit;
+  TaxonDictBrowser, BaseTaxonDictUnit, MultipleMatches;
 
 resourcestring
   ResStr_ImportedData         = 'Imported Data';
@@ -195,8 +201,7 @@ const
   SQL_CHECK_MATCH_COUNTS = 'SELECT Import_Value FROM #%s WHERE Match_Count > 1';
   GENERIC_MATCH_COL      = 1;
   LOCATION_MATCH_COL     = 2;
-
-{-==============================================================================
+ {-==============================================================================
     TBaseMatch
 ===============================================================================}
 {-------------------------------------------------------------------------------
@@ -328,13 +333,13 @@ begin
       tblMatch.FreeBookmark(lBookmark);
       DefaultCursor(lCursor);
     end;
-
     with dmDatabase.ExecuteSQL(Format(SQL_CHECK_MATCH_COUNTS, [MatchRule.Name]), True) do
       if not Eof then begin
         lCount := 0;
         lMultipleMatches := ResStr_MultipleMatches;
         while not Eof do begin
-          lMultipleMatches := lMultipleMatches + #13#9 + Fields['Import_Value'].Value;
+          lMultipleMatches := lMultipleMatches + #13#9 + Fields
+          ['Import_Value'].Value;
           Inc(lCount);
           if lCount > 10 then begin
             lMultipleMatches :=
@@ -345,12 +350,13 @@ begin
           end;
           MoveNext;
         end;
-        MessageDlg(lMultipleMatches, mtInformation, [mbOk], 0);
+        if MatchRule.UpdateNotesProcedure = '' then
+          MessageDlg(ResStr_MultipleMatches, mtInformation,[mbOk], 0);
       end;
 
     ChangedContent;
   end;
-end;  // TBaseMatch.btnSearchClick 
+end;  // TBaseMatch.btnSearchClick
 
 {-------------------------------------------------------------------------------
 }
@@ -367,7 +373,7 @@ begin
   inherited;
   MatchRule.PopulateChecklistCombo(cmbCheckLists);
   cmbCheckLists.ItemIndex := -1;
-end;  // TBaseMatch.cmbCheckListsPopulate 
+end;  // TBaseMatch.cmbCheckListsPopulate
 
 {-------------------------------------------------------------------------------
 }
@@ -521,7 +527,10 @@ begin
     ctLinkedEdit:
         with eMatchValue do begin
           Text := TrimTags(SelectedField.AsString);
-          Key  := tblMatch.FieldByName(FN_MATCH_KEY).AsString;
+          If selectedfield.FieldName = FN_MATCH_VALUE then
+            Key  := tblMatch.FieldByName(FN_MATCH_KEY).AsString
+          else  // FN_MATCH_NOTES
+            Key  := tblMatch.FieldByName(FN_IMPORT_VALUE).AsString;
           EditBox.SelLength := Length(Text);
         end;
     ctIDComboBox:
@@ -596,6 +605,7 @@ var
   lResult: Boolean;
 begin
   inherited;
+
   if MatchRule.RequiresCheckList then
     lResult := DoCheck(eMatchValue, MatchRule.SearchType, cmbChecklists.CurrentStrID)
   else
@@ -627,11 +637,14 @@ var
   lTaxonBrowser: TfrmTaxonDictBrowser;
   lSearchString : String;
   lGrid: TImportWizardDbGrid;
+  lBookmark: TBookmark;
+  lCursor: TCursor;
 begin
-  inherited;
+inherited;
+If SelectedField.FieldName = FN_MATCH_VALUE then begin
   GetDataSourceForm;
   ContainerForm.SetupLink(TBaseForm(Application.MainForm.ActiveMDIChild),
-                          ContainerForm, UpdateMatchValueBox);
+                       ContainerForm, UpdateMatchValueBox);
 
   // When browsing for a taxon, show the 'find' window upon
   // loading the taxon dictionary
@@ -642,7 +655,7 @@ begin
     if (lLinkedEdit.Parent is TImportWizardDbGrid) and
         (AppSettings.AutoCompleteSearch) then
     begin
-      lGrid := lLinkedEdit.Parent as TImportWizardDbGrid;
+    lGrid := lLinkedEdit.Parent as TImportWizardDbGrid;
       lTaxonBrowser := Application.MainForm.ActiveMDIChild as TfrmTaxonDictBrowser;
       // If text has been entered into the control then set the search text
       // to the entered text
@@ -655,7 +668,36 @@ begin
           lSearchString := lGrid.Columns[0].Field.Value
         else lSearchString := '';
       end;
-      lTaxonBrowser.actFindExecute(Sender, lSearchString);
+        lTaxonBrowser.actFindExecute(Sender, lSearchString);
+    end;
+  end;
+end else// end FN_MATCH_VALUE start FN_MATCH_NOTES
+  begin
+    DisplayProcedure := MatchRule.DisplayNotesProcedure;
+    UpdateProcedure :=  MatchRule.UpdateNotesProcedure;
+    DetailsProcedure :=  MatchRule.DetailedNotesProcedure;
+    InputValue := ematchvalue.Key;
+    with TdlgMultipleMatches.Create(nil) do
+      try
+        if ShowModal = mrOk then begin
+          eMatchValue.Visible   := False;
+          cmbMatchValue.Visible := False;
+          // Stops weird moving about after requery.
+          lBookmark := tblMatch.GetBookmark;
+          lCursor   := HourglassCursor;
+          try
+            tblMatch.Requery;
+            // Back to where it was.
+            tblMatch.GotoBookmark(lBookmark);
+          finally
+            tblMatch.FreeBookmark(lBookmark);
+            DefaultCursor(lCursor);
+          end;
+          ChangedContent;
+          RefreshRow;
+        end;
+      finally
+        Free;
     end;
   end;
 end;  // TBaseMatch.eMatchValueGetData
@@ -668,7 +710,6 @@ var
 begin
   inherited;
   if FBusyScrolling then Exit;
-  
   with eMatchValue do begin
     // editable, caret at left limit of text, or all text selected
     lMoveLeftOk := (SelStart = 0) or (SelLength = Length(Text));
@@ -805,7 +846,10 @@ begin
         Close;
       end;
       if not Result then
-        lBullets.Add(Format(ResStr_AllMatchRequired, [Translate(MatchRule.Name)]));
+        lBullets.Add(Format(ResStr_AllMatchRequired, [Translate(MatchRule.Name)]))
+      else
+        lBullets.Add(ResStr_Matching);
+
       ChangedHtml(lBullets);
   finally
     lBullets.Free;
@@ -895,7 +939,7 @@ end;  // TBaseMatch.GetSkip
 procedure TBaseMatch.LoadContent;
 begin
   inherited;
-
+  // Mantis
   // Locate match rule to use in conjunction with match screen.
   FMatchRule := Settings.ImportFile.MatchRules[Settings.MatchRuleIndex];
   if not Assigned(FMatchRule) then
@@ -994,10 +1038,10 @@ begin
 
   if SelectedField = nil then Exit;
 
-  if SelectedField.FieldName = FN_MATCH_VALUE then
+  if (SelectedField.FieldName = FN_MATCH_VALUE)
+    or  (SelectedField.FieldName = FN_MATCH_NOTES) then
   begin
     lRect := dbgMatch.ActiveCellRect;
-
     lCtrl := nil;
     case MatchRule.ControlType of
       ctLinkedEdit: lCtrl := eMatchValue;
@@ -1062,6 +1106,7 @@ begin
 
     // Additional that are known but not in every table, but still need to be visible.
     SetField(FN_TAXON_ORDER);
+    SetField(FN_MATCH_NOTES);
     SetField(FN_CHECKLIST);
     SetField(FN_CLASSIFICATION);
   end;
@@ -1083,7 +1128,10 @@ begin
   cmbCheckLists.Clear;
   if pnlBtnSearch.Visible then begin
     cmbCheckLists.PopulateContent;
-    cmbCheckLists.ItemIndex := cmbCheckLists.IDIndexOf(lDefaultListKey);
+    if AppSettings.UsePreferredTaxa then
+      cmbCheckLists.ItemIndex := 0
+    else
+      cmbCheckLists.ItemIndex := cmbCheckLists.IDIndexOf(lDefaultListKey);
     btnSearch.Enabled       := cmbCheckLists.ItemIndex <> -1;
     btnSearch.Visible       := true; // can't see why this is necessary, but it is
   end;

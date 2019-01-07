@@ -1,7 +1,7 @@
 inherited dmGeneralData: TdmGeneralData
   OldCreateOrder = True
-  Left = 768
-  Top = 348
+  Left = 589
+  Top = 326
   Height = 520
   Width = 428
   object qryIDGenSelect: TJNCCQuery
@@ -258,5 +258,36 @@ inherited dmGeneralData: TdmGeneralData
       end>
     Left = 136
     Top = 356
+  end
+  object qryTempLoc: TJNCCQuery
+    CommandTimeout = 0
+    ParamCheck = False
+    Parameters = <>
+    SQL.Strings = (
+      'SELECT      *'
+      'FROM        SETTING'
+      'WHERE     NAME    =  '#39'TempLic'#39)
+    ParseSQL = False
+    Left = 224
+    Top = 304
+  end
+  object qryTempRecorders: TJNCCQuery
+    CommandTimeout = 0
+    Parameters = <
+      item
+        Name = 'SurveyKey'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT      COUNT(*) AS RECORDS'
+      'FROM        SAMPLE'
+      'INNER JOIN SURVEY_EVENT ON'
+      'SURVEY_EVENT.SURVEY_EVENT_KEY = SAMPLE.SURVEY_EVENT_KEY'
+      'WHERE  isnull(SAMPLE.RECORDERS,'#39#39') <> '#39#39
+      'AND SURVEY_EVENT.SURVEY_KEY  =  :SurveyKey')
+    ParseSQL = True
+    Left = 128
+    Top = 296
   end
 end

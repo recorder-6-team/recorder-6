@@ -28,7 +28,7 @@ uses
 
 resourcestring
   ResStr_ValueNotRecognised='Please enter a value for this parameter.';
-  ResStr_LinkedEditNotRecognised='Please enter an existing item for this parameter.';  
+  ResStr_LinkedEditNotRecognised='Please enter an existing item for this parameter.';
   ResStr_SelectGroupParamYouRequire='Select the %s parameter type you require:';
   ResStr_UseParameter='Use %s as a parameter';
   ResStr_GridSquareRangeDiffSystems = 'A grid square range cannot be generated when '+
@@ -386,6 +386,8 @@ function TfrmParameters.AddCheckBox(AInputParam: TInputParam; AParent:
 begin
   Result := TCheckBox.Create(Self);
   FLastAddedControl := Result;
+  if AInputParam.default = 'Y' then
+    TCheckBox(Result).Checked := True;
 end;  // TFrmParameters.AddCheckBox
 
 {-------------------------------------------------------------------------------
@@ -395,9 +397,10 @@ function TfrmParameters.AddComboBox(AInputParam: TInputParam; AParent:
     TWinControl): TWinControl;
 var
   i: Integer;
+  j: integer;
 begin
   Result := TAddinIDComboBox.Create(Self);
-  FLastAddedControl := Result;  
+  FLastAddedControl := Result;
   with TAddinIDComboBox(Result) do begin
     BevelKind := bkFlat;
     Parent := AParent;
@@ -406,9 +409,12 @@ begin
   with AInputParam do
     if Assigned(Options) then begin
         TAddinIDComboBox(Result).PopulateContent;
-        for i := 0 to Options.Count - 1 do
+        for i := 0 to Options.Count - 1 do begin
           TAddinIDComboBox(Result).Add
                             (Options.Items[i].Name, Options.Items[i].Value);
+          If Options.Items[i].Name = AInputParam.default then j := i;
+        end;
+        TAddinIDComboBox(Result).ItemIndex := j;
     end;
 
 end;  // TFrmParameters.AddComboBox
@@ -420,7 +426,7 @@ function TfrmParameters.AddControl(AInputParam: TInputParam; AParent:
     TWinControl; AWidthRatio: integer=60): TWinControl;
 var
   lEffectiveWidth: integer;
-begin                                
+begin
   with AInputParam do
     if      DataType = dtOptionSet then Result := AddComboBox(AInputParam, AParent)
     else if DataType = dtCSVFile then Result := AddFileOpenButton(AInputParam, AParent)
@@ -467,6 +473,7 @@ function TfrmParameters.AddEdit(AInputParam: TInputParam; AParent:
 begin
   Result := TEdit.Create(Self);
   FLastAddedControl := Result;
+  TCustomEdit(Result).text := AInputParam.default;
 end;  // TFrmParameters.AddEdit
 
 {-------------------------------------------------------------------------------
@@ -949,9 +956,10 @@ function TfrmParameters.AddRestrictedEdit(AInputParam: TInputParam; AParent:
     TWinControl): TWinControl;
 begin
   Result := TRestrictedEdit.Create(Self);
-  FLastAddedControl := Result;  
+  FLastAddedControl := Result;
   with TRestrictedEdit(Result) do
     OnCheckText := RestrictedEditCheckIsFloat;
+
 end;  // TFrmParameters.AddRestrictedEdit
 
 {-------------------------------------------------------------------------------
@@ -1181,7 +1189,7 @@ begin
   mmInstructions.Lines.Text := Value;
   mmInstructions.Height := mmInstructions.Lines.Count*13+16;
   pnlInstructions.Height := mmInstructions.Height;
-end;  // TFrmParameters.SetDescription 
+end;  // TFrmParameters.SetDescription
 
 {-------------------------------------------------------------------------------
   Any parameter that is a combo box with only 1 entry doesn't need to be

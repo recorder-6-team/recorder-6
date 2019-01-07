@@ -1,0 +1,90 @@
+<HTML>
+ 
+<HEAD>
+<TITLE>Things You Should Know</TITLE>
+<LINK REL="stylesheet" TYPE="text/css" HREF="demo.css"> 
+<STYLE TYPE="text/css"> <!--
+  .indent1 {Margin-left: 35px;}
+  -->
+</STYLE>
+
+</HEAD>
+
+<BODY CLASS="indent">
+<P CLASS="title">Things You Should Know</P>
+<TABLE ALIGN="center" BORDER="0">
+  <TR>
+	 <TD> <UL>
+	 <LI><A HREF="#Difference">TFrameViewer, ThtmlViewer, and TFrameBrowser</A> </LI>
+	 <LI><A HREF="#CompileOptions">Version 9.03 Compile Time Options</A> </LI>
+	 <LI><A HREF="#ActiveImages">Mouseover Images</A> </LI>
+	 </UL>
+	 </TD>
+	 <TD WIDTH="30">&nbsp;</TD>
+  </TR>
+</TABLE>
+
+<p CLASS="heading"><A NAME="Difference">TFrameViewer, ThtmlViewer, and TFrameBrowser</A></p>
+<P>The HTML component set consists of the <B>ThtmlViewer</B>, <B>TFrameViewer</B>, and <B>TFrameBrowser</B>
+components. All three are HTML document display components:</P>
+<TABLE WIDTH="100%" CELLSPACING="2" CELLPADDING="2" BORDER="0">
+  <TR>
+	 <TH WIDTH="2%"></TH>
+	 <TH CLASS="maroon" VALIGN="top" ALIGN="left">ThtmlViewer</TH>
+	 <TD VALIGN="top">The basic component. <B>ThtmlViewer</B> displays single (non-frame) documents. It also forms
+	 the basis for the other two components.<BR>
+	 <BR>
+	 </TD>
+  </TR>
+  <TR>
+	 <TD></TD>
+	 <TH CLASS="maroon" VALIGN="top" ALIGN="left">TFrameViewer</TH>
+	 <TD VALIGN="top">Displays both Frame and single HTML documents. <B>TFrameViewer</B> is oriented more for local
+	 disk file use.<BR>
+	 <BR>
+	 </TD>
+  </TR>
+  <TR>
+	 <TH></TH>
+	 <TH CLASS="maroon" VALIGN="top" ALIGN="left">TFrameBrowser&nbsp;&nbsp;&nbsp;</TH>
+	 <TD VALIGN="top">Also displays Frame and single HTML documents. However, <B>TFrameBrower</B> is oriented
+	 toward Internet style protocols and URL usage. Additional code and/or components are generally required to use
+	 <B>TFrameBrowser</B>.<BR>
+	 </TD>
+  </TR>
+</TABLE>
+<P> If you know that your appication will not be using Frames, you can save a fair amount of code overhead by
+using <B>ThtmlViewer</B> rather than one of the Frame components. Many operations are also simpler using
+<B>ThtmlViewer</B>. </P>
+
+<p CLASS="heading"><A NAME="CompileOptions">Version 9.03 Compile Time Options</A></p>
+<P>Version 9.03 has several possible compile time options controlled by defining symbols. You can find these in the
+<CODE>HTMLCONS.INC</CODE> file. None of these symbols are initially defined. To make any one (or all) of these
+symbols active, remove the &quot;<B>.</B>&quot; from the <CODE>{$.Define XXXX}</CODE> sequence and recompile the
+code. </P>
+<P> The possibilities are: </P>
+<P CLASS="maroon">NoGIF</P>
+<P CLASS="indent1">Defining <B>NoGIF</B> disables GIF imaging capabilities. Other image types are unaffected.
+</B></P>
+<P CLASS="maroon">NoPNG</P>
+<P CLASS="indent1">Defining <B>NoPNG</B> disables PNG imaging capabilities. Other image types are unaffected.
+</B></P>
+<P CLASS="maroon">NoTabLink</P>
+<P CLASS="indent1">Defining <B>NoTabLink</B> disables the ability to Tab between
+  Links. This may be desirable for documents with a great many links.
+</B></P>
+<p CLASS="heading"><A NAME="ActiveImages">Mouseover Images</A></p>
+<P>A<I><B> Mouseover Image</B></I> is one that changes when the mouse passes over it. The HTML components use a
+special syntax to implement mouseover images. It's done with the <B>&lt;img&gt;</B> tag as follows: </P>
+<UL>
+<LI>the <B>SRC=&quot;...&quot;</B> attribute should specify an animated GIF image </LI>
+<LI>Add an <B>Active</B> attribute </LI>
+</UL>
+<P> With the <B>Active</B> attribute, the GIF will normally just display the first frame. When the mouse passes
+over, it will display the second frame and when left clicked will show the
+third frame.  If there are more than 3 frames, the GIF will animate when the 
+mouse passes over. </P>
+<P> </P>
+</BODY>
+</HTML>
+

@@ -69,6 +69,7 @@ type
     FRememberedRows: TList;
     FDropRow: integer;
     FDropCol: integer;
+    FSorting: boolean;
     procedure CentroidFromGridRefClick(Sender: TObject);
     procedure CentroidFromMapClick(Sender: TObject);
     function FieldForCol(ACol: integer): TField;
@@ -136,7 +137,7 @@ const
   GRID_REF_COL = 1;
   LOCATION_MATCH_COL = 2;
   CENTROID_COL = 3;
-
+  NOTES_MATCH_COL = 4;
 type
   {-----------------------------------------------------------------------------
     Accessor to get to MeasureItem in TMenuItem which is protected.
@@ -218,6 +219,8 @@ begin
             tblMatch.FieldByName(FN_MATCH_VALUE).AsString;
         Cells[CENTROID_COL, i] :=
             LocaliseSpatialRef(tblMatch.FieldByName(FN_SPATIAL_REF).AsString);
+        Cells[NOTES_MATCH_COL, i] :=
+            tblMatch.FieldByName(FN_MATCH_NOTES).AsString;
         RowMatched[i]   := True;
         eMatchValue.Key := tblMatch.FieldByName(FN_MATCH_KEY).AsString;
         eCentroid.Key   := LocaliseSpatialRef(tblMatch.FieldByName(FN_SPATIAL_REF).AsString);
@@ -344,8 +347,14 @@ begin
     with eCentroid do begin
       Text := LocaliseSpatialRef(tblMatch.FieldByName(FN_SPATIAL_REF).AsString);
       EditBox.SelLength := Length(Text);
+    end
+  else
+  if SelectedField.FieldName = FN_MATCH_NOTES then
+    with eMatchValue do begin
+      Text := tblMatch.FieldByName(FN_MATCH_VALUE).AsString;
+      Key  := tblMatch.FieldByName(FN_IMPORT_VALUE).AsString;
+      EditBox.SelLength := Length(Text);
     end;
-
   // Can't create new entry if match already set
   btnNew.Enabled := (tblMatch.FieldByName(FN_MATCH_KEY).AsString = '');
 end;  // TfraMatchLocations.DoEditableValuesLoad
@@ -355,7 +364,6 @@ end;  // TfraMatchLocations.DoEditableValuesLoad
 procedure TfraMatchLocations.DoEditableValuesSave;
 var
   lBookmark: TBookmark;
-
   function NeedMatchValueSave: boolean;
   begin
     Result := (SelectedField.FieldName = FN_MATCH_VALUE) and
@@ -369,7 +377,7 @@ var
   end;
 
 begin
-  if NeedMatchValueSave or NeedCentroidSave then begin
+  if (NeedMatchValueSave or NeedCentroidSave) and not FSorting then begin
     // Stops weird moving about after requery.
     LockWindowUpdate(dbgMatch.Handle);
     lBookmark := tblMatch.GetBookmark;
@@ -383,7 +391,8 @@ begin
         sgSurrogateMatch.Cells[CENTROID_COL, sgSurrogateMatch.Row] :=
             LocaliseSpatialRef(
               dmGeneralData.GetLocationSpatialRef(eMatchValue.Key).FormattedSR);
-        MatchGrid.Invalidate;
+         sgSurrogateMatch.Cells[NOTES_MATCH_COL, sgSurrogateMatch.Row] := '';
+         MatchGrid.Invalidate;
       end else
       if NeedCentroidSave then
       begin
@@ -886,7 +895,8 @@ begin
   begin
     eMatchValue.Visible := False;
     if SelectedField <> nil then begin
-      if SelectedField.FieldName = FN_MATCH_VALUE then
+      if (SelectedField.FieldName = FN_MATCH_VALUE) OR
+         (SelectedField.FieldName = FN_MATCH_NOTES)  then
       begin
         lRect := sgSurrogateMatch.CellRect(sgSurrogateMatch.Col, sgSurrogateMatch.Row);
         if Assigned(eMatchValue) then
@@ -922,6 +932,8 @@ begin
         tblMatch.FieldByName(FN_MATCH_VALUE).AsString;
     Cells[CENTROID_COL, Row] :=
         LocaliseSpatialRef(tblMatch.FieldByName(FN_SPATIAL_REF).AsString);
+    Cells[NOTES_MATCH_COL, Row] :=
+       tblMatch.FieldByName(FN_MATCH_NOTES).AsString;
     RowMatched[Row] := tblMatch.FieldByName(FN_MATCH_KEY).AsString <> '';
     eMatchValue.Key := tblMatch.FieldByName(FN_MATCH_KEY).AsString;
     eCentroid.Key   := tblMatch.FieldByName(FN_SPATIAL_REF).AsString;
@@ -1033,6 +1045,7 @@ begin
   // trap for clicks on the title row to alter grid sort
   sgSurrogateMatch.MouseToCell(X, Y, lCellX, lCellY);
   if lCellY = 0 then begin
+    FSorting := true;
     GridLeaveCell;
     if (Pos(FieldForCol(lCellX).FieldName, tblMatch.Sort) > 0) and
        (Pos(' DESC', tblMatch.Sort) = 0) then
@@ -1052,6 +1065,7 @@ begin
     // return to top of grid
     sgSurrogateMatch.Row := 1;
     sgSurrogateMatch.Col := 0;
+    Fsorting := false;
     GridEnterCell;
   end;
 end;
@@ -1127,6 +1141,8 @@ begin
   PopulateGridRefCombo(sgSurrogateMatch.Col, sgSurrogateMatch.Row);
   sgSurrogateMatch.Refresh;
 end;  // TfraMatchLocations.WMRefreshSpatialRefSystem
+
+
 
 
 end.

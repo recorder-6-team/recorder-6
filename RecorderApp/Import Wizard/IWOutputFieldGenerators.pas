@@ -222,7 +222,7 @@ type
         override;
   end;
   {-----------------------------------------------------------------------------
-    For Reviewer (second determiner) get teh species, but if teh column is blanj
+    For Reviewer (second determiner) get the species, but if the column is blank
     or not uses then uses the main species.
   }
   TReviewSpeciesFieldGenerator = class(TOutputFieldGenerator)
@@ -1293,6 +1293,7 @@ function TReviewerFieldGenerator.GeneratingSQL(FieldIndex: Integer;
 var
   MappedReviewerSQL: String;
 begin
+  Result := 'NULL';
   if ColumnMapping.KeyIsMapped(CT_KEY_REVIEWER) then
   begin
     MappedReviewerSQL := FieldValueSQL(Tables, CT_KEY_REVIEWER, FLD_DATA);

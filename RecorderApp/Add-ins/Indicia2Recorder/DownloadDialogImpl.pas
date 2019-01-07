@@ -15,7 +15,6 @@ type
   EDownloadDialogConfigException = class(Exception);
 
   TDownloadDialog = class(TActiveForm, IDownloadDialog, IRecorderAddin, IDialog, INewAction)
-    IdHTTP1: TIdHTTP;
     pnlInfo: TPanel;
     ProgressBar: TProgressBar;
     mmLog: TMemo;
@@ -39,6 +38,7 @@ type
     btnLogin: TButton;
     lblLoginInstruct: TLabel;
     cbLimitToAccepted: TCheckBox;
+    IdHTTP1: TIdHTTP;
     procedure btnLoginClick(Sender: TObject);
     procedure cmbSurveyChange(Sender: TObject);
   private
@@ -56,15 +56,26 @@ type
     FAppSecret: string;
     FRemoteSiteID: string;
     FRemoteSite: string;
+    FDrupalVersion: string;
     FDone: integer;
     FTotal: integer;
     FSettingsFolder: string;
     FAttrs: TStringList;
+    FAttrTermMappings: TStringList;
     FSmpAttrs: string;
     FOccAttrs: string;
     FRunning: boolean;
     Ffsiso: TFormatSettings;
     FKnownPeople: TStringList;
+    FFileLog: TStringList;
+    FEventsCreated: integer;
+    FEventsUpdated: integer;
+    FSamplesCreated: integer;
+    FSamplesUpdated: integer;
+    FOccurrencesCreated: integer;
+    FOccurrencesUpdated: integer;
+    FOccurrencesRejected: integer;
+    FPeopleRecordInfo: TStringList;
     procedure ActivateEvent(Sender: TObject);
     procedure ClickEvent(Sender: TObject);
     procedure CreateEvent(Sender: TObject);
@@ -78,7 +89,10 @@ type
     procedure FetchDownloadOptions;
     function GetDownloadType: string;
     function DateToIsoStr(date: TDateTime): string;
-    procedure Log(msg: string);
+    procedure Log(const msg: string);
+    procedure LogFile(const msg: string);
+    procedure ResetLogFile;
+    procedure SaveLogFile;
     procedure ImportRecords(records: TlkJSONbase; surveyKey: string);
     procedure ConnectToDb;
     procedure DisconnectFromDb;
@@ -89,7 +103,9 @@ type
     function IdToKey(id: variant): string;
     procedure CreateSample(sampleKey: string; surveyKey: string; thisrec: TStringList);
     procedure CreateOccurrence(occKey, sampleKey: String; thisrec: TStringList);
+    procedure CreateMedia(occKey: String; thisrec: TStringList);
     function GetIndividual(indiciaId: string; name: string): string;
+    function GetSampleTypeKey(sampleTypeLabel: string): string;
     procedure eachSurvey(ElName: string; Elem: TlkJSONbase; data: pointer;
       var Continue: Boolean);
     procedure PopulateRecorderSurveys;
@@ -109,6 +125,7 @@ type
     function EscapeSqlLiteral(literal: string; maxlen: integer): string; overload;
     procedure LoadKnownPeople;
     procedure ImportSurvey(indiciaSurveyId: integer; surveyKey, quality: string);
+    function GetUrl(const endpoint: string): string;
   protected
     { Protected declarations }
     procedure DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); override;
@@ -205,7 +222,8 @@ resourcestring
       'Please provide the Site ID for records created in Recorder from the website you want to download records from';
   ResStr_ProvideUrl = 'Please provide the URL of the website you want to download records from';      
   ResStr_ProvideWebsiteTitle = 'Please provide the title of the website you want to download records from';
-  ResStr_PleaseLogInIrecord = 'Please log in to iRecord before downloading any records.';
+  ResStr_ProvideDrupalVersion = 'Please provide the Drupal version, either 7 or 8';
+  ResStr_PleaseLogInIrecord = 'Please log in before downloading any records.';
   ResStr_ReceivedNRecords = 'Received %d records';
   ResStr_RecordedByComment = 'Recorded by person named %s';
   ResStr_RecordsICanCollate = 'Records I can collate';
@@ -326,6 +344,9 @@ begin
   FKnownPeople := TStringList.Create;
   FRunning := false;
   FSecret := '';
+  // A log file that contains useful information on the sync results.
+  FFileLog := TStringList.Create;
+  FPeopleRecordInfo := TStringList.Create;
 end;
 
 function TDownloadDialog.Get_Active: WordBool;
@@ -618,6 +639,7 @@ begin
     Log('---------------------------------');
     Log(ResStr_DownloadStarting);
     Log('---------------------------------');
+    ResetLogFile;
     // Get a short date format for iso dates returned from the Indicia reports
     GetLocaleFormatSettings(LOCALE_SYSTEM_DEFAULT, Ffsiso);
     Ffsiso.DateSeparator := '-';
@@ -662,6 +684,11 @@ begin
       Log(ResStr_Done);
     finally
       FAttrs.Free;
+      for i := 0 to FAttrTermMappings.Count-1 do begin
+        FAttrTermMappings.Objects[i].Free;
+      end;
+      FAttrTermMappings.Free;
+      SaveLogFile;
       CleanupTempTables;
       DisconnectFromDb;
       FRunning := false;
@@ -691,7 +718,7 @@ begin
       request.AddFormField('date_to', DateToIsoStr(dtpEndDate.Date));
       request.AddFormField('limit', IntToStr(LIMIT));
       request.AddFormField('smpAttrs', FSmpAttrs);
-      request.AddFormField('occAttrs', FOccAttrs);
+      request.AddFormField('occAttrs', FOccAttrs).ContentTransfer := '';
       request.AddFormField('quality', quality);
       if FDone=0 then
         // first time through, so get the grand total
@@ -700,7 +727,7 @@ begin
         request.AddFormField('offset', IntToStr(FDone));
       if indiciaSurveyId<>0 then
         request.AddFormField('survey_id', IntToStr(indiciaSurveyId));
-      response := idHttp1.Post(FURL + '/?q=user/remote_download/download', request);
+      response := idHttp1.Post(GetUrl('download'), request);
     finally
       request.Free;
     end;
@@ -712,16 +739,54 @@ begin
           if TlkJSONobjectmethod(responseObj.Child[i]).Name='records' then
             records := TlkJSONobjectmethod(responseObj.Child[i]).ObjValue
           else if TlkJSONobjectmethod(responseObj.Child[i]).Name='count' then
-            FTotal := StrToInt(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+            FTotal := StrToInt(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value)
+          else if TlkJSONobjectmethod(responseObj.Child[i]).Name='error' then begin
+            LogFile('Error in response from Indicia web services');
+            LogFile(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+            Log('Error in response from Indicia web services');
+            Log(TlkJSONobjectmethod(responseObj.Child[i]).ObjValue.value);
+          end;
         end;
       end;
     end else
       records := responseObj;
-    if assigned(records) then
+    LogFile('');
+    LogFile('Survey: ' + surveyKey);
+    if assigned(records) then begin
       Log(Format(ResStr_ReceivedNRecords, [records.Count]));
-    ImportRecords(records, surveyKey);
-    FDone := FDone + records.Count;
+      LogFile(Format(ResStr_ReceivedNRecords, [records.Count]));
+      ImportRecords(records, surveyKey);
+      FDone := FDone + records.Count;
+    end;
   until FDone>=FTotal;
+end;
+
+(**
+ * Gets a URL for accessing the web services on the Drupal site. Adapts to
+ * Drupal 7 or Drupal 8 to build correct URLs.
+ *
+ * Endpoint - parameter should be either 'login', 'privileges' or 'download'.
+ *)
+function TDownloadDialog.GetUrl(const endpoint: string): string;
+begin
+  if FDrupalVersion = '7' then begin
+    if endpoint = 'login' then
+      result := FUrl + '/?q=user/mobile/register'
+    else if endpoint = 'privileges' then
+      result := FUrl + '/?q=user/remote_download/privileges'
+    else if endpoint = 'download' then
+      result := FUrl + '/?q=user/remote_download/download'
+  end
+  else if FDrupalVersion = '8' then begin
+    if endpoint = 'login' then
+      result := FUrl + '/remote_download/login'
+    else if endpoint = 'privileges' then
+      result := FUrl + '/remote_download/privileges'
+    else if endpoint = 'download' then
+      result := FUrl + '/remote_download/download'
+  end
+  else
+    raise Exception.Create('Unknown Drupal version in indicia connection info');
 end;
 
 (**
@@ -738,14 +803,18 @@ procedure TDownloadDialog.LoadAttrConfig;
 var
   i: integer;
   def: string;
+  termMappingsFileName: string;
+  termMappings: TStringList;
 begin
   FAttrs := TStringList.Create;
+  FAttrTermMappings := TStringList.Create;
   FSmpAttrs := '';
   FOccAttrs := '';
   if FileExists(FSettingsFolder + 'config.txt') then begin
     FAttrs.LoadFromFile(FSettingsFolder + 'config.txt');
     for i:=0 to FAttrs.Count-1 do begin
       def:=trim(FAttrs.Names[i]);
+      // Skip comments and blank lines in the attrs config file.
       if (Copy(def, 1, 1)<>'#') and (def<>'') then begin
         if CompareStr(Copy(def, 1, 8), 'smpAttr:')=0 then begin
           if FSmpAttrs<>'' then FSmpAttrs := FSmpAttrs+',';
@@ -757,6 +826,13 @@ begin
         end
         else
           raise EDownloadDialogConfigException.Create(Format(ResStr_InvalidConfigLine, [i+1]));
+        // Is there a config file for mapping terms for this attribute?
+        termMappingsFileName := StringReplace(def, ':', '', []) + 'TermMappings.txt';
+        if FileExists(FSettingsFolder + termMappingsFileName) then begin
+          termMappings := TStringList.Create;
+          termMappings.LoadFromFile(FSettingsFolder + termMappingsFileName);
+          FAttrTermMappings.AddObject(def, termMappings);
+        end;
       end;
     end;
   end;
@@ -779,7 +855,6 @@ procedure TDownloadDialog.GetConnectionToIndicia();
 var
   connectionFile, tokens: TStringList;
   encrypted, decrypted: string;
-  sslSocket: TIdSSLIOHandlerSocket;
 begin
   connectionFile := TStringList.Create;
   tokens := TStringList.Create;
@@ -796,18 +871,21 @@ begin
     connectionFile.LoadFromFile(FSettingsFolder + 'indiciaConnection.txt');
     encrypted := connectionFile.Text;
     decrypted := Decrypt(encrypted, 'brim5tone');
-    tokens.Delimiter := '|';
-    tokens.DelimitedText := decrypted;
+    // Split string on delimiter. Using delimitedText doesn't work as it always
+    // splits on spaces.
+    tokens.Text := StringReplace(decrypted, '|', sLineBreak, [rfReplaceAll]);
     FURL := tokens[0];
     FAppSecret := tokens[1];
     FRemoteSiteID := tokens[2];
     FRemoteSite := tokens[3];
+    if tokens.count > 4 then
+      FDrupalVersion := tokens[4]
+    else
+      FDrupalVersion := '7';
     // if https, then set up the IO Handler. See
     // http://stackoverflow.com/questions/11554003/tidhttp-get-eidiohandlerpropinvalid-error
     if Copy(FUrl, 1, 5) = 'https' then begin
-      sslSocket := TIdSSLIOHandlerSocket.Create(nil);
-      sslSocket.SSLOptions.Method := sslvSSLv23;//, sslvSSLv3, sslvTLSv1 
-      idHttp1.IOHandler := sslSocket;
+      idHttp1.IOHandler := TIdSSLIOHandlerSocketOpenSSL.Create();
     end;
     lblLoginInstruct.Caption := StringReplace(lblLoginInstruct.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
     lblEmail.Caption := StringReplace(lblEmail.Caption, 'Indicia', FRemoteSite, [rfReplaceAll]);
@@ -833,9 +911,14 @@ begin
     exit;
   if not InputQuery('Remote Site', ResStr_ProvideWebsiteTitle, FRemoteSite) then
     exit;
+  repeat
+    if not InputQuery('Drupal version (7 or 8)', ResStr_ProvideDrupalVersion, FDrupalVersion) then
+      exit;
+    FDrupalVersion := trim(FDrupalVersion);
+  until (FDrupalVersion = '7') or (FDrupalVersion = '8');
   connectionFile := TStringList.Create;
   try
-    connectionFile.Add(Encrypt(FURL+'|'+FAppSecret+'|'+FRemoteSiteID+'|'+FRemoteSite, 'brim5tone'));
+    connectionFile.Add(Encrypt(FURL+'|'+FAppSecret+'|'+FRemoteSiteID+'|'+FRemoteSite+'|'+FDrupalVersion, 'brim5tone'));
     connectionFile.SaveToFile(FSettingsFolder + 'indiciaConnection.txt');
   finally
     connectionFile.Free;
@@ -889,7 +972,6 @@ end;
  * Nice to have:
  * @todo: progressBar
  * @todo: logs of taxon determinations?
- * @todo: sample_type_key = load from Indicia's sample method or default to field observation
  * @todo: remember previous settings
  * @todo: set a location and vice county admin area??
  * @todo: intelligently set the determination date
@@ -898,7 +980,7 @@ procedure TDownloadDialog.CreateSample(sampleKey: string; surveyKey: string; thi
 var
   existing: _Recordset;
   vd: TVagueDate;
-  locationName, recorder, comment: string;
+  locationName, recorder, comment, sampleTypeKey: string;
   sref: string;
 begin
   existing := FConnection.Execute('SELECT survey_event_key FROM survey_event WHERE survey_event_key=''' + sampleKey + '''');
@@ -938,6 +1020,7 @@ begin
   locationName := locationName + thisrec.values['vicecounty'];
   recorder := GetIndividual(thisrec.values['recorder_person_id'], thisrec.values['recorder']);
   comment := thisrec.values['sample_comment'];
+  sampleTypeKey := GetSampleTypeKey(thisrec.values['sample_method']);
   if (recorder = 'NBNSYS0000000004') and (thisrec.values['recorder']<>'') then
     // since we couldn't resolve the name key, don't lose the recorder name data
     comment := Format(ResStr_RecordedByComment, [thisrec.values['recorder']]) + #13#10 + comment;
@@ -960,6 +1043,7 @@ begin
         '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
+    Inc(FEventsCreated);
   end else
   begin
     // Update existing event
@@ -977,6 +1061,7 @@ begin
         'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
         'WHERE survey_event_key=''' + sampleKey + '''');
+    Inc(FEventsUpdated);
   end;
   // Add a survey event recorder
   existing := FConnection.Execute('SELECT se_recorder_key FROM survey_event_recorder WHERE se_recorder_key=''' + sampleKey + '''');
@@ -1018,11 +1103,12 @@ begin
         '''Imported'', ' +
         '''' + EscapeSqlLiteral(locationName, 100) + ''',' +
         '''' + sampleKey + ''', ' +
-        '''NBNSYS0000000001'', ' +   // field observation
+        '''' + sampleTypeKey + ''', ' +
         '''' + EscapeSqlLiteral(comment) + ''',' +
         '''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
+    Inc(FSamplesCreated);
   end else
   begin
     FConnection.Execute('UPDATE sample SET '+
@@ -1036,11 +1122,12 @@ begin
         'spatial_ref_qualifier=''Imported'', ' +
         'location_name=''' + EscapeSqlLiteral(locationName, 100) + ''', ' +
         'survey_event_key=''' + sampleKey + ''', ' +
-        'sample_type_key=''NBNSYS0000000001'', ' +   // field observation
+        'sample_type_key=''' + sampleTypeKey + ''', ' + 
         'comment=''' + EscapeSqlLiteral(comment) + ''', ' +
         'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
         'WHERE sample_key=''' + sampleKey + '''');
+    Inc(FSamplesUpdated);
   end;
   // sample recorders table
   existing := FConnection.Execute('SELECT sample_key FROM sample_recorder WHERE sample_key=''' + sampleKey +
@@ -1067,12 +1154,16 @@ var
   existing, tli: _Recordset;
   zeroAbundance, confidential, verified, tlikey, determiner, comment: string;
   vd: TVagueDate;
+  nameInfo: string;
 begin
   existing := FConnection.Execute('SELECT taxon_occurrence_key FROM taxon_occurrence WHERE taxon_occurrence_key=''' + occKey + '''');
   tli := FConnection.Execute('SELECT recommended_taxon_list_item_key FROM nameserver ' +
       'WHERE input_taxon_version_key=''' + thisrec.values['taxonversionkey'] + ''' AND recommended_taxon_list_item_key IS NOT NULL');
   if tli.RecordCount=0 then begin
     Log(Format(ResStr_CouldNotFindTVK, [thisrec.values['taxonversionkey'], thisrec.values['taxon']]));
+    LogFile('Indicia record ' + thisrec.values['occurrence_id'] + ' was not imported. TVK ' + thisrec.values['taxonversionkey']
+      + ' could not be found for record ' + VarToStr(thisrec.values['occurrence_id']) + '.');
+    Inc(FOccurrencesRejected);
     exit;
   end;
   vd.StartDate := StrToDate(thisrec.values['date_start'], Ffsiso);
@@ -1099,6 +1190,12 @@ begin
     verified := '1'
   else
     verified := '0';
+  if thisrec.values['recorder']='' then
+    nameInfo := 'Recorder: <not specified>'
+  else
+    nameInfo := 'Recorder: ' + thisrec.values['recorder'];
+  if thisrec.values['determiner']<>'' then
+    nameInfo := nameInfo + ', determiner: ' + thisrec.values['determiner'];
   if existing.RecordCount=0 then begin
     // insert new taxon occurrence
     FConnection.Execute('INSERT INTO taxon_occurrence (taxon_occurrence_key, comment, zero_abundance, confidential, verified, '+
@@ -1120,6 +1217,9 @@ begin
         '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
+    Inc(FOccurrencesCreated);
+    LogFile('Taxon occurrence ' + occKey + ' was created from Indicia record ' + thisrec.values['occurrence_id'] + '. '+
+      nameInfo);
   end
   else begin
     // update existing taxon occurrence
@@ -1133,6 +1233,9 @@ begin
         'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
         'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
         'WHERE taxon_occurrence_key=''' + occKey + '''');
+    Inc(FOccurrencesUpdated);
+    LogFile('Existing taxon occurrence ' + occKey + ' was updated from Indicia record ' +
+      thisrec.values['occurrence_id'] + '. ' + nameInfo);
   end;
   // Create a 1:1 relationship with a determination. At the moment we are not doing anything with the log of determinations, just the latest.
   existing := FConnection.Execute('SELECT taxon_determination_key FROM taxon_determination WHERE taxon_determination_key=''' + occKey + '''');
@@ -1172,6 +1275,67 @@ begin
         'WHERE taxon_determination_key=''' + occKey + '''');
   end;
   CreateData(thisrec, 'Taxon_Occurrence', occKey, 'occ', 'occurrence');
+  CreateMedia(occKey, thisrec);
+end;
+
+procedure TDownloadDialog.CreateMedia(occKey: String; thisrec: TStringList);
+var
+  existing: _Recordset;
+  files, tokens: TStringList;
+  sourceKey: string;
+  i: integer;
+  title: string;
+begin
+  files := TStringList.Create;
+  tokens := TStringList.Create;
+  try
+    files.Text := StringReplace(thisrec.Values['media'], ';', sLineBreak, [rfReplaceAll]);
+    for i:=0 to files.Count-1 do begin
+      tokens.Text := StringReplace(files[i], '|', sLineBreak, [rfReplaceAll]);
+      sourceKey := FRemoteSiteID + IdToKey(tokens[0]);
+      existing := FConnection.Execute(
+        'SELECT source_key ' +
+        'FROM taxon_occurrence_sources ' +
+        'WHERE taxon_occurrence_key=''' + occKey + ''' ' +
+        'AND source_key=''' + sourceKey + ''''
+      );
+      // Title in caption [licence code] format.
+      if (tokens.count > 2) and (tokens[2] <> '') then
+        title := tokens[2]
+      else
+        title := tokens[1];
+      if tokens.count > 3 then begin
+        if tokens[3] <> '' then begin
+          title := title + ' [' + tokens[3] + ']';
+        end;
+      end;
+      if existing.RecordCount > 0 then begin
+        // If existing then update fields.
+        FConnection.Execute(
+          'UPDATE source_file SET file_name=''' + tokens[1] + ''', title=''' + title + ''' ' +
+          'WHERE source_key=''' + sourceKey + ''''
+        );
+      end
+      else begin
+        // else add new source_file, source and taxon_occurrence_sources records
+        FConnection.Execute(
+          'INSERT INTO source(source_key, internal) ' +
+             'VALUES(''' + sourceKey + ''', 0)'
+        );
+        FConnection.Execute(
+          'INSERT INTO source_file(source_key, file_name, title) ' +
+            'VALUES(''' + sourceKey + ''', ''' + tokens[1] + ''', ''' + title + ''')'
+        );
+        FConnection.Execute(
+          'INSERT INTO taxon_occurrence_sources(source_link_key, taxon_occurrence_key, source_key, original) ' +
+            'VALUES(''' + sourceKey + ''', ''' + occKey + ''', ''' + sourceKey + ''', 0)'
+        );
+      end;
+    end;
+  finally
+    files.Free;
+    tokens.Free;
+  end;
 end;
 
 function TDownloadDialog.EscapeSqlLiteral(literal: string): string;
@@ -1190,7 +1354,7 @@ end;
 procedure TDownloadDialog.CreateData(thisrec: TStringList; table, key, prefix, fieldTag: string);
 var i: integer;
   dataKey, def, attrId, mu_key, mq_key, val: string;
-  temp: TStringList;
+  temp, mappings: TStringList;
   existing: _Recordset;
 begin
   temp := TStringList.Create;
@@ -1205,13 +1369,18 @@ begin
           else
             val:=thisrec.values['attr_'+fieldTag+'_'+attrId];
           val := EscapeSqlLiteral(val, 20);
+          // Allow configuration to map the value
+          if FAttrTermMappings.IndexOf(def) > -1 then begin
+            mappings := TStringList(FAttrTermMappings.Objects[FAttrTermMappings.IndexOf(def)]);
+            if mappings.IndexOfName(val) > -1 then
+              val := mappings.Values[val];
+          end;
           dataKey := FRemoteSiteID + IdToKey(StrToInt(thisrec.values['attr_id_'+fieldTag+'_'+attrId]));
           temp.CommaText := FAttrs.Values[FAttrs.Names[i]];
           mu_key := temp[0];
           mq_key := temp[1];
           existing := FConnection.Execute('SELECT ' + table + '_data_key FROM ' + table + '_data ' +
-              'WHERE measurement_unit_key=''' + mu_key + ''' AND measurement_qualifier_key=''' + mq_key +
-              ''' AND ' + table + '_key=''' + key + '''');
+              'WHERE ' + table + '_data_key=''' + dataKey + '''');
           if existing.RecordCount=0 then begin
             // insert new taxon determination
             FConnection.Execute('INSERT INTO ' + table + '_data (' + table + '_data_key, ' + table + '_key, data, accuracy, '+
@@ -1227,12 +1396,15 @@ begin
               ')');
           end
           else begin
-            FConnection.Execute('UPDATE ' + table + '_data SET '+
+            FConnection.Execute('UPDATE ' + table + '_data SET ' +
+              table + '_key=''' + key + ''', ' +
               'data=''' + val + ''', ' +
+              'accuracy=''Unknown'', ' +
+              'measurement_qualifier_key=''' + mq_key + ''', ' +
+              'measurement_unit_key=''' + mu_key + ''', ' +
               'changed_by=''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
               'changed_date=''' + FormatDateTime('yyyy-mm-dd', Date) + ''' ' +
-              'WHERE measurement_unit_key=''' + mu_key + ''' AND measurement_qualifier_key=''' + mq_key +
-                  ''' AND ' + table + '_key=''' + key + '''');
+              'WHERE ' + table + '_data_key=''' + dataKey + '''');
           end;
         end;
       end;
@@ -1264,8 +1436,55 @@ begin
     end
     else
       result := 'NBNSYS0000000004';
+  end
+  else begin
+    FPeopleRecordInfo.Values[result] := 'Using configured known person with name ' + name;
   end;
+end;
 
+function TDownloadDialog.GetSampleTypeKey(sampleTypeLabel: string): string;
+var
+  existing, newKey: _Recordset;
+  sampleTypeKey: string;
+  shortName: string;
+  longName: string;
+begin
+  if sampleTypeLabel = '' then
+    sampleTypeKey := 'NBNSYS0000000001' // field observation
+  else begin
+    // Trim long sample type labels.
+    if Length(sampleTypeLabel) > 20 then begin
+      shortName := Copy(sampleTypeLabel, 1, 18) + '..';
+      longName := ''' + sampleTypeLabel + ''';
+    end
+    else begin
+      shortName := sampleTypeLabel;
+      longName := 'null';
+    end;
+    existing := FConnection.Execute(
+      'SELECT sample_type_key FROM sample_type WHERE short_name=''' + shortName + ''''
+    );
+    if existing.RecordCount=0 then begin
+      FConnection.Execute(
+        'DECLARE @key CHAR(16); ' +
+        'EXEC spNextKey ''sample_type'', @key OUTPUT;'
+      );
+      newKey := FConnection.Execute('SELECT last_key_text FROM last_key WHERE table_name=''sample_type''');
+      sampleTypeKey := FRemoteSiteId + newKey.fields['last_key_text'].value;
+      FConnection.Execute('INSERT INTO sample_type ' +
+        '(sample_type_key, short_name, long_name, entered_by, entry_date, system_supplied_data) ' +
+        'VALUES (''' + sampleTypeKey + ''',' +
+        '''' + shortName + ''',' +
+        longName + ',' +
+        '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
+        '''' + FormatDateTime('yyyy-mm-dd', Date) + ''',' +
+        '0)');
+    end
+    else begin
+      sampleTypeKey := existing.fields['sample_type_key'].value;
+    end;
+  end;
+  result := sampleTypeKey;
 end;
 
 procedure TDownloadDialog.CreateIndividual(indkey: string; name: string);
@@ -1298,6 +1517,12 @@ begin
         '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
+    FPeopleRecordInfo.Values[indkey] := 'New person created for name ' + name;
+  end
+  else begin
+    if FPeopleRecordInfo.Values[indkey] = '' then begin
+      FPeopleRecordInfo.Values[indkey] := 'Existing person used for name ' + name;
+    end;
   end;
 end;
 
@@ -1396,10 +1621,63 @@ begin
   FConnection.Execute(sql, rows);
 end;
 
-procedure TDownloadDialog.Log(msg: string);
+procedure TDownloadDialog.Log(const msg: string);
 begin
   mmLog.Lines.Add(msg);
   Application.ProcessMessages;
+end;
+
+(**
+ * Logs a message to add to a log file.
+ *
+ * Keeps information useful regarding the history of Indicia2Recorder runs.
+ *)
+procedure TDownloadDialog.LogFile(const msg: string);
+begin
+  FFileLog.Add(msg);
+end;
+
+(**
+ * Clears the stringlist used to capture messages for the file log.
+ *)
+procedure TDownloadDialog.ResetLogFile;
+begin
+  FFileLog.Clear;
+  LogFile('Indicia2Recorder started at ' + FormatDateTime('yyyy/mm/dd hh:mm:ss', Date));
+  FEventsCreated := 0;
+  FEventsUpdated := 0;
+  FSamplesCreated := 0;
+  FSamplesUpdated := 0;
+  FOccurrencesCreated := 0;
+  FOccurrencesUpdated := 0;
+  FOccurrencesRejected := 0;
+  FPeopleRecordInfo.Clear;
+end;
+
+(**
+ * Saves the file log.
+ *)
+procedure TDownloadDialog.SaveLogFile;
+var ds: string;
+begin
+  LogFile('');
+  LogFile('Summary');
+  LogFile('-------');
+  LogFile('Survey events created: ' + IntToStr(FEventsCreated));
+  LogFile('Survey events updated: ' + IntToStr(FEventsUpdated));
+  LogFile('Samples created: ' + IntToStr(FSamplesCreated));
+  LogFile('Samples updated: ' + IntToStr(FSamplesUpdated));
+  LogFile('Taxon occurrences created: ' + IntToStr(FOccurrencesCreated));
+  LogFile('Taxon occurrences updated: ' + IntToStr(FOccurrencesUpdated));
+  LogFile('Taxon occurrences rejected: ' + IntToStr(FOccurrencesRejected));
+  // Add the information about people linked to
+  LogFile('');
+  LogFile('Person records');
+  LogFile('--------------');
+  FFileLog.AddStrings(FPeopleRecordInfo);
+  ds := FormatDateTime('yyyy-mm-dd-hh-mm-ss', Now);
+  ForceDirectories(FSettingsFolder + 'Log');
+  FFileLog.SaveToFile(FSettingsFolder + 'Log/log-' + ds + '.txt');
 end;
 
 {*
@@ -1528,7 +1806,7 @@ begin
     request.AddFormField('password', ePassword.Text);
     request.AddFormField('appsecret', FAppSecret);
     try
-      response := idHttp1.Post(FURL + '/?q=user/mobile/register', request);
+      response := idHttp1.Post(GetUrl('login'), request);
     except
       on E:EIdHTTPProtocolException do begin
         ShowMessage(EIdHTTPProtocolException(E).ErrorMessage);
@@ -1695,7 +1973,7 @@ begin
     request.AddFormField('email', FEmail);
     request.AddFormField('appsecret', FAppSecret);
     request.AddFormField('usersecret', FSecret);
-    response := idHttp1.Post(FURL + '/?q=user/remote_download/privileges', request);
+    response := idHttp1.Post(GetUrl('privileges'), request);
     info := TlkJSON.ParseText(response);
     types := info.Field['types'];
     surveys := TlkJSONcustomlist(info.Field['surveys']);
@@ -1764,6 +2042,7 @@ begin
   FSurveys.Free;
   FDoneSignatures.Free;
   FKnownPeople.Free;
+  FFileLog.Free;
   inherited;
 end;
 

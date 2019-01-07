@@ -1,5 +1,5 @@
 //==============================================================================
-//  Unit:        ValidationData
+//  Unit:        ValidationData                          
 //
 //  Implements:  TdmValidation
 //
@@ -66,6 +66,7 @@ type
   private
     FLastCheckedSample : TKeyString;  // Key of sample last checked by CheckDeterminationDateAgainstSample
     FSampleDateToTest: TVagueDate;
+    FSurveyIsTemp  : boolean;
     FLastCheckedSurvey : TKeyString; // Identified survey whose details are cached
     FLastCheckedSurveySW : TLatLong;
     FLastCheckedSurveyNE : TLatLong;
@@ -105,8 +106,11 @@ type
     function CheckDeterminationDateAgainstSample(const iSampleKey : TKeyString;
         const iDeterminationDate : TVagueDate; iUseCachedSampleDate:
         boolean=false): boolean;
+    function CheckDeterminationDateAgainstSampleDate(
+        const sampleDate, determinationDate : TVagueDate): boolean;
     function CheckDeterminationDate(const sampleKey, determinationKey: TKeyString;
         sampleDate, determinationDate: TVagueDate): TValidOccDates;
+    function CheckIsTemporary(const iSurveyKey : TKeyString) : TValidationResult;
   end;
 
 resourcestring
@@ -128,9 +132,11 @@ resourcestring
   ResStr_InvalidVagueDateBlank = 'must be a valid vague date and it cannot be after today''s date of %s.' +
                                  ' Enter a valid vague date or leave blank.';
 
-  ResStr_InvalidDate = 'must be a valid standard date and it cannot be after today''s date of %s.';
+  ResStr_InvalidDate = 'must be a valid standard date and cannot be after today ''s date of %s.';
   ResStr_InvalidDateBlank = 'must be a valid standard date and it cannot be after today''s date of %s.' +
                             ' Enter a valid standard date or leave blank.';
+  ResStr_InvalidStandardDate = ' must be a valid standard date and cannot be blank.';
+  ResStr_InvalidStandardDateBlank = ' must be a valid standard date. Enter a valid standard date or leave blank.';
 
   ResStr_FromDate = 'The Start Date '+ 'must be a valid vague date and it cannot be after today''s date of %s.';
   ResStr_ToDate = 'The End Date ' + 'must be a valid vague date and it cannot be after today''s date of %s.';
@@ -141,7 +147,6 @@ resourcestring
   ResStr_EventInSurvey  = 'The event is not in the bounding box of its survey.';
   ResStr_SystemUnknown  = 'The Spatial Reference system is not recognised.';
   ResStr_InvalidSpatialRef = 'The spatial reference is invalid or cannot be recognised.';
-  ResStr_SampleDate = 'The Sample Date '+ 'must be a valid vague date and it cannot be after today''s date of %s.';
   ResStr_SampleInEvent  = 'The Spatial Reference or location entered is not '+
                           'within that of the survey event.';
   ResStr_LocNotInList = 'The specified location was not found in the list of Locations. ' +
@@ -169,6 +174,8 @@ var
   dmValidation: TdmValidation;
 
 function InvalidDate(const AQualifier:string; const IsVague, IsBlank:boolean):string;
+function InvalidStandardDate(const AQualifier:string; IsBlank:boolean):string;
+
 function ValidateFromToVagueDates(const iFromDateStart, iToDateStart : string;
          var ioError : string; const iDateError : TDateError) : boolean;
 function ValidateFromToRealDates(const iFromDateStart, iToDateStart : string;
@@ -199,6 +206,16 @@ begin
     else
       Result:=AQualifier+Format(ResStr_InvalidDate,[DateString]);
 end;  // InvalidDate
+
+//==============================================================================
+function InvalidStandardDate(const AQualifier:string; IsBlank:boolean):string;
+
+begin
+ if IsBlank then
+   Result:=AQualifier + ResStr_InvalidStandardDateBlank
+ else
+   Result:=AQualifier + ResStr_InvalidStandardDate;
+end;  // InvalidStandardDate
 
 //==============================================================================
 function IsDate(const DateString:string):boolean;
@@ -411,7 +428,12 @@ begin
   Result.Valid := Result.Message = '';
 end;  // CheckDeterminationDate
 
-//==============================================================================
+//=============================================================================
+// Checks that a determination date is valid for a given sample.
+//
+// Loads the sample from the database (with caching option) then checks the
+// determination date is on or after the sample date, returning true if it is.
+//
 function TdmValidation.CheckDeterminationDateAgainstSample(const iSampleKey :
     TKeyString; const iDeterminationDate : TVagueDate; iUseCachedSampleDate:
     boolean=false): boolean;
@@ -429,13 +451,25 @@ begin
       end;
     end;
 
-  if IsVagueDateInVagueDate(FSampleDateToTest, iDeterminationDate) then
-    Result := False
-  else if AreVagueDatesEqual(FSampleDateToTest, iDeterminationDate) then
-    Result := True
-  else
-    Result := CompareVagueDateToVagueDate(iDeterminationDate, FSampleDateToTest) >= 0;
+  Result := CheckDeterminationDateAgainstSampleDate(FSampleDateToTest, iDeterminationDate);
 end;  // CheckDeterminationDateAgainstSample
+
+//=============================================================================
+// Checks that a determination date is valid for a given sample date.
+//
+// Checks the determination date is on or after the given sample date,
+// returning true if it is.
+//
+function TdmValidation.CheckDeterminationDateAgainstSampleDate(
+        const sampleDate, determinationDate : TVagueDate): boolean;
+begin
+  if IsVagueDateInVagueDate(sampleDate, determinationDate) then
+    Result := false
+  else if AreVagueDatesEqual(sampleDate, determinationDate) then
+    Result := true
+  else
+    Result := CompareVagueDateToVagueDate(determinationDate, sampleDate) >= 0;
+end;
 
 //==============================================================================
 function TdmValidation.CheckEventDateAgainstSurvey(iSurveyKey: TKeyString;
@@ -457,6 +491,18 @@ begin
     end;
   end;
 end;  // CheckEventDateAgainstSurvey
+
+//==============================================================================
+function TdmValidation.CheckIsTemporary(const iSurveyKey : TKeyString) :
+         TValidationResult;
+begin
+  ReadSurveyDetails(iSurveyKey);
+  if FSurveyIsTemp then
+    Result.Success := True
+  else
+    Result.Success := False;
+end;  // CheckIsTemporary
+
 
 //==============================================================================
 function TdmValidation.CheckEventInSurvey(const iSurveyKey : TKeyString;
@@ -523,7 +569,7 @@ begin
 end;
 
 //==============================================================================
-{ Read the bounding box and date information for a survey, into the class
+{ Read the bounding box, date and temporary survey information for a survey, into the class
      data for this purpose }
 procedure TdmValidation.ReadSurveyDetails( const iSurveyKey : TKeyString );
 var
@@ -555,7 +601,7 @@ begin
           else
             raise;
       end;
-      
+
       if lFailed then
       begin
         Close;
@@ -563,7 +609,7 @@ begin
         Open;
       end;
 
-      if Eof then 
+      if Eof then
         raise EValidationDataError.Create(Format(ResStr_SurveyNotFound, [iSurveyKey]));
 
       First;
@@ -577,7 +623,7 @@ begin
                          StringToVagueDate(FieldByName('FROM_VAGUE_DATE_START').Text),
                          StringToVagueDate(FieldByName('TO_VAGUE_DATE_START').Text) );
       FLastCheckedSurvey := iSurveyKey;
-            
+      FSurveyIsTemp := FieldByName('TEMPORARY_SURVEY').AsBoolean;
     finally
       Close;
       Connection := lOldCon;

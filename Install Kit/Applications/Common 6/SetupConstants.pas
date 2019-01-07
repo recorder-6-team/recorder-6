@@ -28,6 +28,8 @@ const
   MDF_FILENAME     = 'nbndata_data';
   LDF_FILENAME     = 'nbndata_log.ldf';
 
+  STR_SYSCOMP_DISPLAY_NAME = 'Recorder System Components';
+
   CONNECTION_STRING = 'Provider=SQLOLEDB.1;Persist Security Info=False;%s' +
                       'Initial Catalog=master;Data Source=%s';
 

@@ -26,8 +26,8 @@ uses
   ComCtrls, Mask, VagueDateEdit, BaseChildUnit, CompositeComponent, Sources,
   SurveyData, DataClasses, Db, DropTarget, VagueDate, Constants, JNCCDatasets,
   ExceptionForm, BaseDockedForm, ValidationData, OnlineHelp, SpatialRefFuncs,
-  GeneralFunctions, ImageListButton, DatabaseAccessADO, DataStringGrid, 
-  ControlStringGrid, AddinCompositeComponent, AddinLinkedControls, Map;
+  GeneralFunctions, ImageListButton, DatabaseAccessADO, DataStringGrid,
+  ControlStringGrid, AddinCompositeComponent, AddinLinkedControls, Map,Variants;
 
 type
   ESurveyDetailsError = class(TExceptionPath);
@@ -94,6 +94,9 @@ type
     dbreAttribution: TDBRichEdit;
     lblNotes: TLabel;
     dbreNotes: TDBRichEdit;
+    Label2: TLabel;
+    eImportDate: TEdit;
+    dbcbTemporary: TDBCheckBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbSaveClick(Sender: TObject);
     procedure bbCancelClick(Sender: TObject);
@@ -120,6 +123,7 @@ type
     procedure TagColumnResize(Sender: TObject);
     procedure btnAddTagClick(Sender: TObject);
     procedure btnRemoveTagClick(Sender: TObject);
+    procedure eImportDateExit(Sender: TObject);
   private
     FValidEnteredSW : string;
     FValidEnteredNE : String;
@@ -155,6 +159,7 @@ type
     procedure SurveyTagUpdateRow(var rowKey: String; data: TStringList);
     procedure UpdateSurveyTag(keylist: TKeylist);
     procedure ValidateSurveyTags;
+    procedure ValidateImportDate;
   protected
     procedure SetupDestinationControls; override;
   public
@@ -189,6 +194,8 @@ resourcestring
   ResStr_SurveyNameRequired = 'A Survey Name is required for every Survey.';
   ResStr_SurveyorNameRequired = 'A Surveyor''s Name is required for every Survey.';
   ResStr_InvalidSurveyorsName = 'The Surveyor''s Name is invalid. Enter a valid name.';
+  ResStr_TempSurveyRequired = 'The survey has unparsed observer names and must be set to temporary.';
+  ResStr_InvalidLicence = 'Licence is not valid for a temporary survey';
   ResStr_SurveyTypeRequired = 'A Survey Type is required for every Survey. Select one from the list.';
 
   ResStr_AllowedToDateRequired =  'A Records Allowed To Date is required when the Survey is completed.' +
@@ -206,6 +213,8 @@ resourcestring
   ResStr_SpecifyValidSurveyTag = 'Please specify a valid survey tag.';
   ResStr_InvalidSurveyTag='The term you have selected is not from the list of tags so cannot be used '+
       'as a survey tag.';
+  ResStr_TheImportDate = 'The import date ';
+
 
 //==============================================================================
 constructor TfrmSurveyDetails.Create(AOwner: TComponent);
@@ -329,7 +338,7 @@ begin
         eSurveyTo.Text     := FieldByName('To_Vague_Date_Start').Text;
         eSurveyOpFrom.Text := FieldByName('Op_From_Vague_Date_Start').Text;
         eSurveyOpTo.Text   := FieldByName('Op_To_Vague_Date_Start').Text;
-
+        eImportDate.Text           := FieldByName('Import_Date').Text;
         FValidEnteredSW := FieldByName('SW_Spatial_Ref').AsString;
         eSWCorner.Text := LocaliseSpatialRef(GetDisplaySpatialRef(
             AppSettings.SpatialRefSystem,
@@ -381,6 +390,7 @@ begin
     FieldByName('Survey_Media_Key').AsString:=NONE_RECORD_KEY;
     dbcmbLicence.KeyValue:=NONE_RECORD_KEY;
     FieldByName('Licence_Key').AsString:=NONE_RECORD_KEY;
+    FieldByName('Temporary_Survey').AsBoolean:= false;
   end;
   ResetDBRichEditControls([dbreDescription, dbreGeoCoverage]);
   dmGeneralData.SetNameIDAndDate(FdmSurvey.qrySurvey,'Entered_By','Entry_Date');
@@ -439,8 +449,9 @@ var
   lValidSR         : TValidBoundingBox;
   lCursor          : TCursor;
   lCustodian       : String;
-begin
+ begin
   inherited;
+
   lCurrentTab:=pcSurveyDetails.ActivePage;
   // Sender is nil if called from CloseQuery method.
   if Sender=nil then begin
@@ -456,6 +467,10 @@ begin
   ValidateValue(eSurveyRunBy.Text<>'',ResStr_SurveyorNameRequired,eSurveyRunBy);
   ValidateValue(dmGeneralData.CheckName(eSurveyRunBy),ResStr_InvalidSurveyorsName,eSurveyRunBy);
   ValidateValue(dbcmbSurveyType.Text<>'',ResStr_SurveyTypeRequired,dbcmbSurveyType);
+  if dbcbTemporary.Checked then begin
+    ValidateValue(dmGeneralData.CheckLicence(vartostr(dbcmbLicence.KeyValue)),ResStr_InvalidLicence);
+  end else
+    ValidateValue(dmGeneralData.CheckTempSurvey(SurveyKey),ResStr_TempSurveyRequired);
 
   SurveyDateValidate(nil);
 
@@ -493,6 +508,8 @@ begin
         FieldByName('To_Vague_Date_Start').Text      := eSurveyTo.Text;
         FieldByName('Op_From_Vague_Date_Start').Text := eSurveyOpFrom.Text;
         FieldByName('Op_To_Vague_Date_Start').Text   := eSurveyOpTo.Text;
+        FieldByName('Import_Date').Text   := eImportDate.Text;
+        FieldByName('Temporary_Survey').AsBoolean := dbcbTemporary.checked;
         if EditMode = emAdd then
         begin
           FieldByName('Survey_Key').AsString := SurveyKey;
@@ -572,6 +589,7 @@ begin
   eSurveyOpTo.ReadOnly   := eSurveyFrom.ReadOnly;
   eNECorner.ReadOnly     := eSurveyFrom.ReadOnly;
   eSWCorner.ReadOnly     := eSurveyFrom.ReadOnly;
+  eImportDate.ReadOnly   := eSurveyFrom.ReadOnly;
   if eSurveyFrom.ReadOnly then
     eSurveyRunBy.EditMode := emBrowse
   else
@@ -954,7 +972,6 @@ begin
       TVagueDateEdit(Sender).Text := VagueDateToString(TVagueDateEdit(Sender).VagueDate);
   end;
 end;
-
 {-------------------------------------------------------------------------------
 }
 procedure TfrmSurveyDetails.DropSurveyTag(const Sender: TObject; const format: Integer;
@@ -1206,6 +1223,33 @@ begin
   inherited;
   FSurveyTagsGridManager.DeleteFromGrid(nil);
   TagColumnResize(nil);
+end;
+
+procedure TfrmSurveyDetails.ValidateImportDate;
+begin
+  if eImportDate.Text<>'' then begin
+    try
+      // Use VagueDate functions to deal with other date separators, like "."
+      // If conversion fails, not a valid date and trapped after handler
+      eImportDate.Text := VagueDateToString(StringToVagueDate(eImportDate.Text));
+    except
+    end;
+    // And validate
+    ValidateValue(IsDate(eImportDate.Text) and (StrToDate(eImportDate.Text)<=Date),
+                  InvalidDate(ResStr_TheImportDate,false,false),eImportDate);
+    eImportDate.Text:=DateToStr(StrToDate(eImportDate.Text));
+  end;
+end;  // eImportDateExit
+
+
+procedure TfrmSurveyDetails.eImportDateExit(Sender: TObject);
+var
+lPos: TPoint;
+begin
+  inherited;
+  lPos := bbCancel.ScreenToClient(Mouse.CursorPos);
+  if not (((lPos.X in [0..bbCancel.Width]) and (lPos.Y in [0..bbCancel.Height])) or FClosingForm) then
+    ValidateImportDate;
 end;
 
 end.

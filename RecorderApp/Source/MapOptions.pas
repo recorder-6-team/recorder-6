@@ -142,6 +142,7 @@ type
     lblUserFilePath: TLabel;
     lblBaseMap: TLabel;
     lblCurrentBasemap: TLabel;
+    btnFixMaster: TButton;
     procedure btnAddMapClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnDeleteDatasetClick(Sender: TObject);
@@ -171,6 +172,7 @@ type
     procedure btnSecureClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure rgSecureClick(Sender: TObject);
+    procedure btnFixMasterClick(Sender: TObject);
    private
     FAddBackgroundLayer: TMenuItem;
     FAddPolygonLayer: TMenuItem;
@@ -220,7 +222,6 @@ type
     procedure RecoverBdyLinks;
     function GetMasterObjectSheet: string;
     function UpdateComputerMap: Boolean;
-    function ObjectSheetPathUpdate: Boolean;
     procedure PopulateMapFileMff(const AFilePath : string; ASheetTypes:string; ACheckExists: Boolean; CompId : string);
     function CheckComputerMap: Boolean;
     function CheckObjectSheet : Boolean;
@@ -229,6 +230,8 @@ type
     function UserFilePath: string;
     function DeleteSpecifiedFiles(Apath, AFilename : string) : Boolean;
     function BaseMapWidowOpen: Boolean;
+    function ObjectSheetPathUpdate: boolean;
+    function GetMasterWorkStation: string;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -305,8 +308,13 @@ resourcestring
                       'If you have more than one base map please change the default names';
 
   ResStr_Object_Sheet = 'The object sheet path on this workstation does not appear to be correct'#13#10 +
-                        'Do not add new base maps or reset the maps until this is fixed.'#13#10 +
-                        'Attempt to fix this now ?';
+                        'Do not add new base maps,reset the maps or carry out any other actions until this is fixed.'#13#10 +
+                        'See Fix Button in Map Options/Admin ';
+  ResStr_ObjectSheetSync = 'This option will bring the object sheet folder on this workstation ' +
+                             'in line with that of workstaton %s.'#13#10  +
+                             'Do not proceeed unless maps are working correctly on workstation %s'#13#10 +
+                             'Proceed ? ';
+  ResStr_Admin_No_Master = 'Mapping is not set up. Use Map Options/Reset/All to set up mapping';
 
   ResStr_Object_Sheet_Fail = 'The changes to the object sheet path did not work'#13#10 +
                             'Changes to the registry may be required';
@@ -1175,13 +1183,9 @@ procedure TdlgMapOptions.pcMapOptionsChanging(Sender: TObject; var AllowChange: 
 var
   i: Integer;
   lItem: TSavedMap;
-  lObjectSheetOk: Boolean;
+
 begin
-  // check that the object sheets paths are ok
-  // Until this is fixed then other changes can not be made
-  // Will still allow the reset on an new workstation
-  lObjectSheetOK := CheckObjectSheet;
-  if (not Assigned(sgMaps.Objects[COL_OBJECT, sgMaps.Row])) or (not lObjectSheetOk) then
+  if not Assigned(sgMaps.Objects[COL_OBJECT, sgMaps.Row])  then
     AllowChange := False
   else begin
     // Allow moving from one tab to another by default. Special case for first page though.
@@ -1225,7 +1229,7 @@ begin
       end;
     end;
   end;
-  if (not AllowChange) and (lObjectSheetOk) then
+  if not AllowChange then
     MessageDlg(ResStr_NeedOneMapReset, mtInformation, [mbOk], 0);
 end;  // TdlgMapOptions.pcMapOptionsChanging
 
@@ -2268,7 +2272,10 @@ begin
   lblUserFilePath.caption := UserFilePath;
   edWorkstation.Text := GetHostName;
   UpdateComputerMap;
-  CheckObjectSheet;
+  if (CheckObjectSheet) then
+    btnfixMaster.visible := false
+  else
+    btnfixMaster.visible := true;
 end;
 
 procedure TdlgMapOptions.BackupMapFiles;
@@ -2381,6 +2388,14 @@ function TdlgMapOptions.GetHostName: string;
 begin
   with dmDatabase.ExecuteSQL('Select host_name() as hostname', True) do begin
     Result := VarToStr(Fields['hostname'].Value);
+    Close;
+  end;
+end;
+function TdlgMapOptions.GetMasterWorkStation: string;
+begin
+  Result := '';
+  with dmDatabase.ExecuteSQL('Select * FROM Computer_Map where Master = 1' , True) do begin
+    if not eof then Result := VarToStr(Fields['Computer_Id'].Value);
     Close;
   end;
 end;
@@ -2516,35 +2531,6 @@ begin
   lKeepList.Free;
 end;
 
-{Changes the object sheet path for this workstation to that of the master workstation
-   Any polygon files already in the wrong object sheet folder
-   any links in the wrong folder or any boundaries created within them will be lost.}
-function TdlgMapOptions.ObjectSheetPathUpdate: boolean;
-var
- lCurrentPath, lNewPath : string;
-begin
-  Result := True;
-  if AppSettings.UserAccessLevel = ualAdmin then begin
-    lCurrentPath := AppSettings.ObjectSheetFilePath;
-    lNewPath := GetMasterObjectSheet;
-    try
-      begin
-        if CompareText(lNewPath,LCurrentPath) <> 0 then begin
-          AppSettings.ObjectSheetFilePath := lNewPath;
-          AppSettings.WriteRegistrySettings;
-          UpdateComputerMap;
-        end;
-      end;
-      except begin
-        MessageDlg(ResStr_Object_Sheet_Fail, mtInformation, [mbOK], 0);
-        Result := False;
-      end;
-    end;
-  end else begin
-    MessageDlg(ResStr_Admin_Permission,mtInformation, [mbOk], 0);
-    Result := False;
-  end;
-end;
 
 function TdlgMapOptions.GetMasterObjectSheet: string;
 begin
@@ -2568,8 +2554,16 @@ end;
 
 function TdlgMapOptions.CheckComputerMap: boolean;
 begin
-  dmDatabase.ExecuteSQL(Format('UPDATE COMPUTER_MAP SET OBJECT_SHEET_FOLDER = ''%s'' WHERE ' +
-                       ' COMPUTER_ID = host_name()', [AppSettings.ObjectSheetFilePath]));
+ if AppSettings.standalone then begin   // Added so as not to do network test on standalone
+     dmDatabase.ExecuteSQL ('UPDATE COMPUTER_MAP SET Master= 0 WHERE ' +
+          ' COMPUTER_ID <> host_name() ');
+     dmDatabase.ExecuteSQL(Format('UPDATE COMPUTER_MAP SET OBJECT_SHEET_FOLDER = ''%s'', ' +
+          ' Master=1 WHERE ' +
+          ' COMPUTER_ID = host_name()', [AppSettings.ObjectSheetFilePath]));
+  end
+  else
+     UpdateComputerMap;
+
   Result:= CompareText(GetMasterObjectSheet,AppSettings.ObjectSheetFilePath) = 0;
 end;
 
@@ -2577,8 +2571,7 @@ function TdlgMapOptions.CheckObjectSheet: boolean;
 begin
  Result:= CheckComputerMap;
  if not Result then
-   If MessageDlg(ResStr_Object_Sheet, mtWarning, [mbYes, mbNo], 0) = mrYes then
-     Result := ObjectSheetPathUpdate
+   MessageDlg(ResStr_Object_Sheet, mtWarning, [mbOK], 0);
 end;
 
 function TdlgMapOptions.UserFilePath: String;
@@ -2607,36 +2600,32 @@ begin
   lFolderList := TStringList.Create;
   lFileList := TStringList.Create;
   // Find all the folder we need
-  if FindFirst(UserFilePath + 'Security\' + lItem.SpatialSystem + '\ObjectSheets\*', faDirectory, lSearchRec) = 0 then begin
-    if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..')
-       then lFolderList.add (UserFilePath + 'Security%s\' + lItem.SpatialSystem + '\ObjectSheets\' + lSearchRec.Name);
-    while FindNext(lSearchRec) = 0 do begin
-      if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..') then
-         lFolderList.add (UserFilePath + 'Security%s\' + lItem.SpatialSystem + '\ObjectSheets\' + lSearchRec.Name);
-    end;
-    FindClose(lSearchRec);
-  end;
+  // Add the Object Sheet Folder
+  lFolderList.add (UserFilePath + 'Security%s\' + lItem.SpatialSystem + '\ObjectSheets\');
+  // Add the sub folders for Map Sheets
   if FindFirst(UserFilePath + 'Security\' + lItem.SpatialSystem + '\MapSheets\*', faDirectory, lSearchRec) = 0 then begin
-    if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..')
-       then lFolderList.add (UserFilePath + 'Security%s\MapSheets\' + lSearchRec.Name);
+    if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..') and
+       ((lSearchRec.attr and faDirectory) = faDirectory) then
+       lFolderList.add (UserFilePath + 'Security%s\' + lItem.SpatialSystem + '\MapSheets\' + lSearchRec.Name);
     while FindNext(lSearchRec) = 0 do begin
-      if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..') then
-         lFolderList.add (UserFilePath + 'Security%s\MapSheets\' + lSearchRec.Name);
+      if (lSearchRec.Name <> '.') and (lSearchRec.Name <> '..') and
+        ((lSearchRec.attr and faDirectory) = faDirectory) then
+        lFolderList.add (UserFilePath + 'Security%s\' + lItem.SpatialSystem + '\MapSheets\' + lSearchRec.Name);
     end;
     FindClose(lSearchRec);
   end;
   //Create the Archive folder and find all the files we need
   for i := 0 to lFolderList.count-1 do begin
-     lArchiveSuffix := FloatToStr(round(now*10000));
-     if Not DirectoryExists(Format(lFolderList[i],[lArchiveSuffix])) then
-       lResult :=  ForceDirectories(Format(lFolderList[i],[lArchiveSuffix]));
-     if (lResult = True) and (FindFirst(Format(lFolderList[i],[''])+'\*.*', 0, lSearchRec) = 0) then begin
-       lFileList.add (lFolderList[i] + '\' + lSearchRec.Name);
-       while FindNext(lSearchRec) = 0 do begin
+    lArchiveSuffix := FloatToStr(round(now*10000));
+    if Not DirectoryExists(Format(lFolderList[i],[lArchiveSuffix])) then
+      lResult :=  ForceDirectories(Format(lFolderList[i],[lArchiveSuffix]));
+      if (lResult = True) and (FindFirst(Format(lFolderList[i],[''])+'\*.*', 0, lSearchRec) = 0) then begin
         lFileList.add (lFolderList[i] + '\' + lSearchRec.Name);
-       end;
-      FindClose(lSearchRec);
-     end;
+        while FindNext(lSearchRec) = 0 do begin
+          lFileList.add (lFolderList[i] + '\' + lSearchRec.Name);
+        end;
+        FindClose(lSearchRec);
+    end;
   end;
   for i := 0 to lFileList.count -1 do begin
     lFromFile := Format(lFilelist[i],['']);
@@ -2684,8 +2673,52 @@ begin
   lMapWindow := dmFormActions.MapWindow(FLayerLegend.BaseMapKey);
   Result := Assigned(lMapWindow);
 end;
+{Changes the object sheet path for this workstation to that of the master workstation
+   Any polygon files already in the wrong object sheet folder
+   any links in the wrong folder or any boundaries created within them will be lost.}
+function TdlgMapOptions.ObjectSheetPathUpdate: boolean;
+var
+ lCurrentPath, lNewPath : string;
+begin
+  Result := True;
+  if AppSettings.UserAccessLevel = ualAdmin then begin
+    lCurrentPath := AppSettings.ObjectSheetFilePath;
+    lNewPath := GetMasterObjectSheet;
+    try
+      begin
+        if CompareText(lNewPath,LCurrentPath) <> 0 then begin
+          AppSettings.ObjectSheetFilePath := lNewPath;
+          AppSettings.WriteRegistrySettings;
+          UpdateComputerMap;
+        end;
+      end;
+      except begin
+        MessageDlg(ResStr_Object_Sheet_Fail, mtInformation, [mbOK], 0);
+        Result := False;
+      end;
+    end;
+  end else begin
+    MessageDlg(ResStr_Admin_Permission,mtInformation, [mbOk], 0);
+    Result := False;
+  end;
+end;
+
+procedure TdlgMapOptions.btnFixMasterClick(Sender: TObject);
+var
+lMasterWorkStation : string;
+begin
+
+ lMasterWorkStation := GetMasterWorkStation;
+ if lMasterWorkStation = '' then
+   MessageDlg(ResStr_Admin_No_Master,mtInformation, [mbOk], 0)
+ else
+   if Not AppSettings.Standalone then   // Remove if testing as if network
+      If MessageDlg(Format(ResStr_ObjectSheetSync,[lMasterWorkStation,lMasterWorkStation]), mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+        ObjectSheetPathUpdate;
+end;
 
 end.
+
 
 
 

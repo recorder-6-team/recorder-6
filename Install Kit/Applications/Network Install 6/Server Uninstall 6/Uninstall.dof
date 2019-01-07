@@ -90,11 +90,11 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=R:\Projects\JNCC\Development\Install Kit\CD Image Network\System
-UnitOutputDir=
+OutputDir=C:\Localsource\Recorder disk images\Network\System
+UnitOutputDir=c:\localsource\dcu
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Development\Install Kit\Applications\Common
+SearchPath=C:\localsource\recorder-6\Third Party\Kevin Boylan\VCLZip
 Packages=adortl;bdertl;dbrtl;dsnap;rtl;vcl;vclactnband;vcldb;vcljpg;vclx
 Conditionals=
 DebugSourceDirs=
@@ -134,11 +134,6 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[Excluded Packages]
-c:\program files\borland\delphi7\Bin\dclIntraweb_50_70.bpl=Intraweb 5.0 Design Package for Delphi 7
-P:\Dorset Software Services\Recorder Addins\Development\Build\Packages\RecorderAddin7.bpl=Components for Recorder addins (Delphi 7).
-P:\Luxembourg NHM\Collections\Development\Build\Packages\Luxembourg7_Runtime.bpl=Luxembourg NHM related components (Delphi 7 Runtime package)
-P:\Luxembourg NHM\Collections\Development\Build\Packages\Luxembourg7_Design.bpl=Luxembourg NHM related components (Delphi 7 Design-time package)
 [HistoryLists\hlConditionals]
 Count=1
 Item0=madExcept
@@ -146,21 +141,26 @@ Item0=madExcept
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=6
-Item0=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Development\Install Kit\Applications\Common
-Item1=M:\Delphi 3rdParty\VCLZip;R:\Projects\JNCC\Development\Build\Source
-Item2=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Build\Components;R:\Projects\JNCC\Development\Install Kit\Applications\Common
-Item3=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Development\Build\Source;R:\Projects\JNCC\Development\Install Kit\Applications\Common;M:\MapSvrTurbo5\VCL\Delphi5;M:\MapSvrTurbo5\MapUser5\MapUser\Dll\Lib;M:\Delphi 3rdParty\VCLZip
-Item4=M:\Delphi 3rdParty\VCLZip;M:\DssVcl32;R:\Projects\JNCC\Development\Build\Components
-Item5=M:\Delphi 3rdParty\VCLZip;M:\DssVcl32
+Count=7
+Item0=C:\localsource\recorder-6\Third Party\Kevin Boylan\VCLZip
+Item1=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Development\Install Kit\Applications\Common
+Item2=M:\Delphi 3rdParty\VCLZip;R:\Projects\JNCC\Development\Build\Source
+Item3=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Build\Components;R:\Projects\JNCC\Development\Install Kit\Applications\Common
+Item4=R:\Projects\JNCC\Development\Install Kit\Applications\Common 6;R:\Projects\JNCC\Build;R:\Projects\JNCC\Development\Build\Source;R:\Projects\JNCC\Development\Install Kit\Applications\Common;M:\MapSvrTurbo5\VCL\Delphi5;M:\MapSvrTurbo5\MapUser5\MapUser\Dll\Lib;M:\Delphi 3rdParty\VCLZip
+Item5=M:\Delphi 3rdParty\VCLZip;M:\DssVcl32;R:\Projects\JNCC\Development\Build\Components
+Item6=M:\Delphi 3rdParty\VCLZip;M:\DssVcl32
+[HistoryLists\hlUnitOutputDirectory]
+Count=1
+Item0=c:\localsource\dcu
 [HistoryLists\hlOutputDirectorry]
-Count=9
-Item0=R:\Projects\JNCC\Development\Install Kit\CD Image Network\System
-Item1=R:\Projects\JNCC\Development\Install Kit\CD Image Standalone
-Item2=R:\Projects\JNCC\Development\Install Kit\CD Image Standalone\System
-Item3=C:\Temp\CD Image Standalone
-Item4=C:\Temp\CD Image Standalone\System
-Item5=C:\Temp\Recorder
-Item6=C:\Temp\Recorder 6 - Upgrade Kit
-Item7=R:\Projects\JNCC\Testing\Dictionary Upgrade Kit
-Item8=R:\Projects\JNCC\Testing\Upgrade Kit
+Count=10
+Item0=C:\Localsource\Recorder disk images\Network\System
+Item1=R:\Projects\JNCC\Development\Install Kit\CD Image Network\System
+Item2=R:\Projects\JNCC\Development\Install Kit\CD Image Standalone
+Item3=R:\Projects\JNCC\Development\Install Kit\CD Image Standalone\System
+Item4=C:\Temp\CD Image Standalone
+Item5=C:\Temp\CD Image Standalone\System
+Item6=C:\Temp\Recorder
+Item7=C:\Temp\Recorder 6 - Upgrade Kit
+Item8=R:\Projects\JNCC\Testing\Dictionary Upgrade Kit
+Item9=R:\Projects\JNCC\Testing\Upgrade Kit

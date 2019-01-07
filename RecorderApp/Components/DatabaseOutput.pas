@@ -278,7 +278,7 @@ const
       'SELECT DISTINCT name COLLATE database_default FROM syscolumns '+
       'WHERE id=OBJECT_ID(''%s'') AND name IN ('+
       '''entered_by'', ''changed_by'', ''system_supplied_data'', ''checked'', '+
-      '''confidential'', ''verified'')';
+      '''confidential'', ''verified'',''Temporary_Survey'')';
    // Michael Weideli    Mantis 450 Mantis 451
    SQL_SAMPLE_FIELDS_REQUIRED =
       'SELECT DISTINCT name FROM syscolumns '+
@@ -948,6 +948,7 @@ procedure TDatabaseOutput.SetProgress(const AProgress: Integer);
 begin
   if Assigned(FSetProgress) then FSetProgress(AProgress);
   if Assigned(FProgressBar) then FProgressBar.TaskPosition := AProgress;
+ 
 end;  // SetProgress
 
 
@@ -1217,29 +1218,16 @@ end;
 
 (**
  * Deletes any records from the output data that belongs to a temp survey.
- *)
+ identified by Temporary_Survey field *)
 procedure TDatabaseOutput.RemoveTempSurveyData;
 var
-
-  keys: _Recordset;
-  tempSurveyKeys: string;
   qry: string;
 begin
-  keys := dmDatabase.ExecuteSQL('SELECT Data FROM [Setting] WHERE Name=''TempMedia''', true);
-  if keys.recordcount>0 then begin
-    tempSurveyKeys := '''' + StringReplace(keys.fields[0].Value, ',', ''',''', [rfReplaceAll]) + '''';
-  end;
-  //Michael Weideli   Mantis 466
   if (FTablesUsed.IndexOf('SURVEY') = -1) OR (FTablesPopulated.count = 0) then
     exit;
-  qry := 'DELETE #%s FROM #Survey %s WHERE #Survey.Survey_Media_Key IN ('+tempSurveyKeys+')';
+  qry := 'DELETE #%s FROM #Survey %s WHERE #Survey.Temporary_Survey = 1';
   RemoveTempSurveyDataRecurse(qry, 'SURVEY');
-  // Temp survey data might also be identified by having sample recorders populated.
-  qry := 'DELETE #%s FROM #Sample JOIN Sample ON Sample.Sample_Key=#Sample.Sample_Key %s '+
-    'WHERE Sample.Recorders IS NOT NULL AND Sample.Recorders<>''''';
-  RemoveTempSurveyDataRecurse(qry, 'SAMPLE');
 end;
-
 
 (**
  * Recursively traverses the data model down from a table to build the joins required in a delete

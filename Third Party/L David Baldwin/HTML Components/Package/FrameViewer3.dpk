@@ -1,0 +1,55 @@
+package FrameViewer3;
+
+{$R *.RES}
+{$R 'framview.dcr'}
+{$R 'htmlview.dcr'}
+{$R 'FramBrwz.dcr'}
+{$ALIGN OFF}
+{$ASSERTIONS OFF}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA OFF}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST ON}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $00400000}
+{$DESCRIPTION 'ThtmlViewer, TFrameViewer, and TFrameBrowser'}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  vcl30;
+
+contains
+  framview,
+  htmlview,
+  vwPrint,
+  Htmlsbs1,
+  HTMLSubs,
+  htmlun2,
+  Readhtml,
+  MetaFilePrinter,
+  FramBrwz,
+  URLSubs,
+  DitherUnit,
+  HTMLCompEdit,
+  StylePars,
+  StyleUn,
+  HTMLGif2,
+  htmlgif1,
+  PngImage1,
+  PNGZLIB1;
+
+end.

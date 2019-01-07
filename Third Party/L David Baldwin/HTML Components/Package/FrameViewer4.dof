@@ -1,0 +1,114 @@
+[Compiler]
+A=0
+B=0
+C=0
+D=0
+E=0
+F=0
+G=1
+H=1
+I=1
+J=1
+K=0
+L=0
+M=0
+N=1
+O=1
+P=1
+Q=0
+R=0
+S=0
+T=0
+U=0
+V=1
+W=0
+X=1
+Y=0
+Z=1
+ShowHints=1
+ShowWarnings=1
+UnitAliases=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[Linker]
+MapFile=0
+OutputObjs=0
+ConsoleApp=1
+DebugInfo=0
+RemoteSymbols=0
+MinStackSize=16384
+MaxStackSize=1048576
+ImageBase=4194304
+ExeDescription=ThtmlViewer, TFrameViewer, and TFrameBrowser
+[Directories]
+OutputDir=
+UnitOutputDir=
+PackageDLLOutputDir=
+PackageDCPOutputDir=
+SearchPath=
+Packages=
+Conditionals=
+DebugSourceDirs=
+UsePackages=0
+[Parameters]
+RunParams=
+HostApplication=
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=0
+MajorVer=0
+MinorVer=0
+Release=0
+Build=0
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1033
+CodePage=1252
+[Version Info Keys]
+CompanyName=PBear Components
+FileDescription=
+FileVersion=0.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+[HistoryLists\hlConditionals]
+Count=1
+Item0=USE_TITAN
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlSearchPath]
+Count=11
+Item0=R:\Projects\Jncc\Build\Components\Standard;R:\Projects\Jncc\Build\Components;R:\Projects\Jncc\Build\Source;R:\Projects\Jncc\Build;M:\DssVcl32;M:\DssVcl32\HTML Components\Delphi4;M:\Packages;M:\Packages\output;M:\Delphi 3rdParty\Rapid Tree\Delphi4;M:\Delphi 3rdParty\Rapid Tree\Source
+Item1=R:\Projects\Jncc\Build\Components\Standard;R:\Projects\Jncc\Build\Components;R:\Projects\Jncc\Build\Source;R:\Projects\Jncc\Build;M:\DssVcl32;M:\Packages;M:\Packages\output;M:\Delphi 3rdParty\Rapid Tree\Delphi4;M:\Delphi 3rdParty\Rapid Tree\Source
+Item2=M:\DssVcl;M:\DssVcl32;R:\Projects\Jncc\Build\Components;R:\Projects\Jncc\Build\Components\Standard;R:\Projects\Jncc\Build\Com\Recorder 2000 Type Library;R:\Projects\Jncc\Build\Source;R:\Projects\Jncc\Build;M:\Packages;M:\Packages\output;m:\delphi 3rdparty\rapid tree\delphi4;m:\delphi 3rdparty\rapid tree\source
+Item3=m:\dssvcl;m:\dssvcl32;m:\packages\Output
+Item4=R:\Projects\Jncc\Source Safe\Eric;R:\Projects\Jncc\Build\Components;R:\Projects\Jncc\Build\Components\Standard;R:\Projects\Jncc\Build\Source;R:\Projects\Jncc\MapSvr\Vcl\Delphi 4.0;R:\Projects\Jncc\Build\Components\QRDSGN2;M:\Delphi 3rdParty\QRep305\QuickRpt;M:\Delphi 3rdParty\Rapid Tree\Source;M:\Delphi 3rdParty\VCLZip;$(DELPHI)\Source\Vcl
+Item5=R:\Projects\JNCC\Source Safe\Eric;M:\DssVcl;M:\DssVcl32;R:\Projects\Jncc\Build\Components;R:\Projects\Jncc\Build\Components\Standard;R:\Projects\Jncc\Build\Com\Recorder 2000 Type Library;R:\Projects\Jncc\Build\Source;R:\Projects\Jncc\Build;M:\Packages
+Item6=m:\dssvcl;m:\dssvcl32;R:\projects\jncc\build\components\standard;R:\projects\jncc\build\components
+Item7=m:\dssvcl;m:\dssvcl32;R:\projects\jncc\build\components;R:\projects\jncc\build\components\standard
+Item8=M:\DssVcl;M:\DssVcl32;R:\Projects\Jncc\Build\Components;R:\Projects\Jncc\Build\Components\Standard;R:\Projects\Jncc\Build\Com\Recorder 2000 Type Library;R:\Projects\Jncc\Build\Source;R:\Projects\Jncc\Build;M:\Packages;R:\Projects\JNCC\Source Safe\Eric
+Item9=M:\DssVcl;M:\DssVcl32;R:\Projects\Jncc\Build\Components;R:\Projects\Jncc\Build\Components\Standard;R:\Projects\Jncc\Build\Com\Recorder 2000 Type Library;R:\Projects\Jncc\Build\Source;R:\Projects\Jncc\Build;M:\Packages
+Item10=M:\DssVcl;M:\DssVcl32;S:\Projects\Jncc\Build\Source;S:\Projects\Jncc\Build\Components;S:\Projects\Jncc\Build\Components\Standard;S:\Projects\Jncc\Build\Com\Recorder 2000 Type Library;S:\Projects\Jncc\Mapsvr\Vcl\Delphi 4.0;L:\32bit\Delphi4\QrDsgn2
+[HistoryLists\hlUnitOutputDirectory]
+Count=2
+Item0=m:\packages\output
+Item1=C:\Temp\R2K
+[HistoryLists\hlOutputDirectorry]
+Count=1
+Item0=C:\Temp\R2K
+[HistoryLists\hlBPLOutput]
+Count=4
+Item0=R:\Projects\JNCC\Build\Packages
+Item1=m:\packages
+Item2=R:\Projects\JNCC\Build\Components\Standard
+Item3=R:\Projects\JNCC\Build\Components
+[HistoryLists\hlDCPOutput]
+Count=2
+Item0=m:\packages
+Item1=R:\Projects\JNCC\Build\Packages

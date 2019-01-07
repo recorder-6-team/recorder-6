@@ -3,7 +3,7 @@ inherited dmFormActions: TdmFormActions
   Left = 820
   Top = 226
   Height = 427
-  Width = 189
+  Width = 275
   object alForms: TActionList
     Images = ilMenuOn
     OnExecute = alFormsExecute
@@ -3016,17 +3016,17 @@ inherited dmFormActions: TdmFormActions
       000000000000}
   end
   object dlgPrint: TPrintDialog
-    Left = 108
-    Top = 16
+    Left = 100
+    Top = 24
   end
   object ilSampleTypes: TImageList
-    Left = 108
+    Left = 92
     Top = 120
   end
   object pmRTF: TPopupMenu
     Images = ilMenuOn
-    Left = 108
-    Top = 340
+    Left = 92
+    Top = 348
     object pmRTFCut: TMenuItem
       Action = actCut
     end
@@ -3056,7 +3056,7 @@ inherited dmFormActions: TdmFormActions
       'Select * From SAMPLE_TYPE ORDER BY SHORT_NAME ASC')
     ParseSQL = True
     Left = 32
-    Top = 228
+    Top = 236
   end
   object qryTaxonType: TJNCCQuery
     CommandTimeout = 0
@@ -3067,7 +3067,7 @@ inherited dmFormActions: TdmFormActions
         'C From TAXON_RANK'
       'ORDER BY SEQUENCE')
     ParseSQL = True
-    Left = 108
+    Left = 100
     Top = 228
   end
   object ilTaxon: TImageList
@@ -3091,19 +3091,20 @@ inherited dmFormActions: TdmFormActions
       '     ON USR.Survey_Key = S.Survey_Key'
       '    AND USR.Name_Key = :UserID'
       'WHERE USR.Name_Key IS NULL'
+      'AND TEMPORARY_SURVEY = 0 '
       'ORDER BY S.ITEM_NAME')
     ParseSQL = True
     Left = 32
-    Top = 280
+    Top = 288
   end
   object dsSurvey: TDataSource
     AutoEdit = False
     DataSet = qrySurvey
-    Left = 108
-    Top = 280
+    Left = 92
+    Top = 288
   end
   object ilButtons: TImageList
-    Left = 108
+    Left = 92
     Top = 68
     Bitmap = {
       494C010118001D00040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
@@ -4175,11 +4176,32 @@ inherited dmFormActions: TdmFormActions
     Title = 'Data Source Selection'
     OnTypeChange = dlgIWOpenTypeChange
     Left = 32
-    Top = 340
+    Top = 348
   end
   object dlgExternalFilterOpen: TOpenDialog
     Filter = 'Recorder External Filter (*.ref)|*.ref'
     Left = 32
     Top = 176
+  end
+  object qryTaxonGroup: TJNCCQuery
+    CommandTimeout = 0
+    Parameters = <
+      item
+        Name = 'UserID'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT Taxon_Group_Key,Taxon_Group_Name '
+      'FROM Taxon_Group  ORDER BY  Taxon_Group_Name')
+    ParseSQL = True
+    Left = 160
+    Top = 288
+  end
+  object dsTaxonGroup: TDataSource
+    AutoEdit = False
+    DataSet = qryTaxonGroup
+    Left = 156
+    Top = 344
   end
 end

@@ -1,8 +1,8 @@
 inherited frmEventDetails: TfrmEventDetails
-  Left = 813
-  Top = 147
-  Width = 393
-  Height = 395
+  Left = 856
+  Top = 156
+  Width = 404
+  Height = 446
   Caption = 'Event Details'
   OldCreateOrder = True
   OnClose = FormClose
@@ -12,8 +12,8 @@ inherited frmEventDetails: TfrmEventDetails
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 377
-    Height = 357
+    Width = 388
+    Height = 407
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
@@ -22,13 +22,13 @@ inherited frmEventDetails: TfrmEventDetails
       Left = 0
       Top = 0
       Width = 385
-      Height = 361
+      Height = 409
       BevelOuter = bvLowered
       Caption = 'pnlInner'
       TabOrder = 0
       DesignSize = (
         385
-        361)
+        409)
       object dblblEventDate: TDBText
         Left = 8
         Top = 4
@@ -61,7 +61,7 @@ inherited frmEventDetails: TfrmEventDetails
         Left = 8
         Top = 24
         Width = 373
-        Height = 301
+        Height = 349
         ActivePage = tsGeneral
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 0
@@ -70,12 +70,12 @@ inherited frmEventDetails: TfrmEventDetails
           Caption = 'General'
           DesignSize = (
             365
-            273)
+            321)
           object Bevel1: TBevel
             Left = 4
             Top = 4
             Width = 357
-            Height = 265
+            Height = 313
             Anchors = [akLeft, akTop, akRight, akBottom]
             Shape = bsFrame
           end
@@ -105,13 +105,13 @@ inherited frmEventDetails: TfrmEventDetails
             Left = 8
             Top = 145
             Width = 349
-            Height = 117
+            Height = 160
             Anchors = [akLeft, akTop, akRight, akBottom]
             BevelOuter = bvNone
             TabOrder = 3
             DesignSize = (
               349
-              117)
+              160)
             object pnlComment: TPanel
               Left = 0
               Top = 0
@@ -149,19 +149,19 @@ inherited frmEventDetails: TfrmEventDetails
               Left = 0
               Top = 32
               Width = 349
-              Height = 84
+              Height = 121
               Anchors = [akLeft, akTop, akRight]
               BevelOuter = bvNone
               TabOrder = 1
               DesignSize = (
                 349
-                84)
+                121)
               object shpRecorders: TShape
                 Tag = 2
                 Left = 3
                 Top = 15
                 Width = 318
-                Height = 69
+                Height = 106
                 Anchors = [akLeft, akTop, akRight, akBottom]
                 Pen.Color = clRed
               end
@@ -174,9 +174,9 @@ inherited frmEventDetails: TfrmEventDetails
               end
               object sgRecorders: TStringGrid
                 Left = 4
-                Top = 16
+                Top = 24
                 Width = 316
-                Height = 67
+                Height = 104
                 Anchors = [akLeft, akTop, akRight, akBottom]
                 ColCount = 2
                 DefaultRowHeight = 18
@@ -240,8 +240,20 @@ inherited frmEventDetails: TfrmEventDetails
                 OnChange = cmbRecorderRoleChange
                 OnExit = cmbRecorderRoleExit
                 Items.Strings = (
-                  'Surveyor'
-                  'Recorder')
+                  'Recorder'
+                  'Surveyor')
+              end
+              object bbRecorderReplace: TImageListButton
+                Left = 321
+                Top = 85
+                Width = 24
+                Height = 23
+                Hint = 'Replace the selected name(s) with another person.'
+                Anchors = [akTop, akRight]
+                TabOrder = 5
+                OnClick = bbRecorderReplaceClick
+                ImageList = dmFormActions.ilButtons
+                ImageIndex = 3
               end
             end
           end
@@ -307,7 +319,7 @@ inherited frmEventDetails: TfrmEventDetails
           OnShow = tsOwnershipShow
           DesignSize = (
             365
-            273)
+            321)
           object Label2: TLabel
             Left = 12
             Top = 12
@@ -319,7 +331,7 @@ inherited frmEventDetails: TfrmEventDetails
             Left = 4
             Top = 4
             Width = 357
-            Height = 265
+            Height = 313
             Anchors = [akLeft, akTop, akRight, akBottom]
             Shape = bsFrame
           end
@@ -343,7 +355,7 @@ inherited frmEventDetails: TfrmEventDetails
       end
       object bbSave: TImageListButton
         Left = 222
-        Top = 330
+        Top = 378
         Width = 75
         Height = 25
         Hint = 'Save survey event details'
@@ -357,7 +369,7 @@ inherited frmEventDetails: TfrmEventDetails
       end
       object bbCancel: TImageListButton
         Left = 306
-        Top = 330
+        Top = 378
         Width = 75
         Height = 25
         Hint = 'Cancel changes'

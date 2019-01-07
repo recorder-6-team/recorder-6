@@ -1,6 +1,6 @@
 inherited frmFeatureDetails: TfrmFeatureDetails
-  Left = 512
-  Top = 278
+  Left = 722
+  Top = 274
   Width = 393
   Height = 395
   Caption = 'Features'
@@ -84,7 +84,7 @@ inherited frmFeatureDetails: TfrmFeatureDetails
         Top = 24
         Width = 371
         Height = 301
-        ActivePage = tsPotentialThreats
+        ActivePage = tsGeneral
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 2
         OnChange = pcFeatureDetailsChange
@@ -112,7 +112,7 @@ inherited frmFeatureDetails: TfrmFeatureDetails
           end
           object Label10: TLabel
             Left = 16
-            Top = 112
+            Top = 136
             Width = 52
             Height = 13
             Caption = 'Comments:'
@@ -131,11 +131,25 @@ inherited frmFeatureDetails: TfrmFeatureDetails
             Height = 13
             Caption = 'Name:'
           end
+          object Label32: TLabel
+            Left = 20
+            Top = 109
+            Width = 26
+            Height = 13
+            Caption = 'From:'
+          end
+          object Label31: TLabel
+            Left = 164
+            Top = 109
+            Width = 16
+            Height = 13
+            Caption = 'To:'
+          end
           object dbreComments: TDBRichEdit
             Left = 72
-            Top = 112
+            Top = 136
             Width = 273
-            Height = 145
+            Height = 121
             Anchors = [akLeft, akTop, akRight, akBottom]
             DataField = 'COMMENT'
             DataSource = dmFeatureDetails.dsFeature
@@ -178,7 +192,7 @@ inherited frmFeatureDetails: TfrmFeatureDetails
             Height = 21
             Style = csDropDownList
             Anchors = [akLeft, akTop, akRight]
-            ItemHeight = 0
+            ItemHeight = 13
             Sorted = True
             TabOrder = 1
             OnChange = cmbFeatureTypeChange
@@ -188,6 +202,22 @@ inherited frmFeatureDetails: TfrmFeatureDetails
             Active = False
             EmptyItem = False
             ReadOnly = False
+          end
+          object eFeatureFrom: TEdit
+            Left = 72
+            Top = 106
+            Width = 77
+            Height = 21
+            TabOrder = 4
+            OnExit = eFeatureFromExit
+          end
+          object eFeatureTo: TEdit
+            Left = 188
+            Top = 106
+            Width = 77
+            Height = 21
+            TabOrder = 5
+            OnExit = eFeatureToExit
           end
         end
         object tsAims: TTabSheet
@@ -501,7 +531,7 @@ inherited frmFeatureDetails: TfrmFeatureDetails
               Height = 21
               Style = csDropDownList
               Anchors = [akLeft, akTop, akRight]
-              ItemHeight = 13
+              ItemHeight = 0
               Sorted = True
               TabOrder = 0
               ListField = 'SHORT_NAME'
@@ -752,6 +782,9 @@ inherited frmFeatureDetails: TfrmFeatureDetails
             SourceCol = clBlue
             DestCol = clRed
             TabOrder = 0
+            DesignSize = (
+              355
+              265)
           end
         end
       end

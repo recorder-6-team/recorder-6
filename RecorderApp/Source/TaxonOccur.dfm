@@ -1,8 +1,8 @@
 object frmTaxonOccurrences: TfrmTaxonOccurrences
-  Left = 564
-  Top = 225
-  Width = 393
-  Height = 395
+  Left = 530
+  Top = 405
+  Width = 412
+  Height = 429
   Caption = 'Taxon Occurrences'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,6 +12,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
   Font.Style = []
   OldCreateOrder = False
   Position = poDefault
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
@@ -19,14 +20,14 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 385
-    Height = 368
+    Width = 404
+    Height = 402
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
     OnResize = pnlDetailsResize
     object pnlInner: TPanel
-      Left = 0
+      Left = -8
       Top = 0
       Width = 385
       Height = 361
@@ -49,7 +50,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
         ParentFont = False
       end
       object pcTaxonOccurrence: TPageControl
-        Left = 8
+        Left = 16
         Top = 24
         Width = 373
         Height = 301
@@ -1010,7 +1011,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
               357
               89)
             object sgSpecimens: TStringGrid
-              Left = 0
+              Left = 8
               Top = 0
               Width = 333
               Height = 85
@@ -1082,10 +1083,230 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
               265)
           end
         end
+        object tsPrivate: TTabSheet
+          Caption = 'Private'
+          ImageIndex = 6
+          DesignSize = (
+            365
+            273)
+          object sgPrivateOcc: TStringGrid
+            Left = 0
+            Top = 0
+            Width = 337
+            Height = 97
+            Anchors = [akLeft, akTop, akRight, akBottom]
+            ColCount = 3
+            DefaultColWidth = 190
+            DefaultRowHeight = 18
+            FixedCols = 0
+            RowCount = 2
+            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect]
+            TabOrder = 0
+            OnClick = sgPrivateOccClick
+            OnDrawCell = sgPrivateOccDrawCell
+            ColWidths = (
+              100
+              93
+              205)
+          end
+          object gbPrivateDetails: TGroupBox
+            Left = 0
+            Top = 112
+            Width = 365
+            Height = 161
+            Align = alBottom
+            Caption = 'Details'
+            Constraints.MinHeight = 155
+            TabOrder = 1
+            DesignSize = (
+              365
+              161)
+            object Label20: TLabel
+              Left = 8
+              Top = 72
+              Width = 30
+              Height = 13
+              Caption = 'Detail:'
+            end
+            object Label21: TLabel
+              Left = 184
+              Top = 16
+              Width = 23
+              Height = 13
+              Caption = 'Item:'
+            end
+            object Label17: TLabel
+              Left = 8
+              Top = 100
+              Width = 52
+              Height = 13
+              Caption = 'Comments:'
+            end
+            object Label19: TLabel
+              Left = 8
+              Top = 16
+              Width = 27
+              Height = 13
+              Caption = 'Type:'
+            end
+            object Label22: TLabel
+              Left = 8
+              Top = 44
+              Width = 26
+              Height = 13
+              Caption = 'Date:'
+            end
+            object Label23: TLabel
+              Left = 184
+              Top = 44
+              Width = 30
+              Height = 13
+              Caption = 'Value:'
+            end
+            object lblMetadata: TLabel
+              Left = 8
+              Top = 128
+              Width = 274
+              Height = 24
+              Anchors = [akLeft, akBottom]
+              AutoSize = False
+              Font.Charset = ARABIC_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -9
+              Font.Name = 'Small Fonts'
+              Font.Style = []
+              ParentFont = False
+              WordWrap = True
+            end
+            object bbPrivateAccept: TImageListButton
+              Left = 297
+              Top = 130
+              Width = 24
+              Height = 23
+              Hint = 'Accept changes'
+              Anchors = [akRight, akBottom]
+              TabOrder = 2
+              OnClick = bbPrivateAcceptClick
+              ImageList = dmFormActions.ilButtons
+              ImageIndex = 6
+            end
+            object bbPrivateDiscard: TImageListButton
+              Left = 321
+              Top = 130
+              Width = 24
+              Height = 23
+              Hint = 'Discard changes'
+              Anchors = [akRight, akBottom]
+              TabOrder = 3
+              OnClick = bbPrivateDiscardClick
+              ImageList = dmFormActions.ilButtons
+              ImageIndex = 7
+            end
+            object ePrivateItemName: TEdit
+              Left = 216
+              Top = 12
+              Width = 137
+              Height = 21
+              AutoSize = False
+              MaxLength = 30
+              TabOrder = 0
+            end
+            object ePrivateDetail: TEdit
+              Left = 52
+              Top = 68
+              Width = 301
+              Height = 21
+              Anchors = [akLeft, akTop, akRight]
+              MaxLength = 100
+              TabOrder = 1
+            end
+            object rePrivateComment: TRichEdit
+              Left = 64
+              Top = 96
+              Width = 289
+              Height = 25
+              Anchors = [akLeft, akTop, akRight, akBottom]
+              PopupMenu = dmFormActions.pmRTF
+              ScrollBars = ssVertical
+              TabOrder = 4
+              OnEnter = EnterRTF
+              OnExit = ExitRTF
+            end
+            object dbcmbPrivateType: TDBListCombo
+              Left = 52
+              Top = 12
+              Width = 109
+              Height = 21
+              Style = csDropDownList
+              ItemHeight = 13
+              Sorted = True
+              TabOrder = 5
+              OnChange = dbcmbPrivateTypeChange
+              ListField = 'SHORT_NAME'
+              KeyField = 'TAXON_PRIVATE_TYPE_KEY'
+              Datasource = dmTaxonOccurrences.dsPrivateType
+              Active = False
+              EmptyItem = False
+              ReadOnly = False
+            end
+            object ePrivateItemDate: TEdit
+              Left = 52
+              Top = 42
+              Width = 97
+              Height = 21
+              MaxLength = 10
+              TabOrder = 6
+            end
+            object ePrivateItemValue: TEdit
+              Left = 216
+              Top = 42
+              Width = 81
+              Height = 21
+              MaxLength = 16
+              TabOrder = 7
+            end
+          end
+          object bbPrivateAdd: TImageListButton
+            Left = 333
+            Top = 0
+            Width = 24
+            Height = 23
+            Hint = 'Add new specimen'
+            Anchors = [akTop, akRight]
+            TabOrder = 2
+            OnClick = bbPrivateAddClick
+            ImageList = dmFormActions.ilButtons
+            ImageIndex = 2
+          end
+          object bbPrivateEdit: TImageListButton
+            Left = 333
+            Top = 23
+            Width = 24
+            Height = 23
+            Hint = 'Edit selected specimen'
+            Anchors = [akTop, akRight]
+            TabOrder = 3
+            OnClick = bbPrivateEditClick
+            ImageList = dmFormActions.ilButtons
+            ImageIndex = 3
+          end
+          object bbPrivateDel: TImageListButton
+            Left = 333
+            Top = 46
+            Width = 24
+            Height = 23
+            Hint = 'Delete selected specimen'
+            Anchors = [akTop, akRight]
+            TabOrder = 4
+            OnClick = bbPrivateDelClick
+            ImageList = dmFormActions.ilButtons
+            ImageIndex = 4
+          end
+        end
       end
       object bbSave: TImageListButton
         Left = 222
-        Top = 330
+        Top = 328
         Width = 75
         Height = 25
         Hint = 'Save taxon occurrence details'
@@ -1099,7 +1320,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
       end
       object bbCancel: TImageListButton
         Left = 306
-        Top = 330
+        Top = 328
         Width = 75
         Height = 25
         Hint = 'Cancel changes'

@@ -175,6 +175,7 @@ begin
   lCursor := HourglassCursor;
   frmMain.SetStatus(Format(ResStr_MergingItemsInTable,[iTable]));
   lTaskIndex := frmMain.ProgressBar.EmbedTask(0, 95);
+  lInnerTaskIndex := 0;
   frmMain.ProgressBar.TaskPosition := 0;
   { start a transaction }
   dmDatabase.dbLocal.Execute('Set xact_abort off');
@@ -212,7 +213,7 @@ begin
       on E:Exception do // any probs, then rollback
       begin
         dmDatabase.dbLocal.RollbackTrans;
-        raise EMergeDataError.Create(ResStr_MergeRollback, E);
+        raise E;
       end;
     end;
   finally
@@ -381,7 +382,7 @@ begin
           ltfDoChanged := Assigned(FindField('CHANGED_BY'));
           ltfDoChecked := Assigned(FindField('CHECKED_BY'));
           Close;
-         Except on EOleException do;
+         Except on Exception do;
 
          end;
       end;

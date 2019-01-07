@@ -1,9 +1,9 @@
 inherited dmTaxonOccurrences: TdmTaxonOccurrences
   OldCreateOrder = True
-  Left = 595
-  Top = 109
-  Height = 258
-  Width = 352
+  Left = 836
+  Top = 181
+  Height = 303
+  Width = 403
   object qryTaxonOcc: TJNCCQuery
     CommandTimeout = 0
     Parameters = <
@@ -141,7 +141,7 @@ inherited dmTaxonOccurrences: TdmTaxonOccurrences
       'SELECT Specimen_Type_Key, Short_Name'
       'FROM Specimen_Type')
     ParseSQL = True
-    Left = 276
+    Left = 268
     Top = 60
   end
   object dsSpecType: TDataSource
@@ -166,5 +166,42 @@ inherited dmTaxonOccurrences: TdmTaxonOccurrences
     ParseSQL = True
     Left = 196
     Top = 160
+  end
+  object qryTaxonPrivateDetail: TJNCCQuery
+    CommandTimeout = 0
+    Parameters = <
+      item
+        Name = 'KeyParameter'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT P.*,PT.Short_Name'
+      'FROM TAXON_PRIVATE_DATA  P'
+      'INNER JOIN TAXON_PRIVATE_TYPE PT'
+      'ON PT.TAXON_PRIVATE_TYPE_KEY = P.TAXON_PRIVATE_TYPE_KEY   '
+      'WHERE Taxon_Occurrence_Key = :KeyParameter'
+      '')
+    ParseSQL = True
+    Left = 28
+    Top = 164
+  end
+  object dsPrivateType: TDataSource
+    AutoEdit = False
+    DataSet = qryPrivateType
+    Left = 36
+    Top = 220
+  end
+  object qryPrivateType: TJNCCQuery
+    CommandTimeout = 0
+    Parameters = <>
+    SQL.Strings = (
+      
+        'SELECT Taxon_Private_Type_Key, Short_Name,dbo.ufn_RtfToPlaintext' +
+        '(Description) AS Description '
+      'FROM Taxon_Private_Type')
+    ParseSQL = True
+    Left = 280
+    Top = 168
   end
 end

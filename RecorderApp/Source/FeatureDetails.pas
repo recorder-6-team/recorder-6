@@ -20,7 +20,7 @@
 //  User: Ericsalmon   Date: 11/03/09   Time: 11:16
 //  Updated in $/JNCC/Development/Build/Source
 //  18655. Bug fix.
-//  
+//
 //  *****************  Version 115  *****************
 //  User: Pauldavies   Date: 19/01/09   Time: 12:14
 //  Updated in $/JNCC/Development/Build/Source
@@ -241,6 +241,10 @@ type
     bbDamageEdit: TImageListButton;
     bbDamageDel: TImageListButton;
     sgDamageOccurrences: TStringGrid;
+    eFeatureFrom: TEdit;
+    eFeatureTo: TEdit;
+    Label32: TLabel;
+    Label31: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbSaveClick(Sender: TObject);
     procedure bbCancelClick(Sender: TObject);
@@ -286,6 +290,8 @@ type
     procedure dbComboClick(Sender: TObject);
     procedure eAimAuthorityFindData(Sender: TObject);
     procedure eAimAuthorityGetData(Sender: TObject);
+    procedure eFeatureFromExit(Sender: TObject);
+    procedure eFeatureToExit(Sender: TObject);
   private
     FdmFeatureDetails:TdmFeatureDetails;
     FDrillForm  :TBaseForm;
@@ -324,6 +330,8 @@ type
     procedure ValidateAgreementDate;
     procedure ValidateAppraisalDate;
     procedure ValidateOccurrenceDate;
+    procedure ValidateFeatureFromDate;
+    procedure ValidateFeatureToDate;
   protected
     procedure SetupDestinationControls; override;
   public
@@ -367,7 +375,7 @@ resourcestring
   ResStr_DamageOccurenceDate = 'A Date is required for every Damage Occurrence.';
   ResStr_DamageDescription =  'A Damage description is required for every Damage Occurrence.';
   ResStr_InvalidVagueDate = 'The vague date you have entered is not valid';
-
+  ResStr_EndBeforeStartDate     = 'The End Date cannot come before the Start Date.';
   ResStr_EnterValidNextAppraisalDate =  'The Next Appraisal Date must be a '+
                                         'valid standard date.';
 
@@ -490,6 +498,8 @@ begin
         ResetDBRichEditControls([dbreComments]);
         Parameters.ParamByName('KeyParameter').Value:=AFeatDetKey;
         Open;
+        eFeatureFrom.Text   := FieldByName('Date_From').AsString;
+        eFeatureTo.Text     := FieldByName('Date_To').AsString;
         //Syncronize grading and type
         FCustodian := FieldByName('Custodian').AsString;
         qryTypeLocate.Parameters.ParamByName('Key').Value:= FieldByName('FEATURE_GRADING_KEY').AsString;
@@ -609,6 +619,9 @@ begin
   lCurrentTab:=pcFeatureDetails.ActivePAge;
   pcFeatureDetails.ActivePage:=tsGeneral;
   ValidateValue(dbeFeatureName.Text<>'',ResStr_FeatureMissing, dbeFeatureName);
+  ValidateFeatureFromDate;
+  ValidateFeatureToDate;
+
   pcFeatureDetails.ActivePage:=lCurrentTab;
 
   { Call to validate COM addin page... }
@@ -632,6 +645,8 @@ begin
             FieldByName('Location_Feature_Key').AsString := FeatureKey;
             FieldByName('Location_Key').AsString         := ParentKey;
           end;
+          FieldByName('DATE_FROM').Text:=eFeatureFrom.Text;
+          FieldByName('DATE_TO').Text:=eFeatureTo.Text;
           Post;
         end;
       end;
@@ -1430,5 +1445,65 @@ begin
   dmFormActions.actNames.Execute;
   SetupLink(TBaseForm(frmMain.ActiveMDIChild), Self, UpdateAimAuthority);
 end;
+
+procedure TfrmFeatureDetails.ValidateFeatureFromDate;
+begin
+   if eFeatureFrom.Text <> '' then begin
+    // Use VagueDate functions to deal with other date separators, like "."
+    try
+      eFeatureFrom.Text := VagueDateToString(StringToVagueDate(eFeatureFrom.Text));
+    except
+    end;
+    // And validate (NB: 1753-01-01 is the minimum value for SQL Server's
+    // datetime datatype)
+    ValidateValue(IsDate(eFeatureFrom.Text) and
+        (StrToDate(eFeatureFrom.Text) >= EncodeDate(1753, 1, 1)) and
+        (StrToDate(eFeatureFrom.Text) <= Date),
+        InvalidDate(ResStr_StartDate,False,False),eFeatureFrom);
+  end;
+end;
+
+procedure TfrmFeatureDetails.ValidateFeatureToDate;
+begin
+  if (eFeatureTo.Text <> '') then begin
+    // Use VagueDate functions to deal with other date separators, like "."
+    try
+      eFeatureTo.Text := VagueDateToString(StringToVagueDate(eFeatureTo.Text));
+    except
+    end;
+    // And validate
+    ValidateValue(IsDate(eFeatureTo.Text) and (StrToDate(eFeatureTo.Text)<=Date),
+                  InvalidDate(ResStr_EndDate,False,True),eFeatureTo);
+    ValidateValue(IsDate(eFeatureTo.Text) and
+        (StrToDate(eFeatureTo.Text) >= EncodeDate(1753, 1, 1)) and
+        (StrToDate(eFeatureTo.Text) <= Date),
+        InvalidDate(ResStr_EndDate,False,False),eFeatureTo);
+    if (eFeatureFrom.Text <> '') then
+      ValidateValue((StrToDate(eFeatureFrom.Text) <= StrToDate(eFeatureTo.Text)),
+                     ResStr_EndBeforeStartDate,
+                     eFeatureTo);
+  end;
+end;
+
+procedure TfrmFeatureDetails.eFeatureFromExit(Sender: TObject);
+var lPos:TPoint;
+begin
+  inherited;
+  lPos := bbCancel.ScreenToClient(Mouse.CursorPos);
+  if not (FClosingForm or
+          ((lPos.X in [0..bbCancel.Width]) and (lPos.Y in [0..bbCancel.Height]))) then
+    ValidateFeatureFromDate;
+end;  // eFeatureFromExit
+
+procedure TfrmFeatureDetails.eFeatureToExit(Sender: TObject);
+var lPos:TPoint;
+begin
+  inherited;
+  lPos := bbCancel.ScreenToClient(Mouse.CursorPos);
+  if not (FClosingForm or
+          ((lPos.X in [0..bbCancel.Width]) and (lPos.Y in [0..bbCancel.Height]))) then
+    ValidateFeatureToDate;
+end;  // eFeatureToDate
+
 
 end.

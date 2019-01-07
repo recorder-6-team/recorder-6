@@ -1,9 +1,9 @@
 object dlgOptions: TdlgOptions
-  Left = 446
-  Top = 355
+  Left = 439
+  Top = 295
   BorderStyle = bsDialog
   Caption = 'Options'
-  ClientHeight = 449
+  ClientHeight = 479
   ClientWidth = 545
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,7 +21,7 @@ object dlgOptions: TdlgOptions
   TextHeight = 13
   object bbCancel: TImageListButton
     Left = 456
-    Top = 418
+    Top = 442
     Width = 83
     Height = 25
     Cancel = True
@@ -34,7 +34,7 @@ object dlgOptions: TdlgOptions
   end
   object bbOK: TImageListButton
     Left = 364
-    Top = 418
+    Top = 442
     Width = 83
     Height = 25
     Caption = 'OK'
@@ -47,7 +47,7 @@ object dlgOptions: TdlgOptions
   end
   object btnDefault: TButton
     Left = 4
-    Top = 418
+    Top = 442
     Width = 117
     Height = 25
     Caption = 'Default Settings'
@@ -58,7 +58,7 @@ object dlgOptions: TdlgOptions
     Left = 0
     Top = 0
     Width = 545
-    Height = 409
+    Height = 433
     ActivePage = tsSettingTable
     Align = alTop
     TabOrder = 1
@@ -118,129 +118,9 @@ object dlgOptions: TdlgOptions
           TabOrder = 3
         end
       end
-      object grbOther: TGroupBox
-        Left = 268
-        Top = 86
-        Width = 265
-        Height = 219
-        Caption = ' Other '
-        TabOrder = 5
-        object lblCenturyCutOff: TLabel
-          Left = 8
-          Top = 109
-          Width = 127
-          Height = 13
-          Hint = 'Century cut-off Year (0-99)'
-          Caption = 'Century cut-off Year (0-99):'
-        end
-        object lblCenturyCutOffInfo: TLabel
-          Left = 8
-          Top = 136
-          Width = 248
-          Height = 33
-          Caption = 
-            'This value will be used to automatically work out the century fo' +
-            'r a date where only the last two digits of the year have been sp' +
-            'ecified.'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -9
-          Font.Name = 'Small Fonts'
-          Font.Style = []
-          ParentFont = False
-          WordWrap = True
-        end
-        object lblDelimiter: TLabel
-          Left = 8
-          Top = 177
-          Width = 101
-          Height = 13
-          Hint = 
-            'This must not be alphanumeric, or one of the characters <, >, ~,' +
-            ' -, / or a space as these clash with other data entry.'
-          Caption = 'Rapid Entry Delimiter:'
-        end
-        object cbAutoEmail: TCheckBox
-          Left = 6
-          Top = 18
-          Width = 247
-          Height = 17
-          Hint = 
-            'Automatically create emails when contributing to Recording Schem' +
-            'es'
-          Alignment = taLeftJustify
-          Caption = 'Auto-create emails for Recording Schemes:'
-          Checked = True
-          State = cbChecked
-          TabOrder = 0
-        end
-        object eDateCutYear: TEdit
-          Left = 144
-          Top = 106
-          Width = 33
-          Height = 21
-          Hint = 'Century cut-off Year (0-99)'
-          MaxLength = 2
-          TabOrder = 4
-          OnExit = eDateCutYearExit
-          OnKeyPress = eDateCutYearKeyPress
-        end
-        object chkRememberFilters: TCheckBox
-          Left = 6
-          Top = 40
-          Width = 247
-          Height = 17
-          Alignment = taLeftJustify
-          Caption = 'Remember applied filters:'
-          TabOrder = 1
-        end
-        object eRapidEntryDelimiter: TEdit
-          Left = 120
-          Top = 174
-          Width = 33
-          Height = 21
-          Hint = 
-            'This must not be alphanumeric, or one of the characters <, >, ~,' +
-            ' -, / or a space as these clash with other data entry.'
-          MaxLength = 1
-          TabOrder = 5
-          OnKeyPress = eRapidEntryDelimiterKeyPress
-        end
-        object chkOrganiseSurveysByTag: TCheckBox
-          Left = 6
-          Top = 62
-          Width = 247
-          Height = 17
-          Hint = 'Organise Surveys by Tag'
-          Alignment = taLeftJustify
-          Caption = 'Organise Surveys by Tag:'
-          Checked = True
-          State = cbChecked
-          TabOrder = 2
-        end
-        object chkUseOldImportWizard: TCheckBox
-          Left = 8
-          Top = 196
-          Width = 245
-          Height = 17
-          Alignment = taLeftJustify
-          Caption = 'Use the v6.13 Import Wizard:'
-          TabOrder = 3
-          Visible = False
-        end
-        object chkIgnoreRememberedMatches: TCheckBox
-          Left = 8
-          Top = 84
-          Width = 245
-          Height = 17
-          Alignment = taLeftJustify
-          Caption = 'Ignore Previous Import Wizard Matches:'
-          TabOrder = 6
-        end
-      end
       object grbConfidentialData: TGroupBox
-        Left = 268
-        Top = 4
+        Left = 4
+        Top = 164
         Width = 265
         Height = 77
         Caption = ' Confidential Data '
@@ -288,7 +168,7 @@ object dlgOptions: TdlgOptions
       end
       object gbLocationNodes: TGroupBox
         Left = 4
-        Top = 306
+        Top = 266
         Width = 525
         Height = 73
         Caption = 'Location Hierarchy Options'
@@ -344,8 +224,8 @@ object dlgOptions: TdlgOptions
         end
       end
       object grbTaxonNameOptions: TGroupBox
-        Left = 4
-        Top = 128
+        Left = 276
+        Top = 12
         Width = 257
         Height = 49
         Caption = 'Taxon Name Display Options'
@@ -382,10 +262,10 @@ object dlgOptions: TdlgOptions
         end
       end
       object grbTaxonOptions: TGroupBox
-        Left = 4
-        Top = 180
+        Left = 276
+        Top = 84
         Width = 257
-        Height = 125
+        Height = 149
         Caption = 'Other Taxon Options '
         TabOrder = 2
         object lblTaxonSearches: TLabel
@@ -437,6 +317,15 @@ object dlgOptions: TdlgOptions
           Alignment = taLeftJustify
           Caption = 'Auto-complete search in Import Wizard:'
           TabOrder = 3
+        end
+        object chkUsePreferredTaxa: TCheckBox
+          Left = 6
+          Top = 128
+          Width = 243
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'Use preferred taxa for Import Wizard'
+          TabOrder = 4
         end
       end
     end
@@ -1204,16 +1093,16 @@ object dlgOptions: TdlgOptions
       object lblSetting10: TLabel
         Left = 8
         Top = 232
-        Width = 85
+        Width = 121
         Height = 13
-        Caption = 'Temp Media Keys'
+        Caption = 'Licence Key - Temp Data'
       end
       object lblSetting11: TLabel
         Left = 8
-        Top = 272
-        Width = 90
+        Top = 262
+        Width = 85
         Height = 13
-        Caption = 'Temp Name Keys  '
+        Caption = 'Temp Name Key  '
       end
       object lblWorksattion: TLabel
         Left = 8
@@ -1224,7 +1113,7 @@ object dlgOptions: TdlgOptions
       end
       object lblSettingWarning: TLabel
         Left = 8
-        Top = 360
+        Top = 384
         Width = 53
         Height = 13
         Caption = 'WARNING'
@@ -1237,6 +1126,29 @@ object dlgOptions: TdlgOptions
         ParentColor = False
         ParentFont = False
       end
+      object lblFixOS: TLabel
+        Left = 424
+        Top = 40
+        Width = 76
+        Height = 44
+        Caption = 
+          'Brings the object sheet path for this workstation in line with M' +
+          'aster '
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -9
+        Font.Name = 'Small Fonts'
+        Font.Style = []
+        ParentFont = False
+        WordWrap = True
+      end
+      object lblSetting12: TLabel
+        Left = 8
+        Top = 360
+        Width = 138
+        Height = 13
+        Caption = 'Dictionary Update Block Size'
+      end
       object edMaster: TEdit
         Left = 168
         Top = 38
@@ -1246,9 +1158,9 @@ object dlgOptions: TdlgOptions
         TabOrder = 0
       end
       object btnMaster: TButton
-        Left = 336
+        Left = 328
         Top = 6
-        Width = 81
+        Width = 89
         Height = 25
         Caption = 'Make Master'
         TabOrder = 1
@@ -1296,10 +1208,10 @@ object dlgOptions: TdlgOptions
         MaxLength = 250
         TabOrder = 6
       end
-      object edTempMedia: TEdit
+      object edTempLicence: TEdit
         Left = 168
         Top = 230
-        Width = 353
+        Width = 121
         Height = 21
         MaxLength = 250
         TabOrder = 7
@@ -1328,17 +1240,168 @@ object dlgOptions: TdlgOptions
         MaxLength = 250
         TabOrder = 10
       end
+      object btnFixObjectSheet: TButton
+        Left = 328
+        Top = 40
+        Width = 89
+        Height = 25
+        Caption = 'Fix Object Sheet'
+        TabOrder = 11
+      end
+      object edBlockSize: TEdit
+        Left = 168
+        Top = 358
+        Width = 41
+        Height = 21
+        MaxLength = 2
+        TabOrder = 12
+        Text = '50'
+        OnKeyPress = edBlockSizeKeyPress
+      end
+    end
+    object tsSundry: TTabSheet
+      Caption = 'Other'
+      ImageIndex = 6
+      object grbOther: TGroupBox
+        Left = 140
+        Top = 30
+        Width = 265
+        Height = 275
+        Caption = ' Other '
+        TabOrder = 0
+        object lblCenturyCutOff: TLabel
+          Left = 8
+          Top = 109
+          Width = 127
+          Height = 13
+          Hint = 'Century cut-off Year (0-99)'
+          Caption = 'Century cut-off Year (0-99):'
+        end
+        object lblCenturyCutOffInfo: TLabel
+          Left = 8
+          Top = 136
+          Width = 248
+          Height = 33
+          Caption = 
+            'This value will be used to automatically work out the century fo' +
+            'r a date where only the last two digits of the year have been sp' +
+            'ecified.'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -9
+          Font.Name = 'Small Fonts'
+          Font.Style = []
+          ParentFont = False
+          WordWrap = True
+        end
+        object lblDelimiter: TLabel
+          Left = 8
+          Top = 177
+          Width = 101
+          Height = 13
+          Hint = 
+            'This must not be alphanumeric, or one of the characters <, >, ~,' +
+            ' -, / or a space as these clash with other data entry.'
+          Caption = 'Rapid Entry Delimiter:'
+        end
+        object cbAutoEmail: TCheckBox
+          Left = 6
+          Top = 18
+          Width = 247
+          Height = 17
+          Hint = 
+            'Automatically create emails when contributing to Recording Schem' +
+            'es'
+          Alignment = taLeftJustify
+          Caption = 'Auto-create emails for Recording Schemes:'
+          Checked = True
+          State = cbChecked
+          TabOrder = 0
+        end
+        object eDateCutYear: TEdit
+          Left = 144
+          Top = 106
+          Width = 33
+          Height = 21
+          Hint = 'Century cut-off Year (0-99)'
+          MaxLength = 2
+          TabOrder = 4
+          OnExit = eDateCutYearExit
+          OnKeyPress = eDateCutYearKeyPress
+        end
+        object chkRememberFilters: TCheckBox
+          Left = 6
+          Top = 40
+          Width = 247
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'Remember applied filters:'
+          TabOrder = 1
+        end
+        object eRapidEntryDelimiter: TEdit
+          Left = 120
+          Top = 174
+          Width = 33
+          Height = 21
+          Hint = 
+            'This must not be alphanumeric, or one of the characters <, >, ~,' +
+            ' -, / or a space as these clash with other data entry.'
+          MaxLength = 1
+          TabOrder = 5
+          OnKeyPress = eRapidEntryDelimiterKeyPress
+        end
+        object chkOrganiseSurveysByTag: TCheckBox
+          Left = 6
+          Top = 62
+          Width = 247
+          Height = 17
+          Hint = 'Organise Surveys by Tag'
+          Alignment = taLeftJustify
+          Caption = 'Organise Surveys by Tag:'
+          Checked = True
+          State = cbChecked
+          TabOrder = 2
+        end
+        object chkUseOldImportWizard: TCheckBox
+          Left = 8
+          Top = 252
+          Width = 245
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'Use the v6.13 Import Wizard:'
+          TabOrder = 3
+          Visible = False
+        end
+        object chkIgnoreRememberedMatches: TCheckBox
+          Left = 8
+          Top = 84
+          Width = 245
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'Ignore Previous Import Wizard Matches:'
+          TabOrder = 6
+        end
+        object cbPlaceCardDocs: TCheckBox
+          Left = 6
+          Top = 214
+          Width = 243
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'Documents - add to Taxon Occurrence'
+          TabOrder = 7
+        end
+      end
     end
   end
   object dlgOpen: TOpenPictureDialog
     Left = 144
-    Top = 414
+    Top = 438
   end
   object dlgFolder: TFolderBrowser
     BrowseFlags = [bfDirsOnly, bfStatusText]
     NewDialogStyle = False
     Title = 'Select folder'
     Left = 176
-    Top = 414
+    Top = 438
   end
 end

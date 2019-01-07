@@ -1,7 +1,7 @@
 inherited frmSurveyDetails: TfrmSurveyDetails
-  Left = 417
-  Top = 268
-  Width = 393
+  Left = 416
+  Top = 374
+  Width = 780
   Height = 395
   Caption = 'Survey Details'
   OldCreateOrder = True
@@ -13,7 +13,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 385
+    Width = 772
     Height = 368
     Align = alClient
     BevelOuter = bvLowered
@@ -203,6 +203,13 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             Caption = 'To:'
             WordWrap = True
           end
+          object Label2: TLabel
+            Left = 204
+            Top = 169
+            Width = 70
+            Height = 13
+            Caption = 'Date of Import:'
+          end
           object dbcmbSurveyStatus: TDBLookupComboBox
             Left = 76
             Top = 140
@@ -219,9 +226,9 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             OnKeyUp = dbComboKeyUp
           end
           object dbcmbSurveyMedia: TDBLookupComboBox
-            Left = 252
+            Left = 248
             Top = 140
-            Width = 101
+            Width = 105
             Height = 21
             DataField = 'SURVEY_MEDIA_KEY'
             DataSource = dmSurvey.dsSurvey
@@ -262,9 +269,8 @@ inherited frmSurveyDetails: TfrmSurveyDetails
           object dbePeriodicity: TDBEdit
             Left = 76
             Top = 165
-            Width = 277
+            Width = 125
             Height = 21
-            Anchors = [akLeft, akTop, akRight]
             DataField = 'PERIODICITY'
             DataSource = dmSurvey.dsSurvey
             TabOrder = 9
@@ -351,6 +357,14 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             ImageList = dmFormActions.ilButtons
             OnFindData = eSurveyRunByFindData
             OnGetData = eSurveyRunByGetData
+          end
+          object eImportDate: TEdit
+            Left = 280
+            Top = 165
+            Width = 73
+            Height = 21
+            TabOrder = 11
+            OnExit = eImportDateExit
           end
         end
         object tsGeography: TTabSheet
@@ -615,7 +629,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             Left = 100
             Top = 153
             Width = 261
-            Height = 76
+            Height = 64
             Anchors = [akLeft, akTop, akRight, akBottom]
             DataField = 'PRIVATE_NOTES'
             DataSource = dmSurvey.dsSurvey
@@ -624,6 +638,19 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             TabOrder = 2
             OnEnter = EnterRTF
             OnExit = ExitRTF
+          end
+          object dbcbTemporary: TDBCheckBox
+            Left = 100
+            Top = 228
+            Width = 189
+            Height = 17
+            Anchors = [akLeft, akBottom]
+            Caption = 'Survey Holds Temporary Data'
+            DataField = 'TEMPORARY_SURVEY'
+            DataSource = dmSurvey.dsSurvey
+            TabOrder = 3
+            ValueChecked = 'True'
+            ValueUnchecked = 'False'
           end
         end
       end

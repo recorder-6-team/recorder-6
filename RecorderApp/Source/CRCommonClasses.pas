@@ -38,7 +38,7 @@ type
     procedure WMCommand(var msg: TWMCommand); message WM_COMMAND;
   end;
   
-  TParamDataType = (dtText, dtNumber, dtDate, dtVagueDate,
+  TParamDataType = (dtText, dtNumber, dtDate, dtVagueDate,dtDefault,
       dtTrueFalse, dtCSVFile, dtOptionSet, dtLocation, dtTaxon, dtBoundingBox,
       dtGridSquareRange, dtSpatialRef, dtName, dtIndividual, dtOrganisation,
       dtSamplesInPolygon, dtLocationsInPolygon, dtCurrentUserID);
@@ -120,6 +120,7 @@ type
     FEntryCount: Integer;
     FActive: Boolean;
     FDataType: TParamDataType;
+    FDefault : String;
     FDescription: String;
     FInputControl: TWinControl;
     FSubstituteText: String;
@@ -139,6 +140,7 @@ type
     property Active: Boolean read FActive write SetActive;
     property DataType: TParamDataType read FDataType;
     property Description: String read FDescription;
+    property Default: String read FDefault;
     property EntryCount: Integer read FEntryCount write FEntryCount;
     property InputControl: TWinControl read FInputControl write SetInputControl;
     property SubstituteText: String read FSubstituteText;
@@ -169,7 +171,7 @@ begin
         SendMessage(msg.ctl, CN_COMMAND,
                      TMessage(msg).wparam,
                      TMessage(msg).lparam);
-end;  // TStringGridWithEvents.WMCommand 
+end;  // TStringGridWithEvents.WMCommand
 
 {-==============================================================================
     TConditionOption
@@ -182,8 +184,10 @@ begin
   with ANode do begin
     if HasAttribute(AT_NAME) then FName := Attributes[AT_NAME];
     if HasAttribute(AT_VALUE) then FValue := Attributes[AT_VALUE];
+    if HasAttribute(AT_DEFAULT) then FValue := Attributes[AT_DEFAULT];
+
   end;
-end;  // TConditionOption.ReadXML 
+end;  // TConditionOption.ReadXML
 
 {-==============================================================================
     TConditionOptions
@@ -413,6 +417,7 @@ end;  // TInputParam.Destroy
 procedure TInputParam.ReadAttributes(ANode: IXMLNode);
 begin
   with ANode do begin
+    If HasAttribute(AT_Default) then FDefault :=  Attributes[AT_DEFAULT];
     if HasAttribute(AT_SUBSTITUTEFOR) and
        (not (DataType in [dtSamplesInPolygon, dtLocationsInPolygon])) then
       FSubstituteText := Attributes[AT_SUBSTITUTEFOR];

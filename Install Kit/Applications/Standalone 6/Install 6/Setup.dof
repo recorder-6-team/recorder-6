@@ -91,7 +91,7 @@ ImageBase=4194304
 ExeDescription=
 [Directories]
 OutputDir=C:\Localsource\Recorder disk images\Standalone
-UnitOutputDir=c:\temp\dcu
+UnitOutputDir=c:\localsource\dcu
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=..\..\..\..\Third Party\Kevin Boylan\VCLZip\;..\..\..\..\Third Party\L David Baldwin\HTML Components\Package;..\..\..\..\Third Party\Graticule
@@ -134,8 +134,6 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[Excluded Packages]
-c:\program files (x86)\borland\delphi7\Projects\BPL\dclqrd_d7.bpl=QRDesign
 [HistoryLists\hlConditionals]
 Count=1
 Item0=madExcept
@@ -151,8 +149,9 @@ Item3=$(DELPHI)\Lib\Debug;..\..\..\..\..\Third Party\Kevin Boylan\VCLZip\;..\..\
 Item4=..\..\..\..\..\Third Party\Kevin Boylan\VCLZip\;..\..\..\..\..\Third Party\L David Baldwin\HTML Components\Package
 Item5=..\..\..\..\..\Third Party\Kevin Boylan\VCLZip\
 [HistoryLists\hlUnitOutputDirectory]
-Count=1
-Item0=c:\temp\dcu
+Count=2
+Item0=c:\localsource\dcu
+Item1=c:\temp\dcu
 [HistoryLists\hlOutputDirectorry]
 Count=2
 Item0=C:\Localsource\Recorder disk images\Standalone

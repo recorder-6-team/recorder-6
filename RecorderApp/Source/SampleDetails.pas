@@ -84,6 +84,9 @@ type
     ePrivateCode: TEdit;
     Bevel4: TBevel;
     Label2: TLabel;
+    Label3: TLabel;
+    eUnparsed: TEdit;
+    Label4: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbSaveClick(Sender: TObject);
     procedure bbCancelClick(Sender: TObject);
@@ -187,7 +190,7 @@ resourcestring
   ResStr_OutsideSurveyDateRange = 'The date for the sample falls outside the range of allowed dates '+
       'for the survey.';
   ResStr_DeleteAdmin = 'Are you sure you want to delete this Administrative Area?';
-
+  ResStr_SurveyMustBeTemp = 'Unparsed recorders may only be used on temporary surveys';
 //==============================================================================
 function IsTime(const ATime:string):boolean;
 begin
@@ -358,7 +361,8 @@ begin
         //Michael Weideli  Mantis 450 Mantis 451
         ePrivateLocation.Text := FieldByName('Private_Location').AsString;
         ePrivateCode.Text := FieldByName('Private_Code').AsString;
-
+        eUnparsed.Text := FieldByName('Recorders').AsString;
+     
       end;
       // Deal with Recorders
       RefreshRecorders(ASampleKey, qrySample.FieldByName('Survey_Event_Key').AsString, clbRecorders);
@@ -574,7 +578,7 @@ begin
             // Michael weideli   Mantis 450 Mantis 451
             FieldByName('Private_Location').AsString      := ePrivateLocation.Text;
             FieldByName('Private_Code').AsString          := ePrivateCode.Text;
-
+            FieldByName('Recorders').AsString             := eUnparsed.Text;
             if State = dsInsert then
             begin
               FieldByName('Sample_Key').AsString        := SampleKey;
@@ -691,7 +695,8 @@ begin
   // Michael weideli    Mantis 450 Mantis 451
   ePrivateLocation.ReadOnly := fraLocationInfo.ReadOnly;
   ePrivateCode.ReadOnly :=  fraLocationInfo.ReadOnly;
-  // Related Sample
+  eUnparsed.ReadOnly :=  fraLocationInfo.ReadOnly;
+ // Related Sample
   bbSampleAdd.Enabled  :=tfOn;
   sgRelatedSamplesClick(nil);
   // Other
@@ -1097,8 +1102,13 @@ begin
   pcSampleDetails.ActivePage:=tsGeneral;
   ValidateValue(eSampleDate.Text <> '',ResStr_SampleDateRequired, eSampleDate);
   ValidateValue(dbcmbSampleType.Text <> '',ResStr_SampleTypeRequired,dbcmbSampleType);
-  // Make sure it stays inside its survey irrespective of cascading
   lEventKey := TfrmObservations(DrillForm).GetSurveyKeyForEvent(FEventKey);
+  // if unparsed is not blank then the survey must be marked temporary
+  if eUnparsed.text <> '' then
+    ValidateValue(dmValidation.CheckIsTemporary(lEventKey).Success,
+      ResStr_SurveyMustBeTemp,
+      eUnparsed);
+  // Make sure it stays inside its survey irrespective of cascading
   with fraLocationInfo do begin
     Validate;
     { Check spatial ref for Sample Location lies within survey bounding box }

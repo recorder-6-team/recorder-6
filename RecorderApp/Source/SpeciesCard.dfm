@@ -1,6 +1,6 @@
 inherited frmSpeciesCard: TfrmSpeciesCard
-  Left = 858
-  Top = 299
+  Left = 338
+  Top = 217
   Width = 678
   Height = 545
   BorderIcons = [biSystemMenu, biMinimize]
@@ -16,8 +16,8 @@ inherited frmSpeciesCard: TfrmSpeciesCard
   object pnlSpecies: TPanel [0]
     Left = 0
     Top = 0
-    Width = 662
-    Height = 451
+    Width = 670
+    Height = 463
     Align = alClient
     TabOrder = 0
     OnResize = pnlSpeciesResize
@@ -901,14 +901,14 @@ inherited frmSpeciesCard: TfrmSpeciesCard
   end
   object pnlButtons: TPanel [1]
     Left = 0
-    Top = 451
-    Width = 662
+    Top = 463
+    Width = 670
     Height = 36
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     object pnlButtons2: TPanel
-      Left = 492
+      Left = 500
       Top = 0
       Width = 170
       Height = 36

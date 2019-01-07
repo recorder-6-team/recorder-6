@@ -53,7 +53,7 @@ uses
   DataClasses, DBListCombo, DropStruct, DropSource, DropTarget, ValidationData,
   Exceptionform, OLETools, DBGlyphCtrls, PlaceCardData, VagueDate, OnlineHelp,
   Constants, GeneralFunctions, ImageListButton, DB, Variants, ADODB, Measurements,
-  LocationInfoFrame, Cascade, Contnrs;
+  LocationInfoFrame, Cascade, Contnrs, ActnList;
 
 type
   EPlacesError = class(TExceptionPath);
@@ -139,6 +139,7 @@ type
     lblAdminArea: TLabel;
     lblDate: TLabel;
     eDate: TVagueDateEdit;
+    ActionList1: TActionList;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure bbRecorderFindClick(Sender: TObject);
@@ -232,6 +233,8 @@ type
     FLoadedFromSample: Boolean;
     FLoadedSampleValues: TStringList;
     FColsResized: Boolean;
+    FDefaultSurveyKey: string;
+    FDefaultTaxonGroupKey: string;
     procedure WMTransferDone(var Msg:TMessage); message WM_TRANSFER_DONE;
     procedure WMRefreshTermLists(var Msg: TMessage); message WM_REFRESH_TERM_LISTS;
     procedure WMRefreshSpatialRefSystem(var Msg: TMessage); message WM_REFRESH_SPATIAL_REF_SYSTEM;
@@ -283,6 +286,8 @@ type
         const ADefault: String = ''): String;
     procedure MoveGridCell(const iToTheRight: Boolean);
     procedure ReadRecordingCard;
+    procedure ReadSurveyForCard;
+    procedure ReadTaxonGroupForCard;
     procedure RetrieveTaxa(iTaxaKeys: TStringList);
     function ReturnKeyDown : boolean;
     procedure ReSortGrid;
@@ -306,7 +311,7 @@ type
     function ValidExactMeasurement(measurementKeys: TMeasurementKeys; const AValue: String): Boolean;
     function ValidRestrictedData(measurementKeys: TMeasurementKeys; const AValue: String): Boolean;
     function CheckGridDeterminers(const ColIdx:integer): Boolean;
-    function CheckGridVagueDates(const ColIdx:integer): Boolean;
+    function CheckGridDeterminationDates(const ColIdx:integer): Boolean;
     function CheckCount: Boolean;
     function CheckGridBiotope(const ColIdx: Integer): Boolean;
     function CheckGridMeasurementColumns: Boolean;
@@ -450,6 +455,12 @@ resourcestring
   ResStr_SelectTaxaToSave =
       'Before saving the information on this card, please select one or more '
       + 'taxa from the list to create observations for.';
+  ResStr_SurveyNotEqualDefaultConfirm =
+      'The survey selected is not the same as the default. Continue with save ?';
+  Restr_SurveyNotEqualDefault =
+       'Not saved. The survey selected is not the same as the default';
+  ResStr_TaxonGroupNotEqualDefaultConfirm =
+      'The taxon selected is not in the default taxon group. Continue with save ?';
 
   ResStr_ObservationDateMissing = 'The Observation Date is missing. Enter a vague date value.';
   ResStr_DataOutsideSurvey      = 'The Date is outside the selected Survey''s range. ';
@@ -462,8 +473,9 @@ resourcestring
       + 'the existing names, or leave blank.';
 
   ResStr_InvalidDerterminationDate =
-      'The Dates of Determination must be valid vague dates and must '
-      + 'occur on or after the date of recording.';
+      'The Dates of Determination must be valid vague dates and must occur on or after the date of recording. If a ' +
+      'vague determination date has been entered, note that the start of this vague date must not precede the start ' +
+      'of the observation date.';
 
   ResStr_SettingCount =
       '"Count" and "Count Of" must both be set when either one is set. There is some data missing.' ;
@@ -745,7 +757,78 @@ begin
   Caption := Copy(cardName, 1, Length(cardName) - Length(ExtractFileExt(cardName)));
   Refresh;
   ReadRecordingCard;
+  ReadSurveyForCard;
+  ReadTaxonGroupForCard;
 end;  // SetRecordingCardPath
+//==============================================================================
+procedure TfrmPlaceCard.ReadSurveyForCard;
+var lCardFile: TextFile;
+    lCardName: String;
+    lCurrent : String;
+    lCursor  : TCursor;
+begin
+  lCursor    := HourglassCursor;
+  FLoading   := True;
+  //Open file
+  lCardName := ExtractWithoutExt(FRecordingCardPath);
+  AssignFile(lCardFile, FRecordingCardPath);
+  try
+    Reset(lCardFile);
+    //Read general
+    while not eof(lCardFile) do begin
+      ReadLn(lCardFile, lCurrent);
+        If lCurrent = '<Survey>' then begin
+          ReadLn(lCardFile, lCurrent);
+          FDefaultSurveyKey := lCurrent;
+          ReadLn(lCardFile, lCurrent);
+          if lCurrent <> '</Survey>' then
+            raise ECRDError.CreateNonCritical(Format(ResStr_BadRecCard, [lCardName]));
+          cmbSurvey.KeyValue := FDefaultSurveyKey;
+        end;
+    end;
+
+  finally
+    //Close file
+    CloseFile(lCardFile);
+    DefaultCursor(lCursor);
+    FLoading := False;
+  end;
+
+end;
+//==============================================================================
+procedure TfrmPlaceCard.ReadTaxonGroupForCard;
+var lCardFile: TextFile;
+    lCardName: String;
+    lCurrent : String;
+    lCursor  : TCursor;
+begin
+  lCursor    := HourglassCursor;
+  FLoading   := True;
+  //Open file
+  lCardName := ExtractWithoutExt(FRecordingCardPath);
+  AssignFile(lCardFile, FRecordingCardPath);
+  try
+    Reset(lCardFile);
+    //Read general
+    while not eof(lCardFile) do begin
+      ReadLn(lCardFile, lCurrent);
+        If lCurrent = '<TaxonGroup>' then begin
+          ReadLn(lCardFile, lCurrent);
+          FDefaultTaxonGroupKey := lCurrent;
+          ReadLn(lCardFile, lCurrent);
+          if lCurrent <> '</TaxonGroup>' then
+            raise ECRDError.CreateNonCritical(Format(ResStr_BadRecCard, [lCardName]));
+        end;
+    end;
+
+  finally
+    //Close file
+    CloseFile(lCardFile);
+    DefaultCursor(lCursor);
+    FLoading := False;
+  end;
+
+end;
 
 //==============================================================================
 //    Procedure Name: SetColWidth    Author: GAD    Date: 2/8/99
@@ -820,7 +903,7 @@ end;  // AddTaxonToGrid
  * Checks that the record card *.crd file can be written to. If so, then checks
  * if either the column widths or the species on the list have been changed,
  * and gives the user the chance to save these changes.
- *) 
+ *)
 procedure TfrmPlaceCard.SaveGridLayout;
 var lFileLines: TStringList;
     lIdx, i   : Integer;
@@ -2513,7 +2596,16 @@ begin
           on E:Exception do
             Raise EDatabaseWriteError.Create(ResStr_CreateFail + ' ' + E.Message + ' [Taxon Occurrence]');
         end;
-
+        // Now insert the documents if AddDocsToOccurrence is set to true
+        If (AppSettings.AddDocsToOccurrence) then begin;
+        try
+           dmDatabase.RunStoredProc('usp_TaxonOccurrenceSource_Insert',
+           ['@TaxonOccurrenceKey', lTaxonOccKey]);
+        except
+          on E:Exception do
+           Raise EDatabaseWriteError.Create(ResStr_WriteRecFail + ' ' + E.Message + ' [Taxon Occurrence Sources]');
+      end;
+  end;
         //Now insert determination
         lVagueDate := StringToVagueDate(lstDate);
         lTaxonDeterminationKey :=
@@ -3443,7 +3535,11 @@ begin
   try
     if (KeyList<>nil) and (KeyList.Header.ItemCount>0) then begin
       lTaxonKey:=KeyList.Items[0].KeyField1;
-      GotAddedTaxon(lTaxonKey);
+      //check to see if taxon is in group
+      If (Not dmGeneralData.IsGroupCorrect(ltaxonkey,FDefaultTaxonGroupKey))
+        and (FDefaultTaxonGroupKey <> 'All') then
+        if MessageDlg(ResStr_TaxonGroupNotEqualDefaultConfirm, mtInformation, [mbYes, mbNo], 0) = mrYes then
+          GotAddedTaxon(lTaxonKey);
     end;
   finally
     KeyList.Free;
@@ -3891,43 +3987,44 @@ begin
     end;
 end;  // CheckGridDeterminers
 
-{-------------------------------------------------------------------------------
-  Description : Validates that all vague dates in the grid are acceptable
-  Created : 25/04/2003 }
-function TfrmPlaceCard.CheckGridVagueDates(const ColIdx: Integer): Boolean;
+//=============================================================================
+// Validates that all determination vague dates in the grid are acceptable.
+//
+function TfrmPlaceCard.CheckGridDeterminationDates(const ColIdx: Integer): Boolean;
 var lRowIdx: Integer;
-    lVDateGrid: TVagueDate;
+    determinationDate: TVagueDate;
 begin
   Result := True;
-  with sgSpecies do
+  with sgSpecies do begin
     for lRowIdx := FixedRows to RowCount - 1 do begin
       // Trim spaces
       Cells[ColIdx, lRowIdx] := Trim(Cells[ColIdx, lRowIdx]);
       // if nothing in cell, do nothing, all OK
-      if (Cells[ColIdx, lRowIdx] <> '') and not IsReadOnlyCell(ColIdx, lRowIdx) then
+      if (Cells[ColIdx, lRowIdx] <> '') and not IsReadOnlyCell(ColIdx, lRowIdx) then begin
         // If cell content is valid vague date, carry on with further checks
         if IsVagueDate(Cells[ColIdx, lRowIdx]) then begin
-          lVDateGrid := StringToVagueDate(Cells[ColIdx, lRowIdx]);
+          determinationDate := StringToVagueDate(Cells[ColIdx, lRowIdx]);
           // Check vague date is correct and display properly in grid
-          if CheckVagueDate(Cells[ColIdx, lRowIdx]) and
-             IsVagueDateInVagueDate(eDate.VagueDate, lVDateGrid) or
-             (not IsVagueDateInVagueDate(eDate.VagueDate, lVDateGrid) and
-              (CompareVagueDateToVagueDate(lVDateGrid, eDate.VagueDate) >= 0)) then
-            Cells[ColIdx, lRowIdx] := VagueDateToString(lVDateGrid)
+          if dmValidation.CheckDeterminationDateAgainstSampleDate(eDate.VagueDate, determinationDate) then begin
+            Cells[ColIdx, lRowIdx] := VagueDateToString(determinationDate);
+          end
           else begin
             // Not a good vague date
             Result := False;
             Row    := lRowIdx;
             Break;
           end;
-        end else begin
+        end
+        else begin
           // Cell content isn't a proper vague date
           Result := False;
           Row    := lRowIdx;
           Break;
         end;
+      end;
     end;
-end;  // CheckGridVagueDates
+  end;
+end;  // CheckGridDeterminationDates
 
 function TfrmPlaceCard.CheckCount: Boolean;
 var lRowIdx, lCountIdx, lCountOfIdx: Integer;
@@ -4088,17 +4185,18 @@ end;  // CheckGridSpatialRef
   Created : 25/04/2003 }
 procedure TfrmPlaceCard.ValidateCard;
 begin
-  ValidateCardDate;
-
   ValidateValue(cmbSurvey.Text <> '', ResStr_UnableToSave + SPlaceCard_SelectSurvey, cmbSurvey);
   ValidateValue(TotalSpecies > 0, ResStr_SelectTaxaToSave, sgSpecies);
+  If cmbSurvey.KeyValue <> FDefaultSurveyKey then
+     If MessageDlg(ResStr_SurveyNotEqualDefaultConfirm, mtConfirmation, [mbYes,mbNo], 0)=mrNo then
+       ValidateValue(cmbSurvey.KeyValue = FDefaultSurveyKey,Restr_SurveyNotEqualDefault, cmbSurvey);
 
+  ValidateValue(TotalSpecies > 0, ResStr_SelectTaxaToSave, sgSpecies);
   fraLocationInfo.Validate(cmbSurvey.KeyValue);
 
   // Check the date and ensure a proper format
   ValidateValue(eDate.Text <> '', ResStr_ObservationDateMissing, eDate);
-  ValidateValue(CheckVagueDate(eDate.Text), InvalidDate(ResStr_SampleDate, true, false), eDate);
-  eDate.Text := VagueDateToString(eDate.VagueDate);
+  ValidateCardDate;
   ValidateValue(
       dmValidation.CheckEventDateAgainstSurvey(cmbSurvey.KeyValue, eDate.VagueDate),
       ResStr_DataOutsideSurvey,
@@ -4126,7 +4224,7 @@ begin
         sgSpecies);
   if ColByName(COL_DATE_OF_DETERMINATION) <> -1 then
     ValidateValue(
-        CheckGridVagueDates(ColByName(COL_DATE_OF_DETERMINATION)),
+        CheckGridDeterminationDates(ColByName(COL_DATE_OF_DETERMINATION)),
         ResStr_InvalidDerterminationDate + #13#10#13#10 + SPlaceCard_ValidVagueDates,
         sgSpecies);
   if ColByName(COL_COUNT) <> -1 then
@@ -4205,6 +4303,9 @@ begin
         cmbSurvey.SetFocus;
         LastSurvey := cmbSurvey.KeyValue;
       end;
+
+
+
     except
       on E:EDatabaseWriteError do begin
         Cleanup;

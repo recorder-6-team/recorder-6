@@ -15,7 +15,7 @@ K=0
 L=1
 M=0
 N=1
-O=0
+O=1
 P=1
 Q=0
 R=0
@@ -91,10 +91,10 @@ ImageBase=4194304
 ExeDescription=
 [Directories]
 OutputDir=C:\Program Files (x86)\Recorder 6\Addins
-UnitOutputDir=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU
+UnitOutputDir=c:\localsource\dcu
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=C:\Localsource\recorder-6\Third Party\dec\Part_I
+SearchPath=C:\Localsource\recorder-6\Third Party\dec\Part_I;C:\localsource\Indy\D7
 Packages=vcl;rtl;vclx;indy;vclie;xmlrtl;inetdbbde;inet;inetdbxpress;dbrtl;soaprtl;dsnap;VclSmp;dbexpress;vcldb;dbxcds;inetdb;bdertl;vcldbx;adortl;teeui;teedb;tee;ibxpress;visualclx;visualdbclx;vclactnband;vclshlctrls;dclOfficeXP;localizer7;InHouseAPI7;InHouseDB7;UnitLib7;Qrpt7;InHouse7;RecorderAddin7;Qrd7;rapid;Extended3rdParty7;Jncc7;madBasic_;madDisAsm_;madExcept_;qrdBase_D7;qrdBDE_d7
 Conditionals=madExcept
 DebugSourceDirs=
@@ -130,7 +130,7 @@ TimestampServer=
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=4
+MinorVer=11
 Release=0
 Build=0
 Debug=0
@@ -143,7 +143,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=1.4.0.0
+FileVersion=1.11.0.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -152,8 +152,6 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 OleSelfRegister=1
-[Excluded Packages]
-c:\program files (x86)\borland\delphi7\Projects\BPL\dclqrd_d7.bpl=QRDesign
 [HistoryLists\hlConditionals]
 Count=1
 Item0=madExcept
@@ -161,16 +159,18 @@ Item0=madExcept
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=5
-Item0=C:\Localsource\recorder-6\Third Party\dec\Part_I
-Item1=$(DELPHI)\Lib\Debug;C:\Localsource\recorder-6\Third Party\dec\Part_I
-Item2=$(DELPHI)\Lib\Debug
-Item3=$(DELPHI)\Lib\Debug;C:\Localsource\Recorder\RecorderApp\trunk\Add-ins\Indicia2Recorder\dec\Part_I
-Item4=..\..\..\Third Party\Kevin Boylan\VCLZip
+Count=6
+Item0=C:\Localsource\recorder-6\Third Party\dec\Part_I;C:\localsource\Indy\D7
+Item1=C:\Localsource\recorder-6\Third Party\dec\Part_I
+Item2=$(DELPHI)\Lib\Debug;C:\Localsource\recorder-6\Third Party\dec\Part_I
+Item3=$(DELPHI)\Lib\Debug
+Item4=$(DELPHI)\Lib\Debug;C:\Localsource\Recorder\RecorderApp\trunk\Add-ins\Indicia2Recorder\dec\Part_I
+Item5=..\..\..\Third Party\Kevin Boylan\VCLZip
 [HistoryLists\hlUnitOutputDirectory]
-Count=2
-Item0=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU
-Item1=c:\tmp\dcu
+Count=3
+Item0=c:\localsource\dcu
+Item1=C:\Localsource\recorder-6\RecorderApp\Add-ins\Indicia2Recorder\DCU
+Item2=c:\tmp\dcu
 [HistoryLists\hlOutputDirectorry]
 Count=3
 Item0=C:\Program Files (x86)\Recorder 6\Addins

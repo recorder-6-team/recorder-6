@@ -1,6 +1,6 @@
 object ManageDesignationSetsX: TManageDesignationSetsX
-  Left = 543
-  Top = 261
+  Left = 282
+  Top = 232
   Width = 854
   Height = 694
   Caption = 'ManageDesignationSetsX'

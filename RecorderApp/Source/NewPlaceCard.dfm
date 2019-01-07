@@ -1,14 +1,14 @@
 object dlgNewPlaceCard: TdlgNewPlaceCard
-  Left = 511
-  Top = 252
+  Left = 718
+  Top = 215
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Add or Edit Recording Card'
-  ClientHeight = 425
-  ClientWidth = 392
+  ClientHeight = 605
+  ClientWidth = 391
   Color = clBtnFace
-  Constraints.MinHeight = 457
-  Constraints.MinWidth = 401
+  Constraints.MinHeight = 452
+  Constraints.MinWidth = 399
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -22,105 +22,53 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   OnDestroy = FormDestroy
   OnResize = FormResize
   DesignSize = (
-    392
-    425)
+    391
+    605)
   PixelsPerInch = 96
   TextHeight = 13
   object bbCancel: TImageListButton
-    Left = 312
-    Top = 395
+    Left = 311
+    Top = 575
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 5
+    TabOrder = 4
     OnClick = bbCancelClick
     ImageList = dmFormActions.ilButtons
     ImageIndex = 1
   end
   object bbOK: TImageListButton
-    Left = 232
-    Top = 395
+    Left = 231
+    Top = 575
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'OK'
     Default = True
-    TabOrder = 4
+    TabOrder = 3
     OnClick = bbOKClick
     ImageList = dmFormActions.ilButtons
     ImageIndex = 0
   end
-  object gbStep1: TGroupBox
-    Left = 4
-    Top = 1
-    Width = 384
-    Height = 70
-    Anchors = [akLeft, akTop, akRight]
-    TabOrder = 0
-    DesignSize = (
-      384
-      70)
-    object lblistName: TLabel
-      Left = 8
-      Top = 13
-      Width = 297
-      Height = 13
-      Caption = 
-        '1. Enter name for a new list, or choose an existing list to modi' +
-        'fy:'
-    end
-    object Label3: TLabel
-      Left = 24
-      Top = 40
-      Width = 31
-      Height = 13
-      Caption = 'Name:'
-    end
-    object bbListRemove: TImageListButton
-      Left = 288
-      Top = 34
-      Width = 75
-      Height = 25
-      Anchors = [akTop, akRight]
-      Caption = '&Remove'
-      TabOrder = 1
-      OnClick = bbListRemoveClick
-      ImageList = dmFormActions.ilButtons
-      ImageIndex = 4
-    end
-    object cmbListNames: TComboBox
-      Left = 60
-      Top = 36
-      Width = 221
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
-      ItemHeight = 13
-      Sorted = True
-      TabOrder = 0
-      OnChange = cmbListNamesChange
-    end
-  end
   object gbStep2: TGroupBox
     Left = 4
     Top = 76
-    Width = 384
+    Width = 383
     Height = 89
     Anchors = [akLeft, akTop, akRight]
-    TabOrder = 1
+    TabOrder = 0
     DesignSize = (
-      384
+      383
       89)
     object lblSpeciesList: TLabel
       Left = 8
       Top = 12
-      Width = 300
+      Width = 288
       Height = 13
-      Caption = 
-        '2. Choose a species list from the taxon dictionary or a rucksack' +
-        ':'
+      Caption = 'Choose a species list from the taxon dictionary or a rucksack:'
     end
     object rbTaxonDictionary: TRadioButton
       Left = 24
@@ -145,7 +93,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
     object cmbRucksack: TComboBox
       Left = 132
       Top = 58
-      Width = 232
+      Width = 231
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
@@ -160,7 +108,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
     object cmbTaxonDictionary: TDBListCombo
       Left = 132
       Top = 34
-      Width = 232
+      Width = 231
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
@@ -178,17 +126,17 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   end
   object gbAddin: TGroupBox
     Left = 4
-    Top = 170
+    Top = 282
     Width = 385
     Height = 49
-    TabOrder = 3
+    TabOrder = 2
     Visible = False
     object lblAddin: TLabel
       Left = 16
       Top = 18
-      Width = 146
+      Width = 134
       Height = 13
-      Caption = '3. Select the card header type:'
+      Caption = 'Select the card header type:'
     end
     object cmbHeaderTypes: TComboBox
       Left = 176
@@ -201,22 +149,22 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
   end
   object gbStep3: TGroupBox
     Left = 4
-    Top = 170
-    Width = 384
-    Height = 221
+    Top = 288
+    Width = 383
+    Height = 281
     Anchors = [akLeft, akTop, akRight, akBottom]
-    TabOrder = 2
+    TabOrder = 1
     DesignSize = (
-      384
-      221)
+      383
+      281)
     object lblAddColumns: TLabel
       Left = 8
       Top = 13
-      Width = 365
+      Width = 353
       Height = 13
       Caption = 
-        '3. Choose any additional columns you wish to show alongside the ' +
-        'species list:'
+        'Choose any additional columns you wish to show alongside the spe' +
+        'cies list:'
     end
     object pnlButtons: TPanel
       Left = 180
@@ -296,7 +244,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
       Left = 208
       Top = 32
       Width = 169
-      Height = 179
+      Height = 239
       Anchors = [akLeft, akTop, akBottom]
       DragMode = dmAutomatic
       ItemHeight = 13
@@ -310,7 +258,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
       Left = 8
       Top = 32
       Width = 165
-      Height = 179
+      Height = 239
       ActivePage = tsMeasurements
       Anchors = [akLeft, akTop, akBottom]
       TabOrder = 0
@@ -321,7 +269,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
           Left = 0
           Top = 0
           Width = 157
-          Height = 151
+          Height = 211
           Align = alClient
           DragMode = dmAutomatic
           ItemHeight = 13
@@ -348,7 +296,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
           Left = 0
           Top = 0
           Width = 157
-          Height = 151
+          Height = 211
           Align = alClient
           DragMode = dmAutomatic
           ItemHeight = 13
@@ -364,7 +312,7 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
       Left = 210
       Top = 186
       Width = 165
-      Height = 22
+      Height = 19
       Ctl3D = False
       ParentCtl3D = False
       TabOrder = 2
@@ -374,9 +322,161 @@ object dlgNewPlaceCard: TdlgNewPlaceCard
       OnKeyPress = eRenameKeyPress
     end
   end
+  object gbStep2a: TGroupBox
+    Left = 4
+    Top = 170
+    Width = 383
+    Height = 49
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 5
+    DesignSize = (
+      383
+      49)
+    object Label2: TLabel
+      Left = 8
+      Top = 18
+      Width = 73
+      Height = 13
+      Caption = 'Default Survey '
+    end
+    object cmbSurveyList: TDBListCombo
+      Left = 132
+      Top = 12
+      Width = 230
+      Height = 21
+      Style = csDropDownList
+      Anchors = [akLeft, akTop, akRight]
+      Enabled = False
+      ItemHeight = 13
+      TabOrder = 0
+      KeyValue = '0'
+      ListField = 'Item_Name'
+      KeyField = 'Survey_key'
+      Datasource = dmFormActions.dsSurvey
+      Active = False
+      EmptyItem = False
+      ReadOnly = False
+    end
+    object cbDefaultSurvey: TCheckBox
+      Left = 104
+      Top = 16
+      Width = 17
+      Height = 17
+      TabOrder = 1
+      OnClick = cbDefaultSurveyClick
+    end
+  end
+  object gbStep1: TGroupBox
+    Left = 4
+    Top = 1
+    Width = 383
+    Height = 70
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 6
+    DesignSize = (
+      383
+      70)
+    object lblistName: TLabel
+      Left = 8
+      Top = 13
+      Width = 285
+      Height = 13
+      Caption = 'Enter name for a new list, or choose an existing list to modify:'
+    end
+    object Label3: TLabel
+      Left = 24
+      Top = 40
+      Width = 31
+      Height = 13
+      Caption = 'Name:'
+    end
+    object bbListRemove: TImageListButton
+      Left = 287
+      Top = 34
+      Width = 75
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = '&Remove'
+      TabOrder = 1
+      OnClick = bbListRemoveClick
+      ImageList = dmFormActions.ilButtons
+      ImageIndex = 4
+    end
+    object cmbListNames: TComboBox
+      Left = 60
+      Top = 36
+      Width = 220
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      ItemHeight = 13
+      Sorted = True
+      TabOrder = 0
+      OnChange = cmbListNamesChange
+    end
+  end
+  object gbStep2b: TGroupBox
+    Left = 4
+    Top = 220
+    Width = 383
+    Height = 69
+    Anchors = [akLeft, akTop, akRight]
+    TabOrder = 7
+    DesignSize = (
+      383
+      69)
+    object Label1: TLabel
+      Left = 8
+      Top = 18
+      Width = 66
+      Height = 13
+      Caption = 'Default Group'
+    end
+    object Label4: TLabel
+      Left = 8
+      Top = 40
+      Width = 369
+      Height = 22
+      Caption = 
+        'During data input this option will warn if an attempt is made to' +
+        ' add a taxon not in the default taxon group.'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -9
+      Font.Name = 'Small Fonts'
+      Font.Style = []
+      ParentFont = False
+      WordWrap = True
+    end
+    object cmbTaxonGroupList: TDBListCombo
+      Left = 132
+      Top = 12
+      Width = 230
+      Height = 21
+      Style = csDropDownList
+      Anchors = [akLeft, akTop, akRight]
+      Enabled = False
+      ItemHeight = 13
+      TabOrder = 0
+      KeyValue = '0'
+      ListField = 'Taxon_Group_Name'
+      KeyField = 'Taxon_Group_Key'
+      Datasource = dmFormActions.dsTaxonGroup
+      Active = False
+      EmptyItem = False
+      ReadOnly = False
+    end
+    object cbTaxonGroup: TCheckBox
+      Left = 104
+      Top = 16
+      Width = 17
+      Height = 17
+      TabOrder = 1
+      OnClick = cbTaxonGroupClick
+    end
+  end
   object pmColNames: TPopupMenu
-    Left = 328
-    Top = 206
+    Left = 288
+    Top = 350
     object pmColNamesRename: TMenuItem
       Caption = 'Rename'
       OnClick = pmColNamesRenameClick

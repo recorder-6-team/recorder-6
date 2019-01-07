@@ -29,6 +29,8 @@ resourcestring
   ResStr_Event = 'Event';
   ResStr_Events = 'Events';
   ResStr_EventCannotMove = 'Survey Event cannot be moved.  ';
+  ResStr_TemporaryCannotMoveTo = 'Samples and Event cannot be moved to a temporary survey';
+  ResStr_TemporaryCannotMoveFrom = 'Samples and Events cannot be moved from a temporary survey';
   ResStr_EventDateNotInSurvey = 'The Date for the survey event lies outside ' +
                                  'the recording dates of the survey.';
   ResStr_FileDoesNotExist = 'The file ''%s'' does not exist';
@@ -49,11 +51,13 @@ resourcestring
       'because ReadXML hasn''t been called yet in the TFrmMain.CreateReport method, '+
       'or the XML file has no Where clauses and is therefore invalid';
   ResStr_NotAllowedToDeleteOtherPersonsData = 'You are not allowed to delete this record '+
-      'because it was entered by a different user and you do not have the required '+
-      'access rights to delete other people''s data.';
+      'because it was entered by a different user.';
+  ResStr_NotAllowedToChangeOtherPersonsData = 'You are not allowed to change this record '+
+      'because it was entered by a different user.';
   ResStr_Occurrence = 'Occurrence';
   ResStr_Occurrences = 'Occurrences';
   ResStr_Observations = 'Observations';
+  ResStr_ParameterNotSupported = 'The ''%s'' parameter is not supported for a %s';
   ResStr_ParameterMissing = 'The ''%s'' parameter is missing for a %s';
   ResStr_ParameterRequired = 'The ''%s'' parameter requires a value';
   ResStr_ParseFailure = 'The XML Custom Report "%s" could not be parsed.  Error details:'#13#10'%s';
@@ -65,6 +69,7 @@ resourcestring
                               'recorders for the survey event.';
   ResStr_Sample = 'Sample';
   ResStr_SampleCannotMove = 'Sample cannot be moved.  ';
+  ResStr_RecorderNotInSample = 'Recorders not in new sample. Do you wish to add them';
   ResStr_Samples = 'Samples';
   ResStr_SQLError = 'There is an error in the SQL code. The error message is: ''%s''';
   ResStr_SQLErrorDetail = 'There is an error in the SQL code. The error message is: ''%s'''#13#10'and the SQL is: ''%s''';

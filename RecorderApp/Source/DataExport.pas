@@ -227,15 +227,15 @@ begin
 end;
 
 (**
- * Removes any surveys of type temporary from the export if explicitly included.
+ * Removes any surveys of type temporary_Survey from the export if explicitly included.
  *)
 procedure TdlgDataExport.ExcludeTemporarySurveys;
 var
   i: integer;
   surveyKeys: string;
   surveyCount, deleted: integer;
-  keys, rs: _Recordset;
-  tempSurveyKeys: string;
+  rs: _Recordset;
+  
 begin
   if (CompareText(FKeyList.Header.TableName, 'SURVEY')=0) or (CompareText(FKeyList.Header.TableName, 'MIXED')=0) then begin
     surveyCount := 0;
@@ -250,30 +250,24 @@ begin
       end;
     end;
     if surveyCount>0 then begin
-      keys := dmDatabase.ExecuteSQL('SELECT Data FROM [Setting] WHERE Name=''TempMedia''', true);
-      if (keys.recordcount>0) then begin
-        keys.MoveFirst;
-        tempSurveyKeys := keys.Fields[0].Value;
-        tempSurveyKeys := '''' + StringReplace(tempSurveyKeys, ',', ''',''', [rfReplaceAll]) + '''';
-        rs := dmDatabase.ExecuteSQL('SELECT Survey_Key, Survey_Media_Key FROM Survey WHERE Survey_Key IN (' +
-            surveyKeys + ') AND Survey_Media_Key IN (' + tempSurveyKeys + ')', true);
-        if rs.RecordCount>0 then begin
-          rs.MoveFirst;
-          while not rs.EOF do begin
-            for i:=0 to FKeyList.Header.ItemCount-1 do begin
-              if ((FKeyList.Items[i].KeyField2='') or (CompareText(FKeyList.Items[i].KeyField2, 'SURVEY')=0)) and
-                  (FKeyList.Items[i].KeyField1=rs.Fields[0].Value) then begin
+      rs := dmDatabase.ExecuteSQL('SELECT Survey_Key, Temporary_Survey FROM Survey WHERE Survey_Key IN (' +
+          surveyKeys + ') AND Temporary_Survey = 1', true);
+      if rs.RecordCount>0 then begin
+        rs.MoveFirst;
+        while not rs.EOF do begin
+          for i:=0 to FKeyList.Header.ItemCount-1 do begin
+            if ((FKeyList.Items[i].KeyField2='') or (CompareText(FKeyList.Items[i].KeyField2, 'SURVEY')=0)) and
+               (FKeyList.Items[i].KeyField1=rs.Fields[0].Value) then begin
                 FKeyList.DeleteItem(i);
                 deleted := deleted + 1;
-              end;
             end;
-            rs.MoveNext;
           end;
-          if surveyCount-deleted=0 then
-            raise TExceptionPath.CreateNonCritical(ResStr_TempSurveysNothingToExport)
-          else if deleted>0 then
-            ShowInformation(ResStr_TempSurveysSomethingToExport);
+          rs.MoveNext;
         end;
+        if surveyCount-deleted=0 then
+          raise TExceptionPath.CreateNonCritical(ResStr_TempSurveysNothingToExport)
+        else if deleted>0 then
+          ShowInformation(ResStr_TempSurveysSomethingToExport);
       end;
     end;
   end;

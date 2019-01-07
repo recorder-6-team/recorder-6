@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 480
-  Top = 325
+  Left = 446
+  Top = 359
   Width = 655
   Height = 501
   Anchors = []
@@ -545,6 +545,10 @@ object frmMain: TfrmMain
         end
         object N7: TMenuItem
           Caption = '-'
+        end
+        object MnuToolsUpdateDictionary1: TMenuItem
+          Caption = 'Update Dictionary'
+          OnClick = MnuToolsUpdateDictionary1Click
         end
         object mnuToolsDatabaseRebuildNameIndex: TMenuItem
           Caption = 'Rebuild Taxon &Name Index'

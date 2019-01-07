@@ -137,7 +137,7 @@ begin
       if AInstanceName[i]='\' then
         inc(slashCount)
       else
-        result := result and (AInstanceName[i] in ['_', 'a'..'z', 'A'..'Z',
+        result := result and (AInstanceName[i] in ['-','_', 'a'..'z', 'A'..'Z',
                                                             '$', '0'..'9']);
     end;
   end;

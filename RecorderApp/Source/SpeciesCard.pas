@@ -324,8 +324,9 @@ resourcestring
                                 'entering some data. Please wait a little while before trying to save again'#13#13+
                                 'Residual data was successfully cleaned up.  Message: ';
 
-  ResStr_DetDateAfterObsDate = 'The Determination Date has to occur on or after the '+
-                               'Observation Date of %s.';
+  ResStr_DetDateAfterObsDate = 'The determination date has to occur on or after the observation date of %s. If a ' +
+      'vague determination date has been entered, note that the start of this vague date must not precede the start ' +
+      'of the observation date.';
 
   ResStr_UnableToMatchDeterminer = 'Unable to match the determiner to any known individuals. ' +
                                    'Please try a different determiner.';
@@ -910,11 +911,6 @@ var
   //----------------------------------------------------------------------------
 begin
   inherited;
-  if Sender=nil then begin
-    ValidateCardDate;
-    ValidateDeterminationDate;
-  end;
-
   ValidateValue(cmbSurvey.KeyValue<>'',ResStr_CannotSaveRecordSelect,cmbSurvey);
   ValidateValue((eTaxon.Text<>'') and dmGeneralData.CheckTaxon(eTaxon, FTaxonListItemKey),ResStr_InvalidOrMissingTaxonName,eTaxon);
   ValidateValue((eReference.Text='') or FdmPlaceCard.CheckReference(FReferenceKey,eReference),
@@ -924,18 +920,16 @@ begin
   ValidateValue((eSpecimenNumber.Text <> '') or
                 ((eSpecimenLocation.Text = '') and (reSpecimenComment.Text = '')),
                 ResStr_MustEnterSpecimenNumber, eSpecimenNumber);
-
   ValidateValue(lbRecorders.Items.Count>0,ResStr_MissingRecorderNameSelect,bbRecorderAdd);
-  // Check the date and ensure a proper format
-  ValidateValue(eDate.Text<>'',ResStr_MissingDateEnter,eDate);
-  ValidateValue(CheckVagueDate(eDate.Text),InvalidDate(ResStr_SampleDate,true,false),eDate);
-  eDate.Text:=VagueDateToString(eDate.VagueDate);
+  // Check the date is filled in, then ensure a proper format
+  ValidateValue(eDate.Text<>'', ResStr_MissingDateEnter, eDate);
+  ValidateCardDate;
   try
-    ValidateValue(dmValidation.CheckEventDateAgainstSurvey(cmbSurvey.KeyValue,eDate.VagueDate),
-                  ResStr_DateOutsideRange,eDate);
+    ValidateValue(dmValidation.CheckEventDateAgainstSurvey(cmbSurvey.KeyValue, eDate.VagueDate),
+                  ResStr_DateOutsideRange, eDate);
   except
-    on E : EValidationDataError do
-      Raise TExceptionPath.CreateNonCritical(E.Message);
+    on e: EValidationDataError do
+      raise TExceptionPath.CreateNonCritical(e.Message);
   end;
   fraLocationInfo.Validate(cmbSurvey.KeyValue);
   ValidateValue(cmbSampleType.Text<>'',
@@ -1155,17 +1149,26 @@ begin
   if not FClosingForm then ValidateDeterminationDate;
 end;  // eDeterminationDateExit
 
+//==============================================================================
+// Checks the determination date, either on control exist, or form save.
+//
 procedure TfrmSpeciesCard.ValidateDeterminationDate;
 begin
-  if eDeterminationDate.Text<>'' then begin
-    ValidateValue(CheckVagueDate(eDeterminationDate.Text),
-                  InvalidDate(ResStr_DeterminationDate,true,false),eDeterminationDate);
-    if eDate.Text<>'' then
-    ValidateValue(IsVagueDateInVagueDate(eDate.VagueDate,eDeterminationDate.VagueDate) or
-                  (not IsVagueDateInVagueDate(eDate.VagueDate,eDeterminationDate.VagueDate) and
-                   (CompareVagueDateToVagueDate(eDeterminationDate.VagueDate,eDate.VagueDate)>=0)),
-                  Format(ResStr_DetDateAfterObsDate,[eDate.Text]),eDeterminationDate);
-    eDeterminationDate.Text:=VagueDateToString(eDeterminationDate.VagueDate);
+  if eDeterminationDate.Text <> '' then begin
+    ValidateValue(
+      CheckVagueDate(eDeterminationDate.Text),
+      InvalidDate(ResStr_DeterminationDate, true, false),
+      eDeterminationDate
+    );
+    if eDate.Text <> '' then begin
+      ValidateValue(
+        dmValidation.CheckDeterminationDateAgainstSampleDate(eDate.VagueDate, eDeterminationDate.VagueDate),
+        Format(ResStr_DetDateAfterObsDate, [eDate.Text]),
+        eDeterminationDate
+      );
+    end;
+    // Standardise the input date formatting.
+    eDeterminationDate.Text := VagueDateToString(eDeterminationDate.VagueDate);
   end;
 end;  // ValidateDeterminationDate
 
@@ -1742,7 +1745,19 @@ begin
         end;
       end;
     end; // with qryInsertTaxonOccur
+
   end;  // with FdmPlaceCard
+  // Now insert the documents if AddDocsToOccurrence is set to true
+  If (AppSettings.AddDocsToOccurrence) then begin;
+    try
+      dmDatabase.RunStoredProc('usp_TaxonOccurrenceSource_Insert',
+         ['@TaxonOccurrenceKey', FTaxonOccKey]);
+    except
+      on E:Exception do
+        Raise EDatabaseWriteError.Create(ResStr_WriteRecFail + ' ' + E.Message + ' [Taxon Occurrence Sources]');
+      end;
+  end;
+
 end;  // CreateSpeciesOccurrence
 
 (*******************************************************************************

@@ -3,7 +3,7 @@
   
      XML Batch Update by Mike Weideli of Littlefield Consultancy
      http://www.lfield.co.uk
-     Version 3 - April 19 2009 -->
+     Version 3 - 24 March 2014 - For use with R6 V 6.29 or later -->
      		
 <batchupdate menupath="System Supplied\Delete" title="Del5 Deletes down from a level" 
 
@@ -94,12 +94,24 @@ CREATE TABLE #LCDelete (Survey_Key char(16) COLLATE SQL_Latin1_General_CP1_CI_AS
    END
 
 
+   
+
    set rowcount  3000
    WHILE 1 =1 
    BEGIN
    DELETE FROM TREL2
    FROM 
    TAXON_OCCURRENCE_RELATION  TREL2 INNER JOIN #LCDELETE #LCD ON #LCD.TAXON_OCCURRENCE_KEY = TREL2.TAXON_OCCURRENCE_KEY_2
+   IF @@rowcount &#60; 3000 BREAK
+   END
+
+
+   set rowcount  3000
+   WHILE 1 =1 
+   BEGIN
+   DELETE FROM TPRIV
+   FROM 
+   TAXON_OCCURRENCE_PRIVATE_DATA  TPRIV INNER JOIN #LCDELETE #LCD ON #LCD.TAXON_OCCURRENCE_KEY = TPRIV.TAXON_OCCURRENCE_KEY
    IF @@rowcount &#60; 3000 BREAK
    END
 

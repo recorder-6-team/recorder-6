@@ -710,7 +710,7 @@ begin
     lKeyField := dmDatabase.GetPrimaryKey( lTableName, False );
   except
     on EMultiFieldKey do begin
-      if (not AppSettings.CanExportSystemSupplied) and
+      if (AppSettings.CanExportSystemSupplied) and
          dmGeneralData.IsSystemSuppliedRecord(iDataset) then
         Result := True;
       Exit; // nothing - join tables never get restricted unless system supplied

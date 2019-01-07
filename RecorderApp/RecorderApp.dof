@@ -94,7 +94,7 @@ OutputDir=C:\Program Files (x86)\Recorder 6
 UnitOutputDir=C:\localsource\dcu
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=..\Third Party\QBS Software\QRDesign;..\Third Party\QBS Software\QuickReport\quickrpt;..\Third Party\Kevin Boylan\VCLZip;..\Third Party\L David Baldwin\HTML Components\Package;..\Third Party\Peter Morris\Fast Strings\trunk;..\Third Party\IMCA Systems\Rapid Tree\Source;..\Third Party\Khaled Shagrouni\XP Menu;..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\Third Party\Mike Shkolnik\SMExport\Sources;..\Third Party\Mike Shkolnik\SMImport\Sources;..\Third Party\Graticule;..\Third Party\Khaled Shagrouni\XP Menu\trunk
+SearchPath=..\Third Party\QBS Software\QRDesign;..\Third Party\QBS Software\QuickReport\quickrpt;..\Third Party\Kevin Boylan\VCLZip;..\Third Party\L David Baldwin\HTML Components\Package;..\Third Party\Peter Morris\Fast Strings\trunk;..\Third Party\IMCA Systems\Rapid Tree\Source;..\Third Party\Khaled Shagrouni\XP Menu;..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\Third Party\Mike Shkolnik\SMExport\Sources;..\Third Party\Mike Shkolnik\SMImport\Sources;..\Third Party\Graticule
 Packages=adortl;bdertl;dbrtl;dsnap;rtl;vcl;vclactnband;vcldb;vcljpg;vclx;InHouseAPI7;InHouse7;UnitLib7;InHouseDB7;RecorderAddin7;Extended3rdParty7;Jncc7;Qrpt7;Qrd7
 Conditionals=madExcept
 DebugSourceDirs=C:\Localsource\Recorder\Third Party\Mike Shkolnik\SMImport\Sources\;C:\Localsource\Recorder\Third Party\Mike Shkolnik\SMExport\Sources\
@@ -113,9 +113,9 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=6
-MinorVer=28
+MinorVer=29
 Release=0
-Build=287
+Build=289
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Dorset Software Services Ltd.
 FileDescription=Recorder 6 Application
-FileVersion=6.28.0.287
+FileVersion=6.29.0.289
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -134,8 +134,6 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[Excluded Packages]
-c:\program files (x86)\borland\delphi7\Projects\BPL\dclqrd_d7.bpl=QRDesign
 [HistoryLists\hlDebugSourcePath]
 Count=1
 Item0=C:\Localsource\Recorder\Third Party\Mike Shkolnik\SMImport\Sources\;C:\Localsource\Recorder\Third Party\Mike Shkolnik\SMExport\Sources\
@@ -146,11 +144,12 @@ Item0=madExcept
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=4
-Item0=..\Third Party\QBS Software\QRDesign;..\Third Party\QBS Software\QuickReport\quickrpt;..\Third Party\Kevin Boylan\VCLZip;..\Third Party\L David Baldwin\HTML Components\Package;..\Third Party\Peter Morris\Fast Strings\trunk;..\Third Party\IMCA Systems\Rapid Tree\Source;..\Third Party\Khaled Shagrouni\XP Menu;..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\Third Party\Mike Shkolnik\SMExport\Sources;..\Third Party\Mike Shkolnik\SMImport\Sources;..\Third Party\Graticule;..\Third Party\Khaled Shagrouni\XP Menu\trunk
-Item1=$(DELPHI)\Lib\Debug;..\Third Party\QBS Software\QRDesign;..\Third Party\QBS Software\QuickReport\quickrpt;..\Third Party\Kevin Boylan\VCLZip;..\Third Party\L David Baldwin\HTML Components\Package;..\Third Party\Peter Morris\Fast Strings\trunk;..\Third Party\IMCA Systems\Rapid Tree\Source;..\Third Party\Khaled Shagrouni\XP Menu;..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\Third Party\Mike Shkolnik\SMExport\Sources;..\Third Party\Mike Shkolnik\SMImport\Sources;..\Third Party\Graticule;..\Third Party\Khaled Shagrouni\XP Menu\trunk
-Item2=..\..\Third Party\QBS Software\QRDesign;..\..\Third Party\QBS Software\QuickReport\quickrpt;..\..\Third Party\Kevin Boylan\VCLZip;..\..\Third Party\L David Baldwin\HTML Components\Package;..\..\Third Party\Peter Morris\Fast Strings\trunk;..\..\Third Party\IMCA Systems\Rapid Tree\Source;..\..\Third Party\Khaled Shagrouni\XP Menu;..\..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\..\Third Party\Mike Shkolnik\SMExport\Sources;..\..\Third Party\Mike Shkolnik\SMImport\Sources;..\..\Third Party\Graticule;..\..\Third Party\Khaled Shagrouni\XP Menu\trunk
-Item3=$(DELPHI)\Lib\Debug;..\..\Third Party\QBS Software\QRDesign;..\..\Third Party\QBS Software\QuickReport\quickrpt;..\..\Third Party\Kevin Boylan\VCLZip;..\..\Third Party\L David Baldwin\HTML Components\Package;..\..\Third Party\Peter Morris\Fast Strings\trunk;..\..\Third Party\IMCA Systems\Rapid Tree\Source;..\..\Third Party\Khaled Shagrouni\XP Menu;..\..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\..\Third Party\Mike Shkolnik\SMExport\Sources;..\..\Third Party\Mike Shkolnik\SMImport\Sources;..\..\Third Party\Graticule;..\..\Third Party\Khaled Shagrouni\XP Menu\trunk
+Count=5
+Item0=..\Third Party\QBS Software\QRDesign;..\Third Party\QBS Software\QuickReport\quickrpt;..\Third Party\Kevin Boylan\VCLZip;..\Third Party\L David Baldwin\HTML Components\Package;..\Third Party\Peter Morris\Fast Strings\trunk;..\Third Party\IMCA Systems\Rapid Tree\Source;..\Third Party\Khaled Shagrouni\XP Menu;..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\Third Party\Mike Shkolnik\SMExport\Sources;..\Third Party\Mike Shkolnik\SMImport\Sources;..\Third Party\Graticule
+Item1=..\Third Party\QBS Software\QRDesign;..\Third Party\QBS Software\QuickReport\quickrpt;..\Third Party\Kevin Boylan\VCLZip;..\Third Party\L David Baldwin\HTML Components\Package;..\Third Party\Peter Morris\Fast Strings\trunk;..\Third Party\IMCA Systems\Rapid Tree\Source;..\Third Party\Khaled Shagrouni\XP Menu;..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\Third Party\Mike Shkolnik\SMExport\Sources;..\Third Party\Mike Shkolnik\SMImport\Sources;..\Third Party\Graticule;..\Third Party\Khaled Shagrouni\XP Menu\trunk
+Item2=$(DELPHI)\Lib\Debug;..\Third Party\QBS Software\QRDesign;..\Third Party\QBS Software\QuickReport\quickrpt;..\Third Party\Kevin Boylan\VCLZip;..\Third Party\L David Baldwin\HTML Components\Package;..\Third Party\Peter Morris\Fast Strings\trunk;..\Third Party\IMCA Systems\Rapid Tree\Source;..\Third Party\Khaled Shagrouni\XP Menu;..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\Third Party\Mike Shkolnik\SMExport\Sources;..\Third Party\Mike Shkolnik\SMImport\Sources;..\Third Party\Graticule;..\Third Party\Khaled Shagrouni\XP Menu\trunk
+Item3=..\..\Third Party\QBS Software\QRDesign;..\..\Third Party\QBS Software\QuickReport\quickrpt;..\..\Third Party\Kevin Boylan\VCLZip;..\..\Third Party\L David Baldwin\HTML Components\Package;..\..\Third Party\Peter Morris\Fast Strings\trunk;..\..\Third Party\IMCA Systems\Rapid Tree\Source;..\..\Third Party\Khaled Shagrouni\XP Menu;..\..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\..\Third Party\Mike Shkolnik\SMExport\Sources;..\..\Third Party\Mike Shkolnik\SMImport\Sources;..\..\Third Party\Graticule;..\..\Third Party\Khaled Shagrouni\XP Menu\trunk
+Item4=$(DELPHI)\Lib\Debug;..\..\Third Party\QBS Software\QRDesign;..\..\Third Party\QBS Software\QuickReport\quickrpt;..\..\Third Party\Kevin Boylan\VCLZip;..\..\Third Party\L David Baldwin\HTML Components\Package;..\..\Third Party\Peter Morris\Fast Strings\trunk;..\..\Third Party\IMCA Systems\Rapid Tree\Source;..\..\Third Party\Khaled Shagrouni\XP Menu;..\..\Third Party\Ecological Software Solutions\Shape Viewer Objects\SVO Delphi\Source;..\..\Third Party\Mike Shkolnik\SMExport\Sources;..\..\Third Party\Mike Shkolnik\SMImport\Sources;..\..\Third Party\Graticule;..\..\Third Party\Khaled Shagrouni\XP Menu\trunk
 [HistoryLists\hlUnitOutputDirectory]
 Count=1
 Item0=C:\localsource\dcu

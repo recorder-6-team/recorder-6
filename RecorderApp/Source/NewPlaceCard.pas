@@ -47,10 +47,6 @@ type
   end;
 
   TdlgNewPlaceCard = class(TForm)
-    gbStep1 : TGroupBox;
-    lblistName: TLabel;
-    Label3 : TLabel;
-    cmbListNames : TComboBox;
     gbStep2 : TGroupBox;
     lblSpeciesList: TLabel;
     rbTaxonDictionary : TRadioButton;
@@ -68,7 +64,6 @@ type
     tsMeasurements: TTabSheet;
     lbAvailable: TListBox;
     lbMeasurements: TListBox;
-    bbListRemove: TImageListButton;
     bbOK: TImageListButton;
     bbCancel: TImageListButton;
     eRename: TEdit;
@@ -82,6 +77,20 @@ type
     bbClearAll: TImageListButton;
     bbMoveUp: TImageListButton;
     bbMoveDown: TImageListButton;
+    gbStep2a: TGroupBox;
+    Label2: TLabel;
+    gbStep1: TGroupBox;
+    lblistName: TLabel;
+    Label3: TLabel;
+    bbListRemove: TImageListButton;
+    cmbListNames: TComboBox;
+    cmbSurveyList: TDBListCombo;
+    cbDefaultSurvey: TCheckBox;
+    gbStep2b: TGroupBox;
+    Label1: TLabel;
+    cmbTaxonGroupList: TDBListCombo;
+    cbTaxonGroup: TCheckBox;
+    Label4: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbAddClick(Sender: TObject);
     procedure bbRemoveClick(Sender: TObject);
@@ -106,6 +115,8 @@ type
     procedure eRenameKeyPress(Sender: TObject; var Key: Char);
     procedure eRenameExit(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure cbDefaultSurveyClick(Sender: TObject);
+    procedure cbTaxonGroupClick(Sender: TObject);
   private
     hlpNewRecCard : TOnlineHelp;
     FdmTaxonDictionary : TdmTaxonDictBrowser;
@@ -136,7 +147,7 @@ implementation
 
 uses
   ApplicationSettings, GeneralData, Maintbar, Finder, Search, Registry,
-  Recorder2000_tlb, ComAddinUnit, ComObj, Constants, FormActions, SQLConstants,
+  Recorder2000_tlb, ComAddinUnit, ComObj, Constants,  SQLConstants,FormActions,
   DatabaseAccessADO;
 
 resourcestring
@@ -157,6 +168,8 @@ resourcestring
       'The Record Card Name is missing. Enter a name or select one from the list.';
 
   ResStr_SelectTaxonList =  'You must select a Taxon List for the record card.';
+  ResStr_SelectDefaultSurvey = 'Either select a default Survey or untick.';
+  ResStr_SelectDefaultGroup  = 'Either select a default Group or untick.';
   ResStr_SelectRucksack = 'You must select a Rucksack for the record card.';
   ResStr_OverwriteRecordingCard =
       'A recording card with the name ''%s'' already exists. Do you wish to overwrite it?';
@@ -180,10 +193,11 @@ begin
   FdmTaxonDictionary:= TdmTaxonDictBrowser.Create(nil);
   FdmTaxonDictionary.qryLocalLists.Open;
   cmbTaxonDictionary.Active:= True;
-
+  cmbSurveyList.Active:= True;
+  cmbTaxonGroupList.Active:= True;
   FdmPlaceCard := TdmPlaceCard.Create(nil);
   FdmPlaceCard.SetColumnNames(lbAvailable.Items, lbMeasurements.Items);
-  
+
   lCursor:=HourglassCursor;
   try
     if AppSettings.RecordingCardPath='' then
@@ -571,7 +585,12 @@ begin
                 ResStr_SelectTaxonList, cmbTaxonDictionary);
   if rbRucksack.Checked then
     ValidateValue(cmbRucksack.Text <> '',ResStr_SelectRucksack, cmbRucksack);
-
+  if cbDefaultSurvey.Checked then
+    ValidateValue(cmbSurveyList.Text <> '',
+                ResStr_SelectDefaultSurvey, cmbSurveyList);
+  if cbTaxonGroup.Checked then
+    ValidateValue(cmbTaxonGroupList.Text <> '',
+                ResStr_SelectDefaultGroup, cmbTaxonGroupList);
   if gbAddin.Visible then
     ValidateValue(cmbHeaderTypes.Text <> '',
                    ResStr_SelRecordCardHeaderStyle, cmbHeaderTypes);
@@ -662,6 +681,20 @@ begin
       else
         GetFromRucksack(lKeys);
       lKeys.Add('</Taxon>');
+
+      //Store survey
+      lKeys.Add('<Survey>');
+      if cbDefaultSurvey.Checked then
+         lkeys.Add(cmbSurveyList.keyvalue)
+      else lkeys.Add('All');
+      lKeys.Add('</Survey>');
+
+      //Store taxon group
+      lKeys.Add('<TaxonGroup>');
+      if cbTaxonGroup.Checked then
+         lkeys.Add(cmbTaxonGroupList.keyvalue)
+      else lkeys.Add('All');
+      lKeys.Add('</TaxonGroup>');
 
       //Store Header Details
       lKeys.Add('<HeaderClsID>');
@@ -972,6 +1005,26 @@ begin
   Constraints.MinWidth := lblAddColumns.Width + // widest control
       (lblAddColumns.Left + gbStep3.Left) * 2 + // it's left pos
       (Width - ClientWidth); // plus dialog border allowance
+end;
+
+procedure TdlgNewPlaceCard.cbDefaultSurveyClick(Sender: TObject);
+begin
+  if cbDefaultSurvey.checked then
+    cmbSurveyList.Enabled:=true
+  else begin
+    cmbSurveyList.Enabled:=false;
+    cmbSurveyList.ItemIndex:=-1;
+  end;
+end;
+
+procedure TdlgNewPlaceCard.cbTaxonGroupClick(Sender: TObject);
+begin
+  if cbTaxonGroup.checked then
+    cmbTaxonGroupList.Enabled:=true
+  else begin
+    cmbTaxonGroupList.Enabled:=false;
+    cmbTaxonGroupList.ItemIndex:=-1;
+  end;
 end;
 
 end.

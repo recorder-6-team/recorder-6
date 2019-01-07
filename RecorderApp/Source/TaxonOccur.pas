@@ -131,6 +131,27 @@ type
     bbSpecimenDel: TImageListButton;
     splSpecimens: TSplitter;
     lblReviewSummary: TLabel;
+    tsPrivate: TTabSheet;
+    sgPrivateOcc: TStringGrid;
+    gbPrivateDetails: TGroupBox;
+    Label20: TLabel;
+    Label21: TLabel;
+    bbPrivateAccept: TImageListButton;
+    bbPrivateDiscard: TImageListButton;
+    ePrivateItemName: TEdit;
+    ePrivateDetail: TEdit;
+    bbPrivateAdd: TImageListButton;
+    bbPrivateEdit: TImageListButton;
+    bbPrivateDel: TImageListButton;
+    rePrivateComment: TRichEdit;
+    Label17: TLabel;
+    Label19: TLabel;
+    dbcmbPrivateType: TDBListCombo;
+    Label22: TLabel;
+    ePrivateItemDate: TEdit;
+    ePrivateItemValue: TEdit;
+    Label23: TLabel;
+    lblMetadata: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbSpecimenAddClick(Sender: TObject);
     procedure bbSpecimenAcceptClick(Sender: TObject);
@@ -180,6 +201,16 @@ type
     procedure eDeterminerGetData(Sender: TObject);
     procedure eDeterminerFindData(Sender: TObject);
     procedure pnlDetailsResize(Sender: TObject);
+    procedure sgPrivateOccClick(Sender: TObject);
+    procedure bbPrivateAddClick(Sender: TObject);
+    procedure bbPrivateEditClick(Sender: TObject);
+    procedure bbPrivateDelClick(Sender: TObject);
+    procedure bbPrivateAcceptClick(Sender: TObject);
+    procedure bbPrivateDiscardClick(Sender: TObject);
+    procedure sgPrivateOccDrawCell(Sender: TObject; ACol, ARow: Integer;
+      Rect: TRect; State: TGridDrawState);
+    procedure dbcmbPrivateTypeChange(Sender: TObject);
+
   private
     FdmTaxonOcc       :TdmTaxonOccurrences;
     FdmDetermination  :TdmDetermination;
@@ -199,8 +230,10 @@ type
     FRelTaxonKey  :TKeyString;
 
     FSpecimenList:TSpecimenList;
-    FCurrentSpec :TSpecimenItem;
+    FPrivateDataList:TPrivateDataList;
 
+    FCurrentSpec :TSpecimenItem;
+    FCurrentPrivateData :TPrivateDataItem;
     FAddItem :boolean;
     FProvenance:string;
     FClosingForm:boolean;
@@ -228,7 +261,9 @@ type
     procedure BlankRelOccDetails;
     procedure SaveRelOccDetails;
     procedure BlankSpecDetails;
+    procedure BlankPrivateDetails;
     procedure SaveSpecDetails;
+    procedure SavePrivateDetails;
     function  CheckTaxOcc:boolean;
     function  CheckWork:boolean;
     procedure SetupObjects;
@@ -240,6 +275,7 @@ type
     procedure SetDeterminationColour(const tfDetailsOn: boolean);
     procedure SetRelOccColour(const tfDetailsOn: boolean);
     procedure SetSpecimensColour(const tfDetailsOn: boolean);
+    procedure SetPrivateColour(const tfDetailsOn: boolean);
     procedure SetVerified(value: Byte);
     function CheckValidation: Byte;
     procedure RefreshComboList(ACombo: TDBListCombo);
@@ -250,6 +286,7 @@ type
     function GetReviewStatusCode :integer;
     function GetReviewStatus (const statuscode : integer) : String;
     function GetReviewStatusSummary(const statuscode : integer) : String;
+    function GetTypeDescription : string;
   protected
     procedure SetupDestinationControls; override;
   public
@@ -307,8 +344,13 @@ resourcestring
   ResStr_InvalidTaxonName = 'The Taxon Name is invalid. Enter a valid Taxon Name.';
   ResStr_RelationTypeMissing =  'The Relationship Type is missing. Select a value from the list.';
   ResStr_DeleteSpecimen = 'Are you sure you want to delete this Specimen?';
+  ResStr_DeletePrivate = 'Are you sure you want to delete this Private Entry?';
   ResStr_SpecimenNumRequired =  'A Specimen Number is required for every Specimen.';
   ResStr_SpecimenTypeRequired = 'A Specimen Type is required for every Specimen. Select one from the list.';
+  ResStr_PrivateTypeRequired = 'A Type is required for every Private entry. Select one from the list.';
+  ResStr_PrivateItemRequired = 'An Item Name is required for every Private entry.';
+  ResStr_PrivateValue = 'Must be a number with no punctuation.';
+  ResStr_TheItemDate = 'The item date';
   ResStr_Not_Reviewed = 'Not Reviewed';
   ResStr_Reviewed = 'Review Complete';
   ResStr_Review_Unactioned = 'Review Unactioned';
@@ -324,13 +366,15 @@ begin
   SetGridColumnTitles(sgDeterminations, ['', ResStr_Taxon, ResStr_Determiner, ResStr_Role, ResStr_Type, ResStr_Date]);
   SetGridColumnTitles(sgRelOcc,         [ResStr_RelatedOccurrence, ResStr_Type]);
   SetGridColumnTitles(sgSpecimens,      [ResStr_SpecimenNumber, ResStr_SpecimenType]);
-
+  SetGridColumnTitles(sgPrivateOcc,      [ResStr_PrivateType, ResStr_PrivateItem,ResStr_PrivateDetail]);
   SwitchToDetails(sgDeterminations,bbDetAdd,bbDetEdit,bbDetDel,
                   bbSave, bbCancel, gbDetDetails,false);
   SwitchToDetails(sgRelOcc, bbRelOccAdd, bbRelOccEdit, bbRelOccDel,
                   bbSave, bbCancel, gbRelOccDetails, false);
   SwitchToDetails(sgSpecimens,bbSpecimenAdd,bbSpecimenEdit,bbSpecimenDel,
                   bbSave, bbCancel, gbSpecimenDetails,false);
+  SwitchToDetails(sgPrivateOcc,bbPrivateAdd,bbPrivateEdit,bbPrivateDel,
+                  bbSave, bbCancel, gbPrivateDetails,false);
   EnableDetails(Constants.emView);
   pcTaxonOccurrence.ActivePage:=tsGeneral;
 
@@ -365,7 +409,8 @@ begin
       mrYes : begin
                 if bbDetAccept.Enabled then bbDetAcceptClick(nil) else
                 if bbRelOccAccept.Enabled then bbRelOccAcceptClick(nil) else
-                if bbSpecimenAccept.Enabled then bbSpecimenAcceptClick(nil);
+                if bbSpecimenAccept.Enabled then bbSpecimenAcceptClick(nil) else
+                if bbPrivateAccept.Enabled then bbPrivateAcceptClick(nil);
                 bbSaveClick(nil);
                 CanClose:=true;
               end;
@@ -373,7 +418,8 @@ begin
                 FClosingForm:=true;
                 if bbDetdiscard.Enabled then bbDetDiscardClick(nil) else
                 if bbRelOccDiscard.Enabled then bbRelOccDiscardClick(nil) else
-                if bbSpecimenDiscard.Enabled then bbSpecimenDiscardClick(nil);
+                if bbSpecimenDiscard.Enabled then bbSpecimenDiscardClick(nil) else
+                if bbPrivateDiscard.Enabled then bbPrivateDiscardClick(nil);
                 bbCancelClick(nil);
                 CanClose:=true;
                 FClosingForm:=false;
@@ -406,6 +452,9 @@ begin
                                   sgRelOcc,TRelOccItem,FdmTaxonOcc);
   // Specimens
   FSpecimenList:=TSpecimenList.Create(FdmTaxonOcc.qrySpecimen,'Specimen_Key',sgSpecimens,TSpecimenItem);
+
+  //Private
+  FPrivateDataList:=TPrivateDataList.Create(FdmTaxonOcc.qryTaxonPrivateDetail,'Taxon_Private_Data_Key',sgPrivateOcc,TPrivateDataItem);
 
   // Sources
   Sources.Init(dmDatabase.LocalDatabase, 'Taxon_Occurrence_Sources',
@@ -505,6 +554,12 @@ begin
     FSpecimenList.OccKey:=AOccurrenceKey;
     FSpecimenList.Refresh;
     sgSpecimensClick(nil);
+     // Private
+    dbcmbPrivateType.Active:=true;
+    FdmTaxonOcc.qryTaxonPrivateDetail.Parameters.ParamByName('KeyParameter').Value:=AOccurrenceKey;
+    FPrivateDataList.OccKey:=AOccurrenceKey;
+    FPrivateDataList.Refresh;
+    sgPrivateOccClick(nil);
     // Sources
     Sources.SourcesFromKey:=AOccurrenceKey;
     Sources.RefreshLists;
@@ -555,7 +610,11 @@ begin
   FdmTaxonOcc.qrySpecimen.Parameters.ParamByName('KeyParameter').Value:='';
   FSpecimenList.OccKey:=TaxonOccKey;
   FSpecimenList.Refresh;
-
+  // Private
+  FdmTaxonOcc.qryTaxonPrivateDetail.Parameters.ParamByName('KeyParameter').Value:='';
+  FPrivateDataList.OccKey:=TaxonOccKey;
+  FPrivateDataList.Refresh;
+ 
   with FdmTaxonOcc.qryTaxonOcc do begin
     Append;
     // Set combo boxes
@@ -568,6 +627,11 @@ begin
     dbcbConfidential.Checked := False;
     dbcbChecked.Checked      := False;
   end;
+   // Private
+  FdmTaxonOcc.qryTaxonPrivateDetail.Parameters.ParamByName('KeyParameter').Value:='';
+  FPrivateDataList.OccKey:=TaxonOccKey;
+  FPrivateDataList.Refresh;
+  // Comment
   ResetDBRichEditControls([dbreComments]);
   dmGeneralData.SetNameIDAndDate(FdmTaxonOcc.qryTaxonOcc,'Entered_By','Entry_Date');
   // Sources
@@ -718,7 +782,11 @@ begin
     FSpecimenList.OccKey:=TaxonOccKey;
     FSpecimenList.Update;
     sgSpecimensClick(nil);
-     // Sources
+     // Private
+    FPrivateDataList.OccKey:=TaxonOccKey;
+    FPrivateDataList.Update;
+    sgPrivateOccClick(nil);
+    // Sources
     Sources.Post;
     // Additional Pages
     ChangeAdditionalPage(pcTaxonOccurrence);  // Required after add new occurrence
@@ -815,9 +883,12 @@ begin
   // On Related Occurrences page
   bbRelOccAdd.Enabled :=tfOn;
   sgRelOccClick(nil);
-  // On Specimens page
+   // On Specimens page
   bbSpecimenAdd.Enabled :=tfOn;
   sgSpecimensClick(nil);
+   // On Ext Ref Page
+  bbPrivateAdd.Enabled :=tfOn;
+  sgPrivateOccClick(nil);
   // On Sources page
   Sources.EditMode:=NewMode;
 
@@ -830,7 +901,7 @@ begin
 
   // Additional Pages
   SetAdditionalPagesState(tfOn);
-  
+
   // Upate Main menu
   if DrillForm<>nil then TfrmObservations(DrillForm).SetMenuState(not tfOn);
 end;  // EnableDetails
@@ -1472,7 +1543,6 @@ begin
       // Get back to the beginning of the stream before reading it.
       Comment.Position:=0;
       reSpecComments.Lines.LoadFromStream(Comment);
-
       // ItemKey is empty for newly added items. Save to actually get a value
       bbSpecimenEdit.Enabled := AppSettings.AllowEdit(EditMode) and
                                 (Added or (Custodian = AppSettings.SiteID));
@@ -1490,6 +1560,18 @@ begin
   eSpecLocation.Text:='';
   reSpecComments.Clear;
 end;  // BlankSpecDetails
+
+//------------------------------------------------------------------------------
+procedure TfrmTaxonOccurrences.BlankPrivateDetails;
+begin
+  ePrivateItemName.Text:='';
+  ePrivateDetail.Text  :='';
+  dbcmbPrivateType.ItemIndex:=-1;
+  ePrivateItemDate.Text := '';
+  ePrivateItemValue.Text := '';
+  rePrivateComment.Clear;
+  lblMetaData.caption := '';
+end;  // BlankPrivateDetails
 
 //------------------------------------------------------------------------------
 procedure TfrmTaxonOccurrences.SaveSpecDetails;
@@ -1512,6 +1594,13 @@ procedure TfrmTaxonOccurrences.SetSpecimensColour(const tfDetailsOn:boolean);
 begin
   SetRequiredFieldsColourState(tfDetailsOn,[eSpecNumber,dbcmbSpecType]);
 end;  // SetSpecimensColour
+
+//------------------------------------------------------------------------------
+procedure TfrmTaxonOccurrences.SetPrivateColour(const tfDetailsOn:boolean);
+begin
+  SetRequiredFieldsColourState(tfDetailsOn,[dbcmbPrivateType,ePrivateItemName]);
+end;  // SetPrivateColour
+
 
 //------------------------------------------------------------------------------
 procedure TfrmTaxonOccurrences.bbSpecimenAddClick(Sender: TObject);
@@ -1566,7 +1655,7 @@ begin
   sgSpecimensClick(nil);
 end;  // bbSpecimenAcceptClick
 
-//------------------------------------------------------------------------------
+
 procedure TfrmTaxonOccurrences.bbSpecimenDiscardClick(Sender: TObject);
 begin
   inherited;
@@ -1780,6 +1869,7 @@ begin
   RefreshComboList(dbcmbType);
   RefreshComboList(dbcmbRelType);
   RefreshComboList(dbcmbSpecType);
+  RefreshComboList(dbcmbPrivateType);
   Measurements.RefreshLists;
 end;  // Refreshlists
 
@@ -1856,6 +1946,7 @@ begin
     SetRequiredFieldsColourState(bbDetAccept.Enabled, [eTaxon,eDeterminer,dbcmbRole,dbcmbType,eDetDate]);
     SetRequiredFieldsColourState(bbRelOccAccept.Enabled, [eRelatedTaxon,dbcmbRelType]);
     SetRequiredFieldsColourState(bbSpecimenAccept.Enabled,[eSpecNumber,dbcmbSpecType]);
+    SetRequiredFieldsColourState(bbPrivateAccept.Enabled,[ePrivateItemName,dbcmbPrivateType]);
   end;
 end;
 
@@ -1899,7 +1990,7 @@ begin
   with dmDatabase.ExecuteSQL('SELECT  [dbo].[ufn_ReturnReviewStatus](''' + FTaxonOccKey  + ''') AS ReviewStatus',True) do
   begin
     if not Eof then
-        Result := Fields['ReviewStatus'].Value
+        Result :=  Fields['ReviewStatus'].Value
     else
       Result :=  0;
     Close;
@@ -2053,6 +2144,152 @@ begin
   lblProvenance.Left   := dbcmbSubstrate.Left + dbcmbSubstrate.Width + 4;
   cmbProvenance.Left   := lblProvenance.Left + lblProvenance.Width + 4;
   cmbProvenance.Width  := halfWidth;
+end;
+
+procedure TfrmTaxonOccurrences.sgPrivateOccClick(Sender: TObject);
+begin
+  inherited;
+  with sgPrivateOcc do
+    FCurrentPrivateData:=TPrivateDataItem(Objects[0,Row]);
+  if FCurrentPrivatedata =nil then begin
+    // Nothing in the grid, prevent editing/deleting regardless of access privileges
+    bbPrivateEdit.Enabled:=false;
+    bbPrivateDel.Enabled :=false;
+    BlankPrivateDetails;
+  end else
+    with FCurrentPrivateData do begin
+      ePrivateItemName.Text :=PrivateItemName;
+      ePrivateItemDate.Text := PrivateDate;
+      ePrivateItemValue.Text := PrivateValue;
+      ePrivateDetail.Text := PrivateDetail;
+      dbcmbPrivateType.KeyValue := PrivateTypeKey;
+      PrivateComment.Position:=0;
+      rePrivateComment.Lines.LoadFromStream(PrivateComment);
+      // ItemKey is empty for newly added items. Save to actually get a value
+      bbPrivateEdit.Enabled := AppSettings.AllowEdit(EditMode) and
+                                (Added or (Custodian = AppSettings.SiteID));
+      bbPrivateDel.Enabled  := AppSettings.AllowEdit(EditMode) and
+                                (Added or (Custodian = AppSettings.SiteID));
+      lblMetaData.caption := GetTypeDescription;
+    end;
+
+end;
+
+procedure TfrmTaxonOccurrences.bbPrivateAddClick(Sender: TObject);
+begin
+  inherited;
+  SwitchToDetails(sgPrivateOcc,bbPrivateAdd,bbPrivateEdit,bbPrivateDel,
+                  bbSave, bbCancel, gbPrivateDetails,true);
+  SetPrivateColour(true);
+  FCurrentPrivateData:=TPrivateDataItem.CreateNew(FPrivateDataList);
+  BlankPrivateDetails;
+  FAddItem:=true;
+end;
+
+procedure TfrmTaxonOccurrences.bbPrivateEditClick(Sender: TObject);
+begin
+  inherited;
+  SwitchToDetails(sgPrivateOcc,bbPrivateAdd,bbPrivateEdit,bbPrivateDel,
+                  bbSave, bbCancel, gbPrivateDetails,true);
+  SetPrivateColour(true);
+  FAddItem:=false;
+end;
+
+procedure TfrmTaxonOccurrences.bbPrivateDelClick(Sender: TObject);
+begin
+  inherited;
+  inherited;
+  if MessageDlg(ResStr_DeletePrivate,
+                mtConfirmation,[mbNo,mbYes],0)=mrYes then begin
+    with sgPrivateOcc do
+      if TPrivateDataItem(Objects[0,Row])<>nil then
+        FPrivateDataList.DeleteItem(Row);
+    sgPrivateOccClick(nil);
+  end;
+end;
+
+procedure TfrmTaxonOccurrences.bbPrivateAcceptClick(Sender: TObject);
+
+begin
+  inherited;
+  // Sender is nil if called from CloseQuery method.
+  ValidateValue(dbcmbPrivateType.Text<>'',ResStr_PrivateTypeRequired, dbcmbPrivateType);
+  ValidateValue(ePrivateItemName.Text<>'',ResStr_PrivateItemRequired, ePrivateItemName);
+  if ePrivateItemDate.Text<>'' then begin
+    try
+      ePrivateItemDate.Text := VagueDateToString(StringToVagueDate(ePrivateItemDate.Text));
+    except
+    end;
+    // And validate
+    ValidateValue(IsDate(ePrivateItemDate.Text),
+                  InvalidStandardDate(ResStr_TheItemDate,true));
+    ePrivateItemDate.Text:=DateToStr(StrToDate(ePrivateItemDate.Text));
+  end;
+  SavePrivateDetails;
+  if FAddItem then FPrivateDataList.AddNew(FCurrentPrivateData);
+  SwitchToDetails(sgPrivateOcc,bbPrivateAdd,bbPrivateEdit,bbPrivateDel,
+                  bbSave, bbCancel, gbPrivateDetails,false);
+  SetPrivateColour(false);
+  sgPrivateOccClick(nil);
+end;
+
+procedure TfrmTaxonOccurrences.bbPrivateDiscardClick(Sender: TObject);
+begin
+  inherited;
+  if FAddItem then FCurrentPrivateData.Free;
+  SwitchToDetails(sgPrivateOcc,bbPrivateAdd,bbPrivateEdit,bbPrivateDel,
+                  bbSave, bbCancel, gbPrivateDetails,false);
+  SetPrivateColour(false);
+  sgPrivateOccClick(nil);
+end;
+//------------------------------------------------------------------------------
+procedure TfrmTaxonOccurrences.SavePrivateDetails;
+begin
+  with FCurrentPrivateData do begin
+    PrivateItemName  :=ePrivateItemName.Text;
+    PrivateDate   := ePrivateItemDate.Text;
+    PrivateValue :=  ePrivateItemValue.Text;
+    PrivateDetail:= ePrivateDetail.Text;
+    PrivateType     :=dbcmbPrivateType.Text;
+    PrivateTypeKey := dbcmbPrivateType.KeyValue;
+     // Get back to the beginning of the stream before reading it.
+    PrivateComment.Position:=0;
+      rePrivateComment.Lines.SaveToStream(PrivateComment);
+  end;
+  sgPrivateOCC.Refresh;
+end;
+//------------------------------------------------------------------------------
+procedure TfrmTaxonOccurrences.sgPrivateOccDrawCell(Sender: TObject; ACol,
+  ARow: Integer; Rect: TRect; State: TGridDrawState);
+begin
+  inherited;
+   with sgPrivateOcc do begin
+    Canvas.FillRect(Rect);
+    DrawChoppedText(Cells[ACol,ARow],Canvas,Rect,2);
+  end;
+end;
+
+
+
+
+procedure TfrmTaxonOccurrences.dbcmbPrivateTypeChange(Sender: TObject);
+begin
+  inherited;
+  lblMetaData.caption := GetTypeDescription;
+end;
+
+
+function TfrmTaxonOccurrences.GetTypeDescription : string;
+begin
+  with dmDatabase.ExecuteSQL('SELECT dbo.ufn_RtfToPlaintext(Description) AS Description ' +
+                             ' FROM Taxon_Private_Type WHERE Taxon_Private_Type_key = ''' + dbcmbPrivateType.keyvalue + '''', True) do
+  begin
+    if not Eof then
+     Result := VarToStr(Fields['Description'].Value)
+    else
+      Result :=  '';
+    Close;
+  end;
 end;
 
 end.

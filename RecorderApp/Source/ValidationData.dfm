@@ -1,7 +1,7 @@
 object dmValidation: TdmValidation
   OldCreateOrder = True
-  Left = 401
-  Top = 191
+  Left = 791
+  Top = 235
   Height = 270
   Width = 180
   object tblEntity: TJNCCTable

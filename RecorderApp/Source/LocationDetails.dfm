@@ -1,6 +1,6 @@
 object frmLocationDetails: TfrmLocationDetails
-  Left = 695
-  Top = 184
+  Left = 544
+  Top = 227
   Width = 393
   Height = 395
   Hint = 'View and manage locations list'
@@ -181,6 +181,23 @@ object frmLocationDetails: TfrmLocationDetails
             Font.Height = -11
             Font.Name = 'MS Sans Serif'
             Font.Style = []
+            ParentFont = False
+          end
+          object lblStatus: TLabel
+            Left = 212
+            Top = 232
+            Width = 133
+            Height = 25
+            Anchors = [akLeft, akBottom]
+            AutoSize = False
+            Caption = 'Status  '
+            Color = clBtnFace
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clBlue
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentColor = False
             ParentFont = False
           end
           object dbreLocDescription: TDBRichEdit
@@ -452,7 +469,7 @@ object frmLocationDetails: TfrmLocationDetails
                 Height = 21
                 Style = csDropDownList
                 Anchors = [akLeft, akTop, akRight]
-                ItemHeight = 0
+                ItemHeight = 13
                 Sorted = True
                 TabOrder = 0
                 ListField = 'SHORT_NAME'
@@ -1006,7 +1023,7 @@ object frmLocationDetails: TfrmLocationDetails
             Top = 4
             Width = 355
             Height = 265
-            ActivePage = tsTenure
+            ActivePage = tsRelations
             Anchors = [akLeft, akTop, akRight, akBottom]
             TabOrder = 0
             OnChange = pcOtherInfoChange

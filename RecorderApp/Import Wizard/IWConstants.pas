@@ -84,6 +84,7 @@ const
   FN_MATCH_KEY      = 'Match_Key';
   FN_REMEMBERED     = 'Remembered';
   FN_TAXON_ORDER    = 'Order';
+  FN_MATCH_NOTES    = 'Notes';
   FN_CHECKLIST      = 'Checklist';
   FN_CLASSIFICATION = 'Classification';
   FN_IMPORT_GRIDREF = 'Import_Grid_Reference';

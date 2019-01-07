@@ -1,7 +1,7 @@
 inherited frmSampleDetails: TfrmSampleDetails
-  Left = 867
-  Top = 238
-  Width = 393
+  Left = 632
+  Top = 226
+  Width = 390
   Height = 395
   Caption = 'Sample Details'
   OldCreateOrder = True
@@ -12,8 +12,8 @@ inherited frmSampleDetails: TfrmSampleDetails
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 377
-    Height = 357
+    Width = 382
+    Height = 368
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
@@ -75,7 +75,7 @@ inherited frmSampleDetails: TfrmSampleDetails
         Top = 24
         Width = 373
         Height = 301
-        ActivePage = tsAdminAreas
+        ActivePage = tsPrivate
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 2
         OnChange = pcSampleDetailsChange
@@ -453,7 +453,7 @@ inherited frmSampleDetails: TfrmSampleDetails
             273)
           object Bevel4: TBevel
             Left = 4
-            Top = 4
+            Top = 12
             Width = 355
             Height = 265
             Anchors = [akLeft, akTop, akRight, akBottom]
@@ -478,13 +478,31 @@ inherited frmSampleDetails: TfrmSampleDetails
           object Label2: TLabel
             Left = 12
             Top = 16
-            Width = 316
+            Width = 309
             Height = 26
             Anchors = [akLeft, akTop, akRight]
             Caption = 
-              'Use the following fields to store details of sites which should ' +
-              'not be exported to other systems, for example house names and nu' +
-              'mbers.'
+              'Use the following fields to store details such as house names an' +
+              'd numbers. This data should not be exported. '
+            WordWrap = True
+          end
+          object Label3: TLabel
+            Left = 12
+            Top = 161
+            Width = 52
+            Height = 26
+            Caption = 'Unparsed Recorders:'
+            WordWrap = True
+          end
+          object Label4: TLabel
+            Left = 12
+            Top = 128
+            Width = 313
+            Height = 26
+            Anchors = [akLeft, akTop, akRight]
+            Caption = 
+              'Used for unparsed recorders held for temporary surveys. This dat' +
+              'a must not be exported. '
             WordWrap = True
           end
           object ePrivateLocation: TEdit
@@ -503,6 +521,14 @@ inherited frmSampleDetails: TfrmSampleDetails
             Height = 21
             MaxLength = 20
             TabOrder = 1
+          end
+          object eUnparsed: TEdit
+            Left = 96
+            Top = 166
+            Width = 249
+            Height = 21
+            MaxLength = 255
+            TabOrder = 2
           end
         end
       end

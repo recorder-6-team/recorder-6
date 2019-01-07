@@ -159,29 +159,18 @@ procedure RebuildIndexTaxonName(iGeneralQuery: TADOQuery;
 procedure RebuildIndexTaxonSynonym(iGeneralQuery: TADOQuery;
   iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
 
+
 //==============================================================================
 implementation
 
 const
   SQLBoolStr: array[Boolean] of String = ('0', '1');
 
-  SQL_APPLY_NAMESERVER =
-      'EXEC usp_IndexTaxonName_ApplyNameServer';
-  SQL_APPLY_SORTS =
-      'EXEC usp_IndexTaxonName_ApplySorts';
-  SQL_POPULATE_INDEX_TAXON_HIERARCHY =
-      'EXEC usp_Populate_Index_Taxon_Hierarchy';
-  SQL_APPLY_PREFERRED_TAXA =
-      'EXEC usp_Index_Taxon_Name_Apply_Preferred_Taxa';
+  SQL_POPULATE_INDEX_TAXON_NAME =
+      'EXEC dbo.usp_Index_Taxon_Name_Populate @Stage =';
 
 resourcestring
-  ResStr_ClearingOldNameIndex = 'Clearing old name index...';
-  ResStr_PopRecommendedNames = 'Populating recommended names from NameServer...';
-  ResStr_PopSorts = 'Populating lineage and sorts...';
-  ResStr_PopIndexTaxonHierarchy = 'Populating Index Taxon Hierarchy...';
-  ResStr_PopPreferredTaxa = 'Populating Preferred Taxa...';
-  ResStr_AddingTaxonName = 'Adding taxon names to index...';
-  ResStr_AddingTaxonUserName = 'Adding taxon user names to index...';
+  ResStr_PopulatingNameIndex = 'Populating Taxon Name Index Stage -  ';
   ResStr_ClearingOldSynonymInd = 'Clearing old synonym index...';
   ResStr_AddinTaxonSynonym =  'Adding taxon synonyms to index...';
 
@@ -337,221 +326,26 @@ begin
   end;
 end;
 
-{-------------------------------------------------------------------------------
-  Code to populate Recommended_Taxon_List_Item_Key in Index_Taxon_Name
-}
-procedure PopulateRecommendedNames(iGeneralQuery: TADOQuery;
-  iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
-begin
-  iSetStatus(ResStr_PopRecommendedNames);
-  try
-    with iGeneralQuery do begin
-      if Active then Close;
-      SQL.Clear;
-      SQL.Text := SQL_APPLY_NAMESERVER;
-      ExecSQL;
-    end;
-  finally
-    iSetStatus('');
-  end; // try
-end;
-
-{-------------------------------------------------------------------------------
-  Code to populate sorts and Organism related columns in Index_Taxon_Name
-}
-procedure PopulateSorts(iGeneralQuery: TADOQuery;
-  iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
-begin
-  iSetStatus(ResStr_PopSorts);
-  try
-    with iGeneralQuery do begin
-      if Active then Close;
-      SQL.Clear;
-      SQL.Text := SQL_APPLY_SORTS;
-      ExecSQL;
-    end;
-  finally
-    iSetStatus('');
-  end; // try
-end;
-{-------------------------------------------------------------------------------
-  Code to populate Index_taxon_Hierarchy
-}
-procedure PopulateIndexTaxonHierarchy(iGeneralQuery: TADOQuery;
-  iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
-begin
-  iSetStatus(ResStr_PopIndexTaxonHierarchy);
-  try
-    with iGeneralQuery do begin
-      if Active then Close;
-      SQL.Clear;
-      SQL.Text := SQL_POPULATE_INDEX_TAXON_HIERARCHY;
-      ExecSQL;
-    end;
-  finally
-    iSetStatus('');
-  end; // try
-end;
-
-{-------------------------------------------------------------------------------
-  Code to populate Preferred_Taxa in Index_Taxon_Name
-}
-procedure PopulatePreferredTaxa(iGeneralQuery: TADOQuery;
-  iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
-begin
-  iSetStatus(ResStr_PopPreferredTaxa);
-  try
-    with iGeneralQuery do begin
-      if Active then Close;
-      SQL.Clear;
-      SQL.Text := SQL_APPLY_PREFERRED_TAXA;
-      ExecSQL;
-    end;
-  finally
-    iSetStatus('');
-  end; // try
-end;
-
 //==============================================================================
 procedure RebuildIndexTaxonName(iGeneralQuery: TADOQuery;
   iSetStatus: TSetStatusEvent; iSetProgress: TSetProgressEvent);
-var lSegmentKeys: TStringList;
-    i           : Integer;
-    lProgress   : Single;
+var i: Integer;
     lCursor     : TCursor;
+    lProgress   : Single;
 begin
   lCursor := HourglassCursor;
   try
     with iGeneralQuery do begin
       if Active then Close;
       iSetProgress(0);
-      iSetStatus(ResStr_ClearingOldNameIndex);
-      // Use faster TRUNCATE TABLE to avoid log of every single row being deleted
-      // Only R2K_Administrator roles are allowed to use TRUNCATE TABLE
-      SQL.Text := 'TRUNCATE TABLE Index_Taxon_Name';
-      ExecSQL;
-      iSetProgress(2);
-      iSetStatus(ResStr_AddingTaxonName);
-      lSegmentKeys := GetTaxonListItemSegments(iGeneralQuery, 20);
-      // Work out the amount by which to increase the progress bar.
-      lProgress := (87 / lSegmentKeys.Count);
-      try
-        // Populate the table with names and common names
+      for i := 1 to 16 do begin
+        iSetStatus(ResStr_PopulatingNameIndex + intToStr(i));
         SQL.Clear;
-        SQL.Text :=
-                'INSERT INTO Index_Taxon_Name (Taxon_List_Item_Key, Taxon_List_Version_Key, ' +
-                '  Actual_Name, Actual_Name_Italic, Common_Name, Common_Name_Italic, ' +
-                '  Preferred_Name, Preferred_Name_Italic, Abbreviation, Authority, System_Supplied_Data, ' +
-                '  Actual_Name_Attribute, Common_Name_Attribute, Preferred_Name_Attribute, Preferred_Name_Authority)';
-        SQL.Add('SELECT TLI.Taxon_List_Item_Key, TLI.Taxon_List_Version_Key, ' +
-                '  T.Item_Name, CASE WHEN TR3.List_Font_Italic = 1 AND T.Language = ''La'' THEN 1 ELSE 0 END, ' +
-                '  T2.Item_Name, CASE WHEN TR3.List_Font_Italic = 1 AND T2.Language = ''La'' THEN 1 ELSE 0 END, ' +
-                '  T3.Item_Name, CASE WHEN TR3.List_Font_Italic = 1 AND T3.Language = ''La'' THEN 1 ELSE 0 END, ' +
-                '  T.Abbreviation, T.Authority, 1, TV.Attribute, TV2.Attribute, TV3.Attribute, T3.Authority');
-        SQL.Add('FROM Taxon_List_Item AS TLI ' +
-                'LEFT JOIN Taxon_version AS TV ON TV.Taxon_Version_Key = TLI.Taxon_Version_Key ' +
-                'LEFT JOIN Taxon AS T ON T.Taxon_Key = TV.Taxon_Key ' +
-                'LEFT JOIN Taxon_Common_Name AS TCN ON TCN.Taxon_List_Item_Key = TLI.Taxon_List_Item_Key ' +
-                'LEFT JOIN Taxon_Version AS TV2 ON TV2.Taxon_Version_Key = TCN.Taxon_Version_Key ' +
-                'LEFT JOIN Taxon AS T2 ON T2.Taxon_Key = TV2.Taxon_Key ');
-        SQL.Add('LEFT JOIN Taxon_List_Item AS TLI3 ON TLI3.Taxon_List_Item_Key = TLI.Preferred_Name ' +
-                'LEFT JOIN Taxon_Rank AS TR3 ON TR3.Taxon_Rank_Key = TLI3.Taxon_Rank_Key ' +
-                'LEFT JOIN Taxon_Version AS TV3 ON TV3.Taxon_Version_Key = TLI3.Taxon_Version_Key ' +
-                'LEFT JOIN Taxon AS T3 ON T3.Taxon_Key = TV3.Taxon_Key');
-        SQL.Add('');
-        // Divide the taxon list item keys into segments and repeat the query once per segment
-        // of taxon list item keys, so we can get progress information
-        for i := 0 to lSegmentKeys.Count do begin
-          if i = 0 then
-            SQL[4] := 'WHERE TLI.Taxon_List_Item_Key < ''' + lSegmentKeys[0] + ''' '
-          else if i = lSegmentKeys.Count then
-            SQL[4] := 'WHERE TLI.Taxon_List_Item_Key >= ''' + lSegmentKeys[i - 1] + ''' '
-          else
-            SQL[4] := 'WHERE TLI.Taxon_List_Item_Key >= ''' + lSegmentKeys[i - 1] + ''' '+
-                      'AND TLI.Taxon_List_Item_Key < ''' + lSegmentKeys[i] + ''' ';
-          ExecSQL;
-          iSetProgress(2 + Trunc(i * lProgress));  // up to 89%
-        end;
-      finally
-        lSegmentKeys.Free;
-      end; // try
-      // Populate the table with user names
-      iSetStatus(ResStr_AddingTaxonUserName);
-      SQL.Clear;
-      SQL.Text :=
-              'INSERT INTO Index_Taxon_Name ( Taxon_List_Item_Key, Taxon_List_Version_Key, ' +
-              '   Actual_Name, Actual_Name_Italic, Common_Name, Common_Name_Italic, ' +
-              '   Preferred_Name, Preferred_Name_Italic, System_Supplied_Data)';
-      SQL.Add('SELECT TLI.Taxon_List_Item_Key, TLI.Taxon_List_Version_Key, ' +
-              '  TUN.Item_Name, CASE WHEN TR3.List_Font_Italic = 1 AND TUN.Language = ''La'' THEN 1 ELSE 0 END, ' +
-              '  T2.Item_Name, CASE WHEN TR3.List_Font_Italic = 1 AND T2.Language = ''La'' THEN 1 ELSE 0 END, ' +
-              '  T3.Item_Name, CASE WHEN TR3.List_Font_Italic = 1 AND T3.Language = ''La'' THEN 1 ELSE 0 END, ' +
-              '  0');
-      SQL.Add('FROM Taxon_User_Name AS TUN ' +
-              'LEFT JOIN Taxon_List_Item AS TLI ON TLI.Taxon_List_Item_Key = TUN.Taxon_List_Item_Key ' +
-              'LEFT JOIN Taxon_version AS TV ON TV.Taxon_Version_Key = TLI.Taxon_Version_Key ' +
-              'LEFT JOIN Taxon_Common_Name AS TCN ON TCN.Taxon_List_Item_Key = TLI.Taxon_List_Item_Key ' +
-              'LEFT JOIN Taxon_Version AS TV2 ON TV2.Taxon_Version_Key = TCN.Taxon_Version_Key ' +
-              'LEFT JOIN Taxon AS T2 ON T2.Taxon_Key = TV2.Taxon_Key ');
-      SQL.Add('LEFT JOIN Taxon_List_Item AS TLI3 ON TLI3.Taxon_List_Item_Key = TLI.Preferred_Name ' +
-              'LEFT JOIN Taxon_Rank AS TR3 ON TR3.Taxon_Rank_Key = TLI3.Taxon_Rank_Key ' +
-              'LEFT JOIN Taxon_Version AS TV3 ON TV3.Taxon_Version_Key = TLI3.Taxon_Version_Key ' +
-              'LEFT JOIN Taxon AS T3 ON T3.Taxon_Key = TV3.Taxon_Key ' +
-              'WHERE TLI.Taxon_List_Version_To IS NULL');
-      ExecSQL;
-      iSetProgress(90);
-      SQL.Clear;
-      SQL.Text :=
-              'UPDATE Index_Taxon_Name ' +
-              'SET Common_Name = TUN.Item_Name, ' +
-              'Common_Name_Italic = CASE WHEN TR.List_Font_Italic=1 AND TUN.Language=''La'' THEN 1 ELSE 0 END ' +
-              'FROM Index_Taxon_Name ITN ' +
-              'INNER JOIN Taxon_User_Name TUN ON TUN.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key ' +
-              'INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key ' +
-              'INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key ' +
-              'WHERE TUN.Preferred = 1';
-      ExecSQL;
-      iSetProgress(92);
-      SQL.Clear;
-      SQL.Text :=
-              'UPDATE ITN '+
-              'SET ITN.Preferred_List=TL.Preferred, ITN.Allow_Data_Entry=TLT.Allow_Data_Entry '+
-              'FROM Index_Taxon_Name ITN '+
-              'INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN.Taxon_List_Version_Key '+
-              'INNER JOIN Taxon_List TL ON TL.Taxon_List_Key=TLV.Taxon_List_Key '+
-              'INNER JOIN Taxon_List_Type TLT ON TL.Taxon_List_Type_Key=TLT.Taxon_List_Type_Key';
-      ExecSQL;
-      iSetProgress(94);
-      SQL.Clear;
-      SQL.Text :=
-              'UPDATE ITN '+
-              'SET ITN.Preferred_List=1 '+
-              'FROM TAXON_LIST_ITEM TLI '+
-              'INNER JOIN INDEX_TAXON_NAME ITN ON ITN.TAXON_LIST_ITEM_KEY=TLI.TAXON_LIST_ITEM_KEY '+
-              'INNER JOIN TAXON_VERSION TV ON TLI.TAXON_VERSION_KEY = TV.TAXON_VERSION_KEY '+
-              'INNER JOIN TAXON_GROUP TG ON TV.OUTPUT_GROUP_KEY = TG.TAXON_GROUP_KEY '+
-              'INNER JOIN TAXON_LIST_VERSION TLV'+
-              '      ON TLI.TAXON_LIST_VERSION_KEY = TLV.TAXON_LIST_VERSION_KEY  '+
-              '      AND TG.USE_TAXON_LIST_KEY = TLV.TAXON_LIST_KEY';
-      ExecSQL;
-      iSetProgress(96);
-      SQL.Clear;
-      SQL.Text :=
-              'UPDATE ITN '+
-              'SET Has_Children=1 '+
-              'FROM Index_Taxon_Name ITN '+
-              'INNER JOIN Taxon_List_Item TLIChild '+
-              ' 	ON TLIChild.Parent=ITN.Taxon_List_Item_Key';
-      ExecSQL;
-      iSetProgress(10);
-      PopulateRecommendedNames(iGeneralQuery, iSetStatus, iSetProgress);
-      iSetProgress(30);
-      PopulateSorts(iGeneralQuery, iSetStatus, iSetProgress);
-      iSetProgress(70);
-      PopulateIndexTaxonHierarchy(iGeneralQuery, iSetStatus, iSetProgress);
-      isetProgress(90);
-      PopulatePreferredTaxa(iGeneralQuery, iSetStatus, iSetProgress);
-      isetProgress(100);
+        SQL.Text := SQL_POPULATE_INDEX_TAXON_NAME + intToStr(i);
+        ExecSQL;
+        lProgress := (i*6);
+        iSetProgress(trunc(lProgress));
+      end;
     end;
   finally
     DefaultCursor(lCursor);

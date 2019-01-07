@@ -73,7 +73,7 @@ resourcestring
 
   ResStr_NoMenuWithName    = 'A COM Addin has called a menu option which does not exist : %s';
   ResStr_LinkSourceNotBase = 'Attempt to setup a Return Data link from non-base form';
-
+  ResStr_TaxonPrivate  = 'Private Taxon';
   ResStr_ReadFail       = 'Unable to read from the database.';
   ResStr_CreateFail     = 'Unable to create new record.';
   ResStr_AddFail        = 'Unable to add new item in %s table.';
@@ -100,6 +100,7 @@ resourcestring
   ResStr_BadRecCard =
       'Unable to read content of record card ''%s''.'#13
       + 'This file is an invalid record card file, or its content has been corrupted.';
+
   ResStr_BadRucksack =
       'Unable to read content of rucksack ''%s''.'#13
       + 'This file is an invalid rucksack file, or its content has been corrupted.';
@@ -111,6 +112,9 @@ resourcestring
       'There are no taxon occurrences in the database to relate the currently entered one with.';
   ResStr_NoReferenceItems    = 'There are no documents in the database.';
   ResStr_NoIndividualItems   = 'There are no individuals in the database.';
+  ResStr_SampleNoRecorders   = 'This Recorder cannot be deleted, because they are the only Recorder on one or more of the Samples';
+  ResStr_AddSampleRecorders   = 'Do you wish to add these Recorder(s) to all Samples for this Event ?';
+  ResStr_CascadeDeterminer = 'One or more Recorders have been changed. Do you wish to update the determiners for these ?';
   ResStr_NoOrganisationItems = 'There are no organisations in the database.';
   ResStr_NoNameItems         = 'There are no individuals/organisations in the database.';
   ResStr_NoLocationItems     = 'There are no locations in the database.';
@@ -230,6 +234,9 @@ resourcestring
   ResStr_TaxonName              = 'Taxon Name';
   ResStr_TaxonOccurenceRelation = 'Taxon Occurence Relation';
   ResStr_Specimen               = 'Specimen';
+  ResStr_PrivateItem            = 'Item';
+  ResStr_PrivateDetail          = 'Detail';
+  ResStr_PrivateType            = 'Type';
   ResStr_SystemManager          = 'System Manager';
   ResStr_FullEditOwn            = 'Full Edit (Own data only)';
   ResStr_FullEdit               = 'Full Edit';
@@ -414,12 +421,12 @@ const
   DEFAULT_REFERENCES_SEARCH_KEYWORDS = False;
   DEFAULT_PARTIAL_TAXON_SEARCH       = False;
   DEFAULT_AUTO_COMPLETE_SEARCH       = False;
+  DEFAULT_USE_PREFERRED_TAXA         = True;
   DEFAULT_INCLUDE_LOCATION_SPATIAL_REF = False;
   DEFAULT_INCLUDE_LOCATION_FILE_CODE = False;
   DEFAULT_ORGANISE_SURVEYS_BY_TAG    = False;
   DEFAULT_USE_OLD_IMPORT_WIZARD      = False;
   DEFAULT_IGNORE_REMEMBERED_MATCHES  = False;
-
   // Appearance default values
   DEFAULT_DRAG_SOURCE_COLOUR      = clBlue;
   DEFAULT_DRAG_DEST_COLOUR        = clRed;
@@ -429,6 +436,9 @@ const
   DEFAULT_SHOW_TOOL_TIPS          = True;
   DEFAULT_USE_ORIGINAL_ICONS          = False;
 
+  //Sundry Default Values
+
+  DEFAULT_ADD_DOCS_TO_OCCURRENCE = False;
 
   // Grid Ref default value
   DEFAULT_SPATIAL_REF_SYSTEM    = 'OSGB';
@@ -567,6 +577,7 @@ const
   TN_TAXON_LIST_ITEM            = 'TAXON_LIST_ITEM';
   TN_TAXON_OCCURRENCE           = 'TAXON_OCCURRENCE';
   TN_TAXON_OCCURRENCE_DATA      = 'TAXON_OCCURRENCE_DATA';
+  TN_TAXON_OCCURRENCE_SOURCES   = 'TAXON_OCCURRENCE_SOURCES';
   TN_TAXON_OCCURRENCE_RELATION  = 'TAXON_OCCURRENCE_RELATION';
   TN_THESAURUS_FACT             = 'THESAURUS_FACT';
   TN_TENURE                     = 'TENURE';

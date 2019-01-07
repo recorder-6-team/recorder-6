@@ -77,7 +77,9 @@ resourcestring
       + 'The user may have been deleted.';
   ResStr_NoUsers        = 'There are no users in the database.  The application cannot start.';
   ResStr_WrongPassword  = 'The password you entered is not correct.';
-
+  ResStr_IndexNeedsRebuilding = 'The database index tables need rebuilding otherwise the application ' +
+    'will not function correctly. Please select the Rebuild ... Index options from the Tools > Database Tools ' +
+    'menu to rebuild them';
   ResStr_PasswordInstruct =
       'Hint : This is the first time you have logged into Recorder. '
       + 'If you set up your password during installation then use the password you gave. '
@@ -87,13 +89,18 @@ resourcestring
 {-------------------------------------------------------------------------------
 }
 constructor TdlgLogin.Create;
+var lIndex: _Recordset;
 begin
   inherited;
   Caption := Format(Caption, [Application.Title]);
   dblcUsers.Active := True;
-
+  // Check to see if the index tables are poulated and if not warns
+  lIndex := dmDatabase.GetRecordset('usp_Check_Index',[]);
+  if lIndex.eof then
+    MessageDlg(ResStr_IndexNeedsRebuilding, mtWarning, [mbOk], 0);
+  lIndex.Close;
+  // End of check index
   CheckForFirstRunAndBypass;
-
   if not (BypassLogin or CancelledFirstRun) then
   begin
     //Set the selected user to the last logged-in user
@@ -102,7 +109,7 @@ begin
     dblcUsersChange(nil);
     bbOK.Enabled := (dblcUsers.Text <> '');
   end;
-  
+
   {$IFDEF DEBUG}
   Color := clBlue;
   {$ENDIF} // warning colour for compiler directive
@@ -162,6 +169,7 @@ begin
       AppSettings.LoginUserAccessLevel := TUserAccessLevel(lRS.Fields['Security_Level'].Value - 1);
       AppSettings.UserID               := dblcUsers.KeyValue;
       { TODO : This should be handled by upgrader to SQL Server. }
+
       dmGeneralData.CheckMapTables;
       dmDatabase.RunStoredProc('usp_User_Update_FirstLogin', ['@NameKey', dblcUsers.KeyValue]);
       ModalResult := mrOK;
@@ -221,7 +229,7 @@ var
   rs: _Recordset;
   allDefaultPwd, isFirstRun: Boolean;
   defaultUser, otherUser: TKeyString;
-  AdminUsers: integer;
+  userCount, adminUserCount: integer;
 begin
   defaultUser := '';
   isFirstRun  := False;
@@ -232,11 +240,12 @@ begin
     defaultUser := rs.Fields['Name_Key'].Value;
   // Get the users who are not default users and have a security level of 5
   rs := dmDatabase.GetRecordset('usp_Users_Select_Admin', ['@default_User_key', DefaultUser ]);
-  AdminUsers := rs.RecordCount;
+  adminUserCount := rs.RecordCount;
   // Check how many users there are.
   rs := dmDatabase.GetRecordset('usp_Users_Select', []);
+  userCount := rs.RecordCount;
   // No records, or Default User is the only record found. Show First Run screen.
-  if ((defaultUser <> '') and (rs.RecordCount = 1)) or (rs.RecordCount = 0) then
+  if ((defaultUser <> '') and (userCount = 1)) or (userCount = 0) then
   begin
     with TdlgFirstRun.Create(nil) do
       try
@@ -252,7 +261,7 @@ begin
       end;
   end else
   // Only 2 records, with Default User being one of them, check both for default password.
-  if (defaultUser <> '') and (rs.RecordCount = 2) then
+  if (defaultUser <> '') and (userCount = 2) then
   begin
     allDefaultPwd := True;
     while not rs.Eof do
@@ -267,7 +276,7 @@ begin
   end;
   // If only two records and one is the default, but there are no other admin users then
   // We need to show the login screen
-  if (defaultUser <> '') and (rs.RecordCount = 2) and (adminusers = 0) then
+  if (defaultUser <> '') and (userCount = 2) and (adminUserCount = 0) then
     FBypassLogin := false;
 
   if FBypassLogin then
