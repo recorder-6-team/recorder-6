@@ -118,7 +118,6 @@ GO
 GRANT EXECUTE ON  [dbo].[usp_Survey_TempSurvey] TO PUBLIC
 
 GO
-GO
 /****** Object:  StoredProcedure [dbo].[usp_Survey_Insert]    Script Date: 12/23/2018 17:50:10 ******/
 SET ANSI_NULLS ON
 GO
