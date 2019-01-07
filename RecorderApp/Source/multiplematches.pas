@@ -1,4 +1,4 @@
-unit multiplematches;
+unit MultipleMatches;
 
 interface
 

@@ -174,7 +174,7 @@ uses
   ColumnTypes, MissingData, Import, GeneralFunctions, DatabaseAccessADO, IWConstants,
   IWSearchManager, AddinSearchManager, IWValidation, ProjectSpecificAccess,
   ApplicationSettings, BaseDictionaryUnit, GeneralData, FastColumnTypes,
-  TaxonDictBrowser, BaseTaxonDictUnit,multiplematches;
+  TaxonDictBrowser, BaseTaxonDictUnit, MultipleMatches;
 
 resourcestring
   ResStr_ImportedData         = 'Imported Data';
