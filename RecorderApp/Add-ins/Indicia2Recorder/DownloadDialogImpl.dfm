@@ -215,6 +215,7 @@ object DownloadDialog: TDownloadDialog
   end
   object IdHTTP1: TIdHTTP
     AllowCookies = True
+    HandleRedirects = True
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
     Request.ContentLength = -1
