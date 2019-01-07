@@ -1208,7 +1208,7 @@ begin
           WriteString(OPT_EXTERNAL_FILE_PATH, FExternalFilePath);
         if FErrorPath <> '' then
           WriteString(OPT_ERROR_PATH, FErrorPath);
-        if FBatchUpdatePath <> '' then
+        if FDictionaryUpgradePath <> '' then
           WriteString(OPT_DICT_UPGRADE_PATH, FDictionaryUpgradePath);
 
         // Spatial Ref System
@@ -2239,7 +2239,8 @@ procedure TApplicationSettings.SetAutoCompleteSearch(const Value: boolean);
 begin
   FAutoCompleteSearch := Value;
 end;
- //==============================================================================
+
+//==============================================================================
 { Accessor method }
 procedure TApplicationSettings.SetUsePreferredTaxa(const Value: boolean);
 begin

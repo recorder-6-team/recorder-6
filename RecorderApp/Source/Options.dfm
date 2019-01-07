@@ -1253,7 +1253,7 @@ object dlgOptions: TdlgOptions
         Top = 358
         Width = 41
         Height = 21
-        MaxLength = 1
+        MaxLength = 2
         TabOrder = 12
         Text = '50'
         OnKeyPress = edBlockSizeKeyPress
