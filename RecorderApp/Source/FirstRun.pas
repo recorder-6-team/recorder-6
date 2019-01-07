@@ -220,7 +220,7 @@ var
   template: TStringList;
   dateFrom: TVagueDate;
   errors: String;
-  description, surveyMediaKey, surveyTypeKey: String;
+  description, surveyMediaKey, surveyTypeKey,surveyLicenceKey: String;
   allowedFrom, geoCoverage, runByKey: String;
 
 begin
@@ -230,6 +230,7 @@ begin
   description    := '';
   surveyMediaKey := NONE_RECORD_KEY;
   surveyTypeKey  := NONE_RECORD_KEY;
+  surveyLicenceKey :=  NONE_RECORD_KEY;
   allowedFrom    := '01/01/2000';
   geoCoverage    := 'United Kingdom';
   runByKey       := '<current user>';
@@ -277,7 +278,7 @@ begin
 
   // Check the SurveyMediaKey is valid.
   if dmDatabase.GetRecordset('usp_SurveyMedia_Select', ['@Key', surveyMediaKey]).EOF then
-    errors := errors + #10 + ResStr_InvalidSurveyMediaKey;  
+    errors := errors + #10 + ResStr_InvalidSurveyMediaKey;
 
   // Check the SurveyTypeKey is valid.
   if dmDatabase.GetRecordset('usp_SurveyType_Select', ['@Key', surveyTypeKey]).EOF then
@@ -293,6 +294,7 @@ begin
          '@RunByKey',           runByKey,
          '@SurveyMediaKey',     surveyMediaKey,
          '@SurveyTypeKey',      surveyTypeKey,
+         '@LicenceKey',         surveyLicenceKey,
          '@FromVagueDateStart', dateFrom.StartDate,
          '@FromVagueDateEnd',   dateFrom.EndDate,
          '@FromVagueDateType',  dateFrom.DateTypeString,

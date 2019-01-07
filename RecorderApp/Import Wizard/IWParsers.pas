@@ -1359,7 +1359,9 @@ begin
     end
     else begin
       // Not a system date, so test using vague dates
-      if IsVagueDate(FWorking) then begin
+      if (ansipos(lSystemDateSeparator +  lSystemDateSeparator, FWorking) = 0 )
+      and (FWorking <>  lSystemDateSeparator)
+      and (IsVagueDate(FWorking)) then begin
         lVagueDate := StringToVagueDate(FWorking);
         if IsValidUnknownDate(FWorking, lVagueDate) then
         begin

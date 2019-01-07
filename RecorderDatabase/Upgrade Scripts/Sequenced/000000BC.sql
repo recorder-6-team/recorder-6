@@ -51,7 +51,7 @@ CREATE TABLE [dbo].[Taxon_Private_Data](
 	[Taxon_Private_Data_Key] [char](16) NOT NULL,
 	[Taxon_Occurrence_Key] [char](16) NOT NULL,
 	[Taxon_Private_Type_Key] [char](16) NOT NULL,
-	[Item_Name] [varchar](30) NOT NULL,
+	[Item_Name] [varchar](30)  NULL,
 	[Detail] [varchar](100) NULL,
 	[Item_Date] [smalldatetime] NULL,
         [Item_Value] [varchar](16)  NULL,
@@ -123,3 +123,41 @@ RELATIONSHIP_NAME = 'TAXONOCCURRENCETAXONPRIVATEDATA',
 DETAIL_TABLE = 'TAXON_PRIVATE_DATA'
 WHERE Relationship_Key = 'LCA00023000000R8'
 
+GO
+/****** Object:  StoredProcedure [dbo].[usp_IW_Taxon_Private_Item_Name]    Script Date: 12/29/2018 15:12:58 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*===========================================================================*\
+  Description:  Make the field in Taxon_Private_Data 'None' if null
+  Parameters:   None
+
+  Created:      Dec 2018 
+
+  Last revision information:
+  $Author: MikeWeideli $
+
+\*===========================================================================*/
+CREATE PROCEDURE [dbo].[usp_IW_Taxon_Private_Item_Name]
+AS
+    UPDATE     #Taxon_Private_Data 
+    SET         Item_Name = 'None' 
+                WHERE ISNULL(Item_Name,'') = ''   
+                
+GO
+
+GRANT EXECUTE ON [dbo].[usp_IW_Taxon_Private_Item_Name] TO PUBLIC
+
+GO
+
+INSERT INTO IW_Post_Processing_Procedure (IW_Post_Processing_Procedure_Key,Sequence,Required_Table_Name,
+Procedure_Name,Entered_By,Entry_Date,System_Supplied_Data) VALUES ('LCA00023000000RA',10,
+'Taxon_Private_Data','usp_IW_Taxon_Private_Item_Name','TESTDATA00000001',GETDATE(),1)
+
+GO
+
+INSERT INTO IW_Column_Type_Relationship (IW_Column_Type_Key,Related_IW_Column_Type_Key, Relationship_Type,
+Entered_By,Entry_Date,System_Supplied_Data) VALUES(
+'LCA00023000000R9','LCA00023000000R8',2,'TESTDATA00000001',getdate(),1)

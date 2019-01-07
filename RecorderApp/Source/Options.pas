@@ -128,31 +128,20 @@ type
     cbShowMenuIcons: TCheckBox;
     cbGraduatedMenus: TCheckBox;
     cmbTaxonRestriction: TComboBox;
-    grbOther: TGroupBox;
-    cbAutoEmail: TCheckBox;
-    lblCenturyCutOff: TLabel;
-    eDateCutYear: TEdit;
-    lblCenturyCutOffInfo: TLabel;
     cbFullTranslation: TCheckBox;
-    chkRememberFilters: TCheckBox;
     grbConfidentialData: TGroupBox;
     cbExportConfidentialOcc: TCheckBox;
     lblMinimumAccess: TLabel;
     cmbConfAccessLevel: TComboBox;
     chkPartialTaxonSearch: TCheckBox;
-    lblDelimiter: TLabel;
-    eRapidEntryDelimiter: TEdit;
     lblBatches: TLabel;
     eBatchUpdates: TEdit;
     btnBatchUpdatesBrowse: TButton;
-    chkOrganiseSurveysByTag: TCheckBox;
     bvlSpatialRefs: TBevel;
     bvlToolbars: TBevel;
     bvlAppearance: TBevel;
     bvlFiles: TBevel;
     cbGridRefsAsSquares: TCheckBox;
-    chkUseOldImportWizard: TCheckBox;
-    chkIgnoreRememberedMatches: TCheckBox;
     chkAutoCompleteSearch: TCheckBox;
     gbLocationNodes: TGroupBox;
     chkIncludeLocationSpatialRef: TCheckBox;
@@ -191,17 +180,28 @@ type
     edPrefnames: TEdit;
     edSortMethod: TEdit;
     edTaxDesList: TEdit;
-    edTempMedia: TEdit;
+    edTempLicence: TEdit;
     edTempNames: TEdit;
     edGatewayURL: TEdit;
     edHelpUrl: TEdit;
     lblWorksattion: TLabel;
     lblSettingWarning: TLabel;
     tsSundry: TTabSheet;
-    gbPlaceSpecies: TGroupBox;
+    grbOther: TGroupBox;
+    lblCenturyCutOff: TLabel;
+    lblCenturyCutOffInfo: TLabel;
+    lblDelimiter: TLabel;
+    cbAutoEmail: TCheckBox;
+    eDateCutYear: TEdit;
+    chkRememberFilters: TCheckBox;
+    eRapidEntryDelimiter: TEdit;
+    chkOrganiseSurveysByTag: TCheckBox;
+    chkUseOldImportWizard: TCheckBox;
+    chkIgnoreRememberedMatches: TCheckBox;
     cbPlaceCardDocs: TCheckBox;
-    btnFixObjectSheet: TButton;
-    lblFixOS: TLabel;
+    lblSetting12: TLabel;
+    edBlockSize: TEdit;
+    chkUsePreferredTaxa: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure DrawListItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
@@ -254,6 +254,7 @@ type
     procedure btnMasterClick(Sender: TObject);
     procedure edCompetencyKeyPress(Sender: TObject; var Key: Char);
     procedure FormActivate(Sender: TObject);
+    procedure edBlockSizeKeyPress(Sender: TObject; var Key: Char);
 
   private
     hlpOptions: TOnlineHelp;
@@ -407,6 +408,7 @@ begin
     chkRememberFilters.Checked         := RememberFilters;
     chkPartialTaxonSearch.Checked      := PartialTaxonSearch;
     chkAutoCompleteSearch.Checked      := AutoCompleteSearch;
+    chkUsePreferredTaxa.Checked        := UsePreferredTaxa;
     chkIncludeLocationSpatialRef.Checked := IncludeLocationSpatialRef;
     chkIncludeLocationFileCode.Checked := IncludeLocationFileCode;
     eRapidEntryDelimiter.Text          := RapidEntryDelimiter;
@@ -936,7 +938,7 @@ begin
     chkRememberFilters.Checked        := DEFAULT_REMEMBER_FILTERS;
     chkPartialTaxonSearch.Checked     := DEFAULT_PARTIAL_TAXON_SEARCH;
     chkPartialTaxonSearch.Checked     := DEFAULT_AUTO_COMPLETE_SEARCH;
-
+    chkUsePreferredTaxa.Checked       := DEFAULT_USE_PREFERRED_TAXA;
     if AppSettings.UserAccessLevel = ualAdmin then
     begin
       cmbConfAccessLevel.ItemIndex    := ConfidentialLevelToIndex(DEFAULT_CONFIDENTIAL_ACCESS_LEVEL);
@@ -1154,6 +1156,7 @@ begin
       RememberFilters         := chkRememberFilters.Checked;
       PartialTaxonSearch      := chkPartialTaxonSearch.Checked;
       AutoCompleteSearch      := chkAutoCompleteSearch.Checked;
+      UsePreferredTaxa        := chkUsePreferredTaxa.Checked;
       IncludeLocationSpatialRef := chkIncludeLocationSpatialRef.Checked;
       IncludeLocationFileCode := chkIncludeLocationFileCode.Checked;
       RapidEntryDelimiter     := eRapidEntryDelimiter.Text;
@@ -1534,9 +1537,10 @@ begin
       else if rs.Fields['Name'].Value = 'PrefNames' then  edPrefNames.text := rs.Fields[AField].Value
       else if rs.Fields['Name'].Value = 'SortMethod' then  edSortMethod.text := rs.Fields[AField].Value
       else if rs.Fields['Name'].Value = 'TaxDesList' then  edTaxDesList.text := rs.Fields[AField].Value
-      else if rs.Fields['Name'].Value = 'TempMedia ' then  edTempMedia.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'TempLic' then  edTempLicence.text := rs.Fields[AField].Value
       else if rs.Fields['Name'].Value = 'TempName' then  edTempNames.text := rs.Fields[AField].Value
-      else if rs.Fields['Name'].Value = 'Competency' then  edCompetency.text := rs.Fields[AField].Value;
+      else if rs.Fields['Name'].Value = 'Competency' then  edCompetency.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'BlockSize' then  edBlockSize.text := rs.Fields[AField].Value;
    rs.MoveNext
   end;
   rs.close;
@@ -1581,13 +1585,21 @@ begin
     dmDatabase.ExecuteSQL(Format(sql,[edPrefNames.text,'PrefNames']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edSortMethod.text,'SortMethod']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edTaxDesList.text,'TaxDesList']),false);
-    dmDatabase.ExecuteSQL(Format(sql,[edTempMedia.text,'TempMedia']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edTempLicence.text,'TempLic']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edTempNames.text,'TempName']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edCompetency.text,'Competency']),false);
+    dmDatabase.ExecuteSQL(Format(sql,[edBlockSize.text,'BlockSize']),false);
+    dmDatabase.ExecuteSQL('usp_Setting_Temp_Survey');
+
     PopulateSettingFields('Data');
   end else
     MessageDlg(Restr_Admin_Permission,mtInformation, [mbOk], 0);
 
+end;
+
+procedure TdlgOptions.edBlockSizeKeyPress(Sender: TObject; var Key: Char);
+begin
+ if not (Key in [#8, '0'..'9']) then Key := #0;
 end;
 
 end.

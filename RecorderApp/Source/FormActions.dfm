@@ -3091,6 +3091,7 @@ inherited dmFormActions: TdmFormActions
       '     ON USR.Survey_Key = S.Survey_Key'
       '    AND USR.Name_Key = :UserID'
       'WHERE USR.Name_Key IS NULL'
+      'AND TEMPORARY_SURVEY = 0 '
       'ORDER BY S.ITEM_NAME')
     ParseSQL = True
     Left = 32

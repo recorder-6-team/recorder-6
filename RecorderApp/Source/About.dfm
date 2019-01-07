@@ -52,7 +52,7 @@ object dlgAbout: TdlgAbout
         Shape = bsTopLine
       end
       object Label1: TLabel
-        Left = 132
+        Left = 172
         Top = 8
         Width = 51
         Height = 16
@@ -65,7 +65,7 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object Version: TLabel
-        Left = 202
+        Left = 250
         Top = 8
         Width = 47
         Height = 16
@@ -78,7 +78,7 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object Label4: TLabel
-        Left = 132
+        Left = 172
         Top = 28
         Width = 16
         Height = 16
@@ -91,7 +91,7 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object lDate: TLabel
-        Left = 202
+        Left = 250
         Top = 28
         Width = 33
         Height = 16
@@ -157,10 +157,10 @@ object dlgAbout: TdlgAbout
       end
       object Label6: TLabel
         Left = 8
-        Top = 87
-        Width = 49
+        Top = 119
+        Width = 136
         Height = 14
-        Caption = 'Based on '
+        Caption = 'Based on Recorder 6 v6.28 '
         Font.Charset = ANSI_CHARSET
         Font.Color = clBlue
         Font.Height = -11
@@ -170,10 +170,10 @@ object dlgAbout: TdlgAbout
       end
       object Label5: TLabel
         Left = 8
-        Top = 63
-        Width = 66
+        Top = 79
+        Width = 134
         Height = 14
-        Caption = #169' biodiverseit'
+        Caption = 'Developed by Biodiverse IT '
         Font.Charset = ANSI_CHARSET
         Font.Color = clBlue
         Font.Height = -11
@@ -240,8 +240,8 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object lblDictionaryVersionCaption: TLabel
-        Left = 132
-        Top = 48
+        Left = 172
+        Top = 56
         Width = 64
         Height = 16
         Caption = 'Dictionary'
@@ -253,8 +253,8 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object lblDictionaryVersion: TLabel
-        Left = 202
-        Top = 49
+        Left = 250
+        Top = 57
         Width = 113
         Height = 16
         Caption = 'WWWWWWWW'
@@ -266,8 +266,8 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object lblDictionaryVersionCaption2: TLabel
-        Left = 132
-        Top = 64
+        Left = 172
+        Top = 72
         Width = 51
         Height = 16
         Caption = 'Version:'
@@ -279,8 +279,8 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object Label9: TLabel
-        Left = 132
-        Top = 88
+        Left = 172
+        Top = 96
         Width = 59
         Height = 16
         Caption = 'Database'
@@ -292,8 +292,8 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object Label10: TLabel
-        Left = 132
-        Top = 104
+        Left = 172
+        Top = 112
         Width = 51
         Height = 16
         Caption = 'Version:'
@@ -305,8 +305,8 @@ object dlgAbout: TdlgAbout
         ParentFont = False
       end
       object lblDatabaseVersion: TLabel
-        Left = 202
-        Top = 89
+        Left = 250
+        Top = 97
         Width = 113
         Height = 16
         Caption = 'WWWWWWWW'
@@ -332,10 +332,10 @@ object dlgAbout: TdlgAbout
       end
       object StaticText1: TStaticText
         Left = 8
-        Top = 102
-        Width = 61
+        Top = 94
+        Width = 133
         Height = 18
-        Caption = 'Recorder 6 '
+        Caption = 'and Littlefield Consultancy '
         Font.Charset = ANSI_CHARSET
         Font.Color = clBlue
         Font.Height = -11
@@ -343,20 +343,6 @@ object dlgAbout: TdlgAbout
         Font.Style = []
         ParentFont = False
         TabOrder = 0
-      end
-      object StaticText2: TStaticText
-        Left = 8
-        Top = 118
-        Width = 31
-        Height = 18
-        Caption = 'v6.28'
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clBlue
-        Font.Height = -11
-        Font.Name = 'Arial'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
       end
     end
     object tsMoreInfo: TTabSheet

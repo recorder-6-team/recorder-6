@@ -151,6 +151,7 @@ type
     ePrivateItemDate: TEdit;
     ePrivateItemValue: TEdit;
     Label23: TLabel;
+    lblMetadata: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure bbSpecimenAddClick(Sender: TObject);
     procedure bbSpecimenAcceptClick(Sender: TObject);
@@ -208,6 +209,7 @@ type
     procedure bbPrivateDiscardClick(Sender: TObject);
     procedure sgPrivateOccDrawCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);
+    procedure dbcmbPrivateTypeChange(Sender: TObject);
 
   private
     FdmTaxonOcc       :TdmTaxonOccurrences;
@@ -284,6 +286,7 @@ type
     function GetReviewStatusCode :integer;
     function GetReviewStatus (const statuscode : integer) : String;
     function GetReviewStatusSummary(const statuscode : integer) : String;
+    function GetTypeDescription : string;
   protected
     procedure SetupDestinationControls; override;
   public
@@ -1567,6 +1570,7 @@ begin
   ePrivateItemDate.Text := '';
   ePrivateItemValue.Text := '';
   rePrivateComment.Clear;
+  lblMetaData.caption := '';
 end;  // BlankPrivateDetails
 
 //------------------------------------------------------------------------------
@@ -1986,7 +1990,7 @@ begin
   with dmDatabase.ExecuteSQL('SELECT  [dbo].[ufn_ReturnReviewStatus](''' + FTaxonOccKey  + ''') AS ReviewStatus',True) do
   begin
     if not Eof then
-        Result := Fields['ReviewStatus'].Value
+        Result :=  Fields['ReviewStatus'].Value
     else
       Result :=  0;
     Close;
@@ -2166,6 +2170,7 @@ begin
                                 (Added or (Custodian = AppSettings.SiteID));
       bbPrivateDel.Enabled  := AppSettings.AllowEdit(EditMode) and
                                 (Added or (Custodian = AppSettings.SiteID));
+      lblMetaData.caption := GetTypeDescription;
     end;
 
 end;
@@ -2267,5 +2272,24 @@ end;
 
 
 
-end.
+procedure TfrmTaxonOccurrences.dbcmbPrivateTypeChange(Sender: TObject);
+begin
+  inherited;
+  lblMetaData.caption := GetTypeDescription;
+end;
 
+
+function TfrmTaxonOccurrences.GetTypeDescription : string;
+begin
+  with dmDatabase.ExecuteSQL('SELECT dbo.ufn_RtfToPlaintext(Description) AS Description ' +
+                             ' FROM Taxon_Private_Type WHERE Taxon_Private_Type_key = ''' + dbcmbPrivateType.keyvalue + '''', True) do
+  begin
+    if not Eof then
+     Result := VarToStr(Fields['Description'].Value)
+    else
+      Result :=  '';
+    Close;
+  end;
+end;
+
+end.

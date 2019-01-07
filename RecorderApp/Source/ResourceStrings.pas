@@ -29,6 +29,8 @@ resourcestring
   ResStr_Event = 'Event';
   ResStr_Events = 'Events';
   ResStr_EventCannotMove = 'Survey Event cannot be moved.  ';
+  ResStr_TemporaryCannotMoveTo = 'Samples and Event cannot be moved to a temporary survey';
+  ResStr_TemporaryCannotMoveFrom = 'Samples and Events cannot be moved from a temporary survey';
   ResStr_EventDateNotInSurvey = 'The Date for the survey event lies outside ' +
                                  'the recording dates of the survey.';
   ResStr_FileDoesNotExist = 'The file ''%s'' does not exist';

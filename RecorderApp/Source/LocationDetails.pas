@@ -35,6 +35,8 @@ uses
 
 resourcestring
   ResStr_SiteNotVisited = 'Site not visited';
+  ResStr_SiteStatus = 'Site is active';
+  ResStr_SiteStatusNot = 'Site is not active';
   ResStr_ConfirmObservationSpatialRefUpdate =
       'Do you want to update all existing observations attached to this location ' +
       'and spatial reference to the new spatial reference?';
@@ -245,6 +247,7 @@ type
     btnMapFileBrowse: TButton;
     cmbGISObjectID: TComboBox;
     lblLinkedField: TLabel;
+    lblStatus: TLabel;
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ComboBoxExit(Sender: TObject);
@@ -428,6 +431,7 @@ type
     function CheckExistingObservations: boolean;
     procedure MapForSpatialRefClick(Sender: TObject);
     procedure WMUpdateSurveyDate(var AMessage: TMessage); message WM_UPDATE_SURVEY_DATE;
+    procedure GetLocationStatus;
     procedure InitialiseGridSquareInfoList;
     procedure GridSquareItemChange(Sender: TObject; Item: TDataItem; Status: TDataItemStatus);
     procedure SetPanelSize;
@@ -688,6 +692,7 @@ begin
       qryLocNames.Parameters.ParamByName('KeyParameter').Value:=ALocDetKey;
       FLocNameList.Refresh;
       RefreshLocationNames;
+      GetLocationStatus;
       // Designation
       dbcmbSiteStatus.Active:=True;
       qryDesignation.Parameters.ParamByName('KeyParameter').Value:=ALocDetKey;
@@ -758,7 +763,6 @@ var
   rs: _Recordset;
 begin
   lblLastSurveyDate.Caption := ResStr_SiteNotVisited;
-
   rs := dmDatabase.GetRecordset('usp_LastSurveyEvent_ForLocation_Select',['@Key', FLocationKey]);
   if not rs.Eof then begin
     vagueDate := dmGeneralData.GetVagueDateFromRecordset(rs);
@@ -767,7 +771,25 @@ begin
   end;
   rs.Close;
 end;
+{-------------------------------------------------------------------------------
+  Populate the Status (is location active)
+}
+procedure TfrmLocationDetails.GetLocationStatus();
+var
+  rs: _Recordset;
+  lSql: String;
+begin
+  lblStatus.Caption :=  ResStr_SiteStatus;
+  lSql := 'SELECT [dbo].[ufn_Location_Expired] (''' + FLocationKey + ''')';
+  rs := dmDatabase.ExecuteSql(lSql,True);
+  if not rs.eof then
+  begin
 
+    if rs.Fields[0].Value = '1' then
+      lblStatus.Caption :=  ResStr_SiteStatusNot;
+    rs.Close;
+  end;
+end;
 //==============================================================================
 procedure TfrmLocationDetails.AddRecord(const ALocDetKey:TKeyString);
 begin
@@ -1548,6 +1570,10 @@ begin
     // And validate
     ValidateValue(IsDate(eDesignationTo.Text) and (StrToDate(eDesignationTo.Text)<=Date),
                   InvalidDate(ResStr_EndDate,False,True),eDesignationTo);
+    ValidateValue(IsDate(eDesignationTo.Text) and
+        (StrToDate(eDesignationTo.Text) >= EncodeDate(1753, 1, 1)) and
+        (StrToDate(eDesignationTo.Text) <= Date),
+        InvalidDate(ResStr_FromDate,False,False),eDesignationFrom);
     if (eDesignationFrom.Text <> '') then
       ValidateValue((StrToDate(eDesignationFrom.Text) <= StrToDate(eDesignationTo.Text)),
                      ResStr_EndBeforeStartDate,
@@ -3773,7 +3799,7 @@ end;
   Refreshes the contents of the ObjectID combo box.
 }
 procedure TfrmLocationDetails.RefreshObjectIDCombo(mapSheet: TMapSheet);
-var       
+var
   mapServerLink: TMapServerLink;
   sheetID, itemCount, i, objectID, attributeIndex: integer;
   idValue: array [0..50] of char;
@@ -3835,7 +3861,7 @@ begin
                      mapSheet.FileName);
 
           // The most recent sheet will be the sheet we added.
-          sheetID := mapServerLink.SheetTotal - 1; 
+          sheetID := mapServerLink.SheetTotal - 1;
           try
             attributeIndex := GetAttributeIndex;
 
@@ -3875,7 +3901,7 @@ begin
   if (cmbMapFile.ItemIndex <> -1) and Assigned(cmbMapFile.Items.Objects[cmbMapFile.ItemIndex]) then
   begin
     mapSheet := TMapSheet(cmbMapFile.Items.Objects[cmbMapFile.ItemIndex]);
-    
+
     if not mapSheet.IsInternal then begin
       lblLinkedField.Visible := True;
       lblLinkedField.Caption := Format(ResStr_LinkedTo, [mapSheet.IDField]);

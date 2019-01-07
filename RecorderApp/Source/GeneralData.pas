@@ -155,6 +155,8 @@ type
     qryIndividual: TJNCCQuery;
     spNextKey: TADOStoredProc;
     spRepairLastKey: TADOStoredProc;
+    qryTempLoc: TJNCCQuery;
+    qryTempRecorders: TJNCCQuery;
   private
     FIDGen       : TIDGenerator;
     FTableList   : TStringList;
@@ -256,6 +258,8 @@ type
     function GetBestTaxonName(const ATaxonListItemKey: TKeyString): string;
     function GetCommonNameForTaxonOccurrence(const iTaxonOccurrenceKey: TKeyString): string;
     function IncludeSubTaxa: boolean;
+    function CheckTempSurvey(const ASurveyKey:string ) : boolean;
+    function CheckLicence(const ALicenceKey:string ) : boolean;
     procedure GetTaxonSearchOptions( icmbOptions : TComboBox );
     function GetRucksackTaxaAsCommaList(const iRucksackName: string): string;
     function GetAuthorFieldSQL : string;
@@ -1796,6 +1800,57 @@ begin
 end;  // CheckBiotope
 
 {-------------------------------------------------------------------------------
+  checks to ensure that if there are any temp recorders then temp must be set to true
+}
+function TdmGeneralData.CheckTempSurvey(const ASurveyKey:string) : boolean;
+var
+lCountTempRecorders : integer;
+begin
+  lCountTempRecorders := 0;
+  with qryTempRecorders do begin
+     Parameters.ParamByName('SurveyKey').Value:= ASurveyKey;
+    Open;
+    if not Eof then
+      lCountTempRecorders := FieldByName('RECORDS').AsInteger;
+    close;
+  end;
+
+  If lCountTempRecorders = 0 then
+    Result := true
+  else
+    Result := false
+
+
+end;  // CheckTempSurvey
+
+{-------------------------------------------------------------------------------
+  If it is a temp survey then licence must be lKeyRequired
+}
+function TdmGeneralData.CheckLicence(const ALicenceKey:string) : boolean;
+var
+lKeyRequired : string;
+begin
+  with qryTempLoc do begin
+    Open;
+    try
+      if Eof then
+        lKeyRequired := 'NBNSYS0000000007'
+      else begin
+        lKeyRequired := FieldByName('DATA').AsString;
+      end;
+    finally
+      Close;
+    end;
+  end;
+  if lKeyRequired = ALicenceKey then
+     Result := true
+  else
+     Result := false;
+
+end;  // CheckLicence
+
+
+{-------------------------------------------------------------------------------
   Find a unique match for the individual, display the Find dialog if required. Use
      when the individual is in a grid, otherwise check other overloads.
 }
@@ -2334,8 +2389,10 @@ begin
     Items.Clear;
     Items.Add(ResStr_Preferred_Taxa);
     Items.Add(ResStr_Unrestricted);
-    Items.Add(ResStr_Recommended_Full);
-    Items.Add(ResStr_PreferredLists);
+    If not AppSettings.UsePreferredTaxa then begin
+      Items.Add(ResStr_Recommended_Full);
+      Items.Add(ResStr_PreferredLists);
+    end;
     Items.Add(ResStr_CurrentChecklist);
     Items.Add(ResStr_ContentsOfRucksack);
     // Add in the Current rucksack

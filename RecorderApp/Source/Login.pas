@@ -77,7 +77,7 @@ resourcestring
       + 'The user may have been deleted.';
   ResStr_NoUsers        = 'There are no users in the database.  The application cannot start.';
   ResStr_WrongPassword  = 'The password you entered is not correct.';
-
+  ResStr_IndexNeedsRebuilding = 'The four index tables need rebuilding otherwise the application will not function correctly.';
   ResStr_PasswordInstruct =
       'Hint : This is the first time you have logged into Recorder. '
       + 'If you set up your password during installation then use the password you gave. '
@@ -87,13 +87,18 @@ resourcestring
 {-------------------------------------------------------------------------------
 }
 constructor TdlgLogin.Create;
+var lIndex: _Recordset;
 begin
   inherited;
   Caption := Format(Caption, [Application.Title]);
   dblcUsers.Active := True;
-
+  // Check to see if the index tables are poulated and if not warns
+  lIndex := dmDatabase.GetRecordset('usp_Check_Index',[]);
+  if lIndex.eof then
+    MessageDlg(ResStr_IndexNeedsRebuilding, mtWarning, [mbOk], 0);
+  lIndex.Close;
+  // End of check index
   CheckForFirstRunAndBypass;
-
   if not (BypassLogin or CancelledFirstRun) then
   begin
     //Set the selected user to the last logged-in user
@@ -102,7 +107,7 @@ begin
     dblcUsersChange(nil);
     bbOK.Enabled := (dblcUsers.Text <> '');
   end;
-  
+
   {$IFDEF DEBUG}
   Color := clBlue;
   {$ENDIF} // warning colour for compiler directive
@@ -162,6 +167,7 @@ begin
       AppSettings.LoginUserAccessLevel := TUserAccessLevel(lRS.Fields['Security_Level'].Value - 1);
       AppSettings.UserID               := dblcUsers.KeyValue;
       { TODO : This should be handled by upgrader to SQL Server. }
+
       dmGeneralData.CheckMapTables;
       dmDatabase.RunStoredProc('usp_User_Update_FirstLogin', ['@NameKey', dblcUsers.KeyValue]);
       ModalResult := mrOK;

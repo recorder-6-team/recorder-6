@@ -196,10 +196,12 @@ inherited dmTaxonOccurrences: TdmTaxonOccurrences
     CommandTimeout = 0
     Parameters = <>
     SQL.Strings = (
-      'SELECT Taxon_Private_Type_Key, Short_Name'
+      
+        'SELECT Taxon_Private_Type_Key, Short_Name,dbo.ufn_RtfToPlaintext' +
+        '(Description) AS Description '
       'FROM Taxon_Private_Type')
     ParseSQL = True
     Left = 280
-    Top = 164
+    Top = 168
   end
 end

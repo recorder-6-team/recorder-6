@@ -3033,6 +3033,8 @@ begin
     ExecSQL;
     dmDatabase.RunStoredProc('usp_IndexTaxonName_ApplyNameServer_SingleRecord',
         ['@TLIKey', FTaxonListItemKey]);
+
+
   end;
 end;  // InsertNewIndexTaxonName
 
@@ -3069,7 +3071,7 @@ begin
                        [SafeQuotes(dbeName.Text), FTaxonListItemKey]);
     ExecuteSQL;
   end;
-  // Ensure that Recommended_Taxon_List_Item_Key is updated for new names
+  // Ensure that Recommended_Taxon_List_Item_Key and other fields are updated for new names
   dmDatabase.RunStoredProc('usp_IndexTaxonName_ApplyNameServer_SingleRecord',
         ['@TLIKey', FTaxonListItemKey]);
 end;  // UpdateIndexTaxonName

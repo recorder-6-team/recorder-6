@@ -115,7 +115,7 @@ object dlgMapOptions: TdlgMapOptions
         Height = 21
         AutoCloseUp = True
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         Sorted = True
         TabOrder = 1
         Visible = False
@@ -398,6 +398,15 @@ object dlgMapOptions: TdlgMapOptions
         Height = 25
         Caption = 'Retain'
         TabOrder = 3
+      end
+      object btnFixMaster: TButton
+        Left = 408
+        Top = 168
+        Width = 33
+        Height = 25
+        Caption = 'Fix'
+        TabOrder = 4
+        OnClick = btnFixMasterClick
       end
     end
   end

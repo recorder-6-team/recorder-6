@@ -245,6 +245,7 @@ type
     FReferencesSearchKeywords: boolean;
     FPartialTaxonSearch: boolean;
     FAutoCompleteSearch: boolean;
+    FUsePreferredTaxa :boolean;
     FIncludeLocationSpatialRef: boolean;
     FIncludeLocationFileCode: boolean;
     FRapidEntryDelimiter: String;
@@ -258,6 +259,7 @@ type
     FUserName: string;
     FGridRefsAsSquares: Boolean;
     FExtraLocationSearchColumns: TLocationSearchColumns;
+    FDictionaryUpgradepath: string;
 
     FIWSurveyKey    : TKeyString;
     FIWIsTempSurvey : Boolean;
@@ -341,6 +343,7 @@ type
     procedure SetTaxonListKey(const Value: TKeyString);
     procedure SetPartialTaxonSearch(const Value: boolean);
     procedure SetAutoCompleteSearch(const Value: boolean);
+    procedure SetUsePreferredTaxa(const Value: boolean);
     procedure SetIncludeLocationFileCode(const Value: boolean);
     procedure SetIncludeLocationSpatialRef(const Value: boolean);
     procedure SetRapidEntryDelimiter(const Value: String);
@@ -505,6 +508,7 @@ type
     property ReferencesSearchKeywords: boolean read FReferencesSearchKeywords write SetReferencesSearchKeywords;
     property PartialTaxonSearch: boolean read FPartialTaxonSearch write SetPartialTaxonSearch;
     property AutoCompleteSearch: boolean read FAutoCompleteSearch write SetAutoCompleteSearch;
+    property UsePreferredTaxa: boolean read FUsePreferredTaxa write SetUsePreferredTaxa;
     property IncludeLocationSpatialRef: boolean read FIncludeLocationSpatialRef write SetIncludeLocationSpatialRef;
     property IncludeLocationFileCode: boolean read FIncludeLocationFileCode write SetIncludeLocationFileCode;
     property RapidEntryDelimiter: String read FRapidEntryDelimiter write SetRapidEntryDelimiter;
@@ -526,6 +530,7 @@ type
     property IWSurveyKey   : TKeyString read FIWSurveyKey write FIWSurveyKey;
     property IWTempNameKey : String read FIWTempNameKey write FIWTempNameKey;
     property IWIsTempSurvey : Boolean read FIWIsTempSurvey write FIWIsTempSurvey;
+    property DictionaryUpgradePath : String read FDictionaryUpgradePath write FDictionaryUpgradePath;
   end;
 
   //----------------------------------------------------------------------------
@@ -656,7 +661,8 @@ const
   OPT_CURRENT_CLASSIFICATION     = 'Current Classification';
   OPT_DICT_IMAGES_PATH           = 'Dict Images Path';
   OPT_MAP_DATASET_SYSTEM         = 'Map Dataset System';
-  OPT_LOCAL_DATA_PATH            = 'Local Data Path';
+  OPT_LOCAL_DATA_PATH            = 'Local data Path';
+  OPT_DICT_UPGRADE_PATH          = 'Dictionary Path';
   OPT_FILE_IMPORT_TYPE_INDEX     = 'File Import Type Index';
   OPT_REMEMBER_FILTERS           = 'Remember Filters';
   OPT_REFERENCES_SEARCH_KEYWORDS = 'References Search by Keywords';
@@ -664,6 +670,7 @@ const
   OPT_TAXA_SEARCHED_BY           = 'Taxa Searched By';
   OPT_PARTIAL_TAXON_SEARCH       = 'Partial Taxon Search';
   OPT_AUTO_COMPLETE_SEARCH       = 'Auto-Complete Search in Import Wizard';
+  OPT_USE_PREFERRED_TAXA         = 'Only use Preferred Taxa in Import Wizard';
   OPT_INCLUDE_LOCATION_SPATIAL_REF = 'Include Location Spatial Ref in hierarchy';
   OPT_INCLUDE_LOCATION_FILE_CODE = 'Include Location File Code in hierarchy';
   OPT_RAPID_ENTRY_DELIMITER      = 'Rapid Entry Delimiter';
@@ -682,7 +689,7 @@ const
   OPT_CUSTOM_SPECIES_CARD_PATH   = 'Custom Species Card Path';
   OPT_REPORT_PATH                = 'Report Path';
   OPT_REPORT_TEMPLATE_PATH       = 'Report Template Path';
-  OPT_EXPORT_TEMPLATE_PATH       = 'Export Template Path';  
+  OPT_EXPORT_TEMPLATE_PATH       = 'Export Template Path';
   OPT_RUCKSACK_PATH              = 'Rucksack Path';
   OPT_SNAPSHOT_PATH              = 'Snapshot Path';
   OPT_OBJECT_SHEET_FILE_PATH     = 'Object Sheet File Path';
@@ -899,6 +906,7 @@ begin
       RootKey := HKEY_LOCAL_MACHINE;
       if OpenKeyReadOnly(REG_KEY_RECORDER) then
       begin
+        FDictionaryUpgradePath := ReadString('Dictionary Path');
         FAddinPath     := ReadString('Addin Path');
         FLocalDataPath := ReadString('Local Data Path');
         if (ValueExists('Standalone')) then
@@ -978,6 +986,7 @@ begin
         RememberFilters           := ReadBoolDefault(lReg, OPT_REMEMBER_FILTERS,        False);
         PartialTaxonSearch        := ReadBoolDefault(lReg, OPT_PARTIAL_TAXON_SEARCH,    DEFAULT_PARTIAL_TAXON_SEARCH);
         AutoCompleteSearch        := ReadBoolDefault(lReg, OPT_AUTO_COMPLETE_SEARCH,    DEFAULT_AUTO_COMPLETE_SEARCH);
+        UsePreferredTaxa          := ReadBoolDefault(lReg, OPT_USE_PREFERRED_TAXA,   DEFAULT_USE_PREFERRED_TAXA);
         IncludeLocationSpatialRef := ReadBoolDefault(lReg, OPT_INCLUDE_LOCATION_SPATIAL_REF, DEFAULT_INCLUDE_LOCATION_SPATIAL_REF);
         IncludeLocationFileCode   := ReadBoolDefault(lReg, OPT_INCLUDE_LOCATION_FILE_CODE, DEFAULT_INCLUDE_LOCATION_FILE_CODE);
         OrganiseSurveysByTag      := ReadBoolDefault(lReg, OPT_ORGANISE_SURVEYS_BY_TAG, DEFAULT_ORGANISE_SURVEYS_BY_TAG);
@@ -997,24 +1006,25 @@ begin
          ReadHelpFilePath(lReg);
 
         // note on a standalone install, the installer points dict images to the CD.
-        FDictImagesPath     := FindRegPath(OPT_DICT_IMAGES_PATH,       PATH_DICT_IMAGES,      lReg, fptInstallFolder, [], true);
-        FDTDPath            := FindRegPath(OPT_DTD_PATH,               PATH_DTD,              lReg, fptInstallFolder, ['nbndata.dtd', 'exportstart.xml']);
-        FErrorPath          := FindRegPath(OPT_ERROR_PATH,             PATH_ERRORS,           lReg, fptNetworkDocs, []);
-        madExceptErrorPath  := FErrorPath;
-        FBatchUpdatePath    := FindRegPath(OPT_BATCH_UPDATE_PATH,      PATH_BATCH_UPDATES,    lReg, fptNetworkDocs, []);
-        FExternalFilePath   := FindRegPath(OPT_EXTERNAL_FILE_PATH,     PATH_EXTERNAL_FILES,   lReg, fptNetworkDocs, []);
-        FImportTemplatePath := FindRegPath(OPT_IMPORT_TEMPLATE_PATH,   PATH_IMPORT_TEMPLATES, lReg, fptNetworkDocs, []);
-        FLocalImagesPath    := FindRegPath(OPT_LOCAL_IMAGES_FILE_PATH, PATH_LOCAL_IMAGES,     lReg, fptNetworkDocs, []);
-        FPolygonFilterPath  := FindRegPath(OPT_POLYGON_FILTER_PATH,    PATH_POLYGON_FILTERS,  lReg, fptNetworkDocs, []);
-        FRecordingCardPath  := FindRegPath(OPT_RECORDING_CARD_PATH,    PATH_RECORDING_CARDS,  lReg, fptNetworkDocs, []);
-        FCustomSpeciesCardPath:= FindRegPath(OPT_CUSTOM_SPECIES_CARD_PATH, PATH_CUSTOM_SPECIES_CARDS, lReg, fptNetworkDocs, []);
-        FReportPath         := FindRegPath(OPT_REPORT_PATH,            PATH_REPORTS,          lReg, fptNetworkDocs, []);
-        FReportTemplatePath := FindRegPath(OPT_REPORT_TEMPLATE_PATH,   PATH_REPORT_TEMPLATES, lReg, fptNetworkDocs, []);
-        FExportTemplatePath := FindRegPath(OPT_EXPORT_TEMPLATE_PATH,   PATH_EXPORT_TEMPLATES, lReg, fptNetworkDocs, []);
-        FRucksackPath       := FindRegPath(OPT_RUCKSACK_PATH,          PATH_RUCKSACKS,        lReg, fptNetworkDocs, []);
-        FSnapshotPath       := FindRegPath(OPT_SNAPSHOT_PATH,          PATH_SNAPSHOTS,        lReg, fptNetworkDocs, []);
-        FObjectSheetFilePath:= FindRegPath(OPT_OBJECT_SHEET_FILE_PATH, PATH_OBJECT_SHEETS,    lReg, fptNetworkData, []);
-        FMapFilePath        := FindRegPath(OPT_MAP_FILE_PATH,          PATH_MAP_FILES,        lReg, fptLocalData, []);
+        FDictImagesPath        := FindRegPath(OPT_DICT_IMAGES_PATH,       PATH_DICT_IMAGES,      lReg, fptInstallFolder, [], true);
+        FDTDPath               := FindRegPath(OPT_DTD_PATH,               PATH_DTD,              lReg, fptInstallFolder, ['nbndata.dtd', 'exportstart.xml']);
+        FErrorPath             := FindRegPath(OPT_ERROR_PATH,             PATH_ERRORS,           lReg, fptNetworkDocs, []);
+        madExceptErrorPath     := FErrorPath;
+        FDictionaryUpgradePath := FindRegPath(OPT_DICT_UPGRADE_PATH,      PATH_DICT_UPGRADE,     lReg, fptNetworkDocs, []);
+        FBatchUpdatePath       := FindRegPath(OPT_BATCH_UPDATE_PATH,      PATH_BATCH_UPDATES,    lReg, fptNetworkDocs, []);
+        FExternalFilePath      := FindRegPath(OPT_EXTERNAL_FILE_PATH,     PATH_EXTERNAL_FILES,   lReg, fptNetworkDocs, []);
+        FImportTemplatePath    := FindRegPath(OPT_IMPORT_TEMPLATE_PATH,   PATH_IMPORT_TEMPLATES, lReg, fptNetworkDocs, []);
+        FLocalImagesPath       := FindRegPath(OPT_LOCAL_IMAGES_FILE_PATH, PATH_LOCAL_IMAGES,     lReg, fptNetworkDocs, []);
+        FPolygonFilterPath     := FindRegPath(OPT_POLYGON_FILTER_PATH,    PATH_POLYGON_FILTERS,  lReg, fptNetworkDocs, []);
+        FRecordingCardPath     := FindRegPath(OPT_RECORDING_CARD_PATH,    PATH_RECORDING_CARDS,  lReg, fptNetworkDocs, []);
+        FCustomSpeciesCardPath := FindRegPath(OPT_CUSTOM_SPECIES_CARD_PATH, PATH_CUSTOM_SPECIES_CARDS, lReg, fptNetworkDocs, []);
+        FReportPath            := FindRegPath(OPT_REPORT_PATH,            PATH_REPORTS,          lReg, fptNetworkDocs, []);
+        FReportTemplatePath    := FindRegPath(OPT_REPORT_TEMPLATE_PATH,   PATH_REPORT_TEMPLATES, lReg, fptNetworkDocs, []);
+        FExportTemplatePath    := FindRegPath(OPT_EXPORT_TEMPLATE_PATH,   PATH_EXPORT_TEMPLATES, lReg, fptNetworkDocs, []);
+        FRucksackPath          := FindRegPath(OPT_RUCKSACK_PATH,          PATH_RUCKSACKS,        lReg, fptNetworkDocs, []);
+        FSnapshotPath          := FindRegPath(OPT_SNAPSHOT_PATH,          PATH_SNAPSHOTS,        lReg, fptNetworkDocs, []);
+        FObjectSheetFilePath   := FindRegPath(OPT_OBJECT_SHEET_FILE_PATH, PATH_OBJECT_SHEETS,    lReg, fptNetworkData, []);
+        FMapFilePath           := FindRegPath(OPT_MAP_FILE_PATH,          PATH_MAP_FILES,        lReg, fptLocalData, []);
         // base maps are kept in the install folder for standalone (as they don't change) but
         // are copied to local data for networked installs to improve load performance.
         if FStandalone then
@@ -1056,7 +1066,6 @@ var
 begin
   //Finding the current language id of recorder
   langId := Languages.Ext[Languages.IndexOf(Syslocale.DefaultLCID)];
-
   helpPathTemplate := ExtractFilePath(Application.ExeName) + 'Help\Rec20HLP%s.chm';
   if not HelpFileFound(Format(helpPathTemplate, ['.' + langId])) then
     if not HelpFileFound(Format(helpPathTemplate, ['.' + Copy(langId, 1, 2)])) then
@@ -1147,6 +1156,7 @@ begin
         WriteBool(OPT_REMEMBER_FILTERS,              RememberFilters);
         WriteBool(OPT_PARTIAL_TAXON_SEARCH,          PartialTaxonSearch);
         WriteBool(OPT_AUTO_COMPLETE_SEARCH,          AutoCompleteSearch);
+        WriteBool(OPT_USE_PREFERRED_TAXA,            UsePreferredTaxa);
         WriteBool(OPT_INCLUDE_LOCATION_SPATIAL_REF,  IncludeLocationSpatialRef);
         WriteBool(OPT_INCLUDE_LOCATION_FILE_CODE,    IncludeLocationFileCode);
         WriteString(OPT_RAPID_ENTRY_DELIMITER,       RapidEntryDelimiter);
@@ -1198,6 +1208,8 @@ begin
           WriteString(OPT_EXTERNAL_FILE_PATH, FExternalFilePath);
         if FErrorPath <> '' then
           WriteString(OPT_ERROR_PATH, FErrorPath);
+        if FBatchUpdatePath <> '' then
+          WriteString(OPT_DICT_UPGRADE_PATH, FDictionaryUpgradePath);
 
         // Spatial Ref System
         WriteString('Spatial Ref System',   SpatialRefSystem);
@@ -2226,6 +2238,12 @@ end;
 procedure TApplicationSettings.SetAutoCompleteSearch(const Value: boolean);
 begin
   FAutoCompleteSearch := Value;
+end;
+ //==============================================================================
+{ Accessor method }
+procedure TApplicationSettings.SetUsePreferredTaxa(const Value: boolean);
+begin
+  FUsePreferredTaxa := Value;
 end;
 
 //==============================================================================

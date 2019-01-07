@@ -26,6 +26,7 @@ const
   PATH_DTD              = 'DTD\';
   PATH_ERRORS           = 'Errors\';
   PATH_DICT_IMAGES      = 'Database\Images';
+  PATH_DICT_UPGRADE     = 'User Files\';
   PATH_IMPORT_TEMPLATES = PATH_USER_FILES + 'Import Templates\';
   PATH_POLYGON_FILTERS  = PATH_USER_FILES + 'Polygon Filter\';
   PATH_RECORDING_CARDS  = PATH_USER_FILES + 'Recording Cards\';

@@ -12,7 +12,7 @@ unit GotoKey2_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 29/09/2015 14:41:26 from Type Library described below.
+// File generated on 31/12/2018 11:56:34 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\localsource\recorder-6\LC Addins\GoToKey2\GotoKey2.tlb (1)

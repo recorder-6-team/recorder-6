@@ -67,10 +67,10 @@ resourcestring
   ResStr_CreatingDatabaseTable = 'Creating temporary database - %s';
   ResStr_InitMatching          = 'Initialising matching process...';
   ResStr_PreparingData         = 'Preparing data tables...';
-  ResStr_NoSurname =
-      'A new record cannot be created automatically for this name as '
-      + 'there is no apparent surname.';
   ResStr_AllPreferredLists = 'All preferred lists';
+  ResStr_AllPreferredTaxa = 'All taxa';
+  ResStr_Virtual_Organism  = 'All organisms';
+  ResStr_AllRecommendedTaxa = 'All recommended taxa';
   ResStr_RestoreUnconfirmed =
       'There are some uncommitted matches remaining '
       + 'from a previous session. Do you wish to restore them?';
@@ -344,6 +344,9 @@ type
     FMatchProcedure: String;
     FName: String;
     FNewEntryProcedure: String;
+    FUpdateNotesProcedure: String;
+    FDisplayNotesProcedure: String;
+    FDetailedNotesProcedure: String;
     FRecordMatchesProcedure: String;
     FRememberedMatchesProcedure: String;
     FRequiresChecklist: Boolean;
@@ -365,7 +368,7 @@ type
     property RememberedMatchesProcedure: String read FRememberedMatchesProcedure;
     property SetMatchProcedure: String read FSetMatchProcedure;
     property TableCreateSql: String read FTableCreateSql;
-  public
+   public
     constructor Create(const AKey: string); reintroduce;
     destructor Destroy; override;
     function CheckDuplicates: TStringList;
@@ -383,6 +386,9 @@ type
     property Key: String read FKey;
     property Name: String read FName;
     property NewEntryProcedure: String read FNewEntryProcedure;
+    property UpdateNotesProcedure: String Read FUpdateNotesProcedure;
+    property DisplayNotesProcedure: String Read FDisplayNotesProcedure;
+    property DetailedNotesProcedure: String Read FDetailedNotesProcedure;
     property RequiresChecklist: Boolean read FRequiresChecklist;
     property SearchType: Integer read FSearchType;
     property Sequence: Integer read FSequence;
@@ -425,7 +431,8 @@ const
       'SELECT * FROM tempdb.INFORMATION_SCHEMA.COLUMNS ' +
       'WHERE OBJECT_ID(''tempdb..'' + table_name)=OBJECT_ID(''tempdb..#Master'')' +
       'and COLUMN_NAME like ''System0100000001_Spatial_ref%''';
-
+  SQL_VIRTUAL_ORGANISM_EXISTS = 'Select * FROM Taxon_List WHERE Taxon_List_Key' +
+      ' = ''VIRTUAL_ORGANISM''';
 {-==============================================================================
     TRelatedType
 ===============================================================================}
@@ -460,6 +467,9 @@ begin
     FRequiresChecklist          := Fields['Requires_Checklist'].Value;
     FSetMatchProcedure          := VarToStr(Fields['Set_Match_Procedure'].Value);
     FTableCreateSQL             := VarToStr(Fields['Table_Create_Sql'].Value);
+    FUpdateNotesProcedure       := VarToStr(Fields['Update_Notes_Procedure'].Value);
+    FDisplayNotesProcedure      := VarToStr(Fields['Display_Notes_Procedure'].Value);
+    FDetailedNotesProcedure     := VarToStr(Fields['Detailed_Notes_Procedure'].Value);
     FKeyToCaptionProcedure      := VarToStr(Fields['Key_To_Caption_Procedure'].Value);
     FSearchType                 := Fields['Search_Type'].Value;
     FChecklistsSelectProcedure  := VarToStr(Fields['Checklists_Select_Procedure'].Value);
@@ -494,11 +504,12 @@ begin
     // currently shown in the table. If they are found, gives the user the
     // option of either loading them or removing them.
     unconfirmedMatches := Boolean(
-        dmDatabase.GetStoredProcOutputParam(USP_CHECKUNCONFIRMED_SPECIES,
+        dmDatabase.GetStoredProcOutputParam(USP_RECOVERABLE_SPECIES      ,
                                             ['@ChecklistKey', ChecklistKey,
                                              '@UserID',       AppSettings.UserID,
                                              '@FoundMatches', 0],
                                             '@FoundMatches'));
+
     if unconfirmedMatches then
       if MessageDlg(ResStr_RestoreUnconfirmed, mtWarning, [mbYes, mbNo], 0) = mrYes then
         dmDatabase.RunStoredProc(USP_MATCHRECOVERED_SPECIES,
@@ -628,16 +639,8 @@ end;
 }
 procedure TMatchRule.MakeNewEntry(const ImportValue: String);
 begin
-  try
-    dmDatabase.RunStoredProc(NewEntryProcedure, ['@ImportValue', ImportValue,
+  dmDatabase.RunStoredProc(NewEntryProcedure, ['@ImportValue', ImportValue,
                                                  '@EnteredBy', AppSettings.UserID]);
-  except
-    on E:EOleException do
-      if SameText(E.Message, 'No surname') then
-        raise EMatchRule.CreateNonCritical(ResStr_NoSurname);
-      else
-        raise;
-  end;
 end;  // TMatchRule.MakeNewEntry
 
 {-------------------------------------------------------------------------------
@@ -654,8 +657,9 @@ end;  // TMatchRule.MatchRecords
 }
 procedure TMatchRule.PopulateChecklistCombo(ACombo: TIDComboBox);
 begin
-  ACombo.Add(ResStr_AllPreferredLists, '');
-  PopulateCombo(ACombo, FChecklistsSelectProcedure);
+  ACombo.Add(ResStr_AllPreferredTaxa, '');
+  if not AppSettings.UsePreferredTaxa then
+    PopulateCombo(ACombo, FChecklistsSelectProcedure)
 end;  // TMatchRule.PopulateChecklistCombo 
 
 {-------------------------------------------------------------------------------
@@ -881,8 +885,8 @@ begin
       ['@column_type_key', Key]) do
     while not Eof do
     begin
-      FFieldMatchRuleKeys[Fields['Field_Index'].Value] := 
-          Fields['IW_Match_Rule_Key'].Value;          
+      FFieldMatchRuleKeys[Fields['Field_Index'].Value] :=
+          Fields['IW_Match_Rule_Key'].Value;
       MoveNext;
     end;
 end;  // TColumnType.LoadFieldMatchRuleKeys
@@ -1330,20 +1334,18 @@ begin
     FColumnTitles.Add(Datasource.Fields[i].FieldName + '=' +
                       Datasource.Fields[i].FieldName);
   end;
-end;  // TColumnMapping.LoadColumns 
+end;  // TColumnMapping.LoadColumns
 
 {-------------------------------------------------------------------------------
-  Populate Types[] from the database. 
+  Populate Types[] from the database.
 }
 procedure TColumnMapping.LoadTypes(UseOldImportWizard: Boolean);
 var
   lClass: TColumnTypeClass;
-  lTempSurveyString: String;
-  lCurrentSurveyMediaKey: String;
-  lTempSurveyList: TStrings;
-
+  lCurrentSurveyTemp: boolean;
   // Skip inclusion of Observer/TempObserver column for non-temp/temp imports resp.
   // and Determination Date column for the old import wizard.
+
   function IsIncludedColumn(ColumnKey: String) : Boolean;
   begin
     Result := True;
@@ -1355,25 +1357,20 @@ var
       Result := False;
   end;
 begin
+  //CurrentChange
   if (not UseOldImportWizard) then begin
-    lCurrentSurveyMediaKey := dmDatabase.GetStoredProcOutputParam('usp_Survey_GetMediaKey',
+    lCurrentSurveyTemp := dmDatabase.GetStoredProcOutputParam('usp_Survey_TempSurvey',
                                             ['@Key', AppSettings.IWSurveyKey],
-                                            '@Value');
-    lTempSurveyString := dmDatabase.GetStoredProcOutputParam('usp_Setting_Get',
-                                            ['@Name', 'TempMedia'],
                                             '@Value');
     AppSettings.IWTempNameKey := dmDatabase.GetStoredProcOutputParam('usp_Setting_Get',
                                             ['@Name', 'TempName'],
                                             '@Value');
-    lTempSurveyList := TStringList.Create;
-    lTempSurveyList.Delimiter := ',';
-    lTempSurveyList.DelimitedText := lTempSurveyString;
-    if (lTempSurveyList.IndexOf(lCurrentSurveyMediaKey) = -1) then begin
+    if not lCurrentSurveyTemp then begin
       FIsTempSurvey := False;
       AppSettings.IWTempNameKey := '';
     end else
       FIsTempSurvey := True;
-    lTempSurveyList.Free;
+
   end else begin
     AppSettings.IWTempNameKey := '';
     FIsTempSurvey := False;

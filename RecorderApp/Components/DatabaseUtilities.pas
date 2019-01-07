@@ -170,7 +170,7 @@ const
       'EXEC dbo.usp_Index_Taxon_Name_Populate @Stage =';
 
 resourcestring
-  ResStr_PopulatingNameIndex = 'Populaing Taxon Name Index Stage -  ';
+  ResStr_PopulatingNameIndex = 'Populating Taxon Name Index Stage -  ';
   ResStr_ClearingOldSynonymInd = 'Clearing old synonym index...';
   ResStr_AddinTaxonSynonym =  'Adding taxon synonyms to index...';
 

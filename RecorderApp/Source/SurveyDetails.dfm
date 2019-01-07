@@ -1,7 +1,7 @@
 inherited frmSurveyDetails: TfrmSurveyDetails
-  Left = 417
-  Top = 268
-  Width = 633
+  Left = 416
+  Top = 374
+  Width = 780
   Height = 395
   Caption = 'Survey Details'
   OldCreateOrder = True
@@ -13,7 +13,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
   object pnlDetails: TPanel
     Left = 0
     Top = 0
-    Width = 625
+    Width = 772
     Height = 368
     Align = alClient
     BevelOuter = bvLowered
@@ -103,7 +103,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
         Top = 24
         Width = 373
         Height = 281
-        ActivePage = tsGeneral
+        ActivePage = Licence
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 2
         OnChange = pcSurveyDetailsChange
@@ -115,7 +115,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             365
             253)
           object bvlGeneral: TBevel
-            Left = 12
+            Left = 4
             Top = 4
             Width = 357
             Height = 245
@@ -204,11 +204,11 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             WordWrap = True
           end
           object Label2: TLabel
-            Left = 212
+            Left = 204
             Top = 169
-            Width = 58
+            Width = 70
             Height = 13
-            Caption = 'Date Import:'
+            Caption = 'Date of Import:'
           end
           object dbcmbSurveyStatus: TDBLookupComboBox
             Left = 76
@@ -360,8 +360,8 @@ inherited frmSurveyDetails: TfrmSurveyDetails
           end
           object eImportDate: TEdit
             Left = 280
-            Top = 168
-            Width = 105
+            Top = 165
+            Width = 73
             Height = 21
             TabOrder = 11
             OnExit = eImportDateExit
@@ -629,7 +629,7 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             Left = 100
             Top = 153
             Width = 261
-            Height = 76
+            Height = 64
             Anchors = [akLeft, akTop, akRight, akBottom]
             DataField = 'PRIVATE_NOTES'
             DataSource = dmSurvey.dsSurvey
@@ -638,6 +638,19 @@ inherited frmSurveyDetails: TfrmSurveyDetails
             TabOrder = 2
             OnEnter = EnterRTF
             OnExit = ExitRTF
+          end
+          object dbcbTemporary: TDBCheckBox
+            Left = 100
+            Top = 228
+            Width = 189
+            Height = 17
+            Anchors = [akLeft, akBottom]
+            Caption = 'Survey Holds Temporary Data'
+            DataField = 'TEMPORARY_SURVEY'
+            DataSource = dmSurvey.dsSurvey
+            TabOrder = 3
+            ValueChecked = 'True'
+            ValueUnchecked = 'False'
           end
         end
       end

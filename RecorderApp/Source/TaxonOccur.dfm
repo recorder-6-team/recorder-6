@@ -1,6 +1,6 @@
 object frmTaxonOccurrences: TfrmTaxonOccurrences
-  Left = 750
-  Top = 118
+  Left = 530
+  Top = 405
   Width = 412
   Height = 429
   Caption = 'Taxon Occurrences'
@@ -12,6 +12,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
   Font.Style = []
   OldCreateOrder = False
   Position = poDefault
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
@@ -27,7 +28,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
     OnResize = pnlDetailsResize
     object pnlInner: TPanel
       Left = -8
-      Top = 8
+      Top = 0
       Width = 385
       Height = 361
       BevelOuter = bvLowered
@@ -50,10 +51,10 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
       end
       object pcTaxonOccurrence: TPageControl
         Left = 16
-        Top = 0
+        Top = 24
         Width = 373
         Height = 301
-        ActivePage = tsPrivate
+        ActivePage = tsGeneral
         Anchors = [akLeft, akTop, akRight, akBottom]
         ParentShowHint = False
         ShowHint = True
@@ -229,7 +230,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             Height = 21
             Style = csDropDownList
             Anchors = [akLeft, akTop, akRight]
-            ItemHeight = 0
+            ItemHeight = 13
             Sorted = True
             TabOrder = 1
             ListField = 'SHORT_NAME'
@@ -245,7 +246,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             Width = 105
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             Sorted = True
             TabOrder = 2
             ListField = 'SHORT_NAME'
@@ -262,7 +263,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             Height = 21
             Style = csDropDownList
             Anchors = [akLeft, akRight, akBottom]
-            ItemHeight = 0
+            ItemHeight = 13
             Sorted = True
             TabOrder = 8
             OnChange = cmbDeterminationTypeChange
@@ -1136,7 +1137,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
             end
             object Label17: TLabel
               Left = 8
-              Top = 92
+              Top = 100
               Width = 52
               Height = 13
               Caption = 'Comments:'
@@ -1161,6 +1162,21 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
               Width = 30
               Height = 13
               Caption = 'Value:'
+            end
+            object lblMetadata: TLabel
+              Left = 8
+              Top = 128
+              Width = 274
+              Height = 24
+              Anchors = [akLeft, akBottom]
+              AutoSize = False
+              Font.Charset = ARABIC_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -9
+              Font.Name = 'Small Fonts'
+              Font.Style = []
+              ParentFont = False
+              WordWrap = True
             end
             object bbPrivateAccept: TImageListButton
               Left = 297
@@ -1205,10 +1221,10 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
               TabOrder = 1
             end
             object rePrivateComment: TRichEdit
-              Left = 8
-              Top = 106
+              Left = 64
+              Top = 96
               Width = 289
-              Height = 47
+              Height = 25
               Anchors = [akLeft, akTop, akRight, akBottom]
               PopupMenu = dmFormActions.pmRTF
               ScrollBars = ssVertical
@@ -1225,6 +1241,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
               ItemHeight = 13
               Sorted = True
               TabOrder = 5
+              OnChange = dbcmbPrivateTypeChange
               ListField = 'SHORT_NAME'
               KeyField = 'TAXON_PRIVATE_TYPE_KEY'
               Datasource = dmTaxonOccurrences.dsPrivateType
@@ -1291,7 +1308,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
         Left = 222
         Top = 328
         Width = 75
-        Height = 19
+        Height = 25
         Hint = 'Save taxon occurrence details'
         Anchors = [akRight, akBottom]
         Caption = '&Save'
@@ -1303,7 +1320,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
       end
       object bbCancel: TImageListButton
         Left = 306
-        Top = 322
+        Top = 328
         Width = 75
         Height = 25
         Hint = 'Cancel changes'

@@ -2,7 +2,7 @@ object GotoKey2X: TGotoKey2X
   Left = 865
   Top = 362
   Width = 240
-  Height = 235
+  Height = 191
   Caption = 'Go to key '
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET

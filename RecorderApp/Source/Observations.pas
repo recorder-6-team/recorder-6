@@ -405,6 +405,7 @@ type
     function GetKeyList: TKeyList; override;
     function GetKeyListForValidation: TKeyList; override;
     function GetSurveyKeyForEvent(const AKey: TKeyString): String;
+    function GetSurveyKeyForSample(const AKey: TKeyString): String;
     procedure RefreshSamples;
     procedure RefreshSurvey(const ASurveyKey, AEventKey, ASampleKey : TKeyString);
     procedure ShowSurveyTagDetails(const surveyTag: String);
@@ -2439,7 +2440,8 @@ end;
 {Determines whether the Event can be moved here and moves it if it can}
 procedure TfrmObservations.DropEvent(const AKey: TKeyString; ASourceNode, ADestNode: TFlyNode;
     const AMsg: String);
-var lDestData: TSurveyNode;
+var lDestData,lSourceData: TSurveyNode;
+    lSurveyNode: TFlyNode;
     sRef, sRefSys, LocName: String;
     lValidResult : TValidationResult;
 begin
@@ -2447,6 +2449,9 @@ begin
   //and try to drop the Event there
   while not (TNodeObject(ADestNode.Data) is TSurveyNode) do ADestNode := ADestNode.Parent;
   lDestData := TSurveyNode(ADestNode.Data);
+  lSurveyNode := ASourceNode;
+  while not (TNodeObject(lSurveyNode.Data) is TSurveyNode) do lSurveyNode := lSurveyNode.Parent;
+  lSourceData := TSurveyNode(lSurveyNode.Data);
   if lDestData.ItemKey <> GetSurveyKeyForEvent(AKey) then begin
     ValidateValue(dmValidation.CheckEventDateAgainstSurvey(lDestData.ItemKey,
                                                            GetVagueDate(TN_SURVEY_EVENT, AKey)),
@@ -2457,6 +2462,14 @@ begin
       lValidResult := dmValidation.CheckEventInSurvey(lDestData.ItemKey, sRef, sRefSys, '');
       ValidateValue(lValidResult.Success, ResStr_EventCannotMove + lValidResult.Message);
     end;
+
+    // Event can't be moved from a temporary survey
+    lValidResult := dmValidation.CheckIsTemporary(lSourceData.ItemKey);
+    ValidateValue(not(lValidResult.Success), ResStr_TemporaryCannotMoveFrom);
+
+    // Event can't be be moved to a temporary survey
+    lValidResult := dmValidation.CheckIsTemporary(lDestData.ItemKey);
+    ValidateValue(not(lValidResult.Success), ResStr_TemporaryCannotMoveTo);
 
     //All validation complete move the Event
     if MessageDlg(Format(AMsg, [GetEventName(AKey), ADestNode.Text]),
@@ -2474,7 +2487,7 @@ end;
 procedure TfrmObservations.DropSample(const AKey: TKeyString; ASourceNode, ADestNode: TFlyNode;
     const AMsg: String);
 var lDestData: TEventNode;
-    sRef, sRefSys, LocKey, LocName: String;
+    sRef, sRefSys, LocKey, LocName,DestSurvey,FromSurvey: String;
     lValidResult : TValidationResult;
 begin
   //If dropped on a Biotope Occurrence/Taxon Occurrence or another Sample
@@ -2487,11 +2500,18 @@ begin
   if TNodeObject(ADestNode.Data) is TEventNode then begin
     lDestData := TEventNode(ADestNode.Data);
     if lDestData.ItemKey <> GetEventKeyForSample(AKey) then begin
+      FromSurvey :=  GetSurveyKeyForSample(AKey);
+      // Sample  can't be moved from a temporary survey
+      lValidResult := dmValidation.CheckIsTemporary(FromSurvey);
+      ValidateValue(not(lValidResult.Success), ResStr_TemporaryCannotMoveFrom);
+      DestSurvey := getSurveyKeyforEvent(lDestData.ItemKey);
+      // Sample can't be be moved to a temporary survey
+      lValidResult := dmValidation.CheckIsTemporary(DestSurvey);
+      ValidateValue(not(lValidResult.Success), ResStr_TemporaryCannotMoveTo);
       ValidateValue(dmValidation.CheckSampleDateAgainstEvent(lDestData.ItemKey,
-                                                             GetVagueDate(TN_SAMPLE, AKey)),
-                    ResStr_SampleCannotMove + ResStr_SampleDateAgainstEvent);
+              GetVagueDate(TN_SAMPLE, AKey)),
+              ResStr_SampleCannotMove + ResStr_SampleDateAgainstEvent);
       GetSpatialRefForSample(AKey, sRef, LocKey, sRefSys, LocName);
-
       if (sRef <> '') or (LocKey <> '') or (LocName = '') then begin
         lValidResult := dmValidation.CheckSampleInEvent(lDestData.ItemKey, sRef, LocKey, sRefSys);
         ValidateValue(lValidResult.Success, ResStr_SampleCannotMove + lValidResult.Message);
@@ -2502,7 +2522,6 @@ begin
           AddRecordersToNewEvent(AKey, lDestData.ItemKey);
       end;
       ValidateValue(CheckRecordersInEvent(AKey, lDestData.ItemKey),ResStr_SampleCannotMove+ResStr_RecorderNotInEvent);
-
       //All validation complete move the Sample
       if MessageDlg(Format(AMsg, [GetSampleName(AKey), ADestNode.Text]),
                     mtConfirmation, [mbOK, mbCancel], 0) = idOK then
@@ -2850,7 +2869,23 @@ begin
     Close;
   end;
 end;
-
+{Returns the Survey Key for a Sample}
+function TfrmObservations.GetSurveyKeyForSample(const AKey: TKeyString): String;
+begin
+  with dmGeneralData.qryAllPurpose do
+  try
+    SQL.Text :=
+      'SELECT Survey_Key ' +
+      'FROM Survey_Event ' +
+      'INNER JOIN SAMPLE ON SAMPLE.SURVEY_EVENT_KEY ' +
+      ' =  SURVEY_EVENT.SURVEY_EVENT_KEY ' +
+      'WHERE Sample_Key = ' + QuotedStr(AKey);
+    Open;
+    Result := FieldByName('Survey_Key').AsString;
+  finally
+    Close;
+  end;
+end;
 {Outputs the Spatial Reference and Location Key for a Sample}
 procedure TfrmObservations.GetSpatialRefForSample(const AKey: TKeyString;
   out sRef, LocKey, sRefSys, LocName: String);

@@ -175,6 +175,7 @@ begin
   lCursor := HourglassCursor;
   frmMain.SetStatus(Format(ResStr_MergingItemsInTable,[iTable]));
   lTaskIndex := frmMain.ProgressBar.EmbedTask(0, 95);
+  lInnerTaskIndex := 0;
   frmMain.ProgressBar.TaskPosition := 0;
   { start a transaction }
   dmDatabase.dbLocal.Execute('Set xact_abort off');

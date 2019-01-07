@@ -26,7 +26,8 @@ uses
   Registry, BaseFormUnit, UserConfig, QRPrntr, QuickRpt, OnlineHelp, FileCtrl,
   OleTools, TaskProgress, DBListCombo, DataClasses, ExceptionForm, Constants,
   RecordingSchemes, ApplicationSettings, XPMenu, XPToolButton, ImgList, Contnrs,
-  DatabaseAccessADO, Recorder2000_TLB, ADODB, CRCommonClasses, RapTree, CRReportIndex;
+  DatabaseAccessADO, Recorder2000_Tlb, ADODB, CRCommonClasses, RapTree,
+  CRReportIndex;
 
 resourcestring
   ResStr_PreparingReport  = 'Preparing Report';
@@ -51,7 +52,8 @@ resourcestring
                                   'Are you sure you want to proceed?';
 
   ResStr_DesignationRebuildingStatus = 'Rebuilding Taxon Designations Index...';
-
+  ResStr_DictionaryUpdateStatus = 'Upgrading Dictionary...';
+  ResStr_DictionaryUpdateCounting = 'Counting Records to be updated...';
   ResStr_DesignationIndexRebuildComplete = 'Taxon designation index rebuild is complete.';
 
   ResStr_SynonymIndexRebuildComplete = 'Taxon synonym index rebuild is complete.';
@@ -65,7 +67,11 @@ resourcestring
   ResStr_SpatialReferenceSystemLabel = 'Spatial Reference System:';
   ResStr_HelpUrlNotFound = 'The setting for the Online Help website is not available. Please check that your ' +
       'Recorder 6 installation has been correctly upgraded.';
-type
+  ResStr_InsufficientPermissons = 'You do not have sufficient permissiosn to run this option';
+  ResStr_DictionaryRebuilding = 'Continuing will update the dictionary. Make sure you have the correct file %s.sql ' +
+                              'available before proceeeding. Select OK to proceed or Cancel to abort the operation.';
+
+ Type
   EMainFormError = class(TExceptionPath);
 
   TPreviewOwner = (poApplication, poActiveForm);
@@ -201,6 +207,7 @@ type
     mnuEmpty: TMenuItem;
     mnuToolsDatabaseRebuildDesignationIndex: TMenuItem;
     mnuDataEntryCustomSpeciesCards: TMenuItem;
+    MnuToolsUpdateDictionary1: TMenuItem;
     procedure mnuFileExitClick(Sender: TObject);
     procedure mnuToolsPasswordClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -236,6 +243,7 @@ type
     procedure mnuToolsDatabaseRebuildDesignationIndexClick(
       Sender: TObject);
     procedure mnuOnLineHelpClick(Sender: TObject);
+    procedure MnuToolsUpdateDictionary1Click(Sender: TObject);
   private
     FCurrentForm :TForm;
     FClosing: boolean;
@@ -368,7 +376,7 @@ uses
   ReportDesigner, GeneralData, ValidationData, ComObj, DatabaseUtilities, Locations,
   GeneralFunctions, BaseChildUnit, About, ExportFilters, Snapshot, ServerFolders,
   StrUtils, OLEContainer, MapBrowser, HierarchyNodes, BatchUpdates,
-  SpatialRefFuncs;
+  SpatialRefFuncs, DictionaryUpgrade;
 
 type
 
@@ -754,7 +762,7 @@ end;  // OnDropDownButtonClick
 
 //==============================================================================
 procedure TfrmMain.AddButtonToToolbar(AToolbar: TToolbar; const AStyle: TToolButtonStyle; 
-    const AImageIndex: integer; const IsGrouped: boolean; const AHint: string; AAction: 
+    const AImageIndex: integer; const IsGrouped: boolean; const AHint: string; AAction:
     TBasicAction; AClickEvent: TNotifyEvent; APopupMenu: TPopupMenu = nil);
 var tbtnNew:TXPToolButton;
 begin
@@ -1195,7 +1203,7 @@ begin
     SetActionVisibility(actEditMetadata, True);
     SetActionVisibility(actImport, True);
     SetActionVisibility(actManageSchemes, True);
-    SetActionVisibility(actManageExportFilters, True);        
+    SetActionVisibility(actManageExportFilters, True);
     actSpeciesRecord.Visible := lRecorder;  // Species Record
     actRuckSack.Visible      := lRecorder;  // Rucksack
     actUserConfig.Visible    := lAdmin;     // User Config
@@ -2171,5 +2179,26 @@ begin
     raise TExceptionPath.CreateNonCritical(ResStr_HelpUrlNotFound);
   Result := rs.Fields[0].Value
 end;
+
+procedure TfrmMain.MnuToolsUpdateDictionary1Click(Sender: TObject);
+var rs : _Recordset;
+begin
+  rs := dmDatabase.ExecuteSQL('SELECT Data FROM [Setting] WHERE Name=''Dict Seq''', true);
+  if (not rs.eof) and
+     (MessageDlg(Format(ResStr_DictionaryRebuilding,[rs.Fields[0].Value]),
+        mtWarning, [mbOk, mbCancel],0)= mrOk) then
+  begin
+    if AppSettings.UserAccessLevel >= ualFullUser then begin
+      with TdlgDictionaryUpgrade.Create(nil) do
+      try
+        ShowModal;
+      finally
+        Free;
+      end;
+    end
+    else
+      ShowInformation(ResStr_InsufficientPermissons);
+    end;
+  end;
 
 end.

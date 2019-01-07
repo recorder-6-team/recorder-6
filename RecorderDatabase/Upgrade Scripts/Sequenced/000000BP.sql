@@ -1,0 +1,543 @@
+/*===========================================================================*\
+Alters table ITN
+Alters [dbo].[usp_Index_Taxon_Name_Populate]
+       [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa]
+       [dbo].[usp_IndexTaxonName_ApplyNameServer_SingleRecord]
+       [dbo].[usp_IndexTaxonName_ApplySorts]
+       [dbo].[usp_IndexTaxonName_ApplyNameServer]
+\*===========================================================================*/
+
+TRUNCATE TABLE INDEX_TAXON_NAME
+TRUNCATE TABLE INDEX_TAXON_SYNONYM
+TRUNCATE TABLE INDEX_TAXON_HIERARCHY
+TRUNCATE TABLE INDEX_TAXON_GROUP
+
+ALTER TABLE INDEX_TAXON_NAME
+ADD TAXON_VERSION_KEY char(16)
+GO
+ALTER TABLE INDEX_TAXON_NAME
+ADD RECOMMENDED_TAXON_VERSION_KEY char(16)
+GO
+ALTER TABLE INDEX_TAXON_NAME
+ADD OUTPUT_TAXON_NAME varchar(75)
+GO
+ALTER TABLE INDEX_TAXON_NAME
+ADD DEPRECATED bit  
+GO
+ALTER TABLE [dbo].[INDEX_TAXON_NAME] ADD  DEFAULT (1) FOR [DEPRECATED]
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_Index_Taxon_Name_Populate]    Script Date: 12/06/2018 09:44:04 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*===========================================================================*\
+  Contains all sql for populating index taxon name 
+  
+\*===========================================================================*/
+ALTER procedure [dbo].[usp_Index_Taxon_Name_Populate]
+ ( @stage as integer )
+
+AS
+
+if @stage = 1 or @stage = 0 begin
+  TRUNCATE TABLE INDEX_TAXON_NAME 
+end
+if  @stage = 2 or @stage = 0 begin
+  INSERT INTO Index_Taxon_Name (Taxon_List_Item_Key, Taxon_List_Version_Key, Taxon_Version_Key,Actual_Name,OutPut_Taxon_Name,Actual_Name_Italic,
+  Common_Name_Italic,PREFERRED_NAME_ITALIC,SYSTEM_SUPPLIED_DATA, ABBREVIATION,ACTUAL_NAME_ATTRIBUTE,AUTHORITY)
+  SELECT TLI.Taxon_List_Item_Key,   TLI.Taxon_List_Version_Key,TLI.Taxon_Version_Key, T.Item_Name,dbo.LCRemoveSubGenusText(T.ITem_Name), 0,0,0,1,T.ABBREVIATION,TV.ATTRIBUTE,T.AUTHORITY
+  FROM TAXON_LIST_ITEM TLI LEFT JOIN Taxon_version AS TV ON TV.Taxon_Version_Key = TLI.Taxon_Version_Key 
+  LEFT JOIN Taxon AS T ON T.Taxon_Key = TV.Taxon_Key
+end
+if  @stage = 3 or @stage = 0 begin
+  UPDATE Index_Taxon_Name Set Common_Name = T.Item_Name,
+  COMMON_NAME_ATTRIBUTE = TV.ATTRIBUTE
+  FROM Index_Taxon_Name ITN INNER JOIN Taxon_Common_Name TCN ON TCN.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key 
+  INNER JOIN Taxon_Version TV ON TV.TAXON_VERSION_KEY = TCN.TAXON_VERSION_KEY
+  INNER JOIN Taxon T ON T.TAXON_KEY = TV.TAXON_KEY
+end
+if  @stage = 4 or @stage = 0 begin
+  UPDATE Index_Taxon_Name Set Preferred_Name = T.Item_Name, 
+  Preferred_Name_Attribute = TV.Attribute,
+  Preferred_Name_Authority = T.Authority
+  FROM Index_Taxon_Name ITN INNER JOIN Taxon_List_Item TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+  INNER JOIN TAXON_LIST_ITEM TLI2 ON TLI2.TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME
+  INNER JOIN Taxon_Version TV ON TV.TAXON_VERSION_KEY = TLI2.TAXON_VERSION_KEY
+  INNER JOIN Taxon T On T.Taxon_key = TV.Taxon_Key
+end
+if  @stage = 5 or @stage = 0 begin
+  UPDATE Index_Taxon_Name Set Actual_Name_Italic = 1
+  FROM Index_Taxon_Name ITN INNER JOIN Taxon_List_Item TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+  INNER JOIN Taxon_Version TV ON TV.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+  INNER JOIN Taxon T On T.Taxon_key = TV.Taxon_Key
+  INNER JOIN Taxon_Rank TR On TR.TAXON_RANK_KEY = TLI.TAXON_RANK_KEY
+  WHERE T.LANGUAGE = 'La' and TR.List_Font_Italic = 1
+end 
+if  @stage = 6 or @stage = 0 begin
+  UPDATE Index_Taxon_Name Set Common_Name_Italic = 1
+  FROM Index_Taxon_Name ITN INNER JOIN Taxon_Common_Name  TCN ON TCN.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key 
+  INNER JOIN Taxon_List_Item TLI ON TLI.TAXON_LIST_ITEM_KEY = TCN.TAXON_LIST_ITEM_KEY
+  INNER JOIN Taxon_Version TV ON TV.TAXON_VERSION_KEY = TCN.TAXON_VERSION_KEY
+  INNER JOIN Taxon T ON T.TAXON_KEY = TV.TAXON_KEY
+  INNER JOIN Taxon_Rank TR On TR.TAXON_RANK_KEY = TLI.TAXON_RANK_KEY
+  WHERE T.LANGUAGE = 'La' and TR.List_Font_Italic = 1 
+end 
+if  @stage = 7 or @stage = 0 begin
+  UPDATE Index_Taxon_Name Set Preferred_Name_Italic = 1 
+  FROM Index_Taxon_Name ITN INNER JOIN Taxon_List_Item TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+  INNER JOIN TAXON_LIST_ITEM TLI2 ON TLI2.TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME
+  INNER JOIN Taxon_Version TV ON TV.TAXON_VERSION_KEY = TLI2.TAXON_VERSION_KEY
+  INNER JOIN Taxon_Rank TR On TR.TAXON_RANK_KEY = TLI2.TAXON_RANK_KEY
+  INNER JOIN Taxon T On T.Taxon_key = TV.Taxon_Key
+  WHERE T.LANGUAGE = 'La' and TR.List_Font_Italic = 1 
+end
+if  @stage = 8 or @stage = 0 begin
+  INSERT INTO Index_Taxon_Name ( Taxon_List_Item_Key, Taxon_List_Version_Key,Taxon_Version_Key, 
+  Actual_Name, Output_Taxon_Name,Actual_Name_Italic, Common_Name, Common_Name_Italic, 
+  Preferred_Name, Preferred_Name_Italic, System_Supplied_Data)
+  SELECT TLI.Taxon_List_Item_Key, TLI.Taxon_List_Version_Key,TLI.Taxon_Version_Key, 
+  TUN.Item_Name,dbo.LCRemoveSubGenusText(TUN.ITem_Name) ,CASE WHEN TR3.List_Font_Italic = 1 AND TUN.Language =     'La' THEN 1 ELSE 0 END,
+  T2.Item_Name, CASE WHEN TR3.List_Font_Italic = 1 AND T2.Language = 'La' THEN 1 ELSE 0 END, 
+  T3.Item_Name, CASE WHEN TR3.List_Font_Italic = 1 AND T3.Language = 'La' THEN 1 ELSE 0 END,0 
+  FROM Taxon_User_Name AS TUN 
+  LEFT JOIN Taxon_List_Item AS TLI ON TLI.Taxon_List_Item_Key = TUN.Taxon_List_Item_Key 
+  LEFT JOIN Taxon_version AS TV ON TV.Taxon_Version_Key = TLI.Taxon_Version_Key
+  LEFT JOIN Taxon_Common_Name AS TCN ON TCN.Taxon_List_Item_Key = TLI.Taxon_List_Item_Key 
+  LEFT JOIN Taxon_Version AS TV2 ON TV2.Taxon_Version_Key = TCN.Taxon_Version_Key 
+  LEFT JOIN Taxon AS T2 ON T2.Taxon_Key = TV2.Taxon_Key 
+  LEFT JOIN Taxon_List_Item AS TLI3 ON TLI3.Taxon_List_Item_Key = TLI.Preferred_Name 
+  LEFT JOIN Taxon_Rank AS TR3 ON TR3.Taxon_Rank_Key = TLI3.Taxon_Rank_Key 
+  LEFT JOIN Taxon_Version AS TV3 ON TV3.Taxon_Version_Key = TLI3.Taxon_Version_Key 
+  LEFT JOIN Taxon AS T3 ON T3.Taxon_Key = TV3.Taxon_Key 
+  WHERE TLI.Taxon_List_Version_To IS NULL
+end
+if  @stage = 9 or @stage = 0 begin
+  UPDATE Index_Taxon_Name
+  SET Common_Name = TUN.Item_Name, 
+  Common_Name_Italic = CASE WHEN TR.List_Font_Italic=1 AND TUN.Language='La' THEN 1 ELSE 0 END 
+  FROM Index_Taxon_Name ITN 
+  INNER JOIN Taxon_User_Name TUN ON TUN.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key 
+  INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key
+  INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key
+  WHERE TUN.Preferred = 1
+end
+if  @stage =10 or @stage = 0 begin
+
+  Update Index_Taxon_name set Deprecated = 0
+  FROM INDEX_TAXON_NAME ITN INNER JOIN TAXON_LIST_ITEM TLI
+  ON TLI.TAXON_LIST_ITEM_KEY = ITN.Taxon_List_Item_Key 
+  INNER JOIN Taxon_List_Version TLV ON TLV.TAXON_LIST_VERSION_KEY
+  = TLI.TAXON_LIST_Version_Key 
+  WHERE 
+  TLI.Taxon_List_Version_To IS NULL
+  AND TLV.Version >= (SELECT MAX(Version)
+  FROM Taxon_List_Version 
+  WHERE Taxon_List_Version.Taxon_List_Key = TLV.Taxon_List_Key
+  AND Version_Is_Amendment = 0)
+
+  UPDATE ITN 
+  SET ITN.Preferred_List=TL.Preferred 
+  FROM Index_Taxon_Name ITN 
+  INNER JOIN Taxon_List_Version TLV ON TLV.Taxon_List_Version_Key = ITN.Taxon_List_Version_Key
+  INNER JOIN Taxon_List TL ON TL.Taxon_List_Key=TLV.Taxon_List_Key 
+  INNER JOIN Taxon_List_Type TLT ON TL.Taxon_List_Type_Key=TLT.Taxon_List_Type_Key
+
+end
+if  @stage =11 or @stage = 0 begin
+  UPDATE ITN
+  SET ITN.Preferred_List=1
+  FROM TAXON_LIST_ITEM TLI 
+  INNER JOIN INDEX_TAXON_NAME ITN ON ITN.TAXON_LIST_ITEM_KEY=TLI.TAXON_LIST_ITEM_KEY 
+  INNER JOIN TAXON_VERSION TV ON TLI.TAXON_VERSION_KEY = TV.TAXON_VERSION_KEY
+  INNER JOIN TAXON_GROUP TG ON TV.OUTPUT_GROUP_KEY = TG.TAXON_GROUP_KEY 
+  INNER JOIN TAXON_LIST_VERSION TLV
+  ON TLI.TAXON_LIST_VERSION_KEY = TLV.TAXON_LIST_VERSION_KEY 
+ AND TG.USE_TAXON_LIST_KEY = TLV.TAXON_LIST_KEY
+end
+if  @stage =12 or @stage = 0 begin
+  UPDATE ITN 
+  SET Has_Children=1 
+  FROM Index_Taxon_Name ITN 
+  INNER JOIN Taxon_List_Item TLIChild 
+  ON TLIChild.Parent=ITN.Taxon_List_Item_Key
+end
+if  @stage =13 or @stage = 0 begin
+  execute usp_IndexTaxonName_ApplyNameServer
+end
+if  @stage =14 or @stage = 0 begin
+  execute usp_IndexTaxonName_ApplySorts
+end
+if  @stage =15 or @stage = 0 begin
+  execute usp_Populate_Index_Taxon_Hierarchy
+end
+if  @stage =16 or @stage = 0 begin
+  execute usp_Index_Taxon_Name_Apply_Preferred_Taxa
+end 
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa]    Script Date: 12/06/2018 09:44:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+/*===========================================================================*\
+  Description:	
+			Procedure which populates the preferred taxa column 
+
+  Created:	September 2016 Mike Weideli
+
+  
+   ===========================================================================*/
+ALTER PROCEDURE [dbo].[usp_Index_Taxon_Name_Apply_Preferred_Taxa] 
+
+AS
+
+UPDATE INDEX_TAXON_NAME SET PREFERRED_TAXA = 1 
+FROM
+INDEX_TAXON_NAME ITN
+INNER JOIN TAXON_LIST_VERSION TLV
+ON TLV.TAXON_LIST_VERSION_KEY = ITN.TAXON_LIST_VERSION_KEY
+INNER JOIN TAXON_LIST TL ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_KEY
+WHERE DEPRECATED = 0 AND Allow_Data_Entry = 1
+AND PRIORITY = (SELECT MIN(Priority) FROM TAXON_LIST
+INNER JOIN TAXON_LIST_VERSION ON
+TAXON_LIST_VERSION.TAXON_LIST_KEY = TAXON_LIST.TAXON_LIST_KEY 
+INNER JOIN INDEX_TAXON_NAME ON INDEX_TAXON_NAME.TAXON_LIST_VERSION_KEY
+= TAXON_LIST_VERSION.TAXON_LIST_VERSION_KEY
+WHERE DEPRECATED = 0 AND Allow_Data_Entry = 1 
+AND INDEX_TAXON_NAME.RECOMMENDED_TAXON_VERSION_KEY = ITN.RECOMMENDED_TAXON_VERSION_KEY
+AND  INDEX_TAXON_NAME.OUTPUT_TAXON_NAME = ITN.OUTPUT_TAXON_NAME )
+
+UPDATE INDEX_TAXON_NAME SET PREFERRED_TAXA = -1
+FROM INDEX_TAXON_NAME ITN
+WHERE PREFERRED_TAXA = 0 AND 
+EXISTS (SELECT * FROM INDEX_TAXON_NAME ITN2 WHERE
+ITN2.OUTPUT_TAXON_NAME = ITN.OUTPUT_TAXON_NAME 
+AND ITN2.RECOMMENDED_TAXON_VERSION_KEY =
+ITN.RECOMMENDED_TAXON_VERSION_KEY AND ITN2.PREFERRED_TAXA = 1 )  
+
+
+
+
+UPDATE INDEX_TAXON_NAME SET PREFERRED_TAXA = 2 
+FROM
+INDEX_TAXON_NAME ITN
+INNER JOIN TAXON_LIST_VERSION TLV
+ON TLV.TAXON_LIST_VERSION_KEY = ITN.TAXON_LIST_VERSION_KEY
+INNER JOIN TAXON_LIST TL ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_KEY
+WHERE Deprecated = 1 AND Allow_Data_Entry = 1  AND PREFERRED_TAXA = 0 
+AND PRIORITY = (SELECT MIN(Priority) FROM TAXON_LIST
+INNER JOIN TAXON_LIST_VERSION ON
+TAXON_LIST_VERSION.TAXON_LIST_KEY = TAXON_LIST.TAXON_LIST_KEY 
+INNER JOIN INDEX_TAXON_NAME ON INDEX_TAXON_NAME.TAXON_LIST_VERSION_KEY
+= TAXON_LIST_VERSION.TAXON_LIST_VERSION_KEY
+WHERE Deprecated = 1 AND Allow_Data_Entry = 1  AND PREFERRED_TAXA = 0 
+AND INDEX_TAXON_NAME.RECOMMENDED_TAXON_VERSION_KEY = ITN.RECOMMENDED_TAXON_VERSION_KEY
+AND  INDEX_TAXON_NAME.OUTPUT_TAXON_NAME = ITN.OUTPUT_TAXON_NAME )
+ 
+ 
+
+UPDATE INDEX_TAXON_NAME SET PREFERRED_TAXA = -2
+FROM INDEX_TAXON_NAME ITN
+WHERE PREFERRED_TAXA = 0 AND 
+EXISTS (SELECT * FROM INDEX_TAXON_NAME ITN2 WHERE
+ITN2.OUTPUT_TAXON_NAME = ITN.OUTPUT_TAXON_NAME 
+AND ITN2.RECOMMENDED_TAXON_VERSION_KEY =
+ITN.RECOMMENDED_TAXON_VERSION_KEY AND ITN2.PREFERRED_TAXA = 2 )  
+
+UPDATE INDEX_TAXON_NAME SET PREFERRED_TAXA = 3 
+FROM
+INDEX_TAXON_NAME ITN
+INNER JOIN TAXON_LIST_VERSION TLV
+ON TLV.TAXON_LIST_VERSION_KEY = ITN.TAXON_LIST_VERSION_KEY
+INNER JOIN TAXON_LIST TL ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_KEY
+WHERE  PREFERRED_TAXA = 0 
+AND PRIORITY = (SELECT MIN(Priority) FROM TAXON_LIST
+INNER JOIN TAXON_LIST_VERSION ON
+TAXON_LIST_VERSION.TAXON_LIST_KEY = TAXON_LIST.TAXON_LIST_KEY 
+INNER JOIN INDEX_TAXON_NAME ON INDEX_TAXON_NAME.TAXON_LIST_VERSION_KEY
+= TAXON_LIST_VERSION.TAXON_LIST_VERSION_KEY
+WHERE PREFERRED_TAXA = 0 
+AND INDEX_TAXON_NAME.RECOMMENDED_TAXON_VERSION_KEY = ITN.RECOMMENDED_TAXON_VERSION_KEY
+AND  INDEX_TAXON_NAME.OUTPUT_TAXON_NAME = ITN.OUTPUT_TAXON_NAME )
+ 
+ 
+
+UPDATE INDEX_TAXON_NAME SET PREFERRED_TAXA = -3
+FROM INDEX_TAXON_NAME ITN
+WHERE PREFERRED_TAXA = 0 AND 
+EXISTS (SELECT * FROM INDEX_TAXON_NAME ITN2 WHERE
+ITN2.OUTPUT_TAXON_NAME = ITN.OUTPUT_TAXON_NAME 
+AND ITN2.RECOMMENDED_TAXON_VERSION_KEY =
+ITN.RECOMMENDED_TAXON_VERSION_KEY AND ITN2.PREFERRED_TAXA = 3 ) 
+
+
+GO
+/****** Object:  StoredProcedure [dbo].[usp_IndexTaxonName_ApplyNameServer_SingleRecord]    Script Date: 12/06/2018 10:15:21 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+/*===========================================================================*\
+  Description: Applies the NameServer information to the Index_Taxon_Name
+		Recommended_Taxon_List_Item_Key table and 
+		other fields for for just the supplied key.
+
+  Parameters:	None
+
+  Created:	November 2004
+  Updated November 2018 
+  
+
+\*=========================================================================== */
+ALTER PROCEDURE [dbo].[usp_IndexTaxonName_ApplyNameServer_SingleRecord]
+	@TLIKey CHAR(16)
+AS
+
+UPDATE ITN
+SET ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = NS.RECOMMENDED_TAXON_LIST_ITEM_KEY
+FROM NAMESERVER NS
+INNER JOIN TAXON_LIST_ITEM TLI ON NS.INPUT_TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+INNER JOIN INDEX_TAXON_NAME ITN ON ITN.TAXON_LIST_ITEM_KEY = TLI.TAXON_LIST_ITEM_KEY
+WHERE ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY IS NULL 
+AND ITN.Taxon_List_Item_Key=@TLIKey
+
+UPDATE ITN
+SET ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME
+FROM TAXON_LIST TL 
+INNER JOIN TAXON_LIST_VERSION TLV ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_KEY
+INNER JOIN TAXON_LIST_ITEM TLI ON TLV.TAXON_LIST_VERSION_KEY = TLI.TAXON_LIST_VERSION_KEY
+INNER JOIN TAXON_LIST_ITEM TLI1 ON TLI.TAXON_VERSION_KEY = TLI1.TAXON_VERSION_KEY
+INNER JOIN INDEX_TAXON_NAME ITN ON TLI1.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+WHERE TL.PREFERRED=1 AND ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY IS NULL
+AND ITN.Taxon_List_Item_Key=@TLIKey
+
+UPDATE ITN
+SET ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME
+FROM TAXON_VERSION TV
+INNER JOIN TAXON_LIST_ITEM TLI ON TV.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+INNER JOIN TAXON_GROUP TG ON TV.Output_group_key = TG.TAXON_GROUP_KEY
+INNER JOIN TAXON_LIST_VERSION TLV ON TLV.TAXON_LIST_KEY=TG.USE_TAXON_LIST_KEY
+		AND TLI.TAXON_LIST_VERSION_KEY=TLV.TAXON_LIST_VERSION_KEY
+INNER JOIN TAXON_LIST_ITEM AS TLI1 
+		ON TLI.TAXON_VERSION_KEY = TLI1.TAXON_VERSION_KEY
+INNER JOIN INDEX_TAXON_NAME ITN ON TLI1.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+WHERE ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY IS NULL
+AND ITN.Taxon_List_Item_Key=@TLIKey
+
+UPDATE ITN
+SET ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME
+FROM INDEX_TAXON_NAME ITN
+INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY=ITN.TAXON_LIST_ITEM_KEY
+INNER JOIN TAXON_LIST_ITEM TLI2 on TLI2.TAXON_LIST_ITEM_KEY=TLI.PREFERRED_NAME
+WHERE ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY IS NULL
+AND ITN.Taxon_List_Item_Key=@TLIKey
+
+--Now set up the recommended sort orders, which depend on the recommended names
+
+UPDATE ITN
+SET ITN.Sort_Order=
+	LEFT('000', 3 - LEN(CONVERT(VARCHAR(3), ISNULL(TG.Sort_Order,0))))
+  + CONVERT(VARCHAR(3), ISNULL(TG.Sort_Order,0)) 
+	+ LEFT('00000000', 8 - LEN(CONVERT(VARCHAR(8), ISNULL(TLI.Sort_Code,0))))
+  + CONVERT(VARCHAR(8), ISNULL(TLI.Sort_Code,0)) 
+FROM Index_Taxon_Name ITN 
+INNER JOIN Taxon_List_Item TLI 
+	ON TLI.Taxon_List_Item_Key=ITN.Recommended_Taxon_List_Item_Key
+	AND ITN.Taxon_List_Item_Key=@TLIKey
+INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key
+LEFT JOIN Taxon_Group TG ON TG.Taxon_Group_Key=TV.Output_Group_Key
+
+
+
+-- If there is anything in the Organism table, then it overwrites sort orders.
+
+UPDATE Index_Taxon_Name 
+  SET SORT_ORDER = ORG.SORT_ORDER
+  FROM INDEX_TAXON_NAME ITN 
+  INNER JOIN TAXON_LIST_ITEM TLI 
+    ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
+    AND ITN.Taxon_List_Item_Key=@TLIKey
+  INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+
+
+
+-- Now add Preferred_Taxa,Taxon_Version_Key,Recommended_Taxon_Version_Key
+-- OutPut_Taxon_Name and Deprecated 
+
+UPDATE ITN 
+  SET PREFERRED_TAXA = 1, DEPRECATED = 0,
+  TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY,
+  Recommended_Taxon_Version_Key = ITN2.RECOMMENDED_TAXON_VERSION_KEY,
+  OUTPUT_TAXON_NAME = dbo.LCRemoveSubGenusText(ITN.ACTUAL_NAME)
+  FROM INDEX_TAXON_NAME ITN
+  INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY
+  = ITN.TAXON_LIST_ITEM_KEY
+  INNER JOIN INDEX_TAXON_NAME ITN2 ON ITN2.TAXON_LIST_ITEM_KEY
+  = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
+   WHERE ITN.Taxon_List_Item_Key=@TLIKey
+
+UPDATE ITN
+SET RECOMMENDED_TAXON_VERSION_KEY = ITN2.TAXON_VERSION_KEY
+FROM INDEX_TAXON_NAME ITN 
+INNER JOIN INDEX_TAXON_NAME ITN2 
+ON ITN2.TAXON_LIST_ITEM_KEY 
+= ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
+WHERE ITN.Taxon_List_Item_Key=@TLIKey
+
+
+GO
+
+/****** Object:  StoredProcedure [dbo].[usp_IndexTaxonName_ApplySorts]    Script Date: 12/06/2018 16:33:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*===========================================================================*\
+  Description: Applies the sorting and other information which is related 
+        to the Organism table.
+
+  Parameters:	None
+
+  Created:	September 2016
+
+  
+
+\*=========================================================================== */
+ALTER PROCEDURE [dbo].[usp_IndexTaxonName_ApplySorts]
+AS
+
+--Now set up the recommended sort orders, which depend on the recommended names
+
+UPDATE ITN
+SET ITN.Sort_Order=
+	LEFT('000', 3 - LEN(CONVERT(VARCHAR(3), ISNULL(TG.Sort_Order,0))))
+  + CONVERT(VARCHAR(3), ISNULL(TG.Sort_Order,0)) 
+	+ LEFT('00000000', 8 - LEN(CONVERT(VARCHAR(8), ISNULL(TLI.Sort_Code,0))))
+  + CONVERT(VARCHAR(8), ISNULL(TLI.Sort_Code,0)) 
+FROM Index_Taxon_Name ITN 
+INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Recommended_Taxon_List_Item_Key
+INNER JOIN Taxon_Version TV ON TV.Taxon_Version_Key=TLI.Taxon_Version_Key
+LEFT JOIN Taxon_Group TG ON TG.Taxon_Group_Key=TV.Output_Group_Key
+
+
+-- Rebuild the lineage and sort order on the Organism table - do this first because can_exapnd uses the Redundant Flag
+-- which is upated in populate Organism lineage 
+
+EXECUTE [dbo].[spPopulateOrganismLineage]
+
+-- Set Can_Expand to True
+
+Update Index_Taxon_Name set Can_Expand = 1
+
+
+-- Poulate Can_Expand in ITN
+
+EXECUTE [dbo].[usp_Populate_Can_Expand]
+
+
+-- If there is anything in the Organism table and the Sort_Method not there or set to Recommended.
+
+UPDATE Index_Taxon_Name 
+  SET SORT_ORDER = ORG.SORT_ORDER
+  FROM INDEX_TAXON_NAME ITN 
+  INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
+  INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+  WHERE NOT EXISTS (SELECT * FROM SETTING WHERE [NAME]  = 'SortMethod' AND [DATA] = 'Recommended')
+
+-- If there is anything in the Organism table then set the allow data entry based on redundant flag 
+
+UPDATE Index_Taxon_Name 
+Set Allow_Data_Entry = 1  
+FROM INDEX_TAXON_NAME ITN 
+INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
+INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+WHERE ITN.Allow_Data_Entry = 0 
+
+UPDATE Index_Taxon_Name 
+Set Allow_Data_Entry = 0  
+FROM INDEX_TAXON_NAME ITN 
+INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
+INNER JOIN ORGANISM ORG ON ORG.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+WHERE ORG.REDUNDANT_FLAG = 'Y' 
+
+DELETE FROM IW_MATCHED_SPECIES 
+FROM IW_Matched_Species IMS 
+INNER JOIN INDEX_TAXON_NAME ITN
+ON ITN.TAXON_LIST_ITEM_KEY = IMS.Matched_Key
+WHERE ITN.Allow_Data_Entry = 0  
+
+GO
+/****** Object:  StoredProcedure [dbo].[usp_IndexTaxonName_ApplyNameServer]    Script Date: 12/07/2018 13:17:38 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/*===========================================================================*\
+  Description: Applies the NameServer information to the Index_Taxon_Name
+		Recommended_Taxon_List_Item_Key table.  Updates all records where this value
+		is null.
+
+  Parameters:	None
+
+  Created:	November 2004
+
+  Last revision November 2018 to populate Recommended_Taxon_Version_Key
+
+\*=========================================================================== */
+ALTER PROCEDURE [dbo].[usp_IndexTaxonName_ApplyNameServer]
+AS
+/* Remove any disconnected index_taxon_name records */
+DELETE ITN 
+FROM Index_Taxon_Name ITN
+LEFT JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key=ITN.Taxon_List_Item_Key
+WHERE TLI.Taxon_List_Item_Key IS NULL
+
+UPDATE ITN
+SET ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = NS.RECOMMENDED_TAXON_LIST_ITEM_KEY
+FROM NAMESERVER NS
+INNER JOIN TAXON_LIST_ITEM TLI ON NS.INPUT_TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+INNER JOIN INDEX_TAXON_NAME ITN ON ITN.TAXON_LIST_ITEM_KEY = TLI.TAXON_LIST_ITEM_KEY
+WHERE ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY IS NULL 
+
+UPDATE ITN
+SET ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME
+FROM TAXON_LIST TL 
+INNER JOIN TAXON_LIST_VERSION TLV ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_KEY
+INNER JOIN TAXON_LIST_ITEM TLI ON TLV.TAXON_LIST_VERSION_KEY = TLI.TAXON_LIST_VERSION_KEY
+INNER JOIN TAXON_LIST_ITEM TLI1 ON TLI.TAXON_VERSION_KEY = TLI1.TAXON_VERSION_KEY
+INNER JOIN INDEX_TAXON_NAME ITN ON TLI1.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+WHERE TL.PREFERRED=1 AND ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY IS NULL
+
+UPDATE ITN
+SET ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME
+FROM TAXON_VERSION TV
+INNER JOIN TAXON_LIST_ITEM TLI ON TV.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY
+INNER JOIN TAXON_GROUP TG ON TV.Output_group_key = TG.TAXON_GROUP_KEY
+INNER JOIN TAXON_LIST_VERSION TLV ON TLV.TAXON_LIST_KEY=TG.USE_TAXON_LIST_KEY
+		AND TLI.TAXON_LIST_VERSION_KEY=TLV.TAXON_LIST_VERSION_KEY
+INNER JOIN TAXON_LIST_ITEM AS TLI1 
+		ON TLI.TAXON_VERSION_KEY = TLI1.TAXON_VERSION_KEY
+INNER JOIN INDEX_TAXON_NAME ITN ON TLI1.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY
+WHERE ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY IS NULL
+
+UPDATE ITN
+SET ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME
+FROM INDEX_TAXON_NAME ITN
+INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY=ITN.TAXON_LIST_ITEM_KEY
+INNER JOIN TAXON_LIST_ITEM TLI2 on TLI2.TAXON_LIST_ITEM_KEY=TLI.PREFERRED_NAME
+WHERE ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY IS NULL
+
+UPDATE ITN
+SET RECOMMENDED_TAXON_VERSION_KEY = ITN2.TAXON_VERSION_KEY
+FROM INDEX_TAXON_NAME ITN 
+INNER JOIN INDEX_TAXON_NAME ITN2 
+ON ITN2.TAXON_LIST_ITEM_KEY 
+= ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY
