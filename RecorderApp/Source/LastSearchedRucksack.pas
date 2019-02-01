@@ -112,7 +112,7 @@ procedure TLastSearchedRucksack.BuildTemporaryTable;
 var
   TLIKeys: TStringList;
 begin
-  if IsDirty and (UseCurrentRucksack or (Length(RucksackName) > 0)) then begin
+  if IsDirty then begin
     // Create or clear out the temporary table
     if (FTableCreated) then begin
       dmGeneralData.ExecuteSQL(CLEAR_TABLE_SQL, ResStr_CannotClearTemporaryRucksackTable, False);
@@ -121,26 +121,28 @@ begin
       FTableCreated := True;
     end;    // if (FTableCreated)
 
-    // Populate the temporary table with keys and search codes for this rucksack
-    TLIKeys := TStringList.Create;
-    try
-      if UseCurrentRucksack then begin
-        ReadCurrentTLIKeys(TLIKeys);
-        InsertSearchCodesFromCurrentRucksack(TLIKeys);
-      end else begin
-        AssignFile(FRucksackFile, RucksackName);
-        try
-            ReadTLIKeys(TLIKeys);
-            InsertSearchCodesFromFile(TLIKeys);
-        finally
-          CloseFile(FRucksackFile);
-        end;
-      end;    // if UseCurrentRucksack
-      InsertTaxaWithoutSearchCodes(TLIKeys);
-    finally
-      TLIKeys.Free;
-    end;
-  end;    // if IsDirty and (Length(RucksackName) > 0)
+    if (UseCurrentRucksack or (Length(RucksackName) > 0)) then begin
+      // Populate the temporary table with keys and search codes for this rucksack
+      TLIKeys := TStringList.Create;
+      try
+        if UseCurrentRucksack then begin
+          ReadCurrentTLIKeys(TLIKeys);
+          InsertSearchCodesFromCurrentRucksack(TLIKeys);
+        end else begin
+          AssignFile(FRucksackFile, RucksackName);
+          try
+              ReadTLIKeys(TLIKeys);
+              InsertSearchCodesFromFile(TLIKeys);
+          finally
+            CloseFile(FRucksackFile);
+          end;
+        end;    // if UseCurrentRucksack
+        InsertTaxaWithoutSearchCodes(TLIKeys);
+      finally
+        TLIKeys.Free;
+      end;
+    end;    // if useCurrentRucksack or (Length(RucksackName) > 0)
+  end;  // if isDirty
 end;    // TLastSearchedRucksack.BuildTemporaryTable
 
 {-------------------------------------------------------------------------------
