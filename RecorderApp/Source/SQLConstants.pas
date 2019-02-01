@@ -46,22 +46,16 @@ const
           '                                     TR.Short_Name, ' +
           '                                     ITN.Can_Expand, ' +
           '''%s'') AS ItemName ' +
-          'FROM (Taxon_List_Version TLV ' +
-          'INNER JOIN Taxon_List_Version TLV2 ON TLV2.Taxon_List_Key = TLV.Taxon_List_Key) '+
-          'INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Version_Key = TLV2.Taxon_List_Version_Key '+
+          'FROM Taxon_List_Version TLV ' +
+          'INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Version_Key = TLV.Taxon_List_Version_Key '+
           'INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_List_Item_Key = ITN.Taxon_List_Item_Key ' +
+          ' AND ITN.DEPRECATED = 0 ' +
           'INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key ' +
-          'WHERE TLV.Taxon_List_Version_Key IN (%s) ' +
+          'WHERE TLV.Taxon_List_Key = ''%s''' +
           'AND (ITN.Actual_Name ' + ST_LIKE_PATTERN +
           ' OR ITN.Common_Name ' + ST_LIKE_PATTERN  +
           ' OR ITN.Abbreviation ' + ST_LIKE_PATTERN +
-          ' OR ITN.Authority ' + ST_LIKE_PATTERN + ')' +
-          ' AND TLI.Taxon_List_Version_To IS NULL ' +
-          ' AND TLV2.Version >= (SELECT MAX(Version)' +
-					'	FROM Taxon_List_Version ' +
-          '	WHERE Taxon_List_Key = (SELECT Taxon_List_Key From Taxon_List_Version' +
-          ' WHERE Taxon_List_Version_Key = TLV.Taxon_List_Version_Key)' +
-          ' AND Version_Is_Amendment = 0)';
+          ' OR ITN.Authority ' + ST_LIKE_PATTERN + ')';
       SQL_TAXON_FROM_QUERY_VIRTUAL =
           'SELECT DISTINCT ITN.Taxon_List_Item_Key, ITN.Abbreviation, ' +
           '       ITN.Authority, '''' AS ListName, ' +
