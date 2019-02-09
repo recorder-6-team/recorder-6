@@ -78,4 +78,15 @@ ENTERED_BY,ENTRY_DATE,SYSTEM_SUPPLIED_DATA)
 VALUES ('LCA00023000000R9','TColumnType','External Source',0,0,10,null,
 'TTextParser',30,'TESTDATA00000001',getdate(),1)
 
+GO
 
+INSERT INTO IW_Post_Processing_Procedure (IW_Post_Processing_Procedure_Key,Sequence,Required_Table_Name,
+Procedure_Name,Entered_By,Entry_Date,System_Supplied_Data) VALUES ('LCA00023000000RA',10,
+'Taxon_Private_Data','usp_IW_Taxon_Private_Item_Name','TESTDATA00000001',GETDATE(),1)
+
+
+GO
+
+INSERT INTO IW_Column_Type_Relationship (IW_Column_Type_Key,Related_IW_Column_Type_Key, Relationship_Type,
+Entered_By,Entry_Date,System_Supplied_Data) VALUES(
+'LCA00023000000R9','LCA00023000000R8',2,'TESTDATA00000001',getdate(),1)
