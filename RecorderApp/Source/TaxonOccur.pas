@@ -287,6 +287,7 @@ type
     function GetReviewStatus (const statuscode : integer) : String;
     function GetReviewStatusSummary(const statuscode : integer) : String;
     function GetTypeDescription : string;
+    function GetCompetencyLevel : integer;
   protected
     procedure SetupDestinationControls; override;
   public
@@ -1985,12 +1986,27 @@ end;
 { Description : Gets the Review Status Code }
 
 function TfrmTaxonOccurrences.GetReviewStatusCode : integer;
-
 begin
-  with dmDatabase.ExecuteSQL('SELECT  [dbo].[ufn_ReturnReviewStatus](''' + FTaxonOccKey  + ''') AS ReviewStatus',True) do
+  If  GetCompetencyLevel <> 0 then begin
+    with dmDatabase.ExecuteSQL('SELECT  [dbo].[ufn_ReturnReviewStatus](''' + FTaxonOccKey  + ''') AS ReviewStatus',True) do
+    begin
+      if not Eof then
+        Result :=  Fields['ReviewStatus'].Value
+      else
+        Result :=  0;
+      Close;
+    end;
+  end;
+end;
+
+
+function TfrmTaxonOccurrences.GetCompetencyLevel : integer;
+begin
+
+  with dmDatabase.ExecuteSQL('SELECT  DATA FROM SETTING WHERE NAME = ''Competency''',True) do
   begin
     if not Eof then
-        Result :=  Fields['ReviewStatus'].Value
+        Result :=  Fields['DATA'].Value
     else
       Result :=  0;
     Close;
