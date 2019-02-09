@@ -12,7 +12,7 @@ unit NBNExchangeAddinNu_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 29/09/2015 14:44:28 from Type Library described below.
+// File generated on 05/02/2019 18:02:07 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\localsource\recorder-6\LC Addins\NBNExchangeAddinNu\NBNExchangeAddinNu.tlb (1)
