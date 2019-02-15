@@ -1,9 +1,9 @@
 object dlgMultipleMatches: TdlgMultipleMatches
-  Left = 462
-  Top = 296
+  Left = 454
+  Top = 255
   BorderStyle = bsDialog
   Caption = 'Match Selection'
-  ClientHeight = 422
+  ClientHeight = 472
   ClientWidth = 531
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -16,7 +16,7 @@ object dlgMultipleMatches: TdlgMultipleMatches
   OnShow = FormShow
   DesignSize = (
     531
-    422)
+    472)
   PixelsPerInch = 96
   TextHeight = 13
   object lblInputValue: TLabel
@@ -37,9 +37,9 @@ object dlgMultipleMatches: TdlgMultipleMatches
   end
   object lbMultiMatches: TListBox
     Left = 11
-    Top = 40
+    Top = 32
     Width = 510
-    Height = 160
+    Height = 169
     Anchors = [akLeft, akTop, akRight, akBottom]
     ItemHeight = 13
     ParentShowHint = False
@@ -49,7 +49,7 @@ object dlgMultipleMatches: TdlgMultipleMatches
   end
   object btnAction: TButton
     Left = 400
-    Top = 392
+    Top = 440
     Width = 57
     Height = 25
     Caption = 'Accept'
@@ -58,7 +58,7 @@ object dlgMultipleMatches: TdlgMultipleMatches
   end
   object bbCancel: TImageListButton
     Left = 462
-    Top = 392
+    Top = 440
     Width = 57
     Height = 25
     Cancel = True
@@ -70,9 +70,9 @@ object dlgMultipleMatches: TdlgMultipleMatches
   end
   object memDetailedNotes: TMemo
     Left = 11
-    Top = 208
+    Top = 216
     Width = 510
-    Height = 177
+    Height = 209
     Lines.Strings = (
       '')
     ReadOnly = True
@@ -82,7 +82,7 @@ object dlgMultipleMatches: TdlgMultipleMatches
   end
   object cbExtraInfo: TCheckBox
     Left = 16
-    Top = 395
+    Top = 443
     Width = 113
     Height = 17
     Caption = 'Extra information'
