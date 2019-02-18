@@ -469,7 +469,7 @@ object frmLocationDetails: TfrmLocationDetails
                 Height = 21
                 Style = csDropDownList
                 Anchors = [akLeft, akTop, akRight]
-                ItemHeight = 13
+                ItemHeight = 0
                 Sorted = True
                 TabOrder = 0
                 ListField = 'SHORT_NAME'

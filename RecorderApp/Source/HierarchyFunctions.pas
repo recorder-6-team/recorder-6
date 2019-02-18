@@ -25,11 +25,13 @@ var rs: _Recordset;
 
 begin
   Result := 0;
-  rs := dmDatabase.ExecuteSQL('SELECT [dbo].[ufn_Location_Expired] (''' + AKey  + ''')', true);
-  if (not rs.eof) AND (NOT AppSettings.UseOriginalIcons)  then
-     if rs.fields[0].Value = '1' then Result := 1;
-  rs.Close;
-
+  IF NOT AppSettings.UseOriginalIcons then
+  begin
+    rs := dmDatabase.ExecuteSQL('SELECT [dbo].[ufn_Location_Expired] (''' + AKey  + ''')', true);
+    if not rs.eof then
+      if rs.fields[0].Value = '1' then Result := 1;
+    rs.Close;
+  end;
 end;
 
 end.
