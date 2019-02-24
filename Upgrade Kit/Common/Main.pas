@@ -3,7 +3,7 @@
 
   Defines:      TfrmMain
 
-  Description:  Progress splahs screen for Recorder database upgrades.
+  Description:  Progress splash screen for Recorder database upgrades.
 
   Created:      29/5/2003
 

@@ -25,7 +25,7 @@ object dlgDictionaryUpgrade: TdlgDictionaryUpgrade
   end
   object lblFileLocation: TLabel
     Left = 8
-    Top = 24
+    Top = 20
     Width = 63
     Height = 13
     Caption = 'File Location:'
@@ -60,17 +60,10 @@ object dlgDictionaryUpgrade: TdlgDictionaryUpgrade
   end
   object lblBlockCaption: TLabel
     Left = 8
-    Top = 96
+    Top = 92
     Width = 56
     Height = 13
     Caption = 'Block Size: '
-  end
-  object lblBlockSize: TLabel
-    Left = 136
-    Top = 96
-    Width = 6
-    Height = 13
-    Caption = '1'
   end
   object lblUpdate: TLabel
     Left = 192
@@ -85,6 +78,13 @@ object dlgDictionaryUpgrade: TdlgDictionaryUpgrade
     Width = 61
     Height = 13
     Caption = 'lblUpdateFile'
+  end
+  object lLicenceKey: TLabel
+    Left = 264
+    Top = 92
+    Width = 58
+    Height = 13
+    Caption = 'Licence key'
   end
   object btnAction: TButton
     Left = 288
@@ -108,9 +108,9 @@ object dlgDictionaryUpgrade: TdlgDictionaryUpgrade
     ImageIndex = 1
   end
   object edFileLocation: TEdit
-    Left = 112
+    Left = 88
     Top = 16
-    Width = 273
+    Width = 297
     Height = 21
     TabOrder = 2
   end
@@ -122,6 +122,24 @@ object dlgDictionaryUpgrade: TdlgDictionaryUpgrade
     Caption = '...'
     TabOrder = 3
     OnClick = btnDictionaryUpgradeFolderClick
+  end
+  object edLicenceKey: TEdit
+    Left = 336
+    Top = 90
+    Width = 73
+    Height = 21
+    MaxLength = 8
+    TabOrder = 4
+  end
+  object edBlockSize: TEdit
+    Left = 112
+    Top = 90
+    Width = 41
+    Height = 21
+    MaxLength = 2
+    TabOrder = 5
+    Text = '50'
+    OnKeyPress = edBlockSizeKeyPress
   end
   object dlgFolder: TFolderBrowser
     BrowseFlags = [bfDirsOnly, bfStatusText]
