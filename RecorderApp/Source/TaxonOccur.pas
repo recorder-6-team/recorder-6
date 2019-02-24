@@ -1987,6 +1987,7 @@ end;
 
 function TfrmTaxonOccurrences.GetReviewStatusCode : integer;
 begin
+  Result := 0;
   If  GetCompetencyLevel <> 0 then begin
     with dmDatabase.ExecuteSQL('SELECT  [dbo].[ufn_ReturnReviewStatus](''' + FTaxonOccKey  + ''') AS ReviewStatus',True) do
     begin
