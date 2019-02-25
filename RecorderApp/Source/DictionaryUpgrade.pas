@@ -142,15 +142,15 @@ begin
     while not Eof(lUpdateFile) do
     begin
       Readln(lUpdateFile, lRecord);
-      inc(lUpdatedRecords);
       if leftstr(lRecord,2) = '--' then begin
         inc(lTablesProcessed);
-        frmMain.setProgress(lTablesProcessed * 100 div lTablesToProcess);
+        frmMain.setProgress(lTablesProcessed * 100 div (lTablesToProcess+2));
         frmMain.SetStatus(ResStr_DictionaryUpdateStatus + rightstr(lRecord,length(lRecord)-2),true);
       end
-      else
-          lblock := lblock + lRecord + char(13) + char(10);
-
+      else begin
+        inc(lUpdatedRecords);
+        lblock := lblock + lRecord + char(13) + char(10);
+      end;
       if (lUpdatedRecords = lblocksize) and (lblock <> '') then
       begin
         try
@@ -161,6 +161,7 @@ begin
             ParseSQL := true;
           end;
         except
+          WriteLog(lBlock,true);
           inc(lErrorCount);
         end;
         lUpdatedRecords := 0;
@@ -184,17 +185,20 @@ begin
     end;
 
     frmMain.SetProgress(0);
-
+    DefaultCursor(lCursor);
     if lErrorCount = 0 then begin
       with dmGeneralData.qryAllPurpose do begin
         ParseSQL := false;
         SQL.Text := 'Update Setting Set DATA = ''' + lUpgradeKey + '''' +
                     ' WHERE NAME = ''Dict Seq ''';
         ExecSQL;
+        SQL.Text := 'Update Setting Set DATA = ''Updated''' +
+                    ' WHERE NAME = ''DictStat''';
+        ExecSQL;
         ParseSQL := true;
         frmMain.SetStatus('');
       end;
-      DefaultCursor(lCursor);
+      frmMain.SetStatus('Complete');
       if MessageDlg(ResStr_Rebuild_Index, mtConfirmation, [mbYes,mbNo], 0) = mrYes then begin
        writelog('[Building Indexes]',true);
        lCursor := HourGlassCursor;
@@ -213,12 +217,15 @@ begin
       ModalResult:= mrOK;
     end
     else begin
+      frmMain.SetStatus('Complete with errors');
       writelog('Completed with errors to Update ' + lUpgradekey,true);
       with dmGeneralData.qryAllPurpose do begin
         ParseSQL := false;
-        SQL.Text := 'Update Setting Set DATA = ''' + lUpgradeKey + 'Has Errors''' +
+        SQL.Text := 'Update Setting Set DATA = ''' + lUpgradeKey + ' - Partial''' +
                     ' WHERE NAME = ''DictStat''';
-        ParseSQL := false;
+        ExecSQL;
+        ParseSQL := true;
+        lblDictCurrentStatus.caption := lUpgradeKey + ' - Partial';
       end;
 
       if lBlockSize > 1 then
@@ -227,10 +234,7 @@ begin
         ShowInformation(Format(ResStr_DictionaryFailedOne,[inttostr(lErrorCount),GetLogFilename]));
       ModalResult:= mrNone;
     end;
-    frmMain.SetStatus('');
     CloseFile(lUpdateFile);
-    DefaultCursor(lCursor);
-
 
   end;
 
