@@ -11,7 +11,7 @@ inherited fraKeyCheck: TfraKeyCheck
     Height = 229
     Alignment = taLeftJustify
     Caption = '    '
-    Color = clCaptionText
+    Color = clWhite
     TabOrder = 0
     object lblLiicenceKey: TLabel
       Left = 16
@@ -44,7 +44,6 @@ inherited fraKeyCheck: TfraKeyCheck
     end
   end
   inherited pnlTitle: TPanel
-    Color = clCaptionText
     ParentColor = False
     TabOrder = 1
     inherited lblTitle: TLabel
