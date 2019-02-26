@@ -74,6 +74,7 @@ resourcestring
   ResStr_LicenceKeyInvalid = 'Licence Key Invalid for this update';
 
   ResStr_BlockSize = 'The block size entered is invalid and will default to 1 ';
+  ResStr_All_Indexes_Rebuilt = 'All index table rebuilt';
 
 {$R *.dfm}
 
@@ -198,6 +199,7 @@ begin
         ParseSQL := true;
         frmMain.SetStatus('');
       end;
+
       frmMain.SetStatus('Complete');
       if MessageDlg(ResStr_Rebuild_Index, mtConfirmation, [mbYes,mbNo], 0) = mrYes then begin
        writelog('[Building Indexes]',true);
@@ -209,6 +211,8 @@ begin
         frmMain.SetStatus(ResStr_DesignationRebuildingStatus);
         frmMain.SetProgress(50);
         dmDatabase.RunStoredProc('usp_Index_Taxon_Designation_Rebuild', []);
+        frmMain.SetProgress(100);
+        frmMain.SetStatus(ResStr_All_Indexes_Rebuilt);
         writelog('[Index Build Complete]',true);
         frmMain.SetProgress(0);
       end;
