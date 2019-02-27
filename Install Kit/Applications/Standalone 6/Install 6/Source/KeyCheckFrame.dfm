@@ -44,6 +44,7 @@ inherited fraKeyCheck: TfraKeyCheck
     end
   end
   inherited pnlTitle: TPanel
+    Color = clBtnHighlight
     ParentColor = False
     TabOrder = 1
     inherited lblTitle: TLabel

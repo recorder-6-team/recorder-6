@@ -13,7 +13,7 @@ resourcestring
   ResStr_Key_Required = 'A licence key is required to install this upgrade';
 
 const
-  Contained = 40;
+  Contained = 44;
 
 type
   TfraKeyCheck = class(TBaseFrame)
@@ -27,7 +27,7 @@ type
     function Scramble(const ACode: String): String;
     function CharCheck(const ACode: String): Boolean;
     procedure InternalValidate(ASettings: TSettings; var ACanProceed: boolean);
-    function GetSeed : integer;
+    function GetSeed(ContainedIn : string) : integer;
   public
     { Public declarations }
     function CreateNextFrame(AOwner: TComponent): TBaseFrame; override;
@@ -58,7 +58,7 @@ begin
 	lString  := UpperCase(ACode);
 	// Stores the built-in random number generator's seed.
   // seed comes from the version file
-	Randseed := GetSeed;
+	Randseed := GetSeed(edLicenceKey.text);
 
 	//  Creates an integer total from the sum of (the ASCII values of each character
 	//  in the Key Sting multiplied by a random umber in the ranger 0 to 501)
@@ -146,16 +146,17 @@ begin
   edVersion.text := ResStr_Key_Required;
 end;
 
-function  TfraKeyCheck.GetSeed : integer;
+function  TfraKeyCheck.GetSeed(ContainedIn : string) : integer;
 var versionFile: TStringList;
 begin
-  Result := 7067;
-  versionFile := TStringList.Create;
-  if FileExists(ExtractFilePath(Application.ExeName) + 'VersionControl.txt') then begin
-    versionFile.LoadFromFile(ExtractFilePath(Application.ExeName) + 'VersionControl.txt');
-    Result := strtoint(versionFile[2]);
+  Result := 0;
+  Try
+    Result:= strtoint(rightstr(Containedin,4));
+  except
+    Result := 7067;
   end;
-  versionFile.free;
 end;
+
+
 
 end.
