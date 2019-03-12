@@ -1,9 +1,6 @@
 unit DictionaryUpgrade;
 
-{The dictionary file requires a check string as the first line. This must start with --. The last 4 characters of this
-are the seed which will be used in the Scramble function. The Scramble function will scramble the
-Licence Key as entered then check that it is within the check string. The check string should be the same a that
-used for software updates with the addition of the seed.}
+{The dictionary file requires a check string as the first line. This must start with --}
 
 interface
 
@@ -40,8 +37,9 @@ type
   private
     function AddBackSlash(AFolder: string): string;
     function SelectFolder(const AFolder, AMsg: String): String;
-    function LicenceKeyCheck(ALicenceKeyCheck : string): boolean;
-    function Scramble(const ACode: String; seed:integer): String;
+    function LicenceKeyCheck(ALicenceKey,ALicenceKeyCheck : string): boolean;
+    function LicenceScramble: String;
+    function GetFinancialYear : integer;
     procedure WriteLog(const logentry: ansistring; const app: boolean);
     function GetBlockSize(): integer;
     function GetLogFilename: string;
@@ -75,7 +73,7 @@ resourcestring
 
   ResStr_BlockSize = 'The block size entered is invalid and will default to 1 ';
   ResStr_All_Indexes_Rebuilt = 'All index table rebuilt';
-
+  ResStr_Licence_Word = 'DINTYGRID';
 {$R *.dfm}
 
 procedure TdlgDictionaryUpgrade.btnActionClick(Sender: TObject);
@@ -128,7 +126,7 @@ begin
     ShowInformation (ResStr_DictionaryFileMissing);
   end;
 
-  if not LicenceKeyCheck(lLicenceKeyCheck) then begin
+  if not LicenceKeyCheck(edLicencekey.Text,lLicenceKeyCheck) then begin
     ShowInformation (ResStr_LicenceKeyInvalid);
     lTablesToProcess := 0;
   end;
@@ -295,7 +293,7 @@ begin
   lblUpDateFile.Caption := lUpgradeKey + '.sql';
 end;
 
-function TdlgDictionaryUpgrade.LicenceKeyCheck(ALicenceKeyCheck: string): boolean;
+function TdlgDictionaryUpgrade.LicenceKeyCheck(ALicenceKey, ALicenceKeyCheck: string): boolean;
 var lScrambleResult: string ;
 begin
   Result:= false;
@@ -303,33 +301,33 @@ begin
   writelog('[Licence Check]' + ALicenceKeyCheck,true);
   writelog('[Errors]',true);
   try
-    lScrambleResult := scramble(edLicenceKey.Text,strtoint(rightStr(ALicenceKeyCheck,4)));
-    if pos(lScrambleResult,ALicenceKeyCheck) > 0 then
+    lScrambleResult := LicenceScramble;
+    if (pos(lScrambleResult,ALicenceKey) > 0) OR (ALicenceKeyCheck = '--' +  ResStr_Licence_Word)  then
       Result := true;
   except
     Result:= false;
   end;
 
 end;
-function TdlgDictionaryUpgrade.Scramble(const ACode: String; Seed : integer): String;
+function TdlgDictionaryUpgrade.LicenceScramble: String;
 var
 	i: Integer;
 	lTotal: Int64;
 	lString: String;
 	lSpare: String;
+  lFinancialYear : integer;
 begin
 	lTotal := 0;
 	Result := '0000';
 	// Function is not case sensitive.
-	lString  := UpperCase(ACode);
-	// Stores the built-in random number generator's seed.
-  // seed comes from the version file
-	Randseed := Seed;
-
+	lString  := ResStr_Licence_Word;
+  lFinancialYear := GetFinancialYear;
+  // Get the FinancialYear
+  //Not using a Random number so that algorithm does not depend on delphi
 	//  Creates an integer total from the sum of (the ASCII values of each character
-	//  in the Key Sting multiplied by a random umber in the ranger 0 to 501)
-	for i := 1 to Length(lString) do
-		lTotal := lTotal + ((Random(500) + 1) * Ord(lString[i]));
+	//  in the Key Sting multiplied by the adjusted financial year
+  for i := 1 to Length(lString) do
+		lTotal := lTotal + (lFinancialYear * Ord(lString[i]));
 
 	// if lTotal is greater than FFFF we want to use the integer remainder of 1Total/4093
 	if lTotal > 65535 then
@@ -340,7 +338,7 @@ begin
 	// Swaps the order of the characters round in lSpare
 	for i := 1 to 4 do
 		Result[i] := lSpare[5 - i];
-end;  // Scramble
+end;  // LicenceScramble
 
        //------------------------------------------------------------------------------
 // Write logentry to a log file
@@ -392,5 +390,17 @@ begin
   Result := AddBackSlash(edFileLocation.Text) + 'DictionaryLog.txt'; // file name
 
 end;
+function TdlgDictionaryUpgrade.GetFinancialYear : integer;
+var
+  myDate : TDateTime;
+  myYear, myMonth, myDay : Word;
+begin
+  // Set up the myDate to be now
+  myDate := date;
+  DecodeDate(myDate, myYear, myMonth, myDay);
+  if MyMonth < 4 then
+     MyYear := MyYear -1 ;
+  Result := MyYear - 1700;
 
+end;
 end.
