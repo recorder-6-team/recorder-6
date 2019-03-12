@@ -7,28 +7,24 @@ uses
   Dialogs, StdCtrls, ExtCtrls, BaseFrameUnit,Settings, UpgradeFrame,strutils;
 
 resourcestring
-  ResStr_LengthWrong = 'The Licence key is 8 characters upper case alpha numeric. ';
+  ResStr_FormatWrong = 'The Licence key is not in the correct format. ';
   ResStr_InvalidKey = 'The Licence key entered is not valid for this upgrade. ';
-  ResStr_InvalidLicenceFile = 'Licence.txt is corrupt.';
   ResStr_Key_Required = 'A licence key is required to install this upgrade';
-
-const
-  Contained = 44;
+  ResStr_Licence_Word = 'DINTYGRID';
 
 type
   TfraKeyCheck = class(TBaseFrame)
     Panel1: TPanel;
     edLicenceKey: TEdit;
     edVersion: TEdit;
-    procedure edVersionClick(Sender: TObject);
-    procedure edLicenceKeyChange(Sender: TObject);
-  private
+ private
     { Private declarations }
-    function Scramble(const ACode: String): String;
+    function LicenceScramble: String;
+    function GetFinancialYear : integer;
     function CharCheck(const ACode: String): Boolean;
     procedure InternalValidate(ASettings: TSettings; var ACanProceed: boolean);
-    function GetSeed(ContainedIn : string) : integer;
-  public
+
+ public
     { Public declarations }
     function CreateNextFrame(AOwner: TComponent): TBaseFrame; override;
     procedure Execute(ASettings: TSettings); override;
@@ -45,25 +41,25 @@ begin
   Result := TfraUpgrade.Create(AOwner);
 end;
 
-function TfraKeyCheck.Scramble(const ACode: String): String;
+function TfraKeyCheck.LicenceScramble: String;
 var
 	i: Integer;
 	lTotal: Int64;
 	lString: String;
 	lSpare: String;
+  lFinancialYear : integer;
 begin
 	lTotal := 0;
 	Result := '0000';
 	// Function is not case sensitive.
-	lString  := UpperCase(ACode);
-	// Stores the built-in random number generator's seed.
-  // seed comes from the version file
-	Randseed := GetSeed(edLicenceKey.text);
-
+	lString  := ResStr_Licence_Word;
+  lFinancialYear := GetFinancialYear;
+  // Get the FinancialYear
+  //Not using a Random number so that algorithm does not depend on delphi
 	//  Creates an integer total from the sum of (the ASCII values of each character
-	//  in the Key Sting multiplied by a random umber in the ranger 0 to 501)
-	for i := 1 to Length(lString) do
-		lTotal := lTotal + ((Random(500) + 1) * Ord(lString[i]));
+	//  in the Key Sting multiplied by the adjusted financial year
+  for i := 1 to Length(lString) do
+		lTotal := lTotal + (lFinancialYear * Ord(lString[i]));
 
 	// if lTotal is greater than FFFF we want to use the integer remainder of 1Total/4093
 	if lTotal > 65535 then
@@ -74,7 +70,23 @@ begin
 	// Swaps the order of the characters round in lSpare
 	for i := 1 to 4 do
 		Result[i] := lSpare[5 - i];
-end;  // Scramble
+
+end;  // LicenceScramble
+
+
+function TfraKeyCheck.GetFinancialYear : integer;
+var
+  myDate : TDateTime;
+  myYear, myMonth, myDay : Word;
+begin
+  // Set up the myDate to be now
+  myDate := date;
+  DecodeDate(myDate, myYear, myMonth, myDay);
+  if MyMonth < 4 then
+     MyYear := MyYear - 1 ;
+  Result := MyYear - 1700;
+
+end;
 
 function TfraKeyCheck.CharCheck(const ACode: String): Boolean;
 var
@@ -105,56 +117,19 @@ end;
 
 procedure TfraKeyCheck.InternalValidate(ASettings: TSettings; var ACanProceed: boolean);
 var
-licenceFile: TStringList;
-containedIn: string;
 lscrambled : string;
 begin
   ACanProceed := false;
-  try
-  licenceFile := TStringList.Create;
-    if CharCheck(edLicenceKey.text) then begin
-      if FileExists(ExtractFilePath(Application.ExeName) + 'LicenceKey.txt') then begin
-        licenceFile.LoadFromFile(ExtractFilePath(Application.ExeName) + 'LicenceKey.txt');
-        containedIn := licenceFile[0];
-        if length(Containedin) = Contained then begin
-          lScrambled := scramble(leftStr(edLicenceKey.Text,8));
-          if pos(lScrambled,containedIn) > 0 then begin
-            ACanProceed := true;
-          end else
-            MessageDlg(ResStr_InvalidKey, mtInformation, [mbOk], 0);
-        end else
-            MessageDlg(ResStr_InvalidLicenceFile, mtInformation, [mbOk], 0);
-        end;
-    end else
-      MessageDlg(ResStr_LengthWrong, mtInformation, [mbOk], 0);
-  finally
-    licenceFile.free;
-  end;
-end;
+  if CharCheck(edLicenceKey.text) then begin
+    lScrambled := LicenceScramble;
+    showmessage (lScrambled);
+      if (pos(lScrambled,edLicenceKey.Text) > 0) OR (edLicenceKey.text  = ResStr_Licence_Word) then begin
+        ACanProceed := true;
+      end else
+        MessageDlg(ResStr_InvalidKey, mtInformation, [mbOk], 0);
+  end else
+      MessageDlg(ResStr_FormatWrong, mtInformation, [mbOk], 0);
 
-procedure TfraKeyCheck.edVersionClick(Sender: TObject);
-begin
-  inherited;
-  if edVersion.Text = 'DINTY' then
-    edVersion.Text := scramble(edLicenceKey.text);
-
-end;
-
-procedure TfraKeyCheck.edLicenceKeyChange(Sender: TObject);
-begin
-  inherited;
-  edVersion.text := ResStr_Key_Required;
-end;
-
-function  TfraKeyCheck.GetSeed(ContainedIn : string) : integer;
-var versionFile: TStringList;
-begin
-  Result := 0;
-  Try
-    Result:= strtoint(rightstr(Containedin,4));
-  except
-    Result := 7067;
-  end;
 end;
 
 

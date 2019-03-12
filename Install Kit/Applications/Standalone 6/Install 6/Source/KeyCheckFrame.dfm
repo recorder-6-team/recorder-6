@@ -27,7 +27,6 @@ inherited fraKeyCheck: TfraKeyCheck
       Height = 21
       MaxLength = 8
       TabOrder = 0
-      OnChange = edLicenceKeyChange
     end
     object edVersion: TEdit
       Left = 16
@@ -40,7 +39,6 @@ inherited fraKeyCheck: TfraKeyCheck
       BorderStyle = bsNone
       TabOrder = 1
       Text = 'A licence key is required to install this upgrade'
-      OnClick = edVersionClick
     end
   end
   inherited pnlTitle: TPanel
