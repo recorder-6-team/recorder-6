@@ -68,8 +68,8 @@ resourcestring
   ResStr_HelpUrlNotFound = 'The setting for the Online Help website is not available. Please check that your ' +
       'Recorder 6 installation has been correctly upgraded.';
   ResStr_InsufficientPermissons = 'You do not have sufficient permissiosn to run this option';
-  ResStr_DictionaryRebuilding = 'Continuing will update the dictionary. Make sure you have the correct file %s.sql ' +
-                              'available before proceeeding. Select OK to proceed or Cancel to abort the operation.';
+  ResStr_DictionaryRebuilding = 'Dictionary update. The last update processed was %s.sql. '#13#10#13#10  +
+                                'Select OK to proceed or Cancel to exit.';
 
  Type
   EMainFormError = class(TExceptionPath);

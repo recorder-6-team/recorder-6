@@ -431,7 +431,7 @@ type
     function CheckExistingObservations: boolean;
     procedure MapForSpatialRefClick(Sender: TObject);
     procedure WMUpdateSurveyDate(var AMessage: TMessage); message WM_UPDATE_SURVEY_DATE;
-    procedure GetLocationStatus;
+    function  GetLocationStatus: Integer;
     procedure InitialiseGridSquareInfoList;
     procedure GridSquareItemChange(Sender: TObject; Item: TDataItem; Status: TDataItemStatus);
     procedure SetPanelSize;
@@ -774,19 +774,21 @@ end;
 {-------------------------------------------------------------------------------
   Populate the Status (is location active)
 }
-procedure TfrmLocationDetails.GetLocationStatus();
+function TfrmLocationDetails.GetLocationStatus(): integer;
 var
   rs: _Recordset;
   lSql: String;
 begin
+  result := 0;
   lblStatus.Caption :=  ResStr_SiteStatus;
   lSql := 'SELECT [dbo].[ufn_Location_Expired] (''' + FLocationKey + ''')';
   rs := dmDatabase.ExecuteSql(lSql,True);
   if not rs.eof then
   begin
-
-    if rs.Fields[0].Value = '1' then
+    if rs.Fields[0].Value = '1' then begin
       lblStatus.Caption :=  ResStr_SiteStatusNot;
+      result := 1;
+    end;
     rs.Close;
   end;
 end;
@@ -894,6 +896,7 @@ var lCursor  : TCursor;
     lValidRef: TValidSpatialRef;
     lCurrentTab, lCurrentSubTab : TTabSheet;
     lCustodian : String;
+    lLocationStatus : Integer;
 begin
   inherited;
   lCurrentTab := pcLocationDetails.ActivePage;
@@ -1009,7 +1012,7 @@ begin
     Sources.Post;
     // Additional Pages
     SaveAdditionalPages;
-
+    lLocationStatus := GetLocationStatus;
     if DrillForm<>nil then begin
       with clbLocationNames do
         for iCount:=0 to Items.Count-1 do
@@ -1017,6 +1020,13 @@ begin
             with TfrmLocations(DrillForm) do begin
               SetSite(Items[iCount],dbeFileCode.Text,SpatialRef.SpatialRef,LocationKey);
               tvLocations.Selected:=SelectedItem;
+              if Not AppSettings.UseOriginalIcons then begin
+                If tvLocations.Selected.ImageIndex In[1,2] then
+                  tvLocations.Selected.ImageIndex := lLocationStatus + 1
+                else if tvLocations.Selected.ImageIndex In[3,4]then
+                  tvLocations.Selected.ImageIndex := lLocationStatus + 3;
+                tvLocations.Selected:=SelectedItem;
+              end;
               Break;
             end;
     end;

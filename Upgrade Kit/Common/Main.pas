@@ -3,7 +3,7 @@
 
   Defines:      TfrmMain
 
-  Description:  Progress splahs screen for Recorder database upgrades.
+  Description:  Progress splash screen for Recorder database upgrades.
 
   Created:      29/5/2003
 
@@ -20,7 +20,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls, Settings, LoginFrame, Buttons, BaseFrameUnit,
-  GeneralFunctions, ExtCtrls, Functions, XPMenu;
+  GeneralFunctions, ExtCtrls, Functions, XPMenu,KeyCheckFrame;
 
 resourcestring
   ResStr_RecorderUpdated =
@@ -64,7 +64,7 @@ implementation
     TfrmMain
 ===============================================================================}
 {-------------------------------------------------------------------------------
-  Initialises the form.  Embeds the first frame onto the form (the login frame).
+  Initialises the form.  Embeds the first frame onto the form (the licensing frame).
 }
 constructor TfrmMain.Create(AOwner: TComponent);
 begin
@@ -115,7 +115,9 @@ begin
     lLastFrame.Free;
     if Assigned(FCurrentFrame) then
       try
-        EmbedCurrentFrame
+        EmbedCurrentFrame;
+        btnProceed.Enabled := true;
+        btnCancel.Enabled  := true;
       except
         on EAbort do Close;
       end // try

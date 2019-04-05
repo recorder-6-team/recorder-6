@@ -5,7 +5,7 @@ inherited dmTaxonDictEditor: TdmTaxonDictEditor
   Width = 346
   inherited qryList: TJNCCQuery
     SQL.Strings = (
-      'SELECT TL.Taxon_List_Key AS KeyField,'
+      'SELECT DISTINCT TL.Taxon_List_Key AS KeyField,'
       '       TL.Item_Name AS DisplayField,'
       '       TL.Local_Disk AS IsLocal'
       'FROM Taxon_List AS TL'

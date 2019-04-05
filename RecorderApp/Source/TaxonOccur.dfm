@@ -1238,7 +1238,7 @@ object frmTaxonOccurrences: TfrmTaxonOccurrences
               Width = 109
               Height = 21
               Style = csDropDownList
-              ItemHeight = 13
+              ItemHeight = 0
               Sorted = True
               TabOrder = 5
               OnChange = dbcmbPrivateTypeChange

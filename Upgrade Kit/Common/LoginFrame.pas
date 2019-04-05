@@ -19,7 +19,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, UpgradeFrame, BaseFrameUnit, Settings;
+  Dialogs, StdCtrls, ExtCtrls, UpgradeFrame, BaseFrameUnit, Settings,keycheckframe;
 
 resourcestring
   ResStr_CannotConnect = 'The connection settings you have provided could not connect to the '+
@@ -126,7 +126,7 @@ end;
 }
 function TfraLogin.CreateNextFrame(AOwner: TComponent): TBaseFrame;
 begin
-  Result := TfraUpgrade.Create(AOwner);
+  Result := TfraKeyCheck.Create(AOwner);
 end;  // TfraLogin.CreateNextFrame
 
 {-------------------------------------------------------------------------------

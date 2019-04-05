@@ -225,13 +225,7 @@ const RegistryKey = 'Software\Dorset Software\Recorder 6';
                     'ON SURVEY.SURVEY_KEY = S1.SurveyKey';
       TEMPSURVEY_SQL = 'Delete  From ##nbn_exchange_obs ' +
                      ' FROM ##nbn_exchange_obs INNER JOIN Survey S ON S.Survey_Key =  ##nbn_exchange_obs.SurveyKey '  +
-                     ' WHERE  (Select DATA  FROM  SETTING WHERE [NAME]= ''TEmpMedia'') LIKE(S.Survey_Media_Key + ''%'')';
-
-      TEMPSAMPLE_SQL = ' Delete  From ##nbn_exchange_obs  ' +
-                       ' FROM ##nbn_exchange_obs INNER JOIN Sample Sa ON Sa.Sample_Key =  ##nbn_exchange_obs.SampleKey  ' +
-                       ' WHERE  Sa.Recorders IS NOT NULL ';
-
-
+                     ' WHERE  S.Temporary_Survey = 1 ';
 
 
       COL_NAMES: array[1..21] of ansistring =
@@ -333,7 +327,7 @@ begin
 
             FnPossibleRows :=  RowsToExport;
             ExecuteSQL(TEMPSURVEY_SQL);
-            ExecuteSQL(TEMPSAMPLE_SQL);
+
 
             // the rest of the stored procedured don't have parameters
             oParams := nil;
@@ -410,7 +404,7 @@ end;
 
 function TNBNExchangeAddinNuImp.Get_Description: WideString;
 begin
-   Result := 'Extracts data in the format required by the NBN. This version needs Recorder 6.22 or later to run.';
+   Result := 'Extracts data in the format required by the NBN. This version needs Recorder 6.29 or later to run.';
 end;
 
 function TNBNExchangeAddinNuImp.Get_ImageFileName: WideString;
@@ -420,7 +414,7 @@ end;
 
 function TNBNExchangeAddinNuImp.Get_Name: WideString;
 begin
-   Result := 'NBN Exchange Format - v6.22 ';
+   Result := 'NBN Exchange Format - v6.29 ';
 end;
 
 
@@ -539,7 +533,7 @@ end;
   //==============================================================================
 // Local routines
 //==============================================================================
-// Ececute a stored procedure that doesn't take parameters or return a dataset
+// Execute a stored procedure that doesn't take parameters or return a dataset
 //------------------------------------------------------------------------------
 function TNBNExchangeAddinNuImp.ExecuteStoredProcedure(const sName, sMsg: ansistring; oParams: TParams): boolean;
 var oProc: TADOStoredProc;
