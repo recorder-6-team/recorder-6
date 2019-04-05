@@ -115,7 +115,7 @@ AutoIncBuild=0
 MajorVer=6
 MinorVer=29
 Release=0
-Build=289
+Build=290
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Dorset Software Services Ltd.
 FileDescription=Recorder 6 Application
-FileVersion=6.29.0.289
+FileVersion=6.29.0.290
 InternalName=
 LegalCopyright=
 LegalTrademarks=
