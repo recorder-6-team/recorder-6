@@ -32,6 +32,7 @@ resourcestring
   ResStr_CurrentChecklist = 'Current Checklist';
   ResStr_Unrestricted     = 'Unrestricted';
   ResStr_PreferredLists   = 'Preferred Checklists';
+  ResStr_DeterminationTypeSystemDefault = 'NBNSYS0000000011';
   ResStr_Preferred_Taxa   = 'Preferred Taxa';
   ResStr_Recommended_Full = 'Recommended';
   // Error messages

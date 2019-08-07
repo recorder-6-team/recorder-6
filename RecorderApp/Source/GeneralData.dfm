@@ -1,7 +1,7 @@
 inherited dmGeneralData: TdmGeneralData
   OldCreateOrder = True
-  Left = 589
-  Top = 326
+  Left = 679
+  Top = 275
   Height = 520
   Width = 428
   object qryIDGenSelect: TJNCCQuery

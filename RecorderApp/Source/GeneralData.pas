@@ -244,6 +244,7 @@ type
     procedure ReadLatLong(const AValue: Variant; var ARef: Double); overload;
     procedure PopulateQualifierCombo(iComboBox: TComboBox;
       const iTypeKey: String);
+    procedure PopulateDeterminationTypeCombo( iComboBox : TComboBox);
     property IDGenerator: TIDGenerator read FIDGen;
     property TableList : TStringList read GetTableList;
     function CheckName(const AText:string; var AKey: TKeyString; var
@@ -2360,7 +2361,32 @@ begin
     end;
   end;
 end;  // PopulateQualifierCombo
-
+//==============================================================================
+{ Populate a Box with a list of DeterminationTypes
+       Called by the constructor only. }
+procedure TdmGeneralData.PopulateDeterminationTypeCombo( iComboBox : TComboBox);
+var
+  lKeyObject : TKey;
+begin
+  iComboBox.Items.Clear;
+  with qryAllPurpose do begin
+    ParseSQL := false;
+    SQL.Text := 'SELECT DETERMINATION_TYPE_KEY, SHORT_NAME FROM DETERMINATION_TYPE ' +
+                'ORDER BY SHORT_NAME';
+    try
+      Open;
+      while not EOF do begin
+        lKeyObject := TKey.Create;
+        lKeyObject.Key := FieldByName('DETERMINATION_TYPE_KEY').AsString;
+        iComboBox.Items.AddObject(FieldByName('SHORT_NAME').AsString, lKeyObject);
+        Next;
+      end;
+    finally
+      Close;
+      ParseSQL := true;
+    end;
+  end;
+end;  // PopulateQualifierCombo
 //==============================================================================
 { Reads a lat or long from a field.  Reads NULL_LATLONG if the value is null }
 procedure TdmGeneralData.ReadLatLong(const iField: TField; var iRef: double);

@@ -1374,11 +1374,11 @@ function TDeterminationTypeFieldGenerator.Value(Fields: Fields; FieldIndex: Inte
     OLEVariant;
 begin
   if not ColumnMapping.KeyIsMapped(CT_KEY_DETERMINATION_TYPE) then
-    Result := 'NBNSYS0000000011'
+    Result := AppSettings.DeterminationTypeIWDefault
   else
   begin
     Result := FieldValue(Fields, CT_KEY_DETERMINATION_TYPE, FLD_DATA);
-    if VarIsNull(Result) then Result := 'NBNSYS0000000011';
+    if VarIsNull(Result) then Result := AppSettings.DeterminationTypeIWDefault;
   end;
 end;
 
@@ -1388,11 +1388,11 @@ function TDeterminationTypeFieldGenerator.GeneratingSQL(FieldIndex: Integer;
     Tables: TTableSource): String;
 begin
   if not ColumnMapping.KeyIsMapped(CT_KEY_DETERMINATION_TYPE) then
-    Result := TransactSQLLiteral('NBNSYS0000000011')
+    Result := TransactSQLLiteral(AppSettings.DeterminationTypeIWDefault)
   else
     Result := 'ISNULL('
         + FieldValueSQL(Tables, CT_KEY_DETERMINATION_TYPE, FLD_DATA) + ', '
-        + TransactSQLLiteral('NBNSYS0000000011') + ')'
+        + TransactSQLLiteral(AppSettings.DeterminationTypeIWDefault) + ')'
 end;
 {-==============================================================================
     TReviewTypeFieldGenerator

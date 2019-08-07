@@ -124,7 +124,7 @@ DLL=0
 Locale=2057
 CodePage=1252
 [Version Info Keys]
-CompanyName=Dorset Software Services Ltd.
+CompanyName=BioDiverse IT and Littelfield Consultancy
 FileDescription=Recorder 6 Application
 FileVersion=6.29.0.289
 InternalName=
@@ -134,6 +134,9 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
+[Excluded Packages]
+C:\Program Files (x86)\combit\LL22\Samples\Delphi\ListLabel22PreDelphiXE5.bpl=combit List & Label 22
+C:\Program Files (x86)\ComponentAce\AbsoluteDatabase\Lib\Delphi 7\dclAbsDbd7.bpl=Absolute Database Package
 [HistoryLists\hlDebugSourcePath]
 Count=1
 Item0=C:\Localsource\Recorder\Third Party\Mike Shkolnik\SMImport\Sources\;C:\Localsource\Recorder\Third Party\Mike Shkolnik\SMExport\Sources\
