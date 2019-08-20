@@ -335,6 +335,7 @@ resourcestring
   ResStr_SourceRecNotFound    =  'Source record not found for external source';
   ResStr_SourceNotFoundChk    =  'Source not found in check for internal sources';
   ResStr_RuckSack             = 'Rucksack';
+  ResStr_Warning_Licence      = 'Are you sure you have selected a licence which does not allow the distribution of the data';
   ResStr_IncludeSubTaxa =
       'Do you want to expand the list to include all taxa in the hierarchy '
       + 'contained by the taxa you have selected?'#13#10
@@ -1825,11 +1826,12 @@ begin
 end;  // CheckTempSurvey
 
 {-------------------------------------------------------------------------------
-  If it is a temp survey then licence must be lKeyRequired
+  If it is a temp survey then warn if not expected licence
 }
 function TdmGeneralData.CheckLicence(const ALicenceKey:string) : boolean;
 var
 lKeyRequired : string;
+lDlgResult : word;
 begin
   with qryTempLoc do begin
     Open;
@@ -1844,9 +1846,14 @@ begin
     end;
   end;
   if lKeyRequired = ALicenceKey then
-     Result := true
-  else
-     Result := false;
+    Result := true
+  else begin
+    lDlgResult :=  MessageDlg(ResStr_Warning_Licence, mtConfirmation, [mbYes, mbNo], 0);
+    if lDlgResult = mrNo then
+      Result := false
+    else
+      Result := true;
+  end
 
 end;  // CheckLicence
 

@@ -1583,7 +1583,9 @@ end;
 
 procedure TdlgOptions.SaveSettingTable;
 var sql : string;
+    lOrigCursor: TCursor;
 begin
+  Screen.Cursor := crHourglass;
   if AppSettings.UserAccessLevel = ualAdmin then begin
     if edMaster.Text <> lblThisWorkStation.caption then begin
       dmDatabase.ExecuteSQL ('Update Computer_Map set Object_Sheet_Folder = ''' +
@@ -1610,11 +1612,10 @@ begin
     dmDatabase.ExecuteSQL(Format(sql,[edCompetency.text,'Competency']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edBlockSize.text,'BlockSize']),false);
     dmDatabase.ExecuteSQL('usp_Setting_Temp_Survey');
-
     PopulateSettingFields('Data');
   end else
     MessageDlg(Restr_Admin_Permission,mtInformation, [mbOk], 0);
-
+  Screen.Cursor := crHourglass;
 end;
 
 procedure TdlgOptions.edBlockSizeKeyPress(Sender: TObject; var Key: Char);
