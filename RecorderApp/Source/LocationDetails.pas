@@ -778,14 +778,14 @@ function TfrmLocationDetails.GetLocationStatus(): integer;
 var
   rs: _Recordset;
 begin
-  result := 0;
+  result := 1;
   lblStatus.Caption :=  ResStr_SiteStatusNot;
   rs := dmDatabase.ExecuteSQL('SELECT [dbo].[ufn_Location_Active] (''' + FLocationKey  + ''')', true);
   if not rs.eof then
   begin
     if rs.Fields[0].Value = '1' then begin
       lblStatus.Caption :=  ResStr_SiteStatus;
-      result := 1;
+      result := 0;
     end;
     rs.Close;
   end;
