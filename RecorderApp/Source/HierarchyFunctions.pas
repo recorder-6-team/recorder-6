@@ -27,7 +27,7 @@ begin
   Result := 0;
   IF NOT AppSettings.UseOriginalIcons then
   begin
-    rs := dmDatabase.ExecuteSQL('SELECT [dbo].[ufn_Location_Expired] (''' + AKey  + ''')', true);
+    rs := dmDatabase.ExecuteSQL('SELECT [dbo].[ufn_Location_Active] (''' + AKey  + ''')', true);
     if not rs.eof then
       if rs.fields[0].Value = '1' then Result := 1;
     rs.Close;
