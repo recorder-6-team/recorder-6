@@ -344,6 +344,7 @@ type
     FMatchProcedure: String;
     FName: String;
     FNewEntryProcedure: String;
+    FNewEntryProcedureMulti: String;
     FUpdateNotesProcedure: String;
     FDisplayNotesProcedure: String;
     FDetailedNotesProcedure: String;
@@ -375,6 +376,7 @@ type
     function ConvertKeyToCaption(const AKey: String): String;
     procedure LoadImportedData(ColumnType: TColumnType; const AParseFieldName: string); virtual;
     procedure MakeNewEntry(const ImportValue: String); virtual;
+    procedure MakeNewEntries(const ImportValue: String); virtual;
     procedure MatchRecords(ChecklistKey: string = ''); virtual;
     procedure PopulateChecklistCombo(ACombo: TIDComboBox);
     procedure PopulateTermListCombo(ACombo: TIDComboBox);
@@ -386,6 +388,7 @@ type
     property Key: String read FKey;
     property Name: String read FName;
     property NewEntryProcedure: String read FNewEntryProcedure;
+    property NewEntryProcedureMulti: String read FNewEntryProcedureMulti;
     property UpdateNotesProcedure: String Read FUpdateNotesProcedure;
     property DisplayNotesProcedure: String Read FDisplayNotesProcedure;
     property DetailedNotesProcedure: String Read FDetailedNotesProcedure;
@@ -464,6 +467,7 @@ begin
     FMatchProcedure             := VarToStr(Fields['Match_Procedure'].Value);
     FRecordMatchesProcedure     := VarToStr(Fields['Record_Matches_Procedure'].Value);
     FNewEntryProcedure          := VarToStr(Fields['New_Entry_Procedure'].Value);
+    FNewEntryProcedureMulti     := VarToStr(Fields['New_Wntry_Procedure_Multiple'].Value);
     FRequiresChecklist          := Fields['Requires_Checklist'].Value;
     FSetMatchProcedure          := VarToStr(Fields['Set_Match_Procedure'].Value);
     FTableCreateSQL             := VarToStr(Fields['Table_Create_Sql'].Value);
@@ -642,7 +646,13 @@ begin
   dmDatabase.RunStoredProc(NewEntryProcedure, ['@ImportValue', ImportValue,
                                                  '@EnteredBy', AppSettings.UserID]);
 end;  // TMatchRule.MakeNewEntry
-
+{-------------------------------------------------------------------------------
+}
+procedure TMatchRule.MakeNewEntries(const ImportValue: String);
+begin
+  dmDatabase.RunStoredProc(NewEntryProcedureMulti, ['@ImportValue', ImportValue,
+                                                 '@EnteredBy', AppSettings.UserID]);
+end;  // TMatchRule.MakeNewEntry
 {-------------------------------------------------------------------------------
 }
 procedure TMatchRule.MatchRecords(ChecklistKey: string = '');
