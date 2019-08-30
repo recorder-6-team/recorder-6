@@ -1585,6 +1585,7 @@ procedure TdlgOptions.SaveSettingTable;
 var sql : string;
     lOrigCursor: TCursor;
 begin
+  lOrigCursor := Screen.Cursor;
   Screen.Cursor := crHourglass;
   if AppSettings.UserAccessLevel = ualAdmin then begin
     if edMaster.Text <> lblThisWorkStation.caption then begin
@@ -1615,7 +1616,7 @@ begin
     PopulateSettingFields('Data');
   end else
     MessageDlg(Restr_Admin_Permission,mtInformation, [mbOk], 0);
-  Screen.Cursor := crHourglass;
+  Screen.Cursor := lOrigCursor;
 end;
 
 procedure TdlgOptions.edBlockSizeKeyPress(Sender: TObject; var Key: Char);
