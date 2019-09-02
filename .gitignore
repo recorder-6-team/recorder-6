@@ -16,8 +16,3 @@
 **/*.ntv.lng
 # Other irrelenant files
 **/*.scc
-*.klr
-*.res
-*.dof
-*.mes
-*.dcu
