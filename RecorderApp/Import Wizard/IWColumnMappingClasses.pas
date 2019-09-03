@@ -465,9 +465,9 @@ begin
     FImportedDataInsertSQL      := VarToStr(Fields['Imported_Data_Insert_Sql'].Value);
     FRememberedMatchesProcedure := VarToStr(Fields['Remembered_Matches_Procedure'].Value);
     FMatchProcedure             := VarToStr(Fields['Match_Procedure'].Value);
+    FNewEntryProcedureMulti     := VarToStr(Fields['New_Entry_Procedure_Multiple'].Value);
     FRecordMatchesProcedure     := VarToStr(Fields['Record_Matches_Procedure'].Value);
     FNewEntryProcedure          := VarToStr(Fields['New_Entry_Procedure'].Value);
-    FNewEntryProcedureMulti     := VarToStr(Fields['New_Wntry_Procedure_Multiple'].Value);
     FRequiresChecklist          := Fields['Requires_Checklist'].Value;
     FSetMatchProcedure          := VarToStr(Fields['Set_Match_Procedure'].Value);
     FTableCreateSQL             := VarToStr(Fields['Table_Create_Sql'].Value);
