@@ -85,7 +85,7 @@ object frmLocationDetails: TfrmLocationDetails
         Top = 24
         Width = 373
         Height = 301
-        ActivePage = tsGeneral
+        ActivePage = tsDesignations
         Anchors = [akLeft, akTop, akRight, akBottom]
         Constraints.MinHeight = 140
         TabOrder = 2
@@ -469,7 +469,7 @@ object frmLocationDetails: TfrmLocationDetails
                 Height = 21
                 Style = csDropDownList
                 Anchors = [akLeft, akTop, akRight]
-                ItemHeight = 0
+                ItemHeight = 13
                 Sorted = True
                 TabOrder = 0
                 ListField = 'SHORT_NAME'

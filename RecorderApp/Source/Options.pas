@@ -24,7 +24,7 @@ uses
   StdCtrls, ActnList, Buttons, ComCtrls, ExtCtrls, ColorBtn, JPeg, ExtDlgs,
   CheckLst, ExceptionForm, FolderBrowser, FileCtrl, BaseFormUnit, OnlineHelp,
   Constants, XPToolButton, ImageListButton, Recorder2000_TLB, StrUtils, Math,
-  ApplicationSettings,ADODB, DatabaseAccessADO;
+  ApplicationSettings,ADODB, DatabaseAccessADO,DataClasses;
 
 resourcestring
   SOptions_SelectFolder = 'Select the source folder for %s';
@@ -202,6 +202,11 @@ type
     lblSetting12: TLabel;
     edBlockSize: TEdit;
     chkUsePreferredTaxa: TCheckBox;
+    dbDterminationType: TGroupBox;
+    cmbRecordingCardDT: TComboBox;
+    cmbImportWizardDT: TComboBox;
+    lblRecordingCards: TLabel;
+    lblIW: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure DrawListItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
@@ -329,6 +334,7 @@ constructor TdlgOptions.Create(AOwner: TComponent);
 var
   lAddinIdx: Integer;
   lPageIdx: Integer;
+  lItemIndex: Integer;
   lOptionsPagesAddin: IOptionsPages;
 begin
   inherited Create(AOwner);
@@ -337,6 +343,20 @@ begin
   dmGeneralData.GetTaxonSearchOptions(cmbTaxonRestriction);
   cmbTaxonRestriction.ItemIndex :=
       cmbTaxonRestriction.Items.IndexOf(AppSettings.TaxonomicSearchRestriction);
+
+  dmGeneralData.PopulateDeterminationTypeCombo(cmbImportWizardDT);
+  dmGeneralData.PopulateDeterminationTypeCombo(cmbRecordingCardDT);
+
+  for lItemIndex := 0 to cmbImportWizardDT.Items.Count - 1 do
+    begin
+      if AppSettings.DeterminationTypeIWDefault =
+          TKeydata(cmbImportWizardDT.Items.Objects[lItemIndex]).itemkey then
+        cmbImportWizardDT.ItemIndex := lItemIndex;
+     if AppSettings.DeterminationTypeRCDefault =
+          TKeydata(cmbRecordingCardDT.Items.Objects[lItemIndex]).itemkey then
+       cmbRecordingCardDT.ItemIndex := lItemIndex;
+    end;
+
 
   FPageAddins := TInterfaceList.Create;
   for lAddinIdx := 0 to AppSettings.ComAddins.OptionsPages.Count - 1 do
@@ -1078,11 +1098,10 @@ var
   lToolbar: TToolbar;
   lCheck: boolean;
   locForm: TForm;
-
-    {---------------------------------------------------------------------------
+  {---------------------------------------------------------------------------
       Gets the path stored in the TEdit control- or if the text is blank returns
       the default path.
-    }
+  }
     function Path(ePath: TEdit; default: String): String;
     var
       testPath: String;
@@ -1165,7 +1184,8 @@ begin
       IgnoreRememberedMatches    := chkIgnoreRememberedMatches.Checked;
       TaxonomicSearchRestriction := cmbTaxonRestriction.Items[cmbTaxonRestriction.ItemIndex];
       ExtraLocationSearchColumns := Self.ExtraLocationSearchColumns;
-
+      DeterminationTypeRCDefault :=  TKeydata(cmbImportWizardDT.Items.Objects[cmbImportWizardDT.ItemIndex]).itemkey;
+      DeterminationTypeIWDefault :=  TKeydata(cmbRecordingCardDT.Items.Objects[cmbRecordingCardDT.ItemIndex]).itemkey;
       // Only admin can change these values, and therefore save them.
       if UserAccessLevel = ualAdmin then begin
         ExportConfidentialOccurrences := cbExportConfidentialOcc.Checked;
@@ -1563,7 +1583,10 @@ end;
 
 procedure TdlgOptions.SaveSettingTable;
 var sql : string;
+    lOrigCursor: TCursor;
 begin
+  lOrigCursor := Screen.Cursor;
+  Screen.Cursor := crHourglass;
   if AppSettings.UserAccessLevel = ualAdmin then begin
     if edMaster.Text <> lblThisWorkStation.caption then begin
       dmDatabase.ExecuteSQL ('Update Computer_Map set Object_Sheet_Folder = ''' +
@@ -1590,11 +1613,10 @@ begin
     dmDatabase.ExecuteSQL(Format(sql,[edCompetency.text,'Competency']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edBlockSize.text,'BlockSize']),false);
     dmDatabase.ExecuteSQL('usp_Setting_Temp_Survey');
-
     PopulateSettingFields('Data');
   end else
     MessageDlg(Restr_Admin_Permission,mtInformation, [mbOk], 0);
-
+  Screen.Cursor := lOrigCursor;
 end;
 
 procedure TdlgOptions.edBlockSizeKeyPress(Sender: TObject; var Key: Char);

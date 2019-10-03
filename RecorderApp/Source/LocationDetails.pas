@@ -772,22 +772,20 @@ begin
   rs.Close;
 end;
 {-------------------------------------------------------------------------------
-  Populate the Status (is location active)
+  Populate the Status(Inactive)
 }
 function TfrmLocationDetails.GetLocationStatus(): integer;
 var
   rs: _Recordset;
-  lSql: String;
 begin
-  result := 0;
-  lblStatus.Caption :=  ResStr_SiteStatus;
-  lSql := 'SELECT [dbo].[ufn_Location_Expired] (''' + FLocationKey + ''')';
-  rs := dmDatabase.ExecuteSql(lSql,True);
+  result := 1;
+  lblStatus.Caption :=  ResStr_SiteStatusNot;
+  rs := dmDatabase.ExecuteSQL('SELECT [dbo].[ufn_Location_Active] (''' + FLocationKey  + ''')', true);
   if not rs.eof then
   begin
     if rs.Fields[0].Value = '1' then begin
-      lblStatus.Caption :=  ResStr_SiteStatusNot;
-      result := 1;
+      lblStatus.Caption :=  ResStr_SiteStatus;
+      result := 0;
     end;
     rs.Close;
   end;
@@ -994,6 +992,7 @@ begin
     // Designation
     FDesignationList.LocationKey:=LocationKey;
     FDesignationList.Update;
+
     sgDesignationsClick(nil);
     // Measurements
     Measurements.KeyValue:=LocationKey;
@@ -1007,6 +1006,9 @@ begin
     FRelationList.Update;
     FUseList.Update;
     FTenureList.Update;
+
+    // Bring Location Active Indicator in line with Designation
+    dmDatabase.RunStoredProc('usp_LocationInactiveIndicator_Update',['@LocationKey', FLocationKey]);
 
     // Sources
     Sources.Post;

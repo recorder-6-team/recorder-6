@@ -1626,7 +1626,7 @@ begin
             FBiotopeDetKey +
             ''', ''' + FBiotopeOccKey +
             ''', ''' + FBiotopeListItemKey +
-            ''', ''' + ORIGINAL_DETERMINATION_TYPE_KEY +
+            ''', ''' + AppSettings.DeterminationTypeRCDefault +
             ''', ''' + ORIGINAL_DETERMINER_ROLE_KEY +
             ''', ''' + TKeyData(lbRecorders.Items.Objects[0]).ItemKey +
             ''', 1, ' + IntToStr(Trunc(lVagueDate.StartDate)) +
@@ -1688,7 +1688,7 @@ begin
             'VALUES(''' + FTaxonDetKey +
             ''', ''' + FTaxonOccKey +
             ''', ''' + FTaxonListItemKey +
-            ''', ''' + ORIGINAL_DETERMINATION_TYPE_KEY +
+            ''', ''' + AppSettings.DeterminationTypeRCDefault +
             ''', ''' + ORIGINAL_DETERMINER_ROLE_KEY +
             ''', ''' + GetDeterminerKey +
             ''', 1, ' + IntToStr(Trunc(lVagueDate.StartDate)) +

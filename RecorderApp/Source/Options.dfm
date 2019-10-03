@@ -59,7 +59,7 @@ object dlgOptions: TdlgOptions
     Top = 0
     Width = 545
     Height = 433
-    ActivePage = tsSettingTable
+    ActivePage = tsGeneral
     Align = alTop
     TabOrder = 1
     OnChange = pcOptionsPagesChange
@@ -326,6 +326,52 @@ object dlgOptions: TdlgOptions
           Alignment = taLeftJustify
           Caption = 'Use preferred taxa for Import Wizard'
           TabOrder = 4
+        end
+      end
+      object dbDterminationType: TGroupBox
+        Left = 4
+        Top = 344
+        Width = 525
+        Height = 51
+        Caption = 'Taxon Determination Type Defaults'
+        TabOrder = 5
+        object lblRecordingCards: TLabel
+          Left = 8
+          Top = 24
+          Width = 85
+          Height = 13
+          Caption = 'Recording Cards: '
+        end
+        object lblIW: TLabel
+          Left = 288
+          Top = 24
+          Width = 68
+          Height = 13
+          Caption = 'Import Wizard:'
+        end
+        object cmbRecordingCardDT: TComboBox
+          Left = 96
+          Top = 22
+          Width = 161
+          Height = 21
+          Style = csDropDownList
+          ItemHeight = 13
+          TabOrder = 0
+          OnChange = cmbTaxonRestrictionChange
+          Items.Strings = (
+            '')
+        end
+        object cmbImportWizardDT: TComboBox
+          Left = 360
+          Top = 22
+          Width = 161
+          Height = 21
+          Style = csDropDownList
+          ItemHeight = 13
+          TabOrder = 1
+          OnChange = cmbTaxonRestrictionChange
+          Items.Strings = (
+            '')
         end
       end
     end

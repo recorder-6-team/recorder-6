@@ -260,7 +260,7 @@ begin
       First;
       while not Eof do begin
         if FieldByName(FN_MATCH_KEY).IsNull then
-          MatchRule.MakeNewEntry(FieldByName(FN_IMPORT_VALUE).AsString);
+          MatchRule.MakeNewEntries(FieldByName(FN_IMPORT_VALUE).AsString);
         Next;
       end;
     finally
