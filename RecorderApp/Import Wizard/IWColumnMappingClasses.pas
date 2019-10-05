@@ -646,13 +646,17 @@ begin
   dmDatabase.RunStoredProc(NewEntryProcedure, ['@ImportValue', ImportValue,
                                                  '@EnteredBy', AppSettings.UserID]);
 end;  // TMatchRule.MakeNewEntry
-{-------------------------------------------------------------------------------
+
+{Runs a stored procedure which only creates an entry if it looks reasonable. The aim
+ being to prevent the automatic creation of names which could potentially exist
+ or which are potentially invalid. These checks are not carried out if the users creates
+ a single entry - TMatchRule.MakeNewEntry.
 }
 procedure TMatchRule.MakeNewEntries(const ImportValue: String);
 begin
   dmDatabase.RunStoredProc(NewEntryProcedureMulti, ['@ImportValue', ImportValue,
                                                  '@EnteredBy', AppSettings.UserID]);
-end;  // TMatchRule.MakeNewEntry
+end;  // TMatchRule.MakeNewEntries
 {-------------------------------------------------------------------------------
 }
 procedure TMatchRule.MatchRecords(ChecklistKey: string = '');
