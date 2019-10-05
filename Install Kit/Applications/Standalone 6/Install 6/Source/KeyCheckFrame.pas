@@ -122,8 +122,7 @@ begin
   ACanProceed := false;
   if CharCheck(edLicenceKey.text) then begin
     lScrambled := LicenceScramble;
- //    showmessage (lScrambled);
-      if (pos(lScrambled,edLicenceKey.Text) > 0) OR (edLicenceKey.text  = ResStr_Licence_Word) then begin
+    if (pos(lScrambled,edLicenceKey.Text) > 0) OR (edLicenceKey.text  = ResStr_Licence_Word) then begin
         ACanProceed := true;
       end else
         MessageDlg(ResStr_InvalidKey, mtInformation, [mbOk], 0);
