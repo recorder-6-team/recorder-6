@@ -772,7 +772,10 @@ begin
   rs.Close;
 end;
 {-------------------------------------------------------------------------------
-  Populate the Status(Inactive)
+  Populate the Status based on the Active column in the Location table. This column
+  is updated when the Location Designation 'date to' is changed. Locations where all the
+  the designations have a 'date to' set are considered inactive. Those without designations
+  and those which have one or more designations without a 'date to' are considered active.
 }
 function TfrmLocationDetails.GetLocationStatus(): integer;
 var
