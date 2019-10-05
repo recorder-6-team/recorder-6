@@ -665,7 +665,7 @@ const
   OPT_USE_RECOMMENDED_TAXA       = 'Use Recommended Taxon Names';
   OPT_SEARCH_RESTRICT            = 'Taxonomic Search Restriction';
   OPT_DETERMINATION_IW_DEFAULT   = 'Datermination Type IW Default';
-  OPT_DETERMINATION_RC_DEFAULT      = 'Determination Type RC Default';
+  OPT_DETERMINATION_RC_DEFAULT   = 'Determination Type RC Default';
 
   OPT_CURRENT_CLASSIFICATION     = 'Current Classification';
   OPT_DICT_IMAGES_PATH           = 'Dict Images Path';
