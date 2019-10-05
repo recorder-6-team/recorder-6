@@ -328,7 +328,7 @@ object dlgOptions: TdlgOptions
           TabOrder = 4
         end
       end
-      object dbDterminationType: TGroupBox
+      object dbDeterminationType: TGroupBox
         Left = 4
         Top = 344
         Width = 525

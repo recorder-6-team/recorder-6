@@ -202,7 +202,7 @@ type
     lblSetting12: TLabel;
     edBlockSize: TEdit;
     chkUsePreferredTaxa: TCheckBox;
-    dbDterminationType: TGroupBox;
+    dbDeterminationType: TGroupBox;
     cmbRecordingCardDT: TComboBox;
     cmbImportWizardDT: TComboBox;
     lblRecordingCards: TLabel;
