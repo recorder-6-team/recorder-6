@@ -3312,7 +3312,6 @@ var
   var
     I: Integer;
   begin
-    lOrderByClause.Text := '';
     I := ansiPos('ORDER BY',ansiUppercase(lSQL.Text));
     if I > 0 then begin
       lOrderByClause.Text := ansiRightStr(lSQL.Text,length(lSQL.Text)-I+1);

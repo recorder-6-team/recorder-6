@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.30.0Upgrade_Release_Version
+OutputDir=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.29UpgradeFull
 UnitOutputDir=C:\localsource\DCU
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -151,9 +151,7 @@ Item1=..\..\..\Third Party\Kevin Boylan\VCLZip
 Count=1
 Item0=C:\localsource\DCU
 [HistoryLists\hlOutputDirectorry]
-Count=5
-Item0=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.30.0Upgrade_Release_Version
-Item1=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.30UpgradeFull
-Item2=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.29UpgradeFull
-Item3=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.29UpgradeReleaseCandidate
-Item4=C:\Localsource\Recorder disk images\Upgrade Kit (from 6.14)
+Count=3
+Item0=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.29UpgradeFull
+Item1=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.29UpgradeReleaseCandidate
+Item2=C:\Localsource\Recorder disk images\Upgrade Kit (from 6.14)
