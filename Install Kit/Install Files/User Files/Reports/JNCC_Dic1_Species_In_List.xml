@@ -20,7 +20,7 @@ description="Extract the recommended taxa for a specified list. Works from the T
 <SQL>
 
 <Where keytype="Taxon">
-    SELECT DISTINCT T.Item_name,TV.Attribute,TL.Item_Name as List  FROM Taxon T
+    SELECT DISTINCT TV.Taxon_Version_Key, T.Item_name,ITN.Common_Name,TV.Attribute,TL.Item_Name as List   FROM Taxon T
     INNER JOIN Taxon_Version TV ON  TV.Taxon_Key = T.Taxon_Key
     INNER JOIN Taxon_List_Item TLI ON TLI.Taxon_version_Key = TV.Taxon_Version_Key 
 	INNER JOIN Taxon_Rank TR ON TR.Taxon_Rank_Key = TLI.Taxon_Rank_Key  

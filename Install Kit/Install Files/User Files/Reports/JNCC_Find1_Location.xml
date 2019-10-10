@@ -1,0 +1,51 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC  Find Reports 
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 1 - 29 Sept 2016   
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="Find1_Locations" menupath="System Supplied\Find Records"  
+description="Designed to help find specific record given the name of the Location.
+Provides a list of the samples with grid refs and dates and records.
+Clicking on a line will go to the appropriate record." >
+
+<SQL>
+
+<Where keytype="Default">
+
+Select S.Vague_Date_Start as VDS, TOCC.Taxon_Occurrence_Key,S.Sample_Key,LN.ITEM_NAME,S.SPATIAL_REF,dbo.LCReturnVagueDateShort(S.VAGUE_DATE_START,
+S.VAGUE_DATE_END,S.VAGUE_DATE_TYPE) as VagueDate,dbo.FormatEventRecorders(S.SAMPLE_KEY) as Recorder,ITN.Actual_Name
+From Sample S INNER JOIN LOCATION L ON L.LOCATION_KEY = S.LOCATION_KEY
+INNER JOIN LOCATION_NAME LN ON LN.LOCATION_KEY = L.LOCATION_KEY AND LN.PREFERRED = 1
+INNER JOIN Taxon_Occurrence TOcc ON TOCC.sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key and TDET.Preferred = 1
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+WHERE   <Condition field="L.Location_Key" operator="equal" type="Location" name="Location" />      
+	
+
+
+</Where>
+
+<OutputTableOrderby name="by default" SQL="Order By Item_Name,VDS,Spatial_ref,Actual_Name" /> 
+
+
+</SQL>
+<Columns>
+ <Column name="VDS" visible= "false"  />   
+   <Column name="Taxon_occurrence_key" visible= "true" position = "1" tablename =  "Taxon_Occurrence" caption = "TOCC Key" width = "50" />
+  <Column name="Sample_key" visible= "true" position = "2" tablename =  "Sample" caption = "Sample Key" width = "50" />
+  <Column name="Item_name" visible= "true" position = "3" caption = "Location"  width = "200"/>
+  <Column name="Vaguedate" visible= "true" position = "4" caption = "Date" width = "80" />   
+  <Column name="Spatial_ref" visible= "true" position = "5" caption = "Grid Ref" width = "80" />
+  <Column name="Recorder" visible= "true" position = "6" caption = "Recorder" width = "200" />
+  <Column name="Actual_Name" visible= "true" position = "7" caption = "Taxon" width = "200"  /> 
+
+</Columns>
+</CustomReport>

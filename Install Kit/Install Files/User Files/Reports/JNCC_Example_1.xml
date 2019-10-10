@@ -22,7 +22,7 @@ description="The very minimum required for an XML report " >
 	SELECT * FROM INDIVIDUAL
 
 </Where>
-
+  
 
 </SQL>
 
