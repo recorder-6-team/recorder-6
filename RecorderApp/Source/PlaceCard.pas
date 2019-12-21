@@ -4187,7 +4187,7 @@ procedure TfrmPlaceCard.ValidateCard;
 begin
   ValidateValue(cmbSurvey.Text <> '', ResStr_UnableToSave + SPlaceCard_SelectSurvey, cmbSurvey);
   ValidateValue(TotalSpecies > 0, ResStr_SelectTaxaToSave, sgSpecies);
-  If cmbSurvey.KeyValue <> FDefaultSurveyKey then
+  If (cmbSurvey.KeyValue <> FDefaultSurveyKey) and (FDefaultSurveyKey <> 'All') and (FDefaultSurveyKey <> '') then
      If MessageDlg(ResStr_SurveyNotEqualDefaultConfirm, mtConfirmation, [mbYes,mbNo], 0)=mrNo then
        ValidateValue(cmbSurvey.KeyValue = FDefaultSurveyKey,Restr_SurveyNotEqualDefault, cmbSurvey);
 
