@@ -601,11 +601,11 @@ function TBaseDictionary.FindDictionaryItem(
   const ASearchTitle: String;
   const ASearchType: TFindType;
   ASearchstring: String = ''): TKeyString;
-  
+
 begin
   Result := ADefaultKey;   // Default return value
   if  DictionaryData.ListIsVirtual(ListKeyData.ItemKey) then
-      AppSettings.SessionTaxonomicSearchRestriction := ResStr_Recommended_Full;
+      AppSettings.SessionTaxonomicSearchRestriction := ResStr_CurrentChecklist;
   with TdlgFind.CreateDialog(Self, ASearchTitle, ASearchType) do begin
     SetSearchText(ASearchString);
     if ShowModal = mrOk then Result := ItemKey;  // Get the associated key

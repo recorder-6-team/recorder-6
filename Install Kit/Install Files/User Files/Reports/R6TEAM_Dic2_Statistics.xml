@@ -1,0 +1,52 @@
+<?xml version='1.0' ?>
+
+
+<!-- Dictionary Report
+     XML Report by Mike Weideli of Littlefield Consultancy for R6 Consortium
+     http://www.lfield.co.uk
+     Version 1 - 12 August 2020  
+      
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="Dic2-Statistics" menupath="System Supplied\Dictionary"  
+description="Reports on total number of system supplied entries in key dictionary tables " >
+
+
+<SQL>
+
+CREATE TABLE #Stats (Table_Name char(100)  COLLATE SQL_Latin1_General_CP1_CI_AS, Records integer)
+
+
+<Where keytype="Default">
+Insert into #Stats (Table_Name, Records) values('Taxon_List', 0)
+Insert into #Stats (Table_Name, Records) values('Taxon', 0)
+Insert into #Stats (Table_Name, Records) values('Taxon_Version', 0)
+Insert into #Stats (Table_Name, Records) values('Taxon_List_Item', 0)
+Insert into #Stats (Table_Name, Records) values('Organism', 0)
+
+Update #Stats set Records = (Select count(*) from Taxon WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Taxon' 
+
+Update #Stats set Records = (Select count(*) from Taxon_List WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Taxon_List' 
+Update #Stats set Records = (Select count(*) from Taxon_List_Item WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Taxon_List_Item' 
+Update #Stats set Records = (Select count(*) from Taxon_Version WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Taxon_Version' 
+Update #Stats set Records = (Select count(*) from Organism WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Organism' 
+
+SELECT * FROM #Stats
+
+DROP TABLE #Stats
+
+  
+	
+
+
+</Where>
+
+
+
+</SQL>
+
+</CustomReport>

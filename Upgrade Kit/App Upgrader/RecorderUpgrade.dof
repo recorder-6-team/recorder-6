@@ -90,8 +90,8 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=C:\Localsource\Recorder disk images\Upgrade Kit (from 6.14)
-UnitOutputDir=
+OutputDir=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.29UpgradeFull
+UnitOutputDir=C:\localsource\DCU
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=..\..\Third Party\Kevin Boylan\VCLZip
@@ -113,9 +113,9 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=6
-MinorVer=25
-Release=1
-Build=276
+MinorVer=29
+Release=0
+Build=289
 Debug=0
 PreRelease=0
 Special=0
@@ -124,9 +124,9 @@ DLL=0
 Locale=2057
 CodePage=1252
 [Version Info Keys]
-CompanyName=
+CompanyName=Biodivers IT and Littelfield Consultancy
 FileDescription=
-FileVersion=6.25.1.276
+FileVersion=6.29.0.289
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -135,7 +135,8 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 [Excluded Packages]
-c:\program files (x86)\borland\delphi7\Projects\BPL\dclqrd_d7.bpl=QRDesign
+C:\Program Files (x86)\combit\LL22\Samples\Delphi\ListLabel22PreDelphiXE5.bpl=combit List & Label 22
+C:\Program Files (x86)\ComponentAce\AbsoluteDatabase\Lib\Delphi 7\dclAbsDbd7.bpl=Absolute Database Package
 [HistoryLists\hlConditionals]
 Count=1
 Item0=madExcept
@@ -146,6 +147,11 @@ Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 Count=2
 Item0=..\..\Third Party\Kevin Boylan\VCLZip
 Item1=..\..\..\Third Party\Kevin Boylan\VCLZip
-[HistoryLists\hlOutputDirectorry]
+[HistoryLists\hlUnitOutputDirectory]
 Count=1
-Item0=C:\Localsource\Recorder disk images\Upgrade Kit (from 6.14)
+Item0=C:\localsource\DCU
+[HistoryLists\hlOutputDirectorry]
+Count=3
+Item0=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.29UpgradeFull
+Item1=C:\MYFILES\RECORDER6\APPLICATIONUPGRADES\6.29UpgradeReleaseCandidate
+Item2=C:\Localsource\Recorder disk images\Upgrade Kit (from 6.14)

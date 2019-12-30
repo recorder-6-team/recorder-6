@@ -1,0 +1,59 @@
+<?xml version='1.0' ?>
+
+
+<!-- Dictionary Report
+     XML Report by Mike Weideli of Littlefield Consultancy 
+     http://www.lfield.co.uk
+     
+      
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="IW5-Log File Transaction Report" menupath="System Supplied\Import Wizard"  
+description="List the records for an entry in the Import Wizard log identified by the first taxon occurrence key.Run report IW4 to find the first Taxon_Occurrence_Key for the imports you are interested in, then use this as the parameter(highlight the key and use Ctrl C to copy then paste into this report). Clicking on the highlighted taxon occurrence key will go to the record.">
+
+
+<SQL>
+
+
+<Where keytype="Default">
+ 
+
+SELECT TOCC.TAXON_OCCURRENCE_KEY AS TAXON_OCCURRENCE_KEY,
+TOCC.ENTRY_DATE, TOCC.CHANGED_DATE, ACTUAL_NAME   
+FROM
+Import_Wizard_Log IWL INNER JOIN 
+TAXON_OCCURRENCE TOCC 
+ON TOCC.TAXON_OCCURRENCE_KEY 
+&#62;= IWL.Taxon_Occurrence_Key_1
+AND TOCC.TAXON_OCCURRENCE_KEY &#60;=
+IWL.Taxon_Occurrence_Key_2
+INNER JOIN TAXON_DETERMINATION TDET ON TDET.TAXON_OCCURRENCE_KEY 
+= TOCC.TAXON_OCCURRENCE_KEY AND TDET.PREFERRED = 1
+INNER JOIN INDEX_TAXON_NAME ITN ON ITN.TAXON_LIST_ITEM_KEY =
+TDET.TAXON_LIST_ITEM_KEY 
+
+
+WHERE
+
+<Condition field="Taxon_Occurrence_Key_1" operator="equal" type="Text" name="Start Occurrence Key" /> 
+
+</Where>
+
+
+<OutputTableOrderby name="by default" SQL="ORDER BY Taxon_Occurrence_key"/>
+
+</SQL>
+
+<Columns>  
+   <Column name="Taxon_Occurrence_Key" width="120" position="1" caption="Taxon Occurrence Key"               keycolumn="Taxon_Occurrence_key" tablename ="Taxon_Occurrence"/>
+   <Column name="Entry_Date" width="120" position="2" caption="Entry date" />  
+   <Column name="Changed_Date" width="120" position="3" caption="Changed date" />
+   <Column name="ACtual_name" width="220" visible ="True" position="4" caption="Actual Name"/>
+</Columns>
+
+
+</CustomReport>

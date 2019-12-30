@@ -2535,7 +2535,7 @@ begin
         + 'Determination_Type_Key, Determiner_Role_Key, Determiner, Preferred, '
         + 'Vague_Date_Start, Vague_Date_End, Vague_Date_Type, Entered_By) '
         + 'VALUES ( ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', 1, %d, %d, ''%s'', ''%s'')',
-        [lBiotopeDetKey, lBiotopeOccKey, ABLIKey, ORIGINAL_DETERMINATION_TYPE_KEY,
+        [lBiotopeDetKey, lBiotopeOccKey, ABLIKey, AppSettings.DeterminationTypeIWDefault,
          ORIGINAL_DETERMINER_ROLE_KEY, ADeterminerKey, Trunc(lVagueDate.StartDate),
          Trunc(lVagueDate.EndDate), lVagueDate.DateTypeString, AppSettings.UserID]));
   except
@@ -2618,7 +2618,7 @@ begin
               + 'Vague_Date_Start, Vague_Date_End, Vague_Date_Type, Entered_By) '
               + 'VALUES (''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', 1, %d, %d, ''%s'', ''%s'' ) ',
               [lTaxonDeterminationKey, lTaxonOccKey, RowTLIKey[liRow],
-              ORIGINAL_DETERMINATION_TYPE_KEY, ORIGINAL_DETERMINER_ROLE_KEY, lDeterminerKey,
+              AppSettings.DeterminationTypeRCDefault, ORIGINAL_DETERMINER_ROLE_KEY, lDeterminerKey,
               Trunc(lVagueDate.StartDate), Trunc(lVagueDate.EndDate), lVagueDate.DateTypeString,
               AppSettings.UserID]));
         except
@@ -4187,7 +4187,7 @@ procedure TfrmPlaceCard.ValidateCard;
 begin
   ValidateValue(cmbSurvey.Text <> '', ResStr_UnableToSave + SPlaceCard_SelectSurvey, cmbSurvey);
   ValidateValue(TotalSpecies > 0, ResStr_SelectTaxaToSave, sgSpecies);
-  If cmbSurvey.KeyValue <> FDefaultSurveyKey then
+  If (cmbSurvey.KeyValue <> FDefaultSurveyKey) and (FDefaultSurveyKey <> 'All') and (FDefaultSurveyKey <> '') then
      If MessageDlg(ResStr_SurveyNotEqualDefaultConfirm, mtConfirmation, [mbYes,mbNo], 0)=mrNo then
        ValidateValue(cmbSurvey.KeyValue = FDefaultSurveyKey,Restr_SurveyNotEqualDefault, cmbSurvey);
 

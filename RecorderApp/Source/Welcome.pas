@@ -34,7 +34,7 @@ const
 resourcestring
   SWelcome_Welcome             = 'Welcome to %s';
   SWelcome_UserName            = 'User Name';
-  SWelcome_CopyIdentifier      = 'Copy Identifier';
+  SWelcome_CopyIdentifier      = 'Copy Identifier (Site Id)';
   SWelcome_AccessLevel         = 'Access Level';
   SWelcome_DatabaseContent     = 'The database you are using contains';
   SWelcome_Counting            = 'Counting...';

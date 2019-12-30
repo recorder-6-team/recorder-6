@@ -1,0 +1,39 @@
+<?xml version='1.0' ?>
+
+
+<!-- Dictionary Report
+     XML Report by Mike Weideli of Littlefield Consultancy 
+     http://www.lfield.co.uk
+     
+      
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="IW4-Log File Report" menupath="System Supplied\Import Wizard"  
+description="List all the entries in the Import Wizard log" >
+
+
+
+<SQL>
+
+
+<Where keytype="Default">
+   
+Select * FROM Import_Wizard_Log   
+
+</Where>
+
+
+<OutputTableOrderby name="by default" SQL="ORDER BY Taxon_Occurrence_key_1"/>
+
+</SQL>
+
+<Columns>
+ 
+ 
+</Columns>
+
+</CustomReport>

@@ -220,6 +220,8 @@ type
     FExpandTaxaInWizard: Boolean;
     FUseRecommendedTaxaNames: Boolean;
     FTaxonomicSearchRestriction: String;
+    FDeterminationTypeRCDefault:String;
+    FDeterminationTypeIWDefault:String;
     FSessionTaxonomicSearchRestriction: String;
     FWorkstationInstallFormStart: TDateTime;
 
@@ -308,6 +310,8 @@ type
     procedure SetExpandTaxaInWizard(const Value: Boolean);
     procedure SetUseRecommendedTaxaNames(const Value: Boolean);
     procedure SetTaxonomicSearchRestriction(const Value: String);
+    procedure SetDeterminationTypeRCDefault(const Value: String);
+    procedure SetDeterminationTypeIWDefault(const Value: String);
     function FindRegPath(const iRegKey, iSuggestedFolder: string;
         iReg: TRegistry; pathType: TFilePathType; filesToCheck: array of string;
         optional: boolean=false; canCreate: boolean=false): string;
@@ -460,6 +464,8 @@ type
     //  KJG 2/12/2004 This property enables a link in lookups through recommended name key in index_taxon_name
     property UseRecommendedTaxaNames: Boolean read FUseRecommendedTaxaNames write SetUseRecommendedTaxaNames;
     property TaxonomicSearchRestriction: String read FTaxonomicSearchRestriction write SetTaxonomicSearchRestriction;
+    property DeterminationTypeRCDefault:String read FDeterminationTypeRCDefault write SetDeterminationTypeRCDefault;
+    property DeterminationTypeIWDefault:String read FDeterminationTypeIWDefault write SetDeterminationTypeIWDefault;
     property SessionTaxonomicSearchRestriction: String read FSessionTaxonomicSearchRestriction
         write FSessionTaxonomicSearchRestriction;
     property Convertor: THTMLRTFConversion read GetConvertor;
@@ -658,6 +664,9 @@ const
   OPT_EXPAND_TAXA_WIZARD         = 'Expand Taxa in Wizard';
   OPT_USE_RECOMMENDED_TAXA       = 'Use Recommended Taxon Names';
   OPT_SEARCH_RESTRICT            = 'Taxonomic Search Restriction';
+  OPT_DETERMINATION_IW_DEFAULT   = 'Datermination Type IW Default';
+  OPT_DETERMINATION_RC_DEFAULT   = 'Determination Type RC Default';
+
   OPT_CURRENT_CLASSIFICATION     = 'Current Classification';
   OPT_DICT_IMAGES_PATH           = 'Dict Images Path';
   OPT_MAP_DATASET_SYSTEM         = 'Map Dataset System';
@@ -940,6 +949,9 @@ begin
         FCutOffDate         := EncodeDate(StrToInt(ReadStringDefault(lReg, 'Cut Off Date', '1980')), 1, 1);
         FtfMapSingleDataset := ReadBoolDefault(lReg, 'Map Single Database', False);
         TaxonomicSearchRestriction := ReadStringDefault(lReg, OPT_SEARCH_RESTRICT, ResStr_PreferredLists);
+        DeterminationTypeIWDefault := ReadStringDefault(lReg, OPT_DETERMINATION_IW_DEFAULT, ResStr_DeterminationTypeSystemDefault);
+        DeterminationTypeRCDefault := ReadStringDefault(lReg, OPT_DETERMINATION_IW_DEFAULT, ResStr_DeterminationTypeSystemDefault);
+
         FTaxonListKey       := ReadStringDefault(lReg, 'Current Checklist', '');
         FBiotopeListKey     := ReadStringDefault(lReg, OPT_CURRENT_CLASSIFICATION, '');
         FAdminAreaListKey   := ReadStringDefault(lReg, OPT_CURRENT_ADMINTYPE, '');
@@ -1240,6 +1252,8 @@ begin
         WriteBool   (OPT_EXPAND_TAXA_WIZARD,         ExpandTaxaInWizard);
         WriteBool   (OPT_USE_RECOMMENDED_TAXA,       UseRecommendedTaxaNames);
         WriteString (OPT_SEARCH_RESTRICT,            TaxonomicSearchRestriction);
+        WriteString (OPT_DETERMINATION_IW_DEFAULT,    DeterminationTypeIWDefault);
+        WriteString (OPT_DETERMINATION_RC_DEFAULT,    DeterminationTypeRCDefault);
 
         // Map Stuff
         WriteString(OPT_BASE_MAP_PATH,    BaseMapPath);
@@ -2225,6 +2239,20 @@ procedure TApplicationSettings.SetTaxonomicSearchRestriction(const Value: String
 begin
   FTaxonomicSearchRestriction := Value;
 end;
+//==============================================================================
+{ Accessor method }
+procedure TApplicationSettings.SetDeterminationTypeIWDefault(const Value: String);
+begin
+  FDeterminationTypeIWDefault := Value;
+end;
+
+//==============================================================================
+{ Accessor method }
+procedure TApplicationSettings.SetDeterminationTypeRCDefault(const Value: String);
+begin
+  FDeterminationTypeRCDefault := Value;
+end;
+//===========
 
 //==============================================================================
 { Accessor method }

@@ -492,7 +492,7 @@ function TdlgFind.GetStringForItem(AItemKey: TKeyString; AFullItemName: string):
     lStringKey := AItemKey; // translate as next line has var parameter of diff type
     Result := dmGeneralData.GetLocationNameFromLocNameKey(lStringKey);
   end;
-  
+
 begin
   Case eSearchText.HandleDuplicate of
     sfTaxon:     Result:=dmGeneralData.GetTaxonName(AItemKey);
@@ -528,16 +528,22 @@ begin
 end; // SetUpFinder
 
 //==============================================================================
-{ Don't allow header for list of rucksacks to be selected }
+{ Don't allow header for list of rucksacks to be selected
+  Where this is will depend whether or not UsePreferredTaxa is set in options
+  If it is then Recommended and PreferredList options will not be available.
+}
 procedure TdlgFind.cmbTaxonRestrictionChange(Sender: TObject);
+var iRucksackIndex:integer;
 begin
-  if cmbTaxonRestriction.ItemIndex = 5 then
+  iRucksackIndex := 3;
+  If not AppSettings.UsePreferredTaxa then iRucksackIndex := 5;
+  if cmbTaxonRestriction.ItemIndex = iRucksackIndex then
     cmbTaxonRestriction.ItemIndex := 0;
-  if cmbTaxonRestriction.ItemIndex > 5 then begin
+  if cmbTaxonRestriction.ItemIndex = iRucksackIndex then begin
     eSearchText.MinChars := RUCKSACK_SEARCH_CODE_MIN_CHARS;
   end else begin
     eSearchText.MinChars := MIN_CHARS;
-  end;    // if cmbTaxonRestriction.ItemIndex > 5
+  end;    // if cmbTaxonRestriction.ItemIndex > iRucksackIndex
   eSearchText.SetSearchText(eSearchText.Text); // force refresh
 end;
 

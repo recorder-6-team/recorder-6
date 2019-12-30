@@ -244,6 +244,7 @@ type
     procedure ReadLatLong(const AValue: Variant; var ARef: Double); overload;
     procedure PopulateQualifierCombo(iComboBox: TComboBox;
       const iTypeKey: String);
+    procedure PopulateDeterminationTypeCombo( iComboBox : TComboBox);
     property IDGenerator: TIDGenerator read FIDGen;
     property TableList : TStringList read GetTableList;
     function CheckName(const AText:string; var AKey: TKeyString; var
@@ -334,6 +335,7 @@ resourcestring
   ResStr_SourceRecNotFound    =  'Source record not found for external source';
   ResStr_SourceNotFoundChk    =  'Source not found in check for internal sources';
   ResStr_RuckSack             = 'Rucksack';
+  ResStr_Warning_Licence      = 'Are you sure? You have selected a licence which allows the distribution of the data';
   ResStr_IncludeSubTaxa =
       'Do you want to expand the list to include all taxa in the hierarchy '
       + 'contained by the taxa you have selected?'#13#10
@@ -1824,11 +1826,17 @@ begin
 end;  // CheckTempSurvey
 
 {-------------------------------------------------------------------------------
-  If it is a temp survey then licence must be lKeyRequired
+  If it is a temp survey then warn if not expected licence.
+  The key for the licence(Licence Table) applicable to temporary data is held under
+  TEMPLIC in the Setting Table and can be changed by the user. The default for this
+  is NBNSYS0000000007 and is used if the Setting table entry is missing.
+  The warning is displayed if a licence allowing for distribution of the data is used with
+  temporary data.
 }
 function TdmGeneralData.CheckLicence(const ALicenceKey:string) : boolean;
 var
 lKeyRequired : string;
+lDlgResult : word;
 begin
   with qryTempLoc do begin
     Open;
@@ -1843,9 +1851,14 @@ begin
     end;
   end;
   if lKeyRequired = ALicenceKey then
-     Result := true
-  else
-     Result := false;
+    Result := true
+  else begin
+    lDlgResult :=  MessageDlg(ResStr_Warning_Licence, mtConfirmation, [mbYes, mbNo], 0);
+    if lDlgResult = mrNo then
+      Result := false
+    else
+      Result := true;
+  end
 
 end;  // CheckLicence
 
@@ -2361,6 +2374,32 @@ begin
   end;
 end;  // PopulateQualifierCombo
 
+//==============================================================================
+{ Populate a Box with a list of DeterminationTypes
+       Called by the Options dialog constructor only. }
+procedure TdmGeneralData.PopulateDeterminationTypeCombo(iComboBox : TComboBox);
+var
+  lKeyObject : TKey;
+begin
+  iComboBox.Items.Clear;
+  with qryAllPurpose do begin
+    ParseSQL := false;
+    SQL.Text := 'SELECT DETERMINATION_TYPE_KEY, SHORT_NAME FROM DETERMINATION_TYPE ' +
+                'ORDER BY SHORT_NAME';
+    try
+      Open;
+      while not EOF do begin
+        lKeyObject := TKey.Create;
+        lKeyObject.Key := FieldByName('DETERMINATION_TYPE_KEY').AsString;
+        iComboBox.Items.AddObject(FieldByName('SHORT_NAME').AsString, lKeyObject);
+        Next;
+      end;
+    finally
+      Close;
+      ParseSQL := true;
+    end;
+  end;
+end;  // PopulateDeterminationTypeCombo
 //==============================================================================
 { Reads a lat or long from a field.  Reads NULL_LATLONG if the value is null }
 procedure TdmGeneralData.ReadLatLong(const iField: TField; var iRef: double);

@@ -1,0 +1,52 @@
+<?xml version='1.0' ?>
+
+
+<!-- JNCC  Find Reports 
+     XML Report by Mike Weideli of Littlefield Consultancy for JNCC
+     http://www.lfield.co.uk
+     Version 1 - 29 Sept 2016   
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="Find2_Taxon" menupath="System Supplied\Find Records"  
+description="Designed to help find specific record given the name of a taxon.
+Taxon is chosen from a list, but all linked taxa will be found not just the one selected.
+Provides a list of the samples with grid refs and dates and records.
+Clicking on a line will go to the appropriate record" >
+
+<SQL>
+
+<Where keytype="Default">
+
+Select Distinct S.vague_date_Start,TOCC.Taxon_Occurrence_Key,S.Sample_Key,S.Location_Name,LN.ITEM_NAME,S.SPATIAL_REF,dbo.LCReturnVagueDateShort(S.VAGUE_DATE_START,
+S.VAGUE_DATE_END,S.VAGUE_DATE_TYPE) as VagueDate,dbo.FormatEventRecorders(S.SAMPLE_KEY) as Recorder,ITN.Actual_Name
+From Sample S LEFT JOIN LOCATION L ON L.LOCATION_KEY = S.LOCATION_KEY
+LEFT JOIN LOCATION_NAME LN ON LN.LOCATION_KEY = L.LOCATION_KEY AND LN.PREFERRED = 1
+INNER JOIN Taxon_Occurrence TOcc ON TOCC.sample_Key = S.Sample_Key
+INNER JOIN Taxon_Determination TDET ON TDET.Taxon_Occurrence_Key = TOCC.Taxon_Occurrence_Key and TDET.Preferred = 1
+INNER JOIN Index_Taxon_Name ITN ON ITN.Taxon_List_Item_Key = TDET.Taxon_List_Item_Key
+INNER JOIN Index_Taxon_Name ITN2 ON ITN2.Recommended_Taxon_List_Item_Key = ITN.Recommended_Taxon_LIst_Item_Key 
+WHERE  <Condition field="ITN2.Taxon_List_Item_Key" operator="equal" type="Taxon" name="Taxon" />      
+	
+
+</Where>
+
+<OutputTableOrderby name="by default" SQL="Order By Actual_Name,Vague_date_start,Item_name,spatial_ref" /> 
+
+</SQL>
+<Columns>
+   <Column name="Vague_date_Start" visible= "false"  />
+  <Column name="Taxon_occurrence_key" position = "1" visible= "true" tablename =  "Taxon_Occurrence" caption = "TOCC Key" width = "80" />
+  <Column name="Sample_key" visible= "true" position = "2" tablename =  "Sample" caption = "Sample Key" width = "80" />
+  <Column name="Location_name" visible= "true" position = "3" caption = "Location Name"  width = "100"/>
+  <Column name="Item_name" visible= "true" position = "4" caption = "Location"  width = "200"/>
+  <Column name="Vaguedate" visible= "true" position = "5" caption = "Date" width = "80" />   
+  <Column name="Spatial_ref" visible= "true" position = "6" caption = "Grid Ref" width = "80" />
+  <Column name="Recorder" visible= "true" position = "7" caption = "Recorder" width = "200" />
+  <Column name="Actual_Name" visible= "true" position = "8" caption = "Taxon" width = "200"  /> 
+
+</Columns>
+</CustomReport>

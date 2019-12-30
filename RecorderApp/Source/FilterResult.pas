@@ -3294,7 +3294,7 @@ procedure TfrmFilterResult.ApplyCriteriaToCustomReport(ACriteria: TStrings);
 var
   lSQL: TStrings;
   lCriteria: TStrings;
-
+  lOrderByClause: TStrings;
   {-----------------------------------------------------------------------------
     Removes the current filter (if any) from the query.
   }
@@ -3302,22 +3302,34 @@ var
   var
     I: Integer;
   begin
-    for I := 0 to lSQL.Count - 1 do
-      if AnsiStartsStr('WHERE ', lSQL[I]) then
-      begin
-        while lSQL.Count > I do lSQL.Delete(I);
-        Break;
-      end;
+    I := ansiPos('WHERE ',lSQL.Text);
+    if I > 0 then lSQL.Text := ansiLeftStr(lSQL.Text,I-1)
+  end;
+  {-----------------------------------------------------------------------------
+    Removes and stores the current Order By Clause (if any)
+  }
+  procedure RemoveOrderByClause;
+  var
+    I: Integer;
+  begin
+    lOrderByClause.Text := '';
+    I := ansiPos('ORDER BY',ansiUppercase(lSQL.Text));
+    if I > 0 then begin
+      lOrderByClause.Text := ansiRightStr(lSQL.Text,length(lSQL.Text)-I+1);
+      lSQL.Text := ansiLeftStr(lSQL.Text,I-1);
+    end;
   end;
 
 begin
   lSQL := qryCustomReport.SQL;
   lSQL.BeginUpdate;
   try
+    RemoveOrderByClause;
     RemoveWhereClause;
     lCriteria := MakeCriteria;
     try
       lSQL.AddStrings(lCriteria);
+      lSQL.AddStrings(lOrderByClause);
     finally
       lCriteria.Free;
     end;
