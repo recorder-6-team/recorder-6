@@ -1289,6 +1289,7 @@ begin
       lblSubject.Caption :=ResStr_LocationName;
       eInitials.Visible  :=False;
       lblInitials.Visible:=False;
+      eName.MaxLength    :=100;
 
       if ShowModal=mrOk then begin
         lFound:=False;

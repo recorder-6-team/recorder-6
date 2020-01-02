@@ -1150,6 +1150,8 @@ begin
     try
       Caption:= ResStr_Authors;
       lblSubject.Caption:= ResStr_AuthorSurname + ':';
+      eName.MaxLength := 50;
+      eInitials.MaxLength := 8;
 
       if ShowModal = mrOk then begin
         // Check the name is not already in the list
