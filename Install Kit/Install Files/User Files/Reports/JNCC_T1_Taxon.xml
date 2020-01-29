@@ -4,7 +4,7 @@
 <!-- JNCC  Decades for Taxa 
      XML Report by Mike Weideli of Littlefield Consultancy for JNCC
      http://www.lfield.co.uk
-     Version 5 - 28 November 2014 
+     Version 6 - January 2020 
 
    
      QUICK REPORT ONLY - From Taxon Dictionary
@@ -91,7 +91,8 @@ SUM(CASE WHEN DECADE=197 THEN QTY END) AS [1970-1979],
 SUM(CASE WHEN DECADE=198 THEN QTY END) AS [1980-1989],
 SUM(CASE WHEN DECADE=199 THEN QTY END) AS [1990-1999],
 SUM(CASE WHEN DECADE=200 THEN QTY END) AS [2000-2009],
-SUM(CASE WHEN DECADE=201 THEN QTY END) AS [2010-2019]
+SUM(CASE WHEN DECADE=201 THEN QTY END) AS [2010-2019],
+SUM(CASE WHEN DECADE=202 THEN QTY END) AS [2020-2029]
 
 INTO #MAIN2
 FROM (SELECT pref_tli_key, Decade, dcount as qty From
