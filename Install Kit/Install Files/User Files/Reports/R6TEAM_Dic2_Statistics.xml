@@ -4,7 +4,7 @@
 <!-- Dictionary Report
      XML Report by Mike Weideli of Littlefield Consultancy for R6 Consortium
      http://www.lfield.co.uk
-     Version 1 - 12 August 2020  
+     Version 2 - January 2020 
       
      
      	
@@ -12,7 +12,7 @@
  --> 
 
 
-<CustomReport  title="Dic2-Statistics" menupath="System Supplied\Dictionary"  
+<CustomReport  title="Dic2-Statistics(2020)" menupath="System Supplied\Dictionary"  
 description="Reports on total number of system supplied entries in key dictionary tables " >
 
 
@@ -28,11 +28,16 @@ Insert into #Stats (Table_Name, Records) values('Taxon_Version', 0)
 Insert into #Stats (Table_Name, Records) values('Taxon_List_Item', 0)
 Insert into #Stats (Table_Name, Records) values('Organism', 0)
 
-Update #Stats set Records = (Select count(*) from Taxon WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Taxon' 
+Update #Stats set Records = (Select count(*) from Taxon  WHERE TAXON.SYSTEM_SUPPLIED_DATA = 1 AND EXISTS (SELECT * FROM TAXON_VERSION WHERE TAXON_VERSION.TAXON_KEY = 
+TAXON.TAXON_KEY)) where #Stats.Table_Name = 'Taxon' 
 
 Update #Stats set Records = (Select count(*) from Taxon_List WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Taxon_List' 
+
 Update #Stats set Records = (Select count(*) from Taxon_List_Item WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Taxon_List_Item' 
-Update #Stats set Records = (Select count(*) from Taxon_Version WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Taxon_Version' 
+
+Update #Stats set Records = (Select count(*) from Taxon_Version WHERE SYSTEM_SUPPLIED_DATA = 1 AND EXISTS (SELECT * FROM TAXON_LIST_ITEM WHERE TAXON_LIST_ITEM.TAXON_VERSION_KEY = TAXON_VERSION.TAXON_VERSION_KEY) ) where #Stats.Table_Name = 'Taxon_Version' 
+
+
 Update #Stats set Records = (Select count(*) from Organism WHERE SYSTEM_SUPPLIED_DATA = 1) where #Stats.Table_Name = 'Organism' 
 
 SELECT * FROM #Stats

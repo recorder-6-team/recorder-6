@@ -2524,7 +2524,16 @@ begin
     on E:Exception do
       Raise EDatabaseWriteError.Create(ResStr_CreateFail + ' ' + E.Message + ' [Biotope Occurrence]');
   end;
-
+  // Now insert the documents if AddDocsToOccurrence is set to true
+  If (AppSettings.AddDocsToOccurrence) then begin;
+    try
+    dmDatabase.RunStoredProc('usp_BiotopeOccurrenceSource_Insert',
+       ['@BiotopeOccurrenceKey', lBiotopeOccKey]);
+    except
+       on E:Exception do
+       Raise EDatabaseWriteError.Create(ResStr_WriteRecFail + ' ' + E.Message + ' [Biotope Occurrence Sources]');
+    end;
+  end;
   lBiotopeDetKey := dmGeneralData.GetNextKey(TN_BIOTOPE_DETERMINATION, 'BIOTOPE_DETERMINATION_KEY', True);
   try
     //Now do determination
