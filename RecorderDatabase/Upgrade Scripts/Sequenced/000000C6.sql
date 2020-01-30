@@ -147,7 +147,7 @@ GO
     $Author: MikeWeideli $
 
 \*===========================================================================*/
-ALTER PROCEDURE [dbo].[usp_ImportWizard_TidyLocationLocationAdminArea]
+CREATE PROCEDURE [dbo].[usp_ImportWizard_TidyLocationLocationAdminArea]
 AS
     Declare @LocationKey as char(16) 
     Declare @LocationAdminArea char(16)
