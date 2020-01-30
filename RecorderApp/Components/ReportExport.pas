@@ -26,7 +26,7 @@ uses
 
 resourcestring
   ResStr_ExportAborted = 'The export was cancelled.';
-
+  Restr_ExportFile_Exists = 'File exists - overwrite ?';
 type
   TExportException = class(TExceptionPath);
 
@@ -172,6 +172,10 @@ begin
           end;
           // 'NBN Data|*.xml|All files|*.*'
         end;
+        If FileExists(FileName)then begin
+          if MessageDlg(Restr_ExportFile_Exists,mtConfirmation,[mbYes, mbNo], 0) = mrNo then
+            Filename := '';
+        end;
         Result := FileName;
       end
       else
@@ -220,21 +224,23 @@ var exporter: TSMExportToCustomXLS;
   filepath: string;
 begin
   filepath := GetOutputLocation;
-  if SameText(ExtractFileExt(filepath), '.xls') then
-    exporter := TSMExportToXLS.Create(nil)
-  else
-    exporter := TSMExportToXLSX.Create(nil);
-  with exporter do
-    try
-      DBGrid := ADBGrid;
-      FileName := filepath;
-      AddTitle := true;
-      OnGetCellParams := GetCellParams;
-      Execute;
-      Result := FileName;
-    finally
-      Free;
-    end;
+  if filepath <> '' then begin
+    if SameText(ExtractFileExt(filepath), '.xls') then
+      exporter := TSMExportToXLS.Create(nil)
+    else
+      exporter := TSMExportToXLSX.Create(nil);
+    with exporter do
+      try
+        DBGrid := ADBGrid;
+        FileName := filepath;
+        AddTitle := true;
+        OnGetCellParams := GetCellParams;
+        Execute;
+        Result := FileName;
+      finally
+        Free;
+      end;
+  end;
 end;
 
 {-------------------------------------------------------------------------------
