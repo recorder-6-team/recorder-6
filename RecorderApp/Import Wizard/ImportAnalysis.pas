@@ -129,6 +129,8 @@ type
     btnAccept: TButton;
     btnAllOriginal: TButton;
     btnAllLatest: TButton;
+    lblSurvey: TLabel;
+    lblSurveyName: TLabel;
     procedure btnAcceptClick(Sender: TObject);
     procedure btnRejectClick(Sender: TObject);
     procedure btnAllImportedClick(Sender: TObject);
@@ -183,7 +185,7 @@ uses
   IWResourceStrings, IWConstants, GeneralFunctions, Maintbar,
   ApplicationSettings, ComObj, DatabaseAccessADO, GeneralData, FormActions,
   Treecoll, DBMerger, ImportWizard, OnlineHelp, DefaultPaths, ADODB, DB,
-  StrUtils;
+  StrUtils, FileSelect;
 
 resourcestring
   ResStr_FilterCSV         = 'CSV (comma delimited) (*.csv)';
@@ -372,7 +374,16 @@ end;
 }
 procedure TfraImportAnalysis.SetupDetailMemo(iDisplayDescription: boolean);
 var lstRestrictionText: String;
+    rs: _recordset;
+    lSurveyname: String;
 begin
+  rs:= dmDatabase.ExecuteSQL('SELECT Item_Name' +
+    ' FROM Survey '
+    + ' Where Survey_Key = '
+    + '''' + AppSettings.IWSurveyKey + '''',true);
+  if not rs.Eof then
+    lSurveyname:= (rs.Fields['Item_Name'].Value);
+  lblSurveyName.caption := lSurveyname;
   with mmDetails.Lines do begin
     if iDisplayDescription then
       if Settings.ImportType = itNBNData then begin
