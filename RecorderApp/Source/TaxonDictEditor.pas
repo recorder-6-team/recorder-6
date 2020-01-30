@@ -155,7 +155,7 @@
 //  Updated in $/JNCC/Development/Build/Source
 //  IR10817
 //  Own Data access level fixes.
-//  
+//
 //  *****************  Version 80  *****************
 //  User: Johnvanbreda Date: 20/01/06   Time: 14:30
 //  Updated in $/JNCC/Development/Build/Source
@@ -233,7 +233,7 @@
 //  Updated in $/JNCC/Development/Build/Source
 //  ID 3469. Fix for pending messages causing a bit of trouble when closing
 //  the app before they're processed.
-//  
+//
 //  *****************  Version 67  *****************
 //  User: Andrewkemp   Date: 29/06/04   Time: 17:23
 //  Updated in $/JNCC/Development/Build/Source
@@ -491,6 +491,17 @@ type
     btnFactDelete: TImageListButton;
     btnFactEdit: TImageListButton;
     btnFactAdd: TImageListButton;
+    tsOrganism: TTabSheet;
+    bvOrganism: TBevel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    lblInfo: TLabel;
+    edParent: TEdit;
+    btnParent: TButton;
+    lblOrganismName: TLabel;
+    lblTaxonGroup: TLabel;
+    Label4: TLabel;
     procedure FormActivate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure btnAddClick(Sender: TObject);
@@ -553,6 +564,10 @@ type
       Shift: TShiftState);
     procedure pnlDetailsResize(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure btnParentClick(Sender: TObject);
+    procedure edParentKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edParentClick(Sender: TObject);
   private
     { Private declarations }
     FAdd          : Boolean;
@@ -577,6 +592,15 @@ type
     FArbitraryGroupsEdited : boolean; // save unnecessary saves to DB
     FKeyDown               : Boolean; //indicates whether a key has been pressed on a combo.
     FHaveCustody: Boolean;
+
+    FOrganismParentKey : string;
+    FTaxonGroupKey : string;
+    FSystemSupplied : boolean;
+    FParentSortLevel : integer;
+    FParentLineage : string ;
+    FParentTLIKey : String;
+    FUseOrganismTable : boolean;
+
     procedure AddItem(const ANewNode: TFlyNode);
     function CheckDeletedNode(const AMode: TEditMode): Boolean;
     procedure CheckPreferredTaxonName(const ARow: Integer);
@@ -638,6 +662,12 @@ type
     procedure UpdateIndexTaxonName;
     class function GetTaxonListItemCustodian(const AKey: TKeyString): string;
     function CanEditTaxonNameRow(ARow: integer): Boolean;
+    procedure SetupOrganism;
+    function FindTaxon(const iFindTaxon: string): TKeyString;
+    function IncrementKey(LastKey: string): string;
+    function GenerateSortOrder(ANewLineage: string): string;
+    function Populate_Lineage_Children(AOrganism_Key,AParent_Key : string ): integer;
+    function UseOrganismTable(): boolean;
   protected
     procedure FreeObjects; override;
     function GetExcludeCDLists: Boolean; override;
@@ -685,6 +715,138 @@ const
       'ORDER BY ITN.Sort_Order, ITN.Preferred_Name';
   NONE_GIVEN_TAXON_NAME_TYPE_KEY = 'NBNSYS0000000000';
 
+  SQL_ORGANISM_PARENT =
+      'SELECT DISTINCT ITN2.ACTUAL_NAME AS ORGANISM,ITN3.ACTUAL_NAME AS PARENT_NAME,TG.TAXON_GROUP_KEY AS GROUP_KEY, ' +
+      'TG.TAXON_GROUP_NAME AS GROUP_NAME,TV3.TAXON_VERSION_KEY AS PARENT_KEY, ' +
+      'O2.SORT_LEVEL AS PARENT_SORT_LEVEL, O2.LINEAGE AS PARENT_LINEAGE ' +
+      'FROM INDEX_TAXON_NAME ITN ' +
+      'INNER JOIN INDEX_TAXON_NAME ITN2 ON ITN2.TAXON_LIST_ITEM_KEY =  ' +
+      'ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY ' +
+      'INNER JOIN ORGANISM O ON O.TAXON_VERSION_KEY = ' +
+      'ITN2.TAXON_VERSION_KEY ' +
+      'INNER JOIN ORGANISM O2 ON O2.ORGANISM_KEY = O.PARENT_KEY ' +
+      'INNER JOIN INDEX_TAXON_NAME ITN3 ON ITN3.TAXON_VERSION_KEY = ' +
+      'O2.TAXON_VERSION_KEY ' +
+      'INNER JOIN TAXON_VERSION TV3 ON TV3.TAXON_VERSION_KEY = ' +
+      'ITN3.TAXON_VERSION_KEY ' +
+      'INNER JOIN TAXON_GROUP TG ON TG.TAXON_GROUP_KEY  = TV3.OUTPUT_GROUP_KEY ' +
+      'WHERE ITN.TAXON_LIST_ITEM_KEY = ''%s''';
+
+  SQL_ORGANISM =
+      'SELECT DISTINCT ITN2.ACTUAL_NAME AS ORGANISM, ' +
+      'TG.TAXON_GROUP_NAME AS GROUP_NAME, O.SYSTEM_SUPPLIED_DATA AS SYSTEM_SUPPLIED ' +
+      'FROM INDEX_TAXON_NAME ITN ' +
+      'INNER JOIN INDEX_TAXON_NAME ITN2 ON ITN2.TAXON_LIST_ITEM_KEY = ' +
+      'ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY ' +
+      'INNER JOIN TAXON_VERSION TV ON TV.TAXON_VERSION_KEY = ' +
+      'ITN2.TAXON_VERSION_KEY ' +
+      'LEFT JOIN TAXON_GROUP TG ON TG.TAXON_GROUP_KEY  = TV.OUTPUT_GROUP_KEY ' +
+      'INNER JOIN ORGANISM O ON O.TAXON_VERSION_KEY = TV.TAXON_VERSION_KEY  ' +
+      'WHERE ITN.TAXON_LIST_ITEM_KEY = ''%s''';
+
+  SQL_PARENT_FROM_TLI_KEY =
+      'SELECT DISTINCT ITN2.ACTUAL_NAME AS PARENT_NAME,TG.TAXON_GROUP_KEY AS GROUP_KEY, ' +
+      'TG.TAXON_GROUP_NAME AS GROUP_NAME,O.ORGANISM_KEY AS ORGANISM_PARENT_KEY,  ' +
+      'O.Lineage AS PARENT_LINEAGE, O.SORT_LEVEL AS PARENT_SORT_LEVEL, ' +
+      'ITN2.TAXON_LIST_ITEM_KEY AS PARENT_TLI_KEY ' +
+      'FROM INDEX_TAXON_NAME ITN INNER JOIN INDEX_TAXON_NAME ITN2 ' +
+      'ON ITN2.TAXON_LIST_ITEM_KEY = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY ' +
+      'INNER JOIN ORGANISM O ON O.TAXON_VERSION_KEY = ITN2.TAXON_VERSION_KEY ' +
+      'INNER JOIN TAXON_VERSION TV ON TV.TAXON_VERSION_KEY = ' +
+      'O.TAXON_VERSION_KEY INNER JOIN TAXON_GROUP TG ON TG.TAXON_GROUP_KEY = ' +
+      'TV.OUTPUT_GROUP_KEY ' +
+      'WHERE ITN2.CAN_EXPAND = 1 AND  ITN.TAXON_LIST_ITEM_KEY = ''%s''';
+
+  SQL_ORGANISM_INSERT =
+      'INSERT INTO ORGANISM (ORGANISM_KEY,TAXON_VERSION_KEY,ORGANISM_RANK_KEY, ' +
+      ' ENTERED_BY,ENTRY_DATE,SYSTEM_SUPPLIED_DATA,PARENT_KEY,SORT_LEVEL,HAS_CHILDREN) ' +
+      'SELECT TV.TAXON_VERSION_KEY,TV.TAXON_VERSION_KEY,TLI.TAXON_RANK_KEY,TV.ENTERED_BY, ' +
+      'TV.ENTRY_DATE,0,''%s'',''%s'',0' +
+      'FROM TAXON_VERSION TV INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_VERSION_KEY = ' +
+      'TV.TAXON_VERSION_KEY WHERE TV.TAXON_VERSION_KEY = ''%s''';
+
+  SQL_USER_ADDED_GROUP =
+      'UPDATE TAXON_VERSION SET OUTPUT_GROUP_KEY = ''%s''' +
+      'WHERE TAXON_VERSION_KEY = ''%s'' AND SYSTEM_SUPPLIED_DATA = 0';
+
+  SQL_UPDATE_ORGANISM_PARENT =
+      'UPDATE ORGANISM SET PARENT_KEY = ''%s'' WHERE ORGANISM_KEY = ''%s''';
+
+  SQL_VIRTUAL_ORGANISM_PARENT =
+      'UPDATE ORGANISM SET PARENT_KEY = ''%s'' WHERE ORGANISM_KEY = ''%s''';
+
+  SQL_PARENT_LINEAGE =
+      'SELECT Org.Organism_Key,Org2.Lineage,ORG.Taxon_version_Key from Organism ORG ' +
+      'INNER JOIN ORGANISM ORG2 ON ORG2.Organism_key = ORG.Parent_Key ' +
+      'INNER JOIN Taxon_Rank TR ON TR.Taxon_rank_Key = ORG.Organism_Rank_Key ' +
+      'INNER JOIN Taxon_version TV ON TV.Taxon_Version_Key = ORG.Taxon_Version_Key ' +
+      'INNER JOIN Taxon T ON T.Taxon_Key = TV.Taxon_Key ' +
+      'WHERE (ORG.PARENT_KEY = ''%s'' OR ORG.Lineage LIKE(''%s'')) ' +
+      'AND ( ORG.Sort_Level = %s )' +
+      'ORDER BY  Org2.Lineage,Org.WEIGHT, TR.Sequence, T.Item_Name ';
+
+  SQL_PARENT_DETAIL =
+      'SELECT ORG2.LINEAGE as PARENT_LINEAGE,ORG2.SORT_LEVEL AS PARENT_SORT_LEVEL ' +
+      'FROM ORGANISM ORG INNER JOIN ORGANISM ORG2 ON ORG2.ORGANISM_KEY = ' +
+      'ORG.PARENT_KEY WHERE ORG.ORGANISM_KEY = ''%s''';
+
+  SQL_UPDATE_LINEAGE =
+      'Update Organism Set Sort_Code = 0, Lineage = ''%s'', Sort_Order = ''%s''' +
+      'FROM Organism WHERE Organism_Key = ''%s''';
+
+  SQL_ITN_SORT_ORDER =
+      ' Update Index_Taxon_name set sort_order = ''%s''' +
+      'FROM Index_Taxon_Name ITN INNER JOIN Taxon_List_Item TLI  ' +
+      'ON TLI.Taxon_List_Item_Key = ITN.Recommended_taxon_List_Item_Key ' +
+      'INNER JOIN ORGANISM O ON O.Taxon_Version_Key = TLI.Taxon_Version_Key ' +
+      'WHERE O.Organism_Key = ''%s''';
+
+  SQL_ADD_TO_VIRTUAL_ORGANISM =
+      'INSERT INTO VIRTUAL_ORGANISM ([TAXON_LIST_ITEM_KEY], ' +
+	    '[TAXON_LIST_VERSION_KEY], [TAXON_VERSION_KEY], ' +
+	    '[PREFERRED_NAME],[TAXON_LIST_VERSION_TO], ' +
+	    '[Sort_Code],[PARENT],[TAXON_RANK_KEY],[ENTERED_BY],[ENTRY_DATE], ' +
+	    '[SYSTEM_SUPPLIED_DATA],[Has_Children])' +
+      'SELECT DISTINCT ITN.TAXON_LIST_ITEM_KEY AS TAXON_LIST_ITEM_KEY, ' +
+	    '''VIRTUAL_ORGANISM''	AS TAXON_LIST_VERSION_KEY, ITN.TAXON_VERSION_KEY ' +
+      'AS TAXON_VERSION_KEY, ITN.TAXON_LIST_ITEM_KEY AS PREFERRED_NAME, NULL AS ' +
+      'TAXON_LIST_VERSION_TO, O.Sort_Code, ' +
+      'ITN2.RECOMMENDED_TAXON_LIST_ITEM_KEY AS PARENT, ' +
+      'O.ORGANISM_RANK_KEY AS TAXON_RANK_KEY, O.ENTERED_BY, O.ENTRY_DATE, ' +
+      'O.SYSTEM_SUPPLIED_DATA, O.Has_Children ' +
+	    'FROM dbo.ORGANISM AS O INNER JOIN ' +
+      'INDEX_TAXON_NAME ITN ON ITN.TAXON_VERSION_KEY = ' +
+	    'O.TAXON_VERSION_KEY AND O.SYSTEM_SUPPLIED_DATA = 0 ' +
+      'AND O.REDUNDANT_FLAG IS NULL ' +
+      'INNER JOIN dbo.ORGANISM AS O2 ON O2.ORGANISM_KEY = O.PARENT_KEY ' +
+      'INNER JOIN INDEX_TAXON_NAME ITN2 ON ITN2.TAXON_VERSION_KEY = ' +
+      'O2.TAXON_VERSION_KEY WHERE O.ORGANISM_KEY = ''%s''' ;
+
+   SQL_CLEAR_VO_CHILDREN =
+      'UPDATE VIRTUAL_ORGANISM SET HAS_CHILDREN = 0 ' +
+      'WHERE  NOT EXISTS (SELECT * FROM VIRTUAL_ORGANISM VO ' +
+      'WHERE VO.PARENT = VIRTUAL_ORGANISM.TAXON_LIST_ITEM_KEY)' +
+      'AND VIRTUAL_ORGANISM.HAS_CHILDREN = 1 ';
+
+   SQL_UPDATE_VO_CHILDREN =
+      'UPDATE VIRTUAL_ORGANISM SET HAS_CHILDREN = 1 ' +
+      'WHERE  EXISTS (SELECT * FROM VIRTUAL_ORGANISM VO ' +
+      'WHERE VO.PARENT = VIRTUAL_ORGANISM.TAXON_LIST_ITEM_KEY)' +
+      'AND VIRTUAL_ORGANISM.HAS_CHILDREN = 0 ';
+
+   SQL_UPDATE_ITN_CHILDREN =
+       'UPDATE INDEX_TAXON_NAME SET HAS_CHILDREN = 0 ' +
+       'WHERE NOT EXISTS (SELECT * FROM TAXON_LIST_ITEM TLI WHERE TLI.PARENT = ' +
+       'INDEX_TAXON_NAME.TAXON_LIST_ITEM_KEY) ' +
+       'AND HAS_CHILDREN = 1 ' ;
+
+   SQL_CLEAR_ITN_CHILDREN =
+       'UPDATE INDEX_TAXON_NAME SET HAS_CHILDREN = 1 ' +
+       'WHERE EXISTS (SELECT * FROM TAXON_LIST_ITEM TLI WHERE TLI.PARENT = ' +
+       'INDEX_TAXON_NAME.TAXON_LIST_ITEM_KEY) ' +
+       'AND HAS_CHILDREN = 0 ';
+
+
 resourcestring
   ResStr_DeletedFromDatabase =  'It has been deleted from the database.';
   ResStr_UserStandardCommonName = 'Use standard common name (%s)';
@@ -720,8 +882,8 @@ resourcestring
   ResStr_InvalidVagueDate = 'The vague date you have entered is not valid';
   ResStr_SelectedItem = 'the selected item';
   ResStr_SelectedItems = 'the selected items';
-
-
+  ResStr_OrganismParent = 'Organism Parent is Required';
+  ResStr_Not_Suitable = 'The taxon selected is not suitable';
   //Status
   ResStr_LoadingTaxonList = 'Loading taxonomic list...';
 
@@ -816,11 +978,41 @@ begin
     dblblEntryDate.Datasource   := dsGeneral;
     dblblChangedDate.Datasource := dsGeneral;
   end;
+  // Poulate Organism
+    FUseOrganismTable := UseOrganismTable;
+    if FUseOrganismTable then setUpOrganism;
   // Populate combo
   cmbStatusType.Active := True;
-end;  // SetupObjects
 
+end;  // SetupObjects
 //==============================================================================
+procedure TfrmTaxonDictEditor.SetupOrganism;
+var rs : _Recordset;
+begin
+  FSystemSupplied := true;
+  rs := dmDatabase.ExecuteSQL(Format(SQL_ORGANISM,[FTaxonListItemKey]),true);
+  if not rs.Eof then begin
+    clearfields;
+    lblTaxonGroup.caption := rs.Fields['GROUP_NAME'].Value;
+    lblOrganismName.Caption := rs.Fields['ORGANISM'].Value;
+    If rs.Fields['SYSTEM_SUPPLIED'].value <> 'True' then begin
+      FSystemSupplied := false;
+      SetRequiredFieldsColourState(true,[edParent]);
+    end;
+  end;
+  btnParent.visible := Not FSystemsupplied;
+  rs := dmDatabase.ExecuteSQL(Format(SQL_ORGANISM_PARENT,[FTaxonListItemKey]),true);
+  if not rs.Eof then begin
+    FOrganismParentKey := rs.Fields['PARENT_KEY'].Value;
+    edParent.text := rs.Fields['PARENT_NAME'].Value;
+    FTaxonGroupKey := rs.Fields['GROUP_KEY'].Value;
+    FParentSortLevel := rs.Fields['PARENT_SORT_LEVEL'].value;
+    FParentLineage :=  rs.Fields['PARENT_LINEAGE'].value;
+    FParentTLIKey := '';
+  end;
+end;
+//==============================================================================
+
 procedure TfrmTaxonDictEditor.SetupHelp;
 begin
   mnuEdit.HelpContext        := IDH_EDITMENU;
@@ -841,7 +1033,6 @@ begin
   ClearTaxonGroupPage;
   FDeletedUserNameKeys.Free;
   FDeletedUserNameKeys := nil;
-
   FTaxonStatusList.Free;
   FTaxonStatusList := nil;
   FTaxonFactsList.Free;
@@ -985,6 +1176,17 @@ begin
   ClearFactsFields;
   lblChangedBy.Caption := '';
   lblEnteredBy.Caption := '';
+  FOrganismParentKey := '';
+  lblOrganismName.Caption := '';
+  edParent.Text := '';
+  lblTaxonGroup.Caption := '';
+  FTaxonGroupKey := '';
+  FSystemSupplied := false;
+  FParentSortLevel := 0;
+  FParentLineage := '';
+  FParentTLIKey := '';
+  btnParent.Visible := true;
+  edParent.Enabled := true;
 end;  // ClearFields
 
 //==============================================================================
@@ -1039,7 +1241,7 @@ end;  // RefreshDictionary
 procedure TfrmTaxonDictEditor.WMRefreshColours(var Msg: TMessage);
 begin
   if EditMode <> emView then begin
-    SetRequiredFieldsColourState(true,[dbeName, dbcmbRank]);
+    SetRequiredFieldsColourState(true,[dbeName, dbcmbRank,edParent]);
     SetRequiredFieldsColourState(btnStatusOk.Enabled, [cmbStatusType]);
     SetRequiredFieldsColourState(btnFactOk.Enabled, [cmbFactType, reFact]);
   end;
@@ -1118,8 +1320,11 @@ begin
     finally
       DefaultCursor(lCursor);
     end;
+    SetUpOrganism;
   end;
   UpdateMenus;
+
+
 end;  // PopulateDetails
 
 //==============================================================================
@@ -1237,6 +1442,7 @@ begin
 
     // Taxon List Item Fields
     qryGeneral.FieldByName('TLI_TAXON_LIST_VERSION_KEY').AsString:= LatestVersion;
+
   end;
 end;  // SetKeyFields
 
@@ -1402,6 +1608,10 @@ procedure TfrmTaxonDictEditor.btnAddClick(Sender: TObject);
 var lrPosPopup: TPoint;
 begin
   inherited;
+  FSystemSupplied := false;
+  btnParent.visible := true;
+  edParent.Enabled := true;
+  SetRequiredFieldsColourState(true,[edParent]);
   lrPosPopup := ClientToScreen(Point(btnAdd.Left, pnlButtons.Top + btnAdd.Top + btnAdd.Height));
   pmAdd.Popup(lrPosPopup.X, lrPosPopup.Y);
 end;  // btnAddClick
@@ -1452,6 +1662,7 @@ end;  // actAddChildExecute
 //------------------------------------------------------------------------------
 procedure TfrmTaxonDictEditor.AddItem(const ANewNode: TFlyNode);
 var loNewDictNode: TTaxonDictionaryNode;
+
 begin
   inherited;
   ClearFields;
@@ -1470,11 +1681,9 @@ begin
     SysSupplied     := False; // since we are adding this item
   end;
   ANewNode.Data := loNewDictNode;
-
   // Set contents of the Rank combo which is dependent on the parent node
   SetRankCombo(ANewNode);
-
-  //Append the new taxon/taxon_version/taxon_list_item to the database
+  //Append the new taxon/taxon_version/taxon_list_item/Organism to the database
  	with TdmTaxonDictEditor(DictionaryData) do
     try
       //if query is not open then open it with the newly generated list item key to ensure no records are brought back
@@ -1491,12 +1700,12 @@ begin
       SetKeyFields;
       TdmTaxonDictEditor(DictionaryData).qryRank.First;
       qryGeneral.FieldByName('TLI_Taxon_Rank_Key').AsString := TdmTaxonDictEditor(DictionaryData).qryRank.FieldByName('Taxon_Rank_Key').AsString;
-
       RefreshLists(loNewDictNode);
     except
       qryGeneral.Cancel;
       raise;
     end;
+ 
   pcTaxondetails.ActivePage := tsGeneral;
   EnableDetails(emAdd);
 end;  // AddItem
@@ -1513,7 +1722,6 @@ var
 begin
   inherited;
   if not Assigned(tvDictionary.Selected) then Exit;
-
   if tvDictionary.Selected.Count <> 0 then
     if dbcmbRank.Text = '' then begin
       MessageDlg(ResStr_CorrectRankNeeded, mtInformation, [mbOk], 0);
@@ -1603,6 +1811,7 @@ var loNodeData: TDictionaryNode;
     loNode    : TFlyNode;
     lsKey     : TKeyString;
     lCursor: TCursor;
+    lsTVKey : String;
 begin
   loNode     := tvDictionary.Selected;
   loNodeData := TDictionaryNode(loNode.Data);
@@ -1612,6 +1821,7 @@ begin
     with TdmTaxonDictEditor(DictionaryData) do
       with qryGeneral do begin
         lsKey := FieldByName('T_TAXON_KEY').AsString;
+        lsTVKey := FieldByName('TLI_TAXON_VERSION_KEY').AsString;
         if not ReferencedInTable(lsKey) then begin
           // Update the Sort code fields for the list items following the inserted item
           // subtract 1 from all items after the deleted node
@@ -1634,6 +1844,9 @@ begin
             'Select Taxon_List_Item_key from Taxon_List_Item where Taxon_Version_Key in ' +
                     '(Select Taxon_Version_Key from Taxon_Version where Taxon_Key =' + QuotedStr(lsKey) + '))',
               ResStr_DelFail + ' - INDEX_TAXON_Synonym table');
+          dmGeneralData.ExecuteSQL('Delete from Virtual_Organism where Taxon_Version_Key = ' +
+             QuotedStr(lsTVKey), ResStr_DelFail + ' - Virtual Organism Table');
+
           //  KJG 15/12/2004
           //  VI8136 problem highlighted this when I was testing it.
           //  There is now a constraint based on recommended taxon name key.
@@ -1662,7 +1875,22 @@ begin
                                    'WHERE Taxon_List_Item_Key = ''' + FTaxonListItemKey + ''' ' +
                                    'OR    Synonym_List_Item_Key = ''' + FTaxonListItemKey + ''' ',
                                    ResStr_DelFail + ' - INDEX_TAXON_NAME table');
+          // Remove records from Organism
+          dmGeneralData.ExecuteSQL('DELETE FROM Organism ' +
+                                   'WHERE Organism_key = ''' + FTaxonVersionKey + ''' ',
+                                   ResStr_DelFail + ' - INDEX_TAXON_NAME table');
+
+          dmGeneralData.ExecuteSQL('DELETE FROM Organism ' +
+                                   'WHERE Organism_key = ''' + FTaxonVersionKey + ''' ',
+                                   ResStr_DelFail + ' - INDEX_TAXON_NAME table');
+
           dmGeneralData.qryAllPurpose.Connection.Execute('Commit tran');
+
+          dmDatabase.ExecuteSQL(SQL_CLEAR_VO_CHILDREN);
+          dmDatabase.ExecuteSQL(SQL_UPDATE_VO_CHILDREN);
+          dmDatabase.ExecuteSQL(SQL_CLEAR_ITN_CHILDREN);
+          dmDatabase.ExecuteSQL(SQL_UPDATE_ITN_CHILDREN);
+
           if Assigned(loNodeData) then loNodeData.Free;
           //Refresh;
           loNode.Delete;
@@ -1685,6 +1913,8 @@ begin
   lTab := pcTaxonDetails.ActivePage;
   pcTaxonDetails.ActivePage := tsGeneral;
   ValidateValue(dbeName.Text <> '',ResStr_TaxonNameRequiredEnter, dbeName);
+  if FUseOrganismTable then
+    ValidateValue(FOrganismParentKey <> '',ResStr_OrganismParent, edParent);
   ValidateValue(dbcmbRank.Text <> '', ResStr_TaxonRankRequiredSelect, dbcmbRank);
   pcTaxonDetails.ActivePage := tsPersonalNames;
   ValidateValue(ValidateTaxonNames, ResStr_PersonalTaxonNameBlank, sgPersonalNames);
@@ -1708,7 +1938,8 @@ procedure TfrmTaxonDictEditor.SaveItem;
 var
   lLevel : integer;
   ltfAdd : boolean;
-  lHaveCustody: Boolean;
+  lHaveCustody : boolean;
+  lTVKey : string;
 begin
   lHaveCustody := dmGeneralData.Custodian('Taxon_List_Item', 'Taxon_List_Item_Key',
       TNodeObject(tvDictionary.Selected.Data).ItemKey) = AppSettings.SiteID;
@@ -1718,13 +1949,22 @@ begin
       SetFields;
       with TdmTaxonDictEditor(DictionaryData).qryGeneral do
       begin
+        lTVKey :=  FieldValues['TLI_Taxon_Version_Key'];
         ltfAdd :=(rsNew in TdmTaxonDictEditor(DictionaryData).qryGeneral.RecordStatus);
         Post;
-        if ltfAdd then
-          Connection.Execute('INSERT INTO Taxon_Common_Name (Taxon_List_Item_Key, Taxon_Version_Key)' +
+        if ltfAdd then begin
+           Connection.Execute('INSERT INTO Taxon_Common_Name (Taxon_List_Item_Key, Taxon_Version_Key)' +
               'VALUES (' +
               QuotedStr(FieldValues['TLI_Taxon_List_Item_Key']) + ', ' +
-              QuotedStr(FieldValues['TLI_Taxon_Version_Key']) + ')');
+              QuotedStr(lTVKey) + ')');
+            // Add the Organism;
+           Connection.Execute(FORMAT(SQL_ORGANISM_INSERT,[FOrganismParentKey,inttostr(FParentSortLevel+1),lTVKey]));
+           // Has_Children needs to be updated in order to show the children
+           Connection.Execute(SQL_CLEAR_VO_CHILDREN);
+           Connection.Execute(SQL_UPDATE_VO_CHILDREN);
+           Connection.Execute(SQL_CLEAR_ITN_CHILDREN);
+           Connection.Execute(SQL_UPDATE_ITN_CHILDREN);
+        end;
       end;
     except
       // reset the key fields if in add state as access removes the failed keys of the failed table
@@ -1758,9 +1998,20 @@ begin
       InsertNewIndexTaxonName;
       // New taxon is its own synonym
       InsertNewSynonym(FTaxonListItemKey, FTaxonListItemKey);
+      // Virtual Organism Add
+      with TdmTaxonDictEditor(DictionaryData).qryGeneral do
+        Connection.Execute(FORMAT(SQL_ADD_TO_VIRTUAL_ORGANISM,[lTVKey]));
     end else
       UpdateIndexTaxonName;
-
+    //update the Taxon_Group for user added taxa and the Organism Parent
+    if not FSystemSupplied then begin
+      with TdmTaxonDictEditor(DictionaryData).qryGeneral do begin
+        Connection.Execute(FORMAT(SQL_USER_ADDED_GROUP,[FTaxonGroupKey,FTaxonVersionKey]));
+        Connection.Execute(FORMAT(SQL_UPDATE_ORGANISM_PARENT,[FOrganismParentKey,FTaxonVersionKey]));
+        Connection.Execute(FORMAT(SQL_VIRTUAL_ORGANISM_PARENT,[FOrganismParentKey,FTaxonVersionKey]));
+      end;
+    end;
+    Populate_Lineage_Children(FTaxonVersionKey,FOrganismParentKey);
     // Reload the display names
     TTaxonDictionaryNode(tvDictionary.Selected.Data).RefreshNamesObjects;
 
@@ -3025,15 +3276,14 @@ begin
     // Now insert in Index_Taxon_Name
     SQL.Text := 'INSERT INTO Index_Taxon_Name (Taxon_List_Item_Key, Taxon_List_Version_Key, ' +
                 'Actual_Name, Actual_Name_Italic, Common_Name, Common_Name_Italic, ' +
-                'Preferred_Name, Preferred_Name_Italic, Authority, System_Supplied_Data) ';
-    SQL.Add(Format('VALUES (''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', 1)',
+                'Preferred_Name, Preferred_Name_Italic, Authority, System_Supplied_Data,Can_Expand) ';
+    SQL.Add(Format('VALUES (''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', ''%s'', 1,1)',
                    [FTaxonListItemKey, TdmTaxonDictEditor(DictionaryData).qryGeneral.FieldByName('TLI_TAXON_LIST_VERSION_KEY').AsString,
                     SafeQuotes(dbeName.Text), lstItalic, SafeQuotes(dbeName.Text), lstItalic,
                     SafeQuotes(dbeName.Text), lstItalic, SafeQuotes(dbeAuthority.Text)]));
     ExecSQL;
     dmDatabase.RunStoredProc('usp_IndexTaxonName_ApplyNameServer_SingleRecord',
         ['@TLIKey', FTaxonListItemKey]);
-
 
   end;
 end;  // InsertNewIndexTaxonName
@@ -3229,6 +3479,162 @@ procedure TfrmTaxonDictEditor.FormResize(Sender: TObject);
 begin
   inherited;
   pnlDetailsResize(Sender)
+end;
+
+procedure TfrmTaxonDictEditor.btnParentClick(Sender: TObject);
+var rs: _Recordset;
+begin
+  inherited;
+  if TdmTaxonDictEditor(DictionaryData).qryGeneral.State in [dsEdit, dsInsert] then begin
+    FSystemSupplied := false;
+    FOrganismParentKey := FindTaxon('');
+    FParentTLIKey := '';
+    rs := dmDatabase.ExecuteSQL(Format(SQL_PARENT_FROM_TLI_KEY,[FOrganismParentKey]),true);
+    if not rs.Eof then begin
+      lblTaxonGroup.caption := rs.Fields['GROUP_NAME'].Value;
+      edParent.text := rs.Fields['PARENT_NAME'].Value;
+      FTaxonGroupKey := rs.Fields['GROUP_KEY'].Value;
+      FOrganismParentKey := rs.Fields['ORGANISM_PARENT_KEY'].Value;
+      FParentSortlevel := rs.Fields['PARENT_SORT_LEVEL'].Value;
+      FParentLineage := rs.Fields['PARENT_LINEAGE'].Value;
+      FParentTLIKey :=  rs.Fields['PARENT_TLI_KEY'].Value;
+      lblOrganismName.Caption := dbeName.text;
+    end else begin
+      MessageDlg(ResStr_Not_Suitable,mtInformation, [mbOk], 0);
+      edParent.text := '';
+      lblTaxonGroup.caption := '';
+      FTaxonGroupKey := '';
+      FOrganismParentKey := '';
+    end;
+  end;
+end;
+
+function TfrmTaxonDictEditor.FindTaxon(const iFindTaxon: string): TKeyString;
+var ldlgFind: TdlgFind;
+begin
+  ldlgFind := TdlgFind.CreateDialog(nil, True, 'Find Species', ftTaxon);
+  with ldlgFind do begin
+    try
+      if iFindTaxon <> '' then StoreSearchText(iFindTaxon)
+                          else StoreSearchText('');
+      // If there is a unique item, get it, otherwise, we have to show the dialog
+      if FindUnique(iFindTaxon) then
+        Result := ItemKey
+      else
+      if ShowModal = mrOK then
+        Result := ItemKey
+      else
+        Result := '';
+    finally
+      Release;
+    end;
+  end; // with lFind
+end; // FindTaxon
+
+function TfrmTaxonDictEditor.Populate_Lineage_Children(AOrganism_Key, AParent_Key : string ): integer;
+var
+  rs : _Recordset;
+  lParentSortLevel : integer;
+  lParentLineage : string;
+  J : integer;
+  lCurrentLevel : integer;
+  lNewLineage : string;
+  lBaseLineage : string;
+  lPrevBaseLineage : String;
+  lLastKey : string;
+  lNewSortOrder :string;
+
+begin
+  lParentSortLevel := FParentSortLevel;
+  lParentLineage :=  FParentLineage;
+  lNewLineage := lParentLineage;
+  lCurrentLevel := lParentSortLevel;
+  J := 1;
+  while J <> 0 do begin
+    Screen.Cursor := crHourglass;
+    lcurrentLevel := lCurrentLevel + 1;
+    rs := dmDatabase.ExecuteSQL(Format(SQL_PARENT_LINEAGE,[AParent_Key,lNewLineage+'%',inttostr(lCurrentLevel)]),true);
+    J := 0;
+    lLastkey := '00';
+    lPrevBaseLineage  := '';
+    while rs.eof = false do begin
+      J:= J + 1;
+      lBaseLineage := rs.Fields.Item[1].value;
+      If lBaseLineage <> lPrevBaseLineage then  lLastkey := '00';
+      lLastkey :=  IncrementKey(lLastKey);
+      lNewLineage := rs.Fields.Item[1].value + lLastKey + '\';
+      lNewSortOrder :=  GenerateSortOrder(lNewLineage);
+      lPrevBaseLineage := lBaseLineage;
+      dmDatabase.ExecuteSQL(Format(SQL_UPDATE_LINEAGE,[lNewLineage,lNewsortOrder,AOrganism_Key]),true);
+      dmDatabase.ExecuteSQL(Format(SQL_ITN_SORT_ORDER,[lNewsortOrder,AOrganism_Key]),true);
+      rs.MoveNext
+    end;
+  end;
+  Screen.Cursor := crdefault;
+  Result := J
+end;
+
+function TfrmTaxonDictEditor.IncrementKey(LastKey: string): string;
+Var
+  NewAscLeft : integer;
+  NewAscRight   : integer;
+begin
+  if length(LastKey)  = 1 then LastKey := '0' + LastKey;
+  NewAscLeft := Ord(LastKey[1]);
+  NewAscRight :=  Ord(LastKey[2]) + 1;
+  if NewAscRight =  91 then begin
+    NewAscRight := 48;
+    NewAscLeft := NewAscLeft + 1
+  end;
+  if NewAscRight = 58 then NewAscRight := 65;
+  if NewAscLeft = 58 then NewAscLeft := 65;
+  if NewAscLeft <> 48 then
+    Result := chr(NewAscLeft) + chr(NewAscRight)
+  else
+    Result :=  chr(NewAscRight);
+end;
+
+function TfrmTaxonDictEditor.GenerateSortOrder(ANewLineage: string): string;
+var
+  S : integer;
+  LineageElement : string;
+  Newsort : string;
+  Remainder : string;
+begin
+  Remainder := ANewLineage;
+  S := pos('\',Remainder);
+  while S > 0 do begin
+    LineageElement := '00' + ansileftstr(Remainder,s-1);
+    NewSort := NewSort + ansirightstr(LineageElement,2);
+    Remainder := ansirightstr(Remainder,length(remainder)-s);
+    S := pos('\',Remainder);
+  end;
+  Result := ansileftstr(NewSort + '000000000000000000000000000000000000',36);
+end;
+
+//For international users the Organism tabel may not be implemented so check
+Function TfrmTaxonDictEditor.UseOrganismTable: boolean;
+Var
+  rs : _Recordset;
+begin
+  rs := dmDatabase.ExecuteSQL('Select Count(*) AS ORGANISM from Organism', true);
+  Result := false;
+  if not rs.eof then
+    if rs.Fields['ORGANISM'].Value > 0 then
+       Result := true;
+end;
+
+procedure TfrmTaxonDictEditor.edParentKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  inherited;
+  btnParentClick(Sender);
+end;
+
+procedure TfrmTaxonDictEditor.edParentClick(Sender: TObject);
+begin
+  inherited;
+  btnParentClick(Sender);
 end;
 
 end.

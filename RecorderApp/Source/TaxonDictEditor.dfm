@@ -1,41 +1,48 @@
 inherited frmTaxonDictEditor: TfrmTaxonDictEditor
-  Left = 443
+  Left = 307
   Top = 202
-  Width = 769
+  Width = 855
   Height = 494
   Caption = 'Taxon Dictionary Details'
   OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 13
   inherited DictSplitter: TSplitter
-    Left = 353
-    Height = 373
+    Left = 447
+    Height = 385
   end
   inherited pnlSelection: TPanel
-    Width = 753
+    Width = 847
+    object Label4: TLabel [1]
+      Left = 16
+      Top = 16
+      Width = 32
+      Height = 13
+      Caption = 'Label4'
+    end
     inherited cmbList: TComboBox
-      Width = 634
+      Width = 720
     end
     inherited btnShowAll: TButton
-      Left = 677
+      Left = 763
     end
   end
   inherited pcBrowser: TPageControl
-    Width = 353
-    Height = 373
+    Width = 447
+    Height = 385
     inherited tsTree: TTabSheet
       inherited tvDictionary: TKeyboardRapidTree
-        Width = 343
-        Height = 361
+        Width = 437
+        Height = 373
         OnKeyDown = tvDictionaryKeyDown
         Data = {0400000000000000}
       end
     end
   end
   inherited pnlDetails: TPanel
-    Left = 363
+    Left = 457
     Width = 390
-    Height = 377
+    Height = 385
     Constraints.MinHeight = 377
     Constraints.MinWidth = 388
     OnResize = pnlDetailsResize
@@ -103,7 +110,7 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
         Top = 27
         Width = 371
         Height = 310
-        ActivePage = tsFacts
+        ActivePage = tsOrganism
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 0
         OnChange = pcTaxonDetailsChange
@@ -463,110 +470,88 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
             OnClick = chkStandardCommonNameClick
           end
         end
-        object tsTaxonGroups: TTabSheet
-          Caption = 'Taxon Group'
-          ImageIndex = 5
-          object Splitter1: TSplitter
-            Left = 0
-            Top = 173
-            Width = 363
-            Height = 3
-            Cursor = crVSplit
-            Align = alBottom
-            Beveled = True
+        object tsOrganism: TTabSheet
+          Caption = 'Organism'
+          ImageIndex = 6
+          DesignSize = (
+            363
+            282)
+          object bvOrganism: TBevel
+            Left = 4
+            Top = 4
+            Width = 357
+            Height = 273
+            Anchors = [akLeft, akTop, akRight, akBottom]
+            Shape = bsFrame
           end
-          object pnlArbitraryGroup: TPanel
-            Left = 0
-            Top = 0
-            Width = 363
-            Height = 173
-            Align = alClient
-            BevelOuter = bvNone
+          object Label1: TLabel
+            Left = 16
+            Top = 24
+            Width = 47
+            Height = 13
+            Caption = 'Organism '
+          end
+          object Label2: TLabel
+            Left = 16
+            Top = 56
+            Width = 78
+            Height = 13
+            Caption = 'Organism Parent'
+          end
+          object Label3: TLabel
+            Left = 16
+            Top = 88
+            Width = 65
+            Height = 13
+            Caption = 'Taxon Group '
+          end
+          object lblInfo: TLabel
+            Left = 24
+            Top = 128
+            Width = 324
+            Height = 52
+            Caption = 
+              'Organism is the recommended name for the taxon. For system suppl' +
+              'ied taxa the Organism Parent may be changed. Taxon Group is norm' +
+              'ally system supplied, but for user added taxa it will be the sam' +
+              'e as the parent.    '
+            WordWrap = True
+          end
+          object lblOrganismName: TLabel
+            Left = 128
+            Top = 24
+            Width = 193
+            Height = 25
+            AutoSize = False
+            Caption = 'LblOrganism'
+          end
+          object lblTaxonGroup: TLabel
+            Left = 128
+            Top = 88
+            Width = 69
+            Height = 13
+            AutoSize = False
+            Caption = 'lblTaxonGroup'
+          end
+          object edParent: TEdit
+            Left = 128
+            Top = 56
+            Width = 193
+            Height = 21
+            ReadOnly = True
             TabOrder = 0
-            DesignSize = (
-              363
-              173)
-            object shpTaxa: TShape
-              Tag = 3
-              Left = 3
-              Top = 32
-              Width = 357
-              Height = 138
-              Anchors = [akLeft, akTop, akRight, akBottom]
-              Brush.Style = bsClear
-              Pen.Color = clRed
-            end
-            object lblArbitraryGroup: TLabel
-              Left = 4
-              Top = 16
-              Width = 225
-              Height = 13
-              Caption = 'Arbitrary taxa contained in this taxonomic group:'
-            end
-            object lbArbitraryGroup: TListBox
-              Left = 4
-              Top = 33
-              Width = 355
-              Height = 136
-              Style = lbOwnerDrawFixed
-              Anchors = [akLeft, akTop, akRight, akBottom]
-              DragMode = dmAutomatic
-              ItemHeight = 14
-              MultiSelect = True
-              TabOrder = 0
-              OnDrawItem = lbArbitraryGroupDrawItem
-              OnKeyDown = lbArbitraryGroupKeyDown
-            end
-            object btnLoadFromRucksack: TBitBtn
-              Left = 271
-              Top = 4
-              Width = 89
-              Height = 25
-              Anchors = [akTop, akRight]
-              Caption = '&Use Rucksack'
-              PopupMenu = pmRucksacks
-              TabOrder = 1
-              OnClick = btnLoadFromRucksackClick
-            end
+            OnClick = edParentClick
+            OnKeyDown = edParentKeyDown
           end
-          object pnlSystemGroup: TPanel
-            Left = 0
-            Top = 176
-            Width = 363
-            Height = 106
-            Align = alBottom
-            BevelOuter = bvNone
+          object btnParent: TButton
+            Left = 328
+            Top = 56
+            Width = 25
+            Height = 25
+            Caption = '---'
             TabOrder = 1
-            DesignSize = (
-              363
-              106)
-            object lblSystemGroup: TLabel
-              Left = 4
-              Top = 6
-              Width = 265
-              Height = 13
-              Caption = 'System Supplied taxa contained in this taxonomic group:'
-            end
-            object lbSystemGroup: TListBox
-              Left = 4
-              Top = 21
-              Width = 355
-              Height = 76
-              Style = lbOwnerDrawFixed
-              Anchors = [akLeft, akTop, akRight, akBottom]
-              Color = clBtnFace
-              DragMode = dmAutomatic
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Style = []
-              ItemHeight = 13
-              MultiSelect = True
-              ParentFont = False
-              TabOrder = 0
-              OnDrawItem = lbArbitraryGroupDrawItem
-            end
+            Visible = False
+            OnClick = btnParentClick
           end
         end
         object tsStatuses: TTabSheet
@@ -1084,13 +1069,119 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
               273)
           end
         end
+        object tsTaxonGroups: TTabSheet
+          Caption = 'Ad hoc Group'
+          ImageIndex = 5
+          object Splitter1: TSplitter
+            Left = 0
+            Top = 173
+            Width = 363
+            Height = 3
+            Cursor = crVSplit
+            Align = alBottom
+            Beveled = True
+          end
+          object pnlArbitraryGroup: TPanel
+            Left = 0
+            Top = 0
+            Width = 363
+            Height = 173
+            Align = alClient
+            BevelOuter = bvNone
+            TabOrder = 0
+            DesignSize = (
+              363
+              173)
+            object shpTaxa: TShape
+              Tag = 3
+              Left = 3
+              Top = 32
+              Width = 357
+              Height = 138
+              Anchors = [akLeft, akTop, akRight, akBottom]
+              Brush.Style = bsClear
+              Pen.Color = clRed
+            end
+            object lblArbitraryGroup: TLabel
+              Left = 4
+              Top = 16
+              Width = 211
+              Height = 13
+              Caption = 'Arbitrary taxa in this ad hoc taxonomic group:'
+            end
+            object lbArbitraryGroup: TListBox
+              Left = 4
+              Top = 33
+              Width = 355
+              Height = 136
+              Style = lbOwnerDrawFixed
+              Anchors = [akLeft, akTop, akRight, akBottom]
+              DragMode = dmAutomatic
+              ItemHeight = 14
+              MultiSelect = True
+              TabOrder = 0
+              OnDrawItem = lbArbitraryGroupDrawItem
+              OnKeyDown = lbArbitraryGroupKeyDown
+            end
+            object btnLoadFromRucksack: TBitBtn
+              Left = 271
+              Top = 4
+              Width = 89
+              Height = 25
+              Anchors = [akTop, akRight]
+              Caption = '&Use Rucksack'
+              PopupMenu = pmRucksacks
+              TabOrder = 1
+              OnClick = btnLoadFromRucksackClick
+            end
+          end
+          object pnlSystemGroup: TPanel
+            Left = 0
+            Top = 176
+            Width = 363
+            Height = 106
+            Align = alBottom
+            BevelOuter = bvNone
+            TabOrder = 1
+            DesignSize = (
+              363
+              106)
+            object lblSystemGroup: TLabel
+              Left = 4
+              Top = 6
+              Width = 250
+              Height = 13
+              Caption = 'System Supplied taxa contained in this ad hoc group:'
+            end
+            object lbSystemGroup: TListBox
+              Left = 4
+              Top = 21
+              Width = 355
+              Height = 76
+              Style = lbOwnerDrawFixed
+              Anchors = [akLeft, akTop, akRight, akBottom]
+              Color = clBtnFace
+              DragMode = dmAutomatic
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -11
+              Font.Name = 'MS Sans Serif'
+              Font.Style = []
+              ItemHeight = 13
+              MultiSelect = True
+              ParentFont = False
+              TabOrder = 0
+              OnDrawItem = lbArbitraryGroupDrawItem
+            end
+          end
+        end
       end
     end
   end
   object pnlButtons: TPanel [4]
     Left = 0
-    Top = 402
-    Width = 753
+    Top = 414
+    Width = 847
     Height = 34
     Align = alBottom
     BevelOuter = bvNone
@@ -1116,7 +1207,7 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
       Caption = '&Add'
       TabOrder = 0
       OnClick = btnAddClick
-      ImageList = dmFormActions.ilButtons
+      ImageList = dmFormActions.ilMenuOn
       ImageIndex = 2
     end
     object btnDelete: TImageListButton
@@ -1230,7 +1321,7 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
   end
   object pmRucksacks: TPopupMenu
     AutoHotkeys = maManual
-    Left = 400
-    Top = 162
+    Left = 240
+    Top = 242
   end
 end

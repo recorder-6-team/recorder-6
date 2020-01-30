@@ -1,8 +1,8 @@
 object dlgMetaDataPopup: TdlgMetaDataPopup
-  Left = 326
-  Top = 224
+  Left = 479
+  Top = 188
   Width = 392
-  Height = 371
+  Height = 537
   BorderIcons = [biSystemMenu]
   Caption = 'Metadata'
   Color = clBtnFace
@@ -17,14 +17,14 @@ object dlgMetaDataPopup: TdlgMetaDataPopup
   Position = poScreenCenter
   DesignSize = (
     384
-    344)
+    510)
   PixelsPerInch = 96
   TextHeight = 13
   object pnlHTMLViewer: TPanel
     Left = 6
     Top = 6
     Width = 372
-    Height = 303
+    Height = 469
     Anchors = [akLeft, akTop, akRight, akBottom]
     BevelInner = bvRaised
     BevelOuter = bvLowered
@@ -33,7 +33,7 @@ object dlgMetaDataPopup: TdlgMetaDataPopup
       Left = 2
       Top = 2
       Width = 368
-      Height = 299
+      Height = 465
       Cursor = 2
       TabOrder = 0
       Align = alClient
@@ -55,15 +55,15 @@ object dlgMetaDataPopup: TdlgMetaDataPopup
   end
   object pnlButton: TPanel
     Left = 0
-    Top = 312
+    Top = 483
     Width = 384
-    Height = 32
+    Height = 27
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     DesignSize = (
       384
-      32)
+      27)
     object btnClose: TButton
       Left = 303
       Top = 2
