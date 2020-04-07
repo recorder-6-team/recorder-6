@@ -1157,8 +1157,17 @@ var
   nameInfo: string;
 begin
   existing := FConnection.Execute('SELECT taxon_occurrence_key FROM taxon_occurrence WHERE taxon_occurrence_key=''' + occKey + '''');
-  tli := FConnection.Execute('SELECT recommended_taxon_list_item_key FROM nameserver ' +
+  tli := FConnection.Execute('SELECT recommended_taxon_list_item_key AS taxon_list_item_key FROM nameserver ' +
       'WHERE input_taxon_version_key=''' + thisrec.values['taxonversionkey'] + ''' AND recommended_taxon_list_item_key IS NOT NULL');
+  if tli.RecordCount=0 then begin
+    // If we can't find TVK in Nameserver, revert to any TVK match off a
+    // preferred list.
+    tli := FConnection.Execute('SELECT TOP 1 tli.taxon_list_item_key ' +
+      'FROM taxon_list_item tli ' +
+      'JOIN taxon_list_version tlv ON tlv.taxon_list_version_key=tli.taxon_list_version_key ' +
+      'JOIN taxon_list tl ON tl.taxon_list_key=tlv.taxon_list_key AND tl.preferred=1 '+
+      'WHERE tli.taxon_version_key=''' + thisrec.values['taxonversionkey'] + '''');
+  end;
   if tli.RecordCount=0 then begin
     Log(Format(ResStr_CouldNotFindTVK, [thisrec.values['taxonversionkey'], thisrec.values['taxon']]));
     LogFile('Indicia record ' + thisrec.values['occurrence_id'] + ' was not imported. TVK ' + thisrec.values['taxonversionkey']
@@ -1169,7 +1178,7 @@ begin
   vd.StartDate := StrToDate(thisrec.values['date_start'], Ffsiso);
   vd.EndDate := StrToDate(thisrec.values['date_end'], Ffsiso);
   vd.DateTypeString := thisrec.values['date_type'];
-  tlikey:=tli.fields['recommended_taxon_list_item_key'].value;
+  tlikey:=tli.fields['taxon_list_item_key'].value;
   comment := thisrec.values['record_comment'];
   determiner := GetIndividual(thisrec.values['determiner_person_id'], thisrec.values['determiner']);
   if (determiner = 'NBNSYS0000000004') and (thisrec.values['determiner']<>'') then
