@@ -508,13 +508,13 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
           object lblInfo: TLabel
             Left = 24
             Top = 128
-            Width = 324
+            Width = 283
             Height = 52
             Caption = 
-              'Organism is the recommended name for the taxon. For system suppl' +
-              'ied taxa the Organism Parent may be changed. Taxon Group is norm' +
-              'ally system supplied, but for user added taxa it will be the sam' +
-              'e as the parent.    '
+              'Organism is the recommended name for the taxon. For user added t' +
+              'axa the Organism Parent may be changed. Taxon Group is normally ' +
+              'system supplied, but for user added taxa it will be the same as ' +
+              'the parent.    '
             WordWrap = True
           end
           object lblOrganismName: TLabel
@@ -528,7 +528,7 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
           object lblTaxonGroup: TLabel
             Left = 128
             Top = 88
-            Width = 69
+            Width = 217
             Height = 13
             AutoSize = False
             Caption = 'lblTaxonGroup'

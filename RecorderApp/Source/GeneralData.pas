@@ -157,6 +157,7 @@ type
     spRepairLastKey: TADOStoredProc;
     qryTempLoc: TJNCCQuery;
     qryTempRecorders: TJNCCQuery;
+    qryOrganism: TJNCCQuery;
   private
     FIDGen       : TIDGenerator;
     FTableList   : TStringList;
@@ -168,7 +169,7 @@ type
     function ConvertRichTextToText(ARichEdit: TRichEdit): string; overload;
     function ConvertRichTextToText(ADBRichEdit: TDBRichEdit): string; overload;
     function ConvertRichTextToText(const rtfText: String): String; overload;
-    function ConvertRtfFieldToText(AField: TField): String; 
+    function ConvertRtfFieldToText(AField: TField): String;
     procedure ExecuteSQL(const iSQL, ErrMsg: string; ParseSQL: Boolean = True);
     procedure SetNameIDAndDate(ADataSet:TDataSet; const ANameIDField, ADateField:string);
 
@@ -182,6 +183,7 @@ type
     function GetName(const AKey:TKeyString):string;
     function GetOrganisationName(const AKey:TKeyString):string;
     function GetIndividualName(const AKey:TKeyString):string;
+    function GetParentName(const AKey:TKeyString): String;
     function GetLocationNameFromLocNameKey(var AKey:string): string;
     function GetReferenceText(const AKey:TKeyString):string;
     function GetSourceFileText(const AKey:TKeyString):string;
@@ -292,6 +294,7 @@ type
     function DropLinkedEditText(ctrl: TAddinLinkedEdit; format: Integer; data: TKeyList;
         getName: TGetName; text: TStringList): Boolean;
     function IsGroupCorrect(const ATLIKey:string; AGroupKey: string): Boolean;
+    function GetSystemSupplied(const AKey:TKeyString): String;
   end;
 
 //----------------------------------------------------------------------------
@@ -968,7 +971,42 @@ begin
     end;
   end;
 end;  // GetIndividualName
-
+//==============================================================================
+// Get Parent name (User Added Only)
+function TdmGeneralData.GetParentName(const AKey:TKeyString): String;
+begin
+  with qryOrganism do begin
+    Parameters.ParamByName('TVKey').Value := AKey;
+    Open;
+    try
+      if Eof then
+        Result := ''
+      else begin
+        Result := FieldByName('ITEM_NAME').AsString;
+      end;
+    finally
+      Close;
+    end;
+  end;
+end;  // GetIParentName
+//==============================================================================
+// Get System Supplied (User Added Only)
+function TdmGeneralData.GetSystemSupplied(const AKey:TKeyString): String;
+begin
+  with qryOrganism do begin
+    Parameters.ParamByName('TVKey').Value := AKey;
+    Open;
+    try
+      if Eof then
+        Result := ''
+      else begin
+        Result := FieldByName('SYSTEM_SUPPLIED').AsString;
+      end;
+    finally
+      Close;
+    end;
+  end;
+end;  // GetIParentName
 {-------------------------------------------------------------------------------
   Retrieves a location name using a location name key.  The key is updated to
       reflect the Location key.
