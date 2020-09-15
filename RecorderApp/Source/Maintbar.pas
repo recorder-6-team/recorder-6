@@ -71,6 +71,7 @@ resourcestring
   ResStr_DictionaryRebuilding = 'Dictionary update. The last update processed was %s.sql. '#13#10#13#10  +
                                 'Select OK to proceed or Cancel to exit.';
 
+  ResStr_DesignationLastKeyRebuildComplete = 'Last key table has been rebuilt';
  Type
   EMainFormError = class(TExceptionPath);
 
@@ -190,6 +191,7 @@ resourcestring
     mnuToolsDatabaseRebuildSynonymIndex: TMenuItem;
     N4: TMenuItem;
     N7: TMenuItem;
+    N13: TmenuItem;
     mnuNewCustodian: TMenuItem;
     mnuToolsChangeBackupLocation: TMenuItem;
     mnuReportsQuickReport: TMenuItem;
@@ -207,7 +209,12 @@ resourcestring
     mnuEmpty: TMenuItem;
     mnuToolsDatabaseRebuildDesignationIndex: TMenuItem;
     mnuDataEntryCustomSpeciesCards: TMenuItem;
-    MnuToolsUpdateDictionary1: TMenuItem;
+    mnuToolsUpdateDictionary1: TMenuItem;
+    SundryTools1: TMenuItem;
+    GotoKey1: TMenuItem;
+    RucksackGenerator1: TMenuItem;
+    mnuUserAddedTaxa: TMenuItem;
+    RestoreExternalDB1: TMenuItem;
     procedure mnuFileExitClick(Sender: TObject);
     procedure mnuToolsPasswordClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -242,8 +249,14 @@ resourcestring
     procedure mnuToolsBatchUpdatesClick(Sender: TObject);
     procedure mnuToolsDatabaseRebuildDesignationIndexClick(
       Sender: TObject);
+    procedure mnuToolsDatabaseRebuildLastKeyClick(
+      Sender: TObject);
     procedure mnuOnLineHelpClick(Sender: TObject);
     procedure MnuToolsUpdateDictionary1Click(Sender: TObject);
+    procedure MnuToolsRestoreDBexternalClick(Sender: TObject);
+    procedure GotoKey1Click(Sender: TObject);
+    procedure RucksackGenerator1Click(Sender: TObject);
+    procedure mnuUserAddedTaxaClick(Sender: TObject);
   private
     FCurrentForm :TForm;
     FClosing: boolean;
@@ -376,7 +389,8 @@ uses
   ReportDesigner, GeneralData, ValidationData, ComObj, DatabaseUtilities, Locations,
   GeneralFunctions, BaseChildUnit, About, ExportFilters, Snapshot, ServerFolders,
   StrUtils, OLEContainer, MapBrowser, HierarchyNodes, BatchUpdates,
-  SpatialRefFuncs, DictionaryUpgrade;
+  SpatialRefFuncs, DictionaryUpgrade, GotoAKey, GenerateRucksack,UserAddedTaxa,
+  RestoreDBExternal;
 
 type
 
@@ -2157,7 +2171,16 @@ begin
     end;
   end;
 end;
-
+ {-------------------------------------------------------------------------------
+  Rebuilds the index_taxon_designation table.
+}
+procedure TfrmMain.mnuToolsDatabaseRebuildLastKeyClick(
+  Sender: TObject);
+var lCursor: TCursor;
+begin
+  dmDatabase.RunStoredProc('spUpdateLastKey', []);
+  ShowInformation(ResStr_DesignationLastKeyRebuildComplete);
+end;
 {-------------------------------------------------------------------------------
   Click handler for the online help menu item. Shells to a web browser.
 }
@@ -2198,7 +2221,56 @@ begin
     end
     else
       ShowInformation(ResStr_InsufficientPermissons);
-    end;
   end;
+end;
+
+procedure TfrmMain.MnuToolsRestoreDBExternalClick(Sender: TObject);
+var rs : _Recordset;
+begin
+  if AppSettings.UserAccessLevel >= ualFullUser then begin
+    with TdlgRestoreDBEXternal.Create(nil) do
+    try
+      ShowModal;
+    finally
+      Free;
+    end;
+  end
+  else
+    ShowInformation(ResStr_InsufficientPermissons);
+end;
+
+
+procedure TfrmMain.GotoKey1Click(Sender: TObject);
+var ldlgGotoKey : TdlgGotoKey;
+begin
+  ldlgGotoKey := TdlgGotoKey.Create(nil);
+  try
+    ldlgGotoKey.ShowModal;
+  finally
+    ldlgGotoKey.Free;
+  end;
+end;
+
+procedure TfrmMain.RucksackGenerator1Click(Sender: TObject);
+var ldlgGenerateRucksack : TdlgGenerateRucksack;
+begin
+  ldlgGenerateRucksack := TdlgGenerateRucksack.Create(nil);
+  try
+    ldlgGenerateRucksack.ShowModal;
+  finally
+    ldlgGenerateRucksack.Free;
+  end;
+end;
+
+procedure TfrmMain.mnuUserAddedTaxaClick(Sender: TObject);
+var ldlgUserAddedTaxa : TdlgUserAddedTaxa;
+begin
+  ldlgUserAddedTaxa := TdlgUserAddedTaxa.Create(nil);
+  try
+    ldlgUserAddedTaxa.ShowModal;
+  finally
+    ldlgUserAddedTaxa.Free;
+  end;
+end;
 
 end.

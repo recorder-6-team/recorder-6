@@ -129,6 +129,7 @@ resourcestring
   ResStr_Recommended_List = 'Recommended_List';
   ResStr_Recommended_Sort_Order = 'Recommended_Sort_Order';
   ResStr_TaxonGroup           = 'Taxon Group Name';
+  ResStr_Status               = 'Status';
 //==============================================================================
 procedure TfrmTaxonDictBrowser.FormActivate(Sender: TObject);
 begin
@@ -223,6 +224,7 @@ procedure TfrmTaxonDictBrowser.actShowMetaDataExecute(Sender: TObject);
 var
   header, body: String;
   changedby: String;
+  redundant: String;
 begin
   inherited;
   header := '';
@@ -271,6 +273,10 @@ begin
           changedBy := Format(ResStr_LastChanged,
               [changedBy, DateToStr(Fields['Changed_Date'].Value)]);
       end;
+      If VarIsNull(Fields['Redundant_Flag'].Value) then
+        redundant := 'Valid taxa'
+      else
+        redundant := 'This taxa is not considered valid';
 
       body   := '<P>'
           + Format(ResStr_RecordCreation,
@@ -278,6 +284,7 @@ begin
                DateToStr(Fields['Entry_Date'].Value)])
           + changedBy
           + '.</P>'
+          + MetadataPaneItem(ResStr_Status, redundant)
           + MetadataPaneItem(ResStr_TaxonKey, Fields['Taxon_Key'].Value)
           + MetadataPaneItem(ResStr_TaxonVersionKey, Fields['Taxon_Version_Key'].Value)
           + MetadataPaneItem(ResStr_TaxonListItemKey, Fields['Taxon_List_Item_Key'].Value)
