@@ -1,4 +1,4 @@
-/*****Change to add Redundant Flag to Taxon Detail Meta data
+/*****Change to add Redundant Flag to Taxon Detail Meta data ******/
 /****** Object:  StoredProcedure [dbo].[usp_Taxon_Select_ForMetadata]    Script Date: 09/15/2020 18:07:22 ******/
 SET ANSI_NULLS ON
 GO
