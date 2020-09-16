@@ -90,7 +90,10 @@ CLOSE Table_Cursor;
 DEALLOCATE Table_Cursor
 END
 
+GO
 
 
+GRANT EXECUTE ON  [dbo].[spRepairLastKey] TO PUBLIC 
 
+GO
 GRANT EXECUTE ON  [dbo].[spUpdateLastKey] TO PUBLIC 

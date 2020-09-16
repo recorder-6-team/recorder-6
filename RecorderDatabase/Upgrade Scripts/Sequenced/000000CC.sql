@@ -209,7 +209,6 @@ where Report_Attribute_Key = 'NBNSYS000000009N'
 Update Report_Attribute set item_group = 'Taxon\Status' 
 where Report_Attribute_Key = 'NBNSYS000000009O'
 
-
 Update Report_Attribute set item_group = 'Taxon\Status' 
 where Report_Attribute_Key = 'NBNSYS000000009P'
 
@@ -276,15 +275,6 @@ where Report_Attribute_Key = 'NBNSYS00000000A8'
 
 Update Report_Attribute set item_group = 'Taxon\Status' 
 where Report_Attribute_Key = 'NBNSYS00000000A9'
-
-Update Report_Attribute set item_group = 'Taxon\Status' 
-where Report_Attribute_Key = 'NBNSYS00000000B0'
-
-Update Report_Attribute set item_group = 'Taxon\Status' 
-where Report_Attribute_Key = 'NBNSYS00000000B1'
-
-Update Report_Attribute set item_group = 'Taxon\Status' 
-where Report_Attribute_Key = 'NBNSYS00000000B2'
 
 
 Update Report_Attribute set item_group = 'Taxon\Status' 
@@ -410,7 +400,46 @@ where Report_Attribute_Key = 'NBNSYS0000000144'
 
 Update Report_Attribute set item_group = 'Taxon\Status' 
 where Report_Attribute_Key = 'NBNSYS0000000145'
+
 Update Report_Attribute set item_group = 'Taxon\Status' 
 where Report_Attribute_Key = 'NBNSYS0000000146'
 
+Update Report_Attribute set item_group = 'Taxon\Status' 
+where Report_Attribute_Key = 'NBNSYS00000000AA'
 
+
+Update Report_Attribute set item_group = 'Taxon\Status' 
+where Report_Attribute_Key = 'NBNSYS00000000AB'
+
+
+Update Report_Attribute set item_group = 'Taxon\Status' 
+where Report_Attribute_Key = 'NBNSYS00000000AC'
+
+
+Update Report_Attribute set item_group = 'Taxon\Status' 
+where Report_Attribute_Key = 'NBNSYS00000000AD'
+
+
+Update Report_Attribute set item_group = 'Taxon\Status' 
+where Report_Attribute_Key = 'NBNSYS00000000AE'
+
+Update Report_Attribute set item_group = 'Taxon\Status' 
+where Report_Attribute_Key = 'NBNSYS00000000AF'
+
+Update Report_Attribute set item_group = 'Taxon\Status' 
+where Report_Attribute_Key = 'NBNSYS0000000103'
+
+Update Report_Attribute set item_group = 'Taxon\Sorts' 
+where Report_Attribute_Key = 'LCA0002200000011'
+
+
+Update Report_Attribute set item_group = 'Taxon\Sorts' 
+where Report_Attribute_Key = 'LCA0002200000012'
+
+
+Update Report_Attribute set item_group = 'Taxon\Sorts' 
+where Report_Attribute_Key = 'NBNSYS0000000074'
+
+
+Update Report_Attribute set item_group = 'Taxon\Sorts' 
+where Report_Attribute_Key = 'NBNSYS0000000087'
