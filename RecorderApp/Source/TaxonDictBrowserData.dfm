@@ -280,6 +280,36 @@ inherited dmTaxonDictBrowser: TdmTaxonDictBrowser
         'WHERE TAXON_VERSION.TAXON_VERSION_KEY =:TaxonKey AND TAXON_LIST_' +
         'VERSION.TAXON_LIST_KEY=:ListKey;')
   end
+  inherited qryCheckLists: TJNCCQuery
+    SQL.Strings = (
+      
+        'SELECT DISTINCT TL.Item_Name, TL.Taxon_List_Key, TLI.Preferred_N' +
+        'ame, TLI.Taxon_List_Item_Key, TLV.Taxon_List_Version_Key'
+      'FROM INDEX_TAXON_SYNONYM ITS'
+      
+        'INNER JOIN Taxon_List_Item TLI ON ITS.SYNONYM_LIST_ITEM_KEY = TL' +
+        'I.TAXON_LIST_ITEM_KEY'
+      
+        'INNER JOIN TAXON_LIST_VERSION TLV ON TLI.TAXON_LIST_VERSION_KEY=' +
+        ' TLV.TAXON_LIST_VERSION_KEY'
+      'AND TLI.TAXON_LIST_VERSION_TO IS NULL'
+      
+        'INNER JOIN TAXON_LIST TL ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_K' +
+        'EY'
+      
+        'INNER JOIN TAXON_LIST_ITEM TLI2 ON TLI2.TAXON_LIST_ITEM_KEY = IT' +
+        'S.TAXON_LIST_ITEM_KEY'
+      
+        'INNER JOIN TAXON_LIST_VERSION TLV2 ON TLI2.TAXON_LIST_VERSION_KE' +
+        'Y = TLV2.TAXON_LIST_VERSION_KEY'
+      'AND TLI2.TAXON_LIST_VERSION_TO IS NULL'
+      
+        'INNER JOIN TAXON_LIST TL2 on TLV2.TAXON_LIST_KEY = TL2.TAXON_LIS' +
+        'T_KEY'
+      'WHERE ITS.Taxon_List_Item_Key = :ItemKey'
+      'AND TL.Taxon_List_Key <> TL2.Taxon_List_Key'
+      'AND TLI.TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME')
+  end
   object qryLocalLists: TJNCCQuery
     CommandTimeout = 0
     Parameters = <>
@@ -299,5 +329,43 @@ inherited dmTaxonDictBrowser: TdmTaxonDictBrowser
     DataSet = qryLocalLists
     Left = 212
     Top = 316
+  end
+  object qryCheckListsITN: TJNCCQuery
+    CommandTimeout = 0
+    Parameters = <
+      item
+        Name = 'ItemKey'
+        DataType = ftString
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      
+        'SELECT DISTINCT TL.Item_Name, TL.Taxon_List_Key, TLI.Preferred_N' +
+        'ame, TLI.Taxon_List_Item_Key, TLV2.Taxon_List_Version_Key'
+      'FROM Index_Taxon_Name ITN'
+      
+        'INNER JOIN TAXON_LIST_VERSION TLV ON TLV.TAXON_LIST_VERSION_KEY=' +
+        ' ITN.TAXON_LIST_VERSION_KEY'
+      'INNER JOIN INDEX_TAXON_NAME ITN2 '
+      
+        'ON ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY = ITN2.RECOMMENDED_TAXON_' +
+        'LIST_ITEM_KEY'
+      
+        'INNER JOIN TAXON_LIST_VERSION TLV2 ON TLV2.TAXON_LIST_VERSION_KE' +
+        'Y = ITN2.TAXON_LIST_VERSION_KEY'
+      
+        'INNER JOIN TAXON_LIST TL ON TL.TAXON_LIST_KEY = TLV2.TAXON_LIST_' +
+        'KEY'
+      
+        'INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ITN2' +
+        '.TAXON_LIST_ITEM_KEY'
+      'WHERE ITN.Taxon_List_Item_Key = :ItemKey'
+      'AND TLV.Taxon_List_Key <> TLV2.Taxon_List_Key'
+      'AND TLI.TAXON_LIST_ITEM_KEY = TLI.PREFERRED_NAME AND'
+      'ITN2.DEPRECATED = 0  ')
+    ParseSQL = True
+    Left = 92
+    Top = 336
   end
 end

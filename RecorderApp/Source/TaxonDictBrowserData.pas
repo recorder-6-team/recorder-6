@@ -37,6 +37,7 @@ type
   TdmTaxonDictBrowser = class(TBaseTaxonDictData)
     qryLocalLists: TJNCCQuery;
     dsLocalLists: TDataSource;
+    qryCheckListsITN: TJNCCQuery;
   private
     FListView: TListView;
     FslTaxonHTML: TStringList;
@@ -202,6 +203,7 @@ begin
     qryCodes.Parameters.ParamByName('TaxonKey').Value          := TaxonVersionKey;
     qryCodes.Parameters.ParamByName('ListKey').Value           := THTMLLines(Sender).ListKey;
     qryCheckLists.Parameters.ParamByName('ItemKey').Value      := ItemKey;
+    qryCheckListsITN.Parameters.ParamByName('ItemKey').Value      := ItemKey;
     qryListName.Parameters.ParamByName('ListKey').Value        := THTMLLines(Sender).ListKey;
     qryListName.Parameters.ParamByName('ItemKey').Value        := ItemKey;
   end;

@@ -289,6 +289,7 @@ type
     property ExtraLocationSearchColumns: TLocationSearchColumns
         read FExtraLocationSearchColumns write SetExtraLocationSearchColumns;
     procedure SaveSettingTable;
+    procedure FullTranslateSet(ASetting :string);
 
 
   public
@@ -1576,6 +1577,7 @@ begin
       else  edMaster.text := '';
   rs.close;
   FTempLicence := edTempLicence.text;
+  FullTranslateSet(edSortMethod.text);
 end;
 
 procedure TdlgOptions.edCompetencyKeyPress(Sender: TObject; var Key: Char);
@@ -1610,7 +1612,7 @@ begin
 
     if edCompetency.text = '' then edcompetency.text := '0';
     sql := 'Update Setting SET [Data] = ''%s'' where [Name] = ''%s''';
-    
+
     dmDatabase.ExecuteSQL(Format(sql,[edGatewayURL.text,'GatewayURL']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edHelpURL.text,'HelpURL']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edPreLocs.text,'PrefLocs']),false);
@@ -1627,6 +1629,7 @@ begin
       dmDatabase.ExecuteSQL('usp_Setting_Temp_Survey');
     end;
     PopulateSettingFields('Data');
+    FullTranslateSet(edSortMethod.text);
   end else
     MessageDlg(Restr_Admin_Permission,mtInformation, [mbOk], 0);
   Screen.Cursor := lOrigCursor;
@@ -1635,6 +1638,17 @@ end;
 procedure TdlgOptions.edBlockSizeKeyPress(Sender: TObject; var Key: Char);
 begin
  if not (Key in [#8, '0'..'9']) then Key := #0;
+end;
+
+Procedure TdlgOptions.FullTranslateSet(aSetting: string);
+{Brings the full translate option in line with the Settings Table
+if SortMethod = 'Organism' them fulltranslate must be set to true}
+begin
+  if aSetting = 'Organism' then begin
+    cbFullTranslation.Checked := true;
+    Appsettings.UseRecommendedTaxaNames := true;
+  end;
+
 end;
 
 end.
