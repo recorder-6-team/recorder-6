@@ -393,6 +393,9 @@ begin
         else
           SQL[2] := 'WHERE TLI.Taxon_List_Item_Key >= ''' + lSegmentKeys[i - 1] + '''' +
                     ' AND TLI.Taxon_List_Item_Key < ''' + lSegmentKeys[i] + '''';
+
+          SQL[2] := SQL[2] + ' AND NOT EXISTS (SELECT * FROM SETTING WHERE NAME = ''SORTMethod''' +
+                             ' AND DATA = ''Organism'')'; 
         ExecSQL;
         iSetProgress(2 + Trunc(i * lProgress));  // up to 100%
       end;
