@@ -135,7 +135,7 @@ uses
   Maintbar, GeneralData, ApplicationSettings;
 
 resourcestring
-  ResStr_NotFound = 'The specified %s was not found in the current list.';
+  ResStr_NotFound = 'The specified %s has been deprecated and is no longer in the current version of this list.';
   ResStr_NoMatchFound = 'No Items were found matching the search criteria.';
   ResStr_LocatingItemHeir = 'Locating item in hierarchy...';
 
