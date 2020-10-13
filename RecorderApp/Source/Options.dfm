@@ -1241,7 +1241,6 @@ object dlgOptions: TdlgOptions
         Top = 134
         Width = 353
         Height = 21
-        Color = clCaptionText
         MaxLength = 250
         TabOrder = 4
       end
