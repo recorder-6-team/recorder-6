@@ -203,6 +203,7 @@ begin
        writelog('[Building Indexes]',true);
        lCursor := HourGlassCursor;
         RebuildIndexTaxonName(dmGeneralData.qryAllPurpose,frmMain.SetStatus,frmMain.SetProgress);
+        ClearSystemTaxonGroupIndex(dmGeneralData.qryAllPurpose);
         PopulateTaxonGroupIndex(dmGeneralData.qryAllPurpose,
                                frmMain.SetStatus, frmMain.SetProgress);
         RebuildIndexTaxonSynonym(dmGeneralData.qryAllPurpose,frmMain.SetStatus ,frmMain.SetProgress);
