@@ -501,7 +501,6 @@ type
     btnParent: TButton;
     lblOrganismName: TLabel;
     lblTaxonGroup: TLabel;
-    Label4: TLabel;
     procedure FormActivate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure btnAddClick(Sender: TObject);
@@ -713,6 +712,14 @@ const
       'WHERE  ITG.Taxon_List_Item_Key = ''%s'' ' +
       'AND %s ' +
       'ORDER BY ITN.Sort_Order, ITN.Preferred_Name';
+
+
+  SQL_TAXA_LIST_NEXT_LEVEL =
+      'ITN.SYSTEM_SUPPLIED_DATA = 1 and ITG.SYSTEM_SUPPLIED_DATA=1' +
+      ' AND ITG.ITEM_LEVEL = (SELECT TOP 1 ITEM_LEVEL + 1  ' +
+      ' FROM INDEX_TAXON_GROUP ITG2 ' +
+      ' WHERE ITG2.TAXON_LIST_ITEM_KEY = ITN.TAXON_LIST_ITEM_KEY) ';
+
   NONE_GIVEN_TAXON_NAME_TYPE_KEY = 'NBNSYS0000000000';
 
   SQL_ORGANISM_PARENT =
@@ -1575,7 +1582,7 @@ procedure TfrmTaxonDictEditor.PopulateTaxonGroup;
 begin
   ClearTaxonGroupPage;
   dmGeneralData.qryAllPurpose.SQL.Text :=Format(SQL_TAXA_LIST_GROUP, [FTaxonListItemKey,
-    'ITN.SYSTEM_SUPPLIED_DATA = 1 and ITG.SYSTEM_SUPPLIED_DATA=1']);
+    SQL_TAXA_LIST_NEXT_LEVEL]);
   FillGroupList(lbSystemGroup);
   dmGeneralData.qryAllPurpose.SQL.Text :=Format(SQL_TAXA_LIST_GROUP, [FTaxonListItemKey,
   'ITG.SYSTEM_SUPPLIED_DATA = 0']);

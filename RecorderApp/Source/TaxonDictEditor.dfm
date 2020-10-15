@@ -13,13 +13,6 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
   end
   inherited pnlSelection: TPanel
     Width = 847
-    object Label4: TLabel [1]
-      Left = 16
-      Top = 16
-      Width = 32
-      Height = 13
-      Caption = 'Label4'
-    end
     inherited cmbList: TComboBox
       Width = 720
     end
@@ -110,7 +103,7 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
         Top = 27
         Width = 371
         Height = 310
-        ActivePage = tsOrganism
+        ActivePage = tsGeneral
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 0
         OnChange = pcTaxonDetailsChange
@@ -738,7 +731,7 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
               Height = 21
               Style = csDropDownList
               Anchors = [akLeft, akTop, akRight]
-              ItemHeight = 0
+              ItemHeight = 13
               Sorted = True
               TabOrder = 0
               ListField = 'SHORT_NAME'
@@ -1149,9 +1142,9 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
             object lblSystemGroup: TLabel
               Left = 4
               Top = 6
-              Width = 250
+              Width = 173
               Height = 13
-              Caption = 'System Supplied taxa contained in this ad hoc group:'
+              Caption = 'System Supplied Taxa in this Group  '
             end
             object lbSystemGroup: TListBox
               Left = 4
@@ -1322,6 +1315,6 @@ inherited frmTaxonDictEditor: TfrmTaxonDictEditor
   object pmRucksacks: TPopupMenu
     AutoHotkeys = maManual
     Left = 240
-    Top = 242
+    Top = 234
   end
 end
