@@ -152,7 +152,6 @@ implementation
 procedure TdlgGenerateRucksack.bbBrowserClick(Sender: TObject);
 var
   lLengthRucksackPath : integer;
-  lCheckFileVar : textfile;
   lTextFileVar : textfile;
   lFirstLine : string;
 begin
@@ -341,23 +340,19 @@ var
   lSearchName: string;
   lFileLine: integer;
   lFullLine: string;
-  lRuckSackCurrenttag: string;
-  lRucksackQuery: string;
   lIsTLIKey: boolean;
   lOrigTLIKey: string;
-  lOrigSearchCode: string;
   lOrigSortOrder: integer;
   lTLIKey: string;
   rs2: _Recordset;
   rs: _Recordset;
   lRetry: boolean;
   lOrigCursor: TCursor;
-
 begin
-  lOrigCursor   := Screen.Cursor;
+  lIsTLIKey:=  false;
+  lOrigCursor:= Screen.Cursor;
   Screen.Cursor := crHourglass;
   lRetry:= true;
-  lFileLine:= 0;
   lOrigSortOrder:= 0;
   If (edInputFile.text = '') or (edOutputFile.text = '') or (UPPERCASE(edInputFile.text) =
         UPPERCASE(edOutputFile.text)) then
@@ -582,7 +577,7 @@ begin
   Result := lAllOutput;
 end;
 
-function TdlgGenerateRucksack.Update_Sort_Order;
+function TdlgGenerateRucksack.Update_Sort_Order(): boolean;
 var lSort: string;
 begin
   Case rgSort.ItemIndex of
@@ -594,8 +589,7 @@ begin
    else lSort := 'SEARCHNAME';
    end;
    dmDatabase.ExecuteSQL(Format(SQL_SORT_TO_USE,[lSort]),true);
-
-
+   Result:= true;
 end;
 
 procedure TdlgGenerateRucksack.cbRecommendedClick(Sender: TObject);
@@ -627,6 +621,7 @@ begin
     rs.MoveNext;
   end;
   dmDatabase.ExecuteSQL(SQL_REMOVE_DUPLICATE,true);
+  Result := true;
 end;
 
 end.

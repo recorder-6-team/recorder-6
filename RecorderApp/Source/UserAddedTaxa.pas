@@ -187,7 +187,6 @@ procedure TdlgUserAddedTaxa.FormClose(Sender: TObject; var Action: TCloseAction)
 var
   i: integer;
 begin
-  i := 0;
   for i := 0 to cmbLists.Items.Count - 1 do begin
     cmbLists.Items.Objects[i].Free;
   end;
@@ -214,6 +213,7 @@ var
   lNewTaxonKey: string;
   lNewTaxonName: string;
 begin
+  lAttempted:= 0;
   lSearchName := '';
   for i := 0 to lstTaxa.Items.Count - 1 do begin
     if (lstTaxa.Selected[i])or (rgProcess.ItemIndex = 1) then begin
