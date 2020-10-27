@@ -28,6 +28,7 @@ type
     edLicenceKey: TEdit;
     lLicenceKey: TLabel;
     edBlockSize: TEdit;
+    cbMultiple: TCheckBox;
     procedure btnActionClick(Sender: TObject);
     procedure bbCancelClick(Sender: TObject);
     procedure btnDictionaryUpgradeFolderClick(Sender: TObject);
@@ -40,9 +41,13 @@ type
     function LicenceKeyCheck(ALicenceKey,ALicenceKeyCheck : string): boolean;
     function LicenceScramble: String;
     function GetFinancialYear : integer;
+    function CheckFile(AFilename: string): string;
+    function ProcessFile(AUpdateFileName: string): integer;
     procedure WriteLog(const logentry: ansistring; const app: boolean);
     function GetBlockSize(): integer;
     function GetLogFilename: string;
+    procedure UpdateSettingTable(UpdateErrors,Blocksize: integer; AUpdateKey: string);
+    procedure UpdateAllIndexes();
   public
     { Public declarations }
   end;
@@ -57,11 +62,10 @@ uses DatabaseAccessADO, ADODB, Maintbar, GeneralFunctions,GeneralData;
 resourcestring
   ResStr_SelectFolder = 'Select the folder for %s';
   ResStr_DictionaryUpdate = 'Dictionary Updates';
-  ResStr_DictionaryUpdateComplete = 'Dictionary update is complete. Indexes were rebuilt if requested.';
-  ResStr_DictionaryFileProblem = 'Failing to open files. Check that it is not open by another application';
+  ResStr_DictionaryUpdateComplete = 'Dictionary update is complete to %s. Indexes were rebuilt if requested.';
   ResStr_DictionaryFailed  = 'The Dictionary update has completed with errors. ' +
                              'Please try again using a block size of 1 ';
-  ResStr_DictionaryFileMissing = 'The required file is not in the specified folder.';
+  ResStr_DictionaryFileMissing = 'The required file is missing, is open or is corrupt ';
   ResStr_Rebuild_Index = 'Do you wish to rebuild the indexes now? If you have other dictionary updates ' +
                          'you may leave the index updates until after they are processed.' +
                          'You may also update the the indexes later as a separate process.';
@@ -77,62 +81,119 @@ resourcestring
 {$R *.dfm}
 
 procedure TdlgDictionaryUpgrade.btnActionClick(Sender: TObject);
-var lCursor : TCursor;
-    lUpdateFile:  TextFile;
-    lRecord: string;
-    lErrorCount: integer;
-    lUpdatedRecords: integer;
-    lBlock: string;
+var lErrorCount: integer;
+    lUpGradeKey: string;
+    lUpdateFileName: string;
+    lLicenceKeyCheck: string;
     lBlockSize: integer;
-    lUpGradeKey : string;
-    lUpdateFileName :string;
-    lTablesProcessed :integer;
-    lTablesToProcess :integer;
-    lLicenceKeyCheck : string;
+    lMultipleAllowed: boolean;
+    lLastUpgrade: String;
 begin
-  lBlockSize := getBlockSize;
   writelog('[Block Size]' + edBlockSize.Text,false);
-  lUpdatedRecords := 0;
-  lErrorCount := 0;
-  lTablesToProcess := 0;
-  lLicenceKeyCheck := '';
-  lUpgradeKey :=  dmGeneralData.IdGenerator.GetNextID(lblCurrentKey.Caption);
+  lBlockSize:= GetBlockSize;
+  lErrorCount:= 0;
+  lLicenceKeyCheck:= '';
+  lUpgradeKey:=  dmGeneralData.IdGenerator.GetNextID(lblCurrentKey.Caption);
   lblUpDateFile.Caption := lUpgradeKey + '.sql';
-  lTablesProcessed := 0 ;
   lUpdateFileName :=  AddBackSlash(edFileLocation.Text) + lUpgradeKey + '.sql';
-  AssignFile(lUpdateFile,lUpdateFileName);
+  lMultipleAllowed:= cbMultiple.checked;
+  lLicenceKeyCheck := CheckFile(lUpdateFileName);
+  if lLicenceKeyCheck = '' then begin
+    ShowInformation (ResStr_DictionaryFileMissing + ' - ' + lUpdateFileName);
+    ModalResult := mrNone;
+  end
+  else begin
+    if not LicenceKeyCheck(edLicencekey.Text,lLicenceKeyCheck) then
+      ShowInformation (ResStr_LicenceKeyInvalid)
+    else begin
+      Repeat
+        lErrorCount := ProcessFile(lUpdateFileName);
+        if lErrorCount = 0 then begin
+          if CheckFile(lUpdateFileName) = '' then
+            lMultipleAllowed := false
+          else begin
+            lLastUpgrade:= lUpgradeKey;
+            UpdateSettingTable(lErrorCount,lBlockSize,lLastUpgrade);
+            lUpgradeKey := dmGeneralData.IdGenerator.GetNextID(lUpgradeKey);
+            lUpdateFileName :=  AddBackSlash(edFileLocation.Text) + lUpgradeKey + '.sql';
+            lblUpDateFile.Caption := lUpgradeKey + '.sql';
+            lblCurrentKey.Caption :=  lUpgradeKey;
+          end;
+        end
+        else begin
+          lMultipleAllowed := false;
+          ModalResult := mrNone;
+        end;
+
+      until  lMultipleAllowed = false;
+
+      frmMain.SetProgress(0);
+      if lErrorCount = 0 then begin
+        frmMain.SetStatus('Complete');
+        if MessageDlg(ResStr_Rebuild_Index, mtConfirmation, [mbYes,mbNo], 0) = mrYes then begin
+          writelog('[Building Indexes]',true);
+          UpdateAllIndexes;
+        end
+        else begin
+          ShowInformation(Format(ResStr_DictionaryUpdateComplete,[lLastUpgrade]));
+          ModalResult:= mrOK;
+        end;
+      end
+      else begin
+        frmMain.SetStatus('Complete with errors');
+        writelog('Completed with errors to Update ' + lLastUpgrade,true);
+        if lBlockSize > 1 then
+          ShowInformation(ResStr_DictionaryFailed)
+        else begin
+          ShowInformation(Format(ResStr_DictionaryFailedOne,[inttostr(lErrorCount),GetLogFilename]));
+          ModalResult:= mrNone;
+        end;
+      end;
+    end;
+  end;
+frmMain.SetStatus('');
+frmMain.SetProgress(0);
+
+
+end;
+
+function TdlgDictionaryUpgrade.ProcessFile(AUpdateFileName: string): integer;
+var lUpdateFile :  TextFile;
+lTablesToProcess : integer;
+lTablesProcessed : integer;
+lLicenceKeyCheck : string;
+lErrorCount : integer;
+lRecord: string;
+lUpdatedRecords: integer;
+lBlock: string;
+lBlockSize: integer;
+
+begin
+  lErrorCount:= 0;
+  lUpdatedRecords:= 0;
+  lTablesToProcess:= 0;
+  lTablesProcessed:= 0;
+  AssignFile(lUpdateFile,AUpdateFileName);
+  lBlockSize := getBlocksize;
   frmMain.SetStatus(ResStr_DictionaryUpdateCounting);
   Reset(lUpdateFile);
   if not Eof(lUpdateFile) then begin
     while not Eof(lUpdateFile) do
-      begin
-        Try
-          Readln(lUpdateFile, lRecord);
-          if leftstr(lrecord,2) = '--' then begin
-            if lLicenceKeyCheck = '' then
-              lLicenceKeyCheck := lRecord
-            else
-              inc(lTablesToProcess);
-          end;
-        Except
-          ModalResult := mrNone;
-          ShowInformation (ResStr_DictionaryFileProblem);
-          lTablesToProcess := 0;
-       end;
-    end;
-  end
-  else begin
-    ModalResult := mrNone;
-    ShowInformation (ResStr_DictionaryFileMissing);
-  end;
-
-  if not LicenceKeyCheck(edLicencekey.Text,lLicenceKeyCheck) then begin
-    ShowInformation (ResStr_LicenceKeyInvalid);
-    lTablesToProcess := 0;
-  end;
-  if lTablesToProcess > 0   then begin
-    lCursor := HourGlassCursor;
-    AppSettings.DictionaryUpgradePath := AddBackSlash(edFileLocation.text);
+    begin
+      Try
+        Readln(lUpdateFile, lRecord);
+        if leftstr(lrecord,2) = '--' then begin
+          if lLicenceKeyCheck = '' then
+            lLicenceKeyCheck := lRecord
+          else
+            inc(lTablesToProcess);
+        end; // --
+      Except
+        lErrorCount := 0;
+      end; // try
+    end; // while not
+  end;   //not update file
+  if (lTablesToProcess > 0) and (lErrorCount = 0) then begin
     CloseFile(lUpdateFile);
     Reset(lUpdateFile);
     frmMain.SetStatus(ResStr_DictionaryUpdateStatus);
@@ -165,7 +226,6 @@ begin
         end;
         lUpdatedRecords := 0;
         lblock  := '';
-
       end;
     end;
     if lBlock <> '' then
@@ -178,71 +238,34 @@ begin
           ParseSQL := true;
         end;
       except
-          WriteLog(lBlock,true);
-          inc(lErrorCount);
+        WriteLog(lBlock,true);
+        inc(lErrorCount);
       end;
     end;
-
-    frmMain.SetProgress(0);
-    DefaultCursor(lCursor);
-    if lErrorCount = 0 then begin
-      with dmGeneralData.qryAllPurpose do begin
-        ParseSQL := false;
-        SQL.Text := 'Update Setting Set DATA = ''' + lUpgradeKey + '''' +
-                    ' WHERE NAME = ''Dict Seq ''';
-        ExecSQL;
-        SQL.Text := 'Update Setting Set DATA = ''Updated''' +
-                    ' WHERE NAME = ''DictStat''';
-        ExecSQL;
-        ParseSQL := true;
-        frmMain.SetStatus('');
-      end;
-
-      frmMain.SetStatus('Complete');
-      if MessageDlg(ResStr_Rebuild_Index, mtConfirmation, [mbYes,mbNo], 0) = mrYes then begin
-       writelog('[Building Indexes]',true);
-       lCursor := HourGlassCursor;
-        RebuildIndexTaxonName(dmGeneralData.qryAllPurpose,frmMain.SetStatus,frmMain.SetProgress);
-        ClearSystemTaxonGroupIndex(dmGeneralData.qryAllPurpose);
-        PopulateTaxonGroupIndex(dmGeneralData.qryAllPurpose,
-                               frmMain.SetStatus, frmMain.SetProgress);
-        RebuildIndexTaxonSynonym(dmGeneralData.qryAllPurpose,frmMain.SetStatus ,frmMain.SetProgress);
-        frmMain.SetStatus(ResStr_DesignationRebuildingStatus);
-        frmMain.SetProgress(50);
-        dmDatabase.RunStoredProc('usp_Index_Taxon_Designation_Rebuild', []);
-        frmMain.SetProgress(100);
-        frmMain.SetStatus(ResStr_All_Indexes_Rebuilt);
-        writelog('[Index Build Complete]',true);
-        frmMain.SetProgress(0);
-      end;
-      writelog('Completed with no Errors to Update ' + lUpgradeKey,true);
-      ShowInformation(ResStr_DictionaryUpdateComplete);
-      ModalResult:= mrOK;
-    end
-    else begin
-      frmMain.SetStatus('Complete with errors');
-      writelog('Completed with errors to Update ' + lUpgradekey,true);
-      with dmGeneralData.qryAllPurpose do begin
-        ParseSQL := false;
-        SQL.Text := 'Update Setting Set DATA = ''' + lUpgradeKey + ' - Partial''' +
-                    ' WHERE NAME = ''DictStat''';
-        ExecSQL;
-        ParseSQL := true;
-        lblDictCurrentStatus.caption := lUpgradeKey + ' - Partial';
-      end;
-
-      if lBlockSize > 1 then
-        ShowInformation(ResStr_DictionaryFailed)
-      else
-        ShowInformation(Format(ResStr_DictionaryFailedOne,[inttostr(lErrorCount),GetLogFilename]));
-      ModalResult:= mrNone;
-    end;
-    CloseFile(lUpdateFile);
-
   end;
+  Result := lErrorCount;
+  CloseFile(lUpdateFile);
+end;
 
-frmMain.SetStatus('');
-frmMain.SetProgress(0);
+function TdlgDictionaryUpgrade.CheckFile(AFilename: string): string;
+var
+lUpdateFile : TextFile;
+lRecord : string;
+begin
+  // Checks that the file is Ok and gets the first line
+  // Returns a blank if the file is not OK
+  AssignFile(lUpdateFile,AFileName);
+  Reset(lUpdateFile);
+  Result := '';
+  try
+    if not Eof(lUpdateFile) then begin
+      Readln(lUpdateFile, lRecord);
+      if leftstr(lRecord,2) = '--' then
+        Result := lRecord;
+      closefile (lUpdateFile);
+    end;
+  except
+  end;
 end;
 
 procedure TdlgDictionaryUpgrade.bbCancelClick(Sender: TObject);
@@ -404,4 +427,51 @@ begin
   Result := MyYear - 1700;
 
 end;
+procedure TdlgDictionaryUpgrade.UpdateSettingTable(UpdateErrors,Blocksize: integer;
+  AUpdateKey: string);
+begin
+
+  if UpdateErrors = 0 then begin
+    with dmGeneralData.qryAllPurpose do begin
+      ParseSQL := false;
+      SQL.Text := 'Update Setting Set DATA = ''' + AUpdateKey + '''' +
+                  ' WHERE NAME = ''Dict Seq ''';
+      ExecSQL;
+      SQL.Text := 'Update Setting Set DATA = ''Updated''' +
+                    ' WHERE NAME = ''DictStat''';
+      ExecSQL;
+      ParseSQL := true;
+      frmMain.SetStatus('');
+    end;
+    writelog('Completed with no Errors to Update ' + AUpdateKey,true);
+  end
+  else begin
+    frmMain.SetStatus('Complete with errors');
+    writelog('Completed with errors to Update ' + AUpdateKey,true);
+    with dmGeneralData.qryAllPurpose do begin
+      ParseSQL := false;
+      SQL.Text := 'Update Setting Set DATA = ''' + AUpdateKey + ' - Partial''' +
+                  ' WHERE NAME = ''DictStat''';
+      ExecSQL;
+      ParseSQL := true;
+      lblDictCurrentStatus.caption := AUpdateKey + ' - Partial';
+    end;
+  end;
+end;
+
+procedure TdlgDictionaryUpgrade.UpdateAllIndexes;
+begin
+  RebuildIndexTaxonName(dmGeneralData.qryAllPurpose,frmMain.SetStatus,frmMain.SetProgress);
+  ClearSystemTaxonGroupIndex(dmGeneralData.qryAllPurpose);
+  PopulateTaxonGroupIndex(dmGeneralData.qryAllPurpose,
+  frmMain.SetStatus, frmMain.SetProgress);
+  RebuildIndexTaxonSynonym(dmGeneralData.qryAllPurpose,frmMain.SetStatus ,frmMain.SetProgress);
+  frmMain.SetStatus(ResStr_DesignationRebuildingStatus);
+  frmMain.SetProgress(50);
+  dmDatabase.RunStoredProc('usp_Index_Taxon_Designation_Rebuild', []);
+  frmMain.SetProgress(100);
+  frmMain.SetStatus(ResStr_All_Indexes_Rebuilt);
+  writelog('[Index Build Complete]',true);
+end;
+
 end.

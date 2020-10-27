@@ -141,6 +141,16 @@ object dlgDictionaryUpgrade: TdlgDictionaryUpgrade
     Text = '50'
     OnKeyPress = edBlockSizeKeyPress
   end
+  object cbMultiple: TCheckBox
+    Left = 264
+    Top = 72
+    Width = 137
+    Height = 17
+    Caption = 'Allow Muliple Updates'
+    Checked = True
+    State = cbChecked
+    TabOrder = 6
+  end
   object dlgFolder: TFolderBrowser
     BrowseFlags = [bfDirsOnly, bfStatusText]
     NewDialogStyle = False
