@@ -1022,7 +1022,7 @@ begin
         FDTDPath               := FindRegPath(OPT_DTD_PATH,               PATH_DTD,              lReg, fptInstallFolder, ['nbndata.dtd', 'exportstart.xml']);
         FErrorPath             := FindRegPath(OPT_ERROR_PATH,             PATH_ERRORS,           lReg, fptNetworkDocs, []);
         madExceptErrorPath     := FErrorPath;
-        FDictionaryUpgradePath := FindRegPath(OPT_DICT_UPGRADE_PATH,      PATH_DICT_UPGRADE,     lReg, fptNetworkDocs, []);
+        FDictionaryUpgradePath := FindRegPath(OPT_DICT_UPGRADE_PATH,      PATH_DICT_UPGRADE,     lReg, fptNetworkDocs, [],true);
         FBatchUpdatePath       := FindRegPath(OPT_BATCH_UPDATE_PATH,      PATH_BATCH_UPDATES,    lReg, fptNetworkDocs, []);
         FExternalFilePath      := FindRegPath(OPT_EXTERNAL_FILE_PATH,     PATH_EXTERNAL_FILES,   lReg, fptNetworkDocs, []);
         FImportTemplatePath    := FindRegPath(OPT_IMPORT_TEMPLATE_PATH,   PATH_IMPORT_TEMPLATES, lReg, fptNetworkDocs, []);
