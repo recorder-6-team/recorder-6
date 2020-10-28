@@ -19,7 +19,7 @@ resourcestring
 const
   CRLF = chr(13)+chr(10);
   SQL_CREATE_TEMPTABLE =
-      'Create Table ##Temptaxa(TaxonName varchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS,' +
+      'Create Table #Temptaxa(TaxonName varchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS,' +
       'TLIKey varchar(16) COLLATE SQL_Latin1_General_CP1_CI_AS,' +
       'Sort_Order varchar (60)  COLLATE SQL_Latin1_General_CP1_CI_AS, ' +
       'Original_order integer, Duplicate_Flag integer, ' +
@@ -28,61 +28,61 @@ const
       'Sort_To_Use varchar (150) COLLATE SQL_Latin1_General_CP1_CI_AS,' +
       'MatchCount integer)';
   SQL_CREATE_TEMPRUCKSACK =
-      'Create Table ##TempRucksack(Rucksack_data varchar(60) COLLATE SQL_Latin1_General_CP1_CI_AS)';
+      'Create Table #TempRucksack(Rucksack_data varchar(60) COLLATE SQL_Latin1_General_CP1_CI_AS)';
   SQL_INSERT_CSV_DATA =
-      'INSERT INTO ##TempTaxa (Taxonname,SearchName,Original_Order) VALUES(''%s'',''%s'',''%s'')';
+      'INSERT INTO #TempTaxa (Taxonname,SearchName,Original_Order) VALUES(''%s'',''%s'',''%s'')';
   SQL_INSERT_RUCKSACK =
-      'Insert Into ##TempTaxa (OriginalKey,Original_order) Values (' +
+      'Insert Into #TempTaxa (OriginalKey,Original_order) Values (' +
       '''%s'',%s)';
   SQL_INSERT_RUCKSACK_REST =
-      'Insert Into ##TempRucksack (Rucksack_data) Values (' +
+      'Insert Into #TempRucksack (Rucksack_data) Values (' +
       '''%s'')';
   SQL_RUCKSACK_NAMES =
-      ' Update ##Temptaxa Set MATCHCOUNT = 0, TaxonName = (select Output_Taxon_Name FROM ' +
+      ' Update #Temptaxa Set MATCHCOUNT = 0, TaxonName = (select Output_Taxon_Name FROM ' +
       ' Index_Taxon_Name WHERE Index_Taxon_Name.Taxon_List_Item_Key = ' +
-      ' ##Temptaxa.OriginalKey)';
+      ' #Temptaxa.OriginalKey)';
   SQL_MATCHES_COUNT =
-      'UPDATE ##TEMPTAXA SET MATCHCOUNT = D.CTN ' +
-      ' FROM (Select ##TEMPTAXA.TAXONNAME AS TN, count(Taxon_List_Item_Key) AS CTN FROM ' +
+      'UPDATE #TEMPTAXA SET MATCHCOUNT = D.CTN ' +
+      ' FROM (Select #TEMPTAXA.TAXONNAME AS TN, count(Taxon_List_Item_Key) AS CTN FROM ' +
       ' INDEX_TAXON_NAME INNER JOIN ' +
-      ' ##TEMPTAXA ON ##TEMPTAXA.TaxonName ' +
+      ' #TEMPTAXA ON #TEMPTAXA.TaxonName ' +
       ' = Index_Taxon_Name.OUTPUT_TAXON_NAME ' +
       ' AND INDEX_TAXON_NAME.PREFERRED_TAXA = 1 ' +
-      ' GROUP BY ##TEMPTAXA.TAXONNAME, OUTPUT_TAXON_NAME) AS D ' +
-      ' WHERE D.TN = ##TEMPTAXA.TaxonName ';
+      ' GROUP BY #TEMPTAXA.TAXONNAME, OUTPUT_TAXON_NAME) AS D ' +
+      ' WHERE D.TN = #TEMPTAXA.TaxonName ';
   SQL_SINGLE_MATCH =
-      'Update ##TempTaxa set TLIKey = (select Taxon_List_Item_Key FROM ' +
-      'Index_taxon_Name where Preferred_Taxa = 1 and ##Temptaxa.TaxonName = ' +
-      'Index_Taxon_Name.Output_Taxon_Name) WHERE ##TempTaxa.MatchCount = 1';
+      'Update #TempTaxa set TLIKey = (select Taxon_List_Item_Key FROM ' +
+      'Index_taxon_Name where Preferred_Taxa = 1 and #Temptaxa.TaxonName = ' +
+      'Index_Taxon_Name.Output_Taxon_Name) WHERE #TempTaxa.MatchCount = 1';
   SQL_SINGLE_MATCH_RECOMMENDED =
-      ' Update ##TempTaxa set TLIKey = (select Recommended_Taxon_List_Item_Key FROM ' +
-      ' Index_taxon_Name WHERE ##TempTaxa.TLIKey = Index_taxon_Name.Taxon_List_Item_Key)';
+      ' Update #TempTaxa set TLIKey = (select Recommended_Taxon_List_Item_Key FROM ' +
+      ' Index_taxon_Name WHERE #TempTaxa.TLIKey = Index_taxon_Name.Taxon_List_Item_Key)';
   SQL_RETAIN_KEY =
-      'Update ##TempTaxa set TLIKey = OriginalKey';
+      'Update #TempTaxa set TLIKey = OriginalKey';
   SQL_UPDATE_TLIKEY =
-      'Update ##TempTaxa set TLIKey = ''%s'' WHERE TaxonName = ''%s''';
+      'Update #TempTaxa set TLIKey = ''%s'' WHERE TaxonName = ''%s''';
   SQL_SEARCH_NAME =
-      'Update ##TempTaxa set SEARCHNAME = '''' WHERE SEARCHNAME IS NULL';
+      'Update #TempTaxa set SEARCHNAME = '''' WHERE SEARCHNAME IS NULL';
   SQL_TLIKEY_BLANK =
-      'Update ##TempTaxa set TLIKEY = '''' WHERE TLIKEY IS NULL';
-  SQL_SORT_TO_USE = 'Update ##TempTaxa Set Sort_To_Use = %s';
-  SQL_SET_DUPLICATE = 'Update ##TEmptaxa set Original_Order = 0 Where Original_Order = ''%s''';
-  SQL_REMOVE_DUPLICATE = 'DELETE FROM ##TempTaxa WHERE Original_Order = 0';
+      'Update #TempTaxa set TLIKEY = '''' WHERE TLIKEY IS NULL';
+  SQL_SORT_TO_USE = 'Update #TempTaxa Set Sort_To_Use = %s';
+  SQL_SET_DUPLICATE = 'Update #TEmptaxa set Original_Order = 0 Where Original_Order = ''%s''';
+  SQL_REMOVE_DUPLICATE = 'DELETE FROM #TempTaxa WHERE Original_Order = 0';
 
   SORT_ORIGINAL_ORDER = 'LTRIM(STR(Original_Order))';
   SORT_TAXON_NAME =
        '(Select OUTPUT_TAXON_NAME FROM INDEX_TAXON_NAME ITN WHERE ' +
-       ' ITN.Taxon_List_Item_Key = ##TempTaxa.TLIkey )';
+       ' ITN.Taxon_List_Item_Key = #TempTaxa.TLIkey )';
   SORT_GROUP_TAXON =
        '(SELECT str(TG.SORT_ORDER) + OUTPUT_TAXON_NAME FROM INDEX_TAXON_NAME ITN ' +
        ' INNER JOIN TAXON_LIST_ITEM TLI ON TLI.TAXON_LIST_ITEM_KEY = ' +
        ' ITN.TAXON_LIST_ITEM_KEY INNER JOIN TAXON_VERSION TV ON ' +
        ' TV.TAXON_VERSION_KEY = TLI.TAXON_VERSION_KEY ' +
        ' INNER JOIN TAXON_GROUP TG ON TG.TAXON_GROUP_KEY = TV.OUTPUT_GROUP_KEY ' +
-       ' WHERE ITN.TAXON_LIST_ITEM_KEY = ##TEMPTAXA.TLIKEY)';
+       ' WHERE ITN.TAXON_LIST_ITEM_KEY = #TEMPTAXA.TLIKEY)';
   SORT_DICT_SORT =
        '(Select Sort_Order FROM INDEX_TAXON_NAME ITN WHERE ' +
-       ' ITN.Taxon_List_Item_Key = ##TempTaxa.TLIkey )';
+       ' ITN.Taxon_List_Item_Key = #TempTaxa.TLIkey )';
 
 type
 TdlgGenerateRucksack = class(TForm)
@@ -355,8 +355,10 @@ begin
   lRetry:= true;
   lOrigSortOrder:= 0;
   If (edInputFile.text = '') or (edOutputFile.text = '') or (UPPERCASE(edInputFile.text) =
-        UPPERCASE(edOutputFile.text)) then
-    MessageDlg(Restr_FilesInvalid, mtWarning, [mbOk], 0)
+       UPPERCASE(edOutputFile.text)) then begin
+    MessageDlg(Restr_FilesInvalid, mtWarning, [mbOk], 0);
+    ModalResult:= mrNone;
+  end
   else begin
     if CreatInputTable()then begin
       AssignFile(lFileVar, edInputFile.text);
@@ -405,14 +407,14 @@ begin
       dmDatabase.ExecuteSQL(SQL_SINGLE_MATCH);
       While lretry do begin
         lRetry := true;
-        rs := dmDatabase.ExecuteSQL('SELECT * FROM ##TempTaxa WHERE TLIKey IS NULL',true);
+        rs := dmDatabase.ExecuteSQL('SELECT * FROM #TempTaxa WHERE TLIKey IS NULL',true);
         if not rs.EOF then begin
           if MessageDlg(Restr_Unmatched_Exist, mtInformation, [mbYes,MbNo], 0)=mrNo then
             lRetry:= false
         end else
           lRetry := false;
         if lRetry = true then begin
-          rs2 := dmDatabase.ExecuteSQL('SELECT * FROM ##TempTaxa WHERE MatchCount <> 1',true);
+          rs2 := dmDatabase.ExecuteSQL('SELECT * FROM #TempTaxa WHERE MatchCount <> 1',true);
           while not rs2.Eof do begin
             lTaxonName := rs2.Fields['TaxonName'].Value;
             lTLIKey := FindTaxon(lTaxonName);
@@ -425,13 +427,13 @@ begin
     if cbRecommended.checked then
       dmDatabase.ExecuteSQL(SQL_SINGLE_MATCH_RECOMMENDED);
     WriteRucksack;
-    dmDatabase.ExecuteSQL('Drop Table ##TempTaxa');
-    dmDatabase.ExecuteSQL('Drop Table ##TempRucksack');
+    dmDatabase.ExecuteSQL('Drop Table #TempTaxa');
+    dmDatabase.ExecuteSQL('Drop Table #TempRucksack');
     MessageDlg('Process complete', mtInformation, [mbok], 0);
-
+    ModalResult:= mrOK;
   end;
   Screen.Cursor := lOrigCursor;
-  ModalResult:= mrOK;
+
 end;
 
 Function TdlgGenerateRucksack.CreatInputTable() : boolean;
@@ -518,7 +520,7 @@ begin
   Update_Sort_Order;
   Remove_Duplicates;
   dmDatabase.ExecuteSQL(SQL_TLIKEY_BLANK,true);
-  rs := dmDatabase.ExecuteSQL('SELECT * FROM ##TempTaxa Order By Sort_To_Use',true);
+  rs := dmDatabase.ExecuteSQL('SELECT * FROM #TempTaxa Order By Sort_To_Use',true);
   {Start writing Rucksack here }
   write (RuckVar,'<TAXON>',CRLF);
   while not rs.Eof do begin
@@ -565,11 +567,12 @@ lAllOutput: string;
 rsTag : _Recordset;
 
 begin
-  rsTag := dmDatabase.ExecuteSQL('SELECT * FROM ##TempRucksack',true);
+  rsTag := dmDatabase.ExecuteSQL('SELECT * FROM #TempRucksack',true);
   While not rsTag.Eof do begin
     if (rsTag.Fields[0].value = '<TAXONSEARCHCODE>')
        and (cbTransfer.checked) then Break;
-    lAllOutput := lAllOutput + rsTag.Fields[0].value + CRLF;
+    if pos('TAXON>',rsTag.Fields[0].value) = 0 then
+      lAllOutput := lAllOutput + rsTag.Fields[0].value + CRLF;
     rsTag.MoveNext;
   end;
   if cbTransfer.checked then
@@ -612,7 +615,7 @@ var
   lPrevious: string;
 begin
   lPrevious := '';
-  rs := dmDatabase.ExecuteSQL('SELECT * FROM ##TempTaxa Order by TLIKey',true);
+  rs := dmDatabase.ExecuteSQL('SELECT * FROM #TempTaxa Order by TLIKey',true);
   while not rs.eof do begin
     if rs.fields[1].value = lPrevious then begin
       dmDatabase.ExecuteSQL(Format(SQL_SET_DUPLICATE,[rs.fields[3].value]),true);
