@@ -15,7 +15,8 @@ resourcestring
   Restr_Unmatched_Exist = 'Some taxa remain unmatched - find a match ?';
   Restr_Search_Column_Not_Found = 'Search column not found';
   Restr_SourceNameInvalid = 'Search column not found in file';
-
+  Restr_Write_Failed = 'Failing to generate rucksack - check input file';
+  Restr_Process_Complete = 'Process complete';
 const
   CRLF = chr(13)+chr(10);
   SQL_CREATE_TEMPTABLE =
@@ -207,7 +208,7 @@ begin
         end;
       end;
     except
-      edInputFile.text := '';
+     edInputFile.text := '';
     end;
   end;
   if edInputFile.text = '' then MessageDlg(Restr_InputFileInvalid, mtWarning, [mbOk], 0);
@@ -426,11 +427,16 @@ begin
     end;
     if cbRecommended.checked then
       dmDatabase.ExecuteSQL(SQL_SINGLE_MATCH_RECOMMENDED);
-    WriteRucksack;
-    dmDatabase.ExecuteSQL('Drop Table #TempTaxa');
-    dmDatabase.ExecuteSQL('Drop Table #TempRucksack');
-    MessageDlg('Process complete', mtInformation, [mbok], 0);
-    ModalResult:= mrOK;
+    Try
+      WriteRucksack;
+      dmDatabase.ExecuteSQL('Drop Table #TempTaxa');
+      dmDatabase.ExecuteSQL('Drop Table #TempRucksack');
+      MessageDlg(Restr_Process_complete, mtInformation, [mbok], 0);
+      ModalResult:= mrOK;
+    except
+      MessageDlg(Restr_Write_Failed, mtInformation, [mbok], 0);
+      ModalResult:= mrNone;
+    end;
   end;
   Screen.Cursor := lOrigCursor;
 
