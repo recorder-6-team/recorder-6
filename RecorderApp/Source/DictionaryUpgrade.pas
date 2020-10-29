@@ -47,7 +47,7 @@ type
     function GetBlockSize(): integer;
     function GetLogFilename: string;
     procedure UpdateSettingTable(UpdateErrors,Blocksize: integer; AUpdateKey: string);
-    procedure UpdateAllIndexes();
+    function UpdateAllIndexes: boolean;
   public
     { Public declarations }
   end;
@@ -62,7 +62,9 @@ uses DatabaseAccessADO, ADODB, Maintbar, GeneralFunctions,GeneralData;
 resourcestring
   ResStr_SelectFolder = 'Select the folder for %s';
   ResStr_DictionaryUpdate = 'Dictionary Updates';
-  ResStr_DictionaryUpdateComplete = 'Dictionary update is complete to %s. Indexes were rebuilt if requested.';
+  ResStr_DictionaryUpdateComplete = 'Dictionary update is complete to %s. Indexes were not rebuilt';
+  ResStr_IndexUpdateFailed = 'Dictionary update is complete to %s. Indexes rebuilt failed.';
+  ResStr_IndexUpdateComplete = 'Dictionary update is complete to %s. Indexes were rebuilt.';
   ResStr_DictionaryFailed  = 'The Dictionary update has completed with errors. ' +
                              'Please try again using a block size of 1 ';
   ResStr_DictionaryFileMissing = 'The required file is missing, is open or is corrupt ';
@@ -88,7 +90,9 @@ var lErrorCount: integer;
     lBlockSize: integer;
     lMultipleAllowed: boolean;
     lLastUpgrade: String;
+    lCursor: TCursor;
 begin
+  lCursor := HourglassCursor;
   writelog('[Block Size]' + edBlockSize.Text,false);
   lBlockSize:= GetBlockSize;
   lErrorCount:= 0;
@@ -103,6 +107,7 @@ begin
     ModalResult := mrNone;
   end
   else begin
+    AppSettings.DictionaryUpgradePath := edFileLocation.Text;
     if not LicenceKeyCheck(edLicencekey.Text,lLicenceKeyCheck) then
       ShowInformation (ResStr_LicenceKeyInvalid)
     else begin
@@ -117,7 +122,7 @@ begin
             lUpgradeKey := dmGeneralData.IdGenerator.GetNextID(lUpgradeKey);
             lUpdateFileName :=  AddBackSlash(edFileLocation.Text) + lUpgradeKey + '.sql';
             lblUpDateFile.Caption := lUpgradeKey + '.sql';
-            lblCurrentKey.Caption :=  lUpgradeKey;
+            lblCurrentKey.Caption :=  lLastUpgrade;
           end;
         end
         else begin
@@ -132,12 +137,14 @@ begin
         frmMain.SetStatus('Complete');
         if MessageDlg(ResStr_Rebuild_Index, mtConfirmation, [mbYes,mbNo], 0) = mrYes then begin
           writelog('[Building Indexes]',true);
-          UpdateAllIndexes;
+          if UpdateAllIndexes then
+             ShowInformation(Format(ResStr_IndexUpdateComplete,[lLastUpgrade]))
+          else
+             ShowInformation(Format(ResStr_IndexUpdateFailed,[lLastUpgrade]));
         end
-        else begin
-          ShowInformation(Format(ResStr_DictionaryUpdateComplete,[lLastUpgrade]));
-          ModalResult:= mrOK;
-        end;
+        else
+           ShowInformation(Format(ResStr_DictionaryUpdateComplete,[lLastUpgrade]));
+        ModalResult:= mrOK;
       end
       else begin
         frmMain.SetStatus('Complete with errors');
@@ -153,7 +160,7 @@ begin
   end;
 frmMain.SetStatus('');
 frmMain.SetProgress(0);
-
+DefaultCursor(lCursor);
 
 end;
 
@@ -459,19 +466,24 @@ begin
   end;
 end;
 
-procedure TdlgDictionaryUpgrade.UpdateAllIndexes;
+function TdlgDictionaryUpgrade.UpdateAllIndexes: boolean;
 begin
-  RebuildIndexTaxonName(dmGeneralData.qryAllPurpose,frmMain.SetStatus,frmMain.SetProgress);
-  ClearSystemTaxonGroupIndex(dmGeneralData.qryAllPurpose);
-  PopulateTaxonGroupIndex(dmGeneralData.qryAllPurpose,
-  frmMain.SetStatus, frmMain.SetProgress);
-  RebuildIndexTaxonSynonym(dmGeneralData.qryAllPurpose,frmMain.SetStatus ,frmMain.SetProgress);
-  frmMain.SetStatus(ResStr_DesignationRebuildingStatus);
-  frmMain.SetProgress(50);
-  dmDatabase.RunStoredProc('usp_Index_Taxon_Designation_Rebuild', []);
-  frmMain.SetProgress(100);
-  frmMain.SetStatus(ResStr_All_Indexes_Rebuilt);
-  writelog('[Index Build Complete]',true);
+  Result:= true;
+  Try
+    RebuildIndexTaxonName(dmGeneralData.qryAllPurpose,frmMain.SetStatus,frmMain.SetProgress);
+    ClearSystemTaxonGroupIndex(dmGeneralData.qryAllPurpose);
+    PopulateTaxonGroupIndex(dmGeneralData.qryAllPurpose,
+    frmMain.SetStatus, frmMain.SetProgress);
+    RebuildIndexTaxonSynonym(dmGeneralData.qryAllPurpose,frmMain.SetStatus ,frmMain.SetProgress);
+    frmMain.SetStatus(ResStr_DesignationRebuildingStatus);
+    frmMain.SetProgress(50);
+    dmDatabase.RunStoredProc('usp_Index_Taxon_Designation_Rebuild', []);
+    frmMain.SetProgress(100);
+    frmMain.SetStatus(ResStr_All_Indexes_Rebuilt);
+    writelog('[Index Build Complete]',true);
+  except
+    Result := false;
+  end;
 end;
 
 end.
