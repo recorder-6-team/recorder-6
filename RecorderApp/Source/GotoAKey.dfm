@@ -1,9 +1,13 @@
 object dlgGotoKey: TdlgGotoKey
   Left = 578
   Top = 328
-  Width = 257
-  Height = 231
+  HorzScrollBar.Visible = False
+  VertScrollBar.Visible = False
+  BorderIcons = []
+  BorderStyle = bsDialog
   Caption = 'Goto Key'
+  ClientHeight = 204
+  ClientWidth = 194
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -31,7 +35,7 @@ object dlgGotoKey: TdlgGotoKey
   object Bevel1: TBevel
     Left = 0
     Top = 0
-    Width = 241
+    Width = 185
     Height = 153
     Shape = bsFrame
   end
@@ -78,7 +82,7 @@ object dlgGotoKey: TdlgGotoKey
     OnClick = cbExpandClick
   end
   object btnAction: TButton
-    Left = 116
+    Left = 60
     Top = 168
     Width = 57
     Height = 25
@@ -87,7 +91,7 @@ object dlgGotoKey: TdlgGotoKey
     OnClick = btnActionClick
   end
   object bbCancel: TImageListButton
-    Left = 180
+    Left = 124
     Top = 168
     Width = 57
     Height = 25
