@@ -948,7 +948,7 @@ begin
           CreateSample(sampleKey, surveyKey, thisrec);
         doneSamples.Add(sampleKey);
         occKey := FRemoteSiteID + IdToKey(rec.Field['occurrence_id'].Value);
-        FEnteredBy = GetIndividual(thisrec['created_by_person_id'], thisrec['created_by']); 
+        FEnteredBy := GetIndividual(thisrec.values['created_by_person_id'], thisrec.values['created_by']);
         CreateOccurrence(occKey, sampleKey, thisrec);
         ProgressBar.Position := (FDone+i+1) * 100 div FTotal;
         Application.ProcessMessages;
