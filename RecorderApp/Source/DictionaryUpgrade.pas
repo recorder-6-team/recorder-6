@@ -63,7 +63,7 @@ resourcestring
   ResStr_SelectFolder = 'Select the folder for %s';
   ResStr_DictionaryUpdate = 'Dictionary Updates';
   ResStr_DictionaryUpdateComplete = 'Dictionary update is complete to %s. Indexes were not rebuilt';
-  ResStr_IndexUpdateFailed = 'Dictionary update is complete to %s. Indexes rebuilt failed.';
+  ResStr_IndexUpdateFailed = 'Dictionary update is complete to %s. Indexes rebuilt failed. See log file for details';
   ResStr_IndexUpdateComplete = 'Dictionary update is complete to %s. Indexes were rebuilt.';
   ResStr_DictionaryFailed  = 'The Dictionary update has completed with errors. ' +
                              'Please try again using a block size of 1 ';
@@ -481,8 +481,11 @@ begin
     frmMain.SetProgress(100);
     frmMain.SetStatus(ResStr_All_Indexes_Rebuilt);
     writelog('[Index Build Complete]',true);
-  except
-    Result := false;
+  except on E:Exception do
+    begin
+      writelog('[Index Build Failed - ' + E.Message + ']',true);
+      Result := false;
+    end;
   end;
 end;
 
