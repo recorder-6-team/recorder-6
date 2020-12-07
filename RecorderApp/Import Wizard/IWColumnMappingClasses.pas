@@ -671,10 +671,12 @@ end;  // TMatchRule.MatchRecords
 }
 procedure TMatchRule.PopulateChecklistCombo(ACombo: TIDComboBox);
 begin
-  ACombo.Add(ResStr_AllPreferredTaxa, '');
-  if not AppSettings.UsePreferredTaxa then
+  if (FName <> 'Species') OR  (NOT AppSettings.UsePreferredTaxa) then
     PopulateCombo(ACombo, FChecklistsSelectProcedure)
-end;  // TMatchRule.PopulateChecklistCombo 
+  else
+    ACombo.Add(ResStr_AllPreferredTaxa, '');
+
+end;  // TMatchRule.PopulateChecklistCombo
 
 {-------------------------------------------------------------------------------
 }

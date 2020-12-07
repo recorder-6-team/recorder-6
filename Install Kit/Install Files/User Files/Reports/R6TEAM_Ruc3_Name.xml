@@ -1,0 +1,43 @@
+<?xml version='1.0' ?>
+
+
+<!-- Displays details of the Names in a Selected Rucksack 
+     XML Report by Mike Weideli of Littlefield Consultancy for 
+     http://www.lfield.co.uk
+     Version 28 October 2020 
+     
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="R6TEAM_Rucksack3_Names" menupath="System Supplied\Rucksack " 
+
+description="Reports on the Names in a selected Rucksack" >
+
+
+
+<SQL>
+
+<Where keytype="Default">
+
+
+Select NAME_KEY, [dbo].[ufn_GetFormattedName](Name_Key) as Name FROM 
+NAME WHERE 
+<Condition field= "NAME_KEY" entrycount= "-1" operator= "equal" type= "Name" name= "SelectRucksack" userucksack= "yes" />
+
+
+
+   
+   
+
+                  
+</Where>
+
+</SQL>
+<Columns>
+
+</Columns>
+
+</CustomReport>

@@ -199,7 +199,7 @@ type
     chkUseOldImportWizard: TCheckBox;
     chkIgnoreRememberedMatches: TCheckBox;
     cbPlaceCardDocs: TCheckBox;
-    lblSetting12: TLabel;
+    lblSetting14: TLabel;
     edBlockSize: TEdit;
     chkUsePreferredTaxa: TCheckBox;
     dbDeterminationType: TGroupBox;
@@ -207,6 +207,8 @@ type
     cmbImportWizardDT: TComboBox;
     lblRecordingCards: TLabel;
     lblIW: TLabel;
+    Label1: TLabel;
+    edStatus: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure DrawListItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
@@ -263,6 +265,7 @@ type
 
   private
     hlpOptions: TOnlineHelp;
+    FTempLicence: String;
     FSpatialRefSystem: String;
     FLeftMouseButton: Boolean;
     FCheckedIndex: Integer;
@@ -286,6 +289,8 @@ type
     property ExtraLocationSearchColumns: TLocationSearchColumns
         read FExtraLocationSearchColumns write SetExtraLocationSearchColumns;
     procedure SaveSettingTable;
+    procedure FullTranslateSet(ASetting :string);
+
 
   public
     constructor Create(AOwner : TComponent); override;
@@ -319,6 +324,8 @@ resourcestring
   Restr_Master_Workstation = 'The map on this workstation must be reset before it can be made the master';
   Restr_Admin_Permission  = 'Changes to the Setting table have not been made as they require Administrator permission';
   ResStr_Setting_Warning = 'WARNING - do NOT change any of these settings unless you fully understand the implications.';
+  ResStr_Delay           = 'Saving may take several minutes - please wait';
+
 const
   BAD_DELIMITERS = ['a'..'z', '0'..'9', 'A'..'Z', '<', '>', '~', '-', '/', ' '];
 
@@ -1560,14 +1567,17 @@ begin
       else if rs.Fields['Name'].Value = 'TempLic' then  edTempLicence.text := rs.Fields[AField].Value
       else if rs.Fields['Name'].Value = 'TempName' then  edTempNames.text := rs.Fields[AField].Value
       else if rs.Fields['Name'].Value = 'Competency' then  edCompetency.text := rs.Fields[AField].Value
-      else if rs.Fields['Name'].Value = 'BlockSize' then  edBlockSize.text := rs.Fields[AField].Value;
-   rs.MoveNext
+      else if rs.Fields['Name'].Value = 'BlockSize' then  edBlockSize.text := rs.Fields[AField].Value
+      else if rs.Fields['Name'].Value = 'DictStat' then  edStatus.text := rs.Fields[AField].Value;
+    rs.MoveNext
   end;
   rs.close;
   rs := dmDatabase.ExecuteSQL('Select Computer_Id  From Computer_Map WHERE Master = 1', true);
     if not rs.eof then edMaster.text := rs.Fields['Computer_Id'].Value
       else  edMaster.text := '';
   rs.close;
+  FTempLicence := edTempLicence.text;
+  FullTranslateSet(edSortMethod.text);
 end;
 
 procedure TdlgOptions.edCompetencyKeyPress(Sender: TObject; var Key: Char);
@@ -1599,6 +1609,7 @@ begin
           lblThisWorkStation.caption  + '''',false);
     end;
 
+
     if edCompetency.text = '' then edcompetency.text := '0';
     sql := 'Update Setting SET [Data] = ''%s'' where [Name] = ''%s''';
 
@@ -1612,8 +1623,13 @@ begin
     dmDatabase.ExecuteSQL(Format(sql,[edTempNames.text,'TempName']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edCompetency.text,'Competency']),false);
     dmDatabase.ExecuteSQL(Format(sql,[edBlockSize.text,'BlockSize']),false);
-    dmDatabase.ExecuteSQL('usp_Setting_Temp_Survey');
+    dmDatabase.ExecuteSQL(Format(sql,[edStatus.text,'DictStat']),false);
+    if edTempLicence.text <> FTempLicence then begin
+      MessageDlg(Resstr_Delay, mtWarning, [mbOk], 0);
+      dmDatabase.ExecuteSQL('usp_Setting_Temp_Survey');
+    end;
     PopulateSettingFields('Data');
+    FullTranslateSet(edSortMethod.text);
   end else
     MessageDlg(Restr_Admin_Permission,mtInformation, [mbOk], 0);
   Screen.Cursor := lOrigCursor;
@@ -1622,6 +1638,17 @@ end;
 procedure TdlgOptions.edBlockSizeKeyPress(Sender: TObject; var Key: Char);
 begin
  if not (Key in [#8, '0'..'9']) then Key := #0;
+end;
+
+Procedure TdlgOptions.FullTranslateSet(aSetting: string);
+{Brings the full translate option in line with the Settings Table
+if SortMethod = 'Organism' them fulltranslate must be set to true}
+begin
+  if aSetting = 'Organism' then begin
+    cbFullTranslation.Checked := true;
+    Appsettings.UseRecommendedTaxaNames := true;
+  end;
+
 end;
 
 end.

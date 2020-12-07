@@ -4,16 +4,14 @@
 <!-- DMAP OUTPUT  ADDIN VERSION  
      XML Report by Mike Weideli of Littlefield Consultancy
      http://www.lfield.co.uk
-     Version 1.2 - 16 June 2011
+     Version 1.3 - 1 Nov 2020
+
                 
  
 
   --> 
 
-<CustomReport menupath="System Supplied\DMAP Addin Reports" title="DMAP1 - OSGB/OSNI. On Taxon Group with option to have symbols Date Cut Off based."  description="Generates a report in the format required by traditional DMAP for OSGB and OSNI references.
-If 'Use Date Split' is specified then different symbol values are output depending on vague date start of record. The cut off date is determined by a keyword in the enhanced term list in the format 'DMAP CUT OFF 12/03/2007' Records BEFORE this date have one symbol 
-and ones after another. If the keyword is not set 01/01/2000 is used. When a date cut off is used records with dates type of 'Unknown' or 'Season' are excluded. 
-To extract all taxa in the database enter * as the Taxon Group (User defined taxa are not extracted). Note that this report produces one entry for every record selected and does not consolidate."
+<CustomReport menupath="System Supplied\DMAP Addin Reports" title="DMAP1 - OSGB/OSNI. On Taxon Group with option to have symbols Date Cut Off based."  description="Generates a report in the format required by traditional DMAP for OSGB and OSNI references. If 'Use Date Split' is specified then different symbol values are output depending on vague date start of record. The cut off date is determined by a keyword in the enhanced term list in the format 'DMAP CUT OFF 12/03/2007' Records BEFORE this date have one symbol and ones after another. If the keyword is not set 01/01/2000 is used. When a date cut off is used records with dates type of 'Unknown' or 'Season' are excluded. To extract all taxa in the database enter * as the Taxon Group (User defined taxa are not extracted). Note that this report produces one entry for every record selected and does not consolidate. This revised version has defaults set to save tiem in entering the parameters"
 >
 <SQL>
 
@@ -28,7 +26,7 @@ FROM TERM WHERE LEFT(TERM.PlainText,12) = 'DMAP CUT OFF'
 UPDATE #PARAMS SET CODINT = dbo.LCToRataDie(#PARAMS.COD)
 
 Update #Params set xDateSplit 
-<Condition field= "" operator="equal" type="OptionSet"  name="Date split" >
+<Condition field= "" operator="equal" type="OptionSet"  name="Date split" default="Use"  >
         <Option name="Use" value = "1" />
         <Option name="Do not use" value = "0" />
 </Condition>
@@ -104,21 +102,22 @@ INNER JOIN TAXON_GROUP TG ON TG.TAXON_GROUP_KEY = TV.OUTPUT_GROUP_KEY
 
 WHERE
 
-<Condition field= "TG.TAXON_GROUP_NAME" operator="like" type="Text"  name="Taxon Group(Wild card)" />
+<Condition field= "TG.TAXON_GROUP_NAME" operator="like" type="Text"  name="Taxon Group(Wild card)" default= "*" />
 
 AND 
 
 
 
 
-<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" >
+<Condition field= "TOCC.Verified" operator="not equal" type="OptionSet"  name="Failed/Pending verification" default= "Include" >
 
 	
         <Option name="Include" value = "3" />
         <Option name="Exclude" value = "1" />
+	
 </Condition>
 AND 
-<Condition field= "TOCC.Confidential" operator="not equal" type="OptionSet"  name="Confidential" >
+<Condition field= "TOCC.Confidential" operator="not equal" type="OptionSet"  name="Confidential" default= "Exclude">
 	<Option name="Include" value = "2" />
         <Option name="Exclude" value = "1" />
         <Option name="Only" value = "0" />
@@ -127,7 +126,7 @@ AND
 </Condition>
 AND
 
-<Condition field= "TOCC.Checked" operator="not equal" type="OptionSet"  name="Unchecked Records" >
+<Condition field= "TOCC.Checked" operator="not equal" type="OptionSet"  name="Unchecked Records" default= "Exclude">
 	<Option name="Include" value = "2" />
         <Option name="Exclude" value = "0" />
         <Option name="Only" value = "1" />
@@ -135,7 +134,7 @@ AND
 
 </Condition> 
 AND        
-<Condition field= "TOCC.Zero_Abundance" operator="not equal" type="OptionSet"  name="Zero Abundance" >
+<Condition field= "TOCC.Zero_Abundance" operator="not equal" type="OptionSet"  name="Zero Abundance" default= "Exclude">
 	<Option name="Include" value = "2" />
         <Option name="Exclude" value = "1" />
         <Option name="Only" value = "0" />
@@ -143,7 +142,7 @@ AND
 </Condition> 
 AND
 
-<Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" >
+<Condition field= "S.SPATIAL_REF_Qualifier" operator="not equal" type="OptionSet"  name="Site Centroid" default= "Exclude">
 	
         <Option name="Include" value = "'Anything'" />
         <Option name="Exclude" value = "'Site Centroid'" />

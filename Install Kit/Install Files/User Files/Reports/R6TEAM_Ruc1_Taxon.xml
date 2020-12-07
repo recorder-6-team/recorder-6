@@ -1,0 +1,44 @@
+<?xml version='1.0' ?>
+
+
+<!-- Displays details of the Taxon in a Selected Rucksack 
+     XML Report by Mike Weideli of Littlefield Consultancy for 
+     http://www.lfield.co.uk
+     Version 28 October 2020 
+     
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="R6TEAM_Rucksack1_Taxon" menupath="System Supplied\Rucksack " 
+
+description="Reports on the Taxon in a selected Rucksack" >
+
+
+
+<SQL>
+
+<Where keytype="Default">
+
+
+Select Taxon_List_Item_Key, dbo.ufn_GetFullSpeciesName( Taxon_List_Item_Key) AS 
+Taxon_Name
+FROM 
+INDEX_TAXON_NAME ITN WHERE 
+<Condition field= "ITN.Taxon_List_Item_key" entrycount ="-1" operator= "equal" type ="Taxon"  name= "SelectRucksack" userucksack= "yes" />
+
+
+   
+   
+
+                  
+</Where>
+
+</SQL>
+<Columns>
+
+</Columns>
+
+</CustomReport>

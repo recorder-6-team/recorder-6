@@ -1,8 +1,8 @@
 inherited dmTaxonDictEditor: TdmTaxonDictEditor
-  Left = 479
-  Top = 185
+  Left = 736
+  Top = 211
   Height = 454
-  Width = 346
+  Width = 411
   inherited qryList: TJNCCQuery
     SQL.Strings = (
       'SELECT DISTINCT TL.Taxon_List_Key AS KeyField,'
@@ -55,6 +55,8 @@ inherited dmTaxonDictEditor: TdmTaxonDictEditor
       'AND TLI.Taxon_List_Version_To IS NULL'
       '<#Filter>'
       '<#OrderBy>')
+    Left = 252
+    Top = 152
   end
   inherited ppVirtualChildLevel: TPageProducer
     HTMLDoc.Strings = (
@@ -95,6 +97,10 @@ inherited dmTaxonDictEditor: TdmTaxonDictEditor
       '<#Fi')
     Left = 256
     Top = 308
+  end
+  inherited ppVirtualParent: TPageProducer
+    Left = 296
+    Top = 196
   end
   inherited qryCheckLists: TJNCCQuery
     Parameters = <
@@ -151,6 +157,8 @@ inherited dmTaxonDictEditor: TdmTaxonDictEditor
       '       ON T.Taxon_Key = TV.Taxon_Key'
       ''
       'WHERE TLI.Taxon_List_Item_Key = :Key;')
+    Left = 164
+    Top = 76
   end
   object dsRank: TDataSource
     AutoEdit = False
@@ -211,8 +219,8 @@ inherited dmTaxonDictEditor: TdmTaxonDictEditor
     CommandTimeout = 0
     Parameters = <>
     ParseSQL = True
-    Left = 256
-    Top = 124
+    Left = 216
+    Top = 204
   end
   object qryTaxonNames: TJNCCQuery
     CommandTimeout = 0
@@ -236,7 +244,7 @@ inherited dmTaxonDictEditor: TdmTaxonDictEditor
       'WHERE Taxon_List_Item_Key = :Key')
     ParseSQL = True
     Left = 256
-    Top = 232
+    Top = 256
   end
   object qryRankMinChild: TJNCCQuery
     CommandTimeout = 0
@@ -257,6 +265,6 @@ inherited dmTaxonDictEditor: TdmTaxonDictEditor
       'ORDER BY SEQUENCE DESC')
     ParseSQL = True
     Left = 256
-    Top = 180
+    Top = 364
   end
 end

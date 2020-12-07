@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 446
-  Top = 359
+  Left = 1120
+  Top = 427
   Width = 655
   Height = 501
   Anchors = []
@@ -539,6 +539,10 @@ object frmMain: TfrmMain
         object mnuToolsDatabaseRestore: TMenuItem
           Action = dmFormActions.actRestore
         end
+        object RestoreExternalDB1: TMenuItem
+          Caption = 'Restore from Specified Backup '
+          OnClick = MnuToolsRestoreDBexternalClick
+        end
         object mnuToolsChangeBackupLocation: TMenuItem
           Caption = 'View or Change Backup Location...'
           OnClick = mnuToolsChangeBackupLocationClick
@@ -566,13 +570,36 @@ object frmMain: TfrmMain
           Caption = 'Rebuild Taxon &Designation Index'
           OnClick = mnuToolsDatabaseRebuildDesignationIndexClick
         end
+        object N13: TMenuItem
+          Caption = '-'
+        end
+        object mnuToolsDatabaseRebuildLastKey: TMenuItem
+          Caption = 'Rebuild &Last Key Table'
+          OnClick = mnuToolsDatabaseRebuildLastKeyClick
+        end
       end
-      object mnuToolsSep4: TMenuItem
-        Caption = '-'
+      object SundryTools1: TMenuItem
+        Caption = 'Sundry Tools'
         GroupIndex = 9
+        object GotoKey1: TMenuItem
+          Caption = 'Goto Key'
+          OnClick = GotoKey1Click
+        end
+        object mnuUserAddedTaxa: TMenuItem
+          Caption = 'Manage User Added Taxa'
+          OnClick = mnuUserAddedTaxaClick
+        end
+        object RucksackGenerator1: TMenuItem
+          Caption = 'Rucksack Generator'
+          OnClick = RucksackGenerator1Click
+        end
       end
       object mnuToolsOptions: TMenuItem
         Action = dmFormActions.actOptions
+        GroupIndex = 9
+      end
+      object mnuToolsSep4: TMenuItem
+        Caption = '-'
         GroupIndex = 9
       end
     end

@@ -96,6 +96,7 @@ type
       const ATableName, ALinkedTableName: String);
     procedure DoBackup;
     procedure DoRestore;
+    procedure DoRestoreandmove(RestoreSQL: String);
     function ExecuteSQL(const ASQLText: String; AReturnsRecords: Boolean = False;
       const AErrMsg: String = ''): _Recordset;
     function ExecuteSQLGetRowsAffected(const ASQLText: String;
@@ -151,9 +152,7 @@ const
 
   SQL_CHECK_BACKUPDEVICE = 'Select name from [master].[dbo].[sysdevices] where name=''NBNData_Backup''';
   SQL_BACKUP = 'Backup Database "%s" to "NBNData_Backup" with init';
-  SQL_RESTORE = 'Restore Database "%s" from "NBNData_Backup"';
-
-  // Connection string used to create linked tables between Access and SQL Server
+  SQL_RESTORE = 'Restore Database "%s" from "NBNData_Backup" ';
   LINK_PROVIDER_STRING = 'ODBC;DRIVER={SQL Server};Server=%s;Database=%s;%s';
   LINK_SECURITY = 'UID=%s;PWD=%s';
 
@@ -827,7 +826,56 @@ begin
       CommandTimeout := 0;
       lConnection.Open;
       try
-        Execute(Format(SQL_RESTORE, [FDatabaseName]));
+        Execute(Format(SQL_RESTORE, [FDatabasename]));
+      except
+        on EOleException do
+        begin
+          Case lConnection.Errors[0].NativeError of
+            3101: //Can't get Exclusive access
+              raise EJNCCDatabaseError.CreateNonCritical(ResStr_RestoreDBError);
+            3201: //Can't find the backup
+              raise EJNCCDatabaseError.CreateNonCritical(ResStr_ErBackupNoValidBackup);
+            3110: //Don't have permission
+              raise EJNCCDatabaseError.CreateNonCritical(ResStr_ErRestorePermission);
+            else
+              raise;
+          end;
+        end;
+      end;
+    end;
+  finally
+    lConnection.Close;
+    lConnection.Free;
+    // restore security information (it is not persisted in the connection)
+    SetConnectionToMainDB(dbLocal);
+    OpenDatabase(true);
+    DefaultCursor(lCursor);
+  end;
+end;
+{===============================================================================
+ Description : restore the database from the nbndata_backup device
+ Created : 15/1/2003 }
+procedure TdmDatabase.DoRestoreandmove(RestoreSQL: String);
+var
+  lCursor    : TCursor;
+  lConnection: TADOConnection;
+begin
+  lCursor := HourglassCursor;
+  // need a new connection to get backupoperator priveleges
+  //(which are removed by the app role)
+  CloseDatabase;
+  lConnection := TADOConnection.Create(nil);
+  try
+    with lConnection do begin
+      // connect to master
+      ConnectionTimeout := 0;
+      ConnectionString := StringReplace(GetNewConnectionString, FDatabaseName,
+                          'master', [rfReplaceAll]);
+      LoginPrompt := False;
+      CommandTimeout := 0;
+      lConnection.Open;
+      try
+        EXECUTE (RESTORESQL);
       except
         on EOleException do
         begin

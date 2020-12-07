@@ -236,7 +236,7 @@ begin
   FConnection.CommandTimeout := 0;
   FdsMeasurements := TADODataSet.Create(nil);
   FGroups := TStringList.Create;   // distinct list of attribute groups
-  FGroups.Sorted := True;
+  FGroups.Sorted := true;
   FGroups.Duplicates := dupIgnore;
 
   ReadAttributeData;  //Populate FAttributes with data from database
@@ -413,7 +413,7 @@ begin
                                 true);
   //Populate dataset with sql data
   FAttributes := TStringList.Create;
-  FAttributes.Sorted := false;
+  FAttributes.Sorted := true;
   FAttributes.Duplicates := dupAccept;
 
   //Add each attribute to the FAttributes Object along with field metadata

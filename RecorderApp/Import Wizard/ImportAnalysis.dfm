@@ -402,7 +402,7 @@ inherited fraImportAnalysis: TfraImportAnalysis
             object lblInvalidDetails: TLabel
               Left = 0
               Top = 0
-              Width = 35
+              Width = 344
               Height = 13
               Align = alTop
               Caption = 'Details:'
@@ -500,16 +500,30 @@ inherited fraImportAnalysis: TfraImportAnalysis
       137)
     object lblImportDetails: TLabel
       Left = 8
-      Top = 12
+      Top = 36
       Width = 76
       Height = 13
       Caption = 'Analysis Details:'
     end
-    object mmDetails: TMemo
+    object lblSurvey: TLabel
+      Left = 8
+      Top = 8
+      Width = 33
+      Height = 13
+      Caption = 'Survey'
+    end
+    object lblSurveyName: TLabel
       Left = 88
       Top = 8
+      Width = 457
+      Height = 17
+      AutoSize = False
+    end
+    object mmDetails: TMemo
+      Left = 88
+      Top = 32
       Width = 472
-      Height = 122
+      Height = 98
       Anchors = [akLeft, akTop, akRight, akBottom]
       BevelInner = bvNone
       BevelOuter = bvNone

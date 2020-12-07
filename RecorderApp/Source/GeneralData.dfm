@@ -1,7 +1,7 @@
 inherited dmGeneralData: TdmGeneralData
   OldCreateOrder = True
-  Left = 679
-  Top = 275
+  Left = 712
+  Top = 272
   Height = 520
   Width = 428
   object qryIDGenSelect: TJNCCQuery
@@ -289,5 +289,27 @@ inherited dmGeneralData: TdmGeneralData
     ParseSQL = True
     Left = 128
     Top = 296
+  end
+  object qryOrganism: TJNCCQuery
+    CommandTimeout = 0
+    Parameters = <
+      item
+        Name = 'TVKey'
+        Size = -1
+        Value = Null
+      end>
+    SQL.Strings = (
+      'SELECT  ITEM_NAME AS ITEM_NAME,'
+      'ORGANISM.SYSTEM_SUPPLIED_DATA AS SYSTEM_SUPPLIED '
+      'FROM   TAXON T INNER JOIN'
+      'TAXON_VERSION TV  ON TV.TAXON_KEY '
+      '=  T.TAXON_KEY '
+      'INNER JOIN ORGANISM '
+      'ON ORGANISM.ORGANISM_KEY = TV.TAXON_VERSION_KEY'
+      'AND ORGANISM.SYSTEM_SUPPLIED_DATA = 1'
+      'WHERE   TV.TAXON_VERSION_KEY   =  :TVKey')
+    ParseSQL = True
+    Left = 272
+    Top = 16
   end
 end

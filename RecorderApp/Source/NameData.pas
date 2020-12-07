@@ -513,6 +513,10 @@ begin
     dmDatabase.Connection.BeginTrans;
     try
       with dmGeneralData do begin
+        ExecuteSQL('DELETE FROM User_Survey_Restriction WHERE Name_Key=''' + AKey + '''',
+                   ResStr_DelFail + ' - User Survey Restriction table');
+        ExecuteSQL('DELETE FROM User WHERE Name_Key=''' + AKey + '''',
+                   ResStr_DelFail + ' - User table');
         ExecuteSQL('DELETE FROM Address WHERE Name_Key=''' + AKey + '''',
                    ResStr_DelFail + ' - ADDRESS table');
         ExecuteSQL('DELETE FROM Communication WHERE Name_Key_1=''' + AKey + ''' OR Name_Key_2=''' + AKey + '''',

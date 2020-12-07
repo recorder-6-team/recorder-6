@@ -299,7 +299,7 @@ const
       'Follow_Up, Follow_Down, One_To_One, Exclude_Type '+
       'FROM Database_Relationship '+
       'WHERE ((Master_Table=''%s'' AND Follow_Down=1) '+
-      'OR (Detail_table=''%s'' AND Follow_Up=1)) AND (Exclude_Type <> ''%s'')';
+      'OR (Detail_table=''%s'' AND Follow_Up=1)) AND (Exclude_Type <> ''%s'' and Exclude_Type <> ''P'')';
 
   SQL_INSERT_TABLE =
       'INSERT INTO [#%s] ' +

@@ -887,7 +887,11 @@ var lslFoundLists,
     lqryCheckLists                  : TJnccQuery;
 begin
   FslCheckLists.Clear;
-  lqryCheckLists := TJnccQuery(FDictData.FindComponent('qryCheckLists'));
+  If AppSettings.UseRecommendedTaxaNames then
+    lqryCheckLists := TJnccQuery(FDictData.FindComponent('qryCheckListsITN'))
+  else
+    lqryCheckLists := TJnccQuery(FDictData.FindComponent('qryCheckLists'));
+
   if lqryCheckLists <> nil then begin
     if FDictNode is TTaxonDictionaryNode then begin
       lslLocalLists := TStringList.Create;

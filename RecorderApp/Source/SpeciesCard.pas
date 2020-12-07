@@ -1611,6 +1611,8 @@ begin
             ''', ''' + AppSettings.UserID +
             ''')';
         ExecSQL;
+
+
         //Now do determination
         if eDeterminationDate.Text = '' then lVagueDate := eDate.VagueDate
                                         else lVagueDate := eDeterminationDate.VagueDate;
@@ -1642,6 +1644,16 @@ begin
       end;
     end; // with qryInsertBiotopeOccur
   end;  // with FdmPlaceCard
+  // Now insert the documents if AddDocsToOccurrence is set to true
+  If (AppSettings.AddDocsToOccurrence) then begin;
+    try
+      dmDatabase.RunStoredProc('usp_BiotopeOccurrenceSource_Insert',
+         ['@BiotopeOccurrenceKey', FBiotopeOccKey]);
+    except
+      on E:Exception do
+        Raise EDatabaseWriteError.Create(ResStr_WriteRecFail + ' ' + E.Message + ' [Biotope Occurrence Sources]');
+      end;
+  end;
 end;  // CreateBiotopeOccurrence
 
 //==============================================================================

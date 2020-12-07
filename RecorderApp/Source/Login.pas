@@ -75,10 +75,10 @@ resourcestring
   ResStr_LocateUserFail =
       'Unable to find the selected user in the database.  '#13
       + 'The user may have been deleted.';
-  ResStr_NoUsers        = 'There are no users in the database.  The application cannot start.';
+  ResStr_NoUsers        = 'There are no users in the database. The application cannot start.';
   ResStr_WrongPassword  = 'The password you entered is not correct.';
   ResStr_IndexNeedsRebuilding = 'The database index tables need rebuilding otherwise the application ' +
-    'will not function correctly. Please select the Rebuild ... Index options from the Tools > Database Tools ' +
+    'will not function correctly. Please select the Rebuild ... Index options from the Tools/Database Tools ' +
     'menu to rebuild them';
   ResStr_PasswordInstruct =
       'Hint : This is the first time you have logged into Recorder. '

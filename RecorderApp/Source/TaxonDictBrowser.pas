@@ -121,7 +121,15 @@ resourcestring
   ResStr_VersionAuthority     = 'Version Authority';
   ResStr_VersionAppliesFrom   = 'Version Applies From';
   ResStr_VersionQuality       = 'Version Quality';
-
+  ResStr_Recommended_TLI_KEY  = 'Recommended Taxon List Item Key';
+  ResStr_Recommended_TV_KEY   = 'Recommended Taxon Version Key';
+  ResStr_Organism_Key         = 'Organism_Key';
+  Restr_Recommended_Name      = 'Recommended_Name';
+  ResStr_Recommended_Common_name = 'Recommended_Common_Name';
+  ResStr_Recommended_List = 'Recommended_List';
+  ResStr_Recommended_Sort_Order = 'Recommended_Sort_Order';
+  ResStr_TaxonGroup           = 'Taxon Group Name';
+  ResStr_Status               = 'Status';
 //==============================================================================
 procedure TfrmTaxonDictBrowser.FormActivate(Sender: TObject);
 begin
@@ -216,6 +224,7 @@ procedure TfrmTaxonDictBrowser.actShowMetaDataExecute(Sender: TObject);
 var
   header, body: String;
   changedby: String;
+  redundant: String;
 begin
   inherited;
   header := '';
@@ -264,6 +273,10 @@ begin
           changedBy := Format(ResStr_LastChanged,
               [changedBy, DateToStr(Fields['Changed_Date'].Value)]);
       end;
+      If VarIsNull(Fields['Redundant_Flag'].Value) then
+        redundant := 'Valid taxa'
+      else
+        redundant := 'This taxa is not considered valid';
 
       body   := '<P>'
           + Format(ResStr_RecordCreation,
@@ -271,9 +284,18 @@ begin
                DateToStr(Fields['Entry_Date'].Value)])
           + changedBy
           + '.</P>'
+          + MetadataPaneItem(ResStr_Status, redundant)
           + MetadataPaneItem(ResStr_TaxonKey, Fields['Taxon_Key'].Value)
           + MetadataPaneItem(ResStr_TaxonVersionKey, Fields['Taxon_Version_Key'].Value)
           + MetadataPaneItem(ResStr_TaxonListItemKey, Fields['Taxon_List_Item_Key'].Value)
+          + MetadataPaneItem(ResStr_TaxonGroup, Fields['Taxon_Group_Name'].Value)
+          + MetaDataPaneItem(ResStr_Recommended_TLI_KEY, Fields['Recommended_TLI_Key'].Value)
+          + MetaDataPaneItem(ResStr_Recommended_TV_KEY, Fields['Recommended_TV_Key'].Value)
+          + MetaDataPaneItem(ResStr_Organism_Key, Fields['Organism_Key'].Value)
+          + MetaDataPaneItem(Restr_Recommended_Name, Fields['Recommended_Name'].Value)
+          + MetaDataPaneItem(ResStr_Recommended_Common_name, Fields['Recommended_Common_Name'].Value)
+          + MetaDataPaneItem(ResStr_Recommended_List, Fields['Recommended_List'].Value)
+          + MetaDataPaneItem(ResStr_Recommended_Sort_Order, Fields['Recommended_Sort_Order'].Value)
           + '<hr>'
           + body;
     end;

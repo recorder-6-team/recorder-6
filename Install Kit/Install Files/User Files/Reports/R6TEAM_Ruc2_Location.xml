@@ -1,0 +1,43 @@
+<?xml version='1.0' ?>
+
+
+<!-- Displays details of the Locations in a Selected Rucksack 
+     XML Report by Mike Weideli of Littlefield Consultancy for 
+     http://www.lfield.co.uk
+     Version 28 October 2020 
+     
+     
+     	
+   
+ --> 
+
+
+<CustomReport  title="R6TEAM_Rucksack2_Locations" menupath="System Supplied\Rucksack " 
+
+description="Reports on the Locationsin a selected Rucksack" >
+
+
+
+<SQL>
+
+<Where keytype="Default">
+
+
+Select Location_Key,Item_Name as Location_Name FROM 
+LOCATION_NAME WHERE Preferred = 1 AND
+<Condition field= "LOCATION_NAME.LOCATION_KEY" entrycount ="-1" operator= "equal" type ="Location"  name= "SelectRucksack" userucksack= "yes" />
+
+
+
+   
+   
+
+                  
+</Where>
+
+</SQL>
+<Columns>
+
+</Columns>
+
+</CustomReport>

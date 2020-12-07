@@ -26,8 +26,31 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   OleCtrls, StdCtrls, Buttons, Htmlview, JNCCDataSets, DataClasses, ExtCtrls,
-  Menus;
+  Menus,ADODB, DatabaseAccessADO,Variants;
+const
+  SQL_OBSERVATIONS =
+    ' SELECT ITN.ACTUAL_NAME as EnteredName,ITN.Authority as ' +
+    ' EnteredAuth, ITN.ACTUAL_NAME_ATTRIBUTE as Enteredattribute, ' +
+    ' TL.Item_Name as EnteredDict, ITN.Taxon_List_Item_Key, ' +
+    ' Tocc.Zero_Abundance, ' +
+    ' ITN2.ACTUAL_NAME as RecName,ITN2.Authority as RecAuth, ' +
+    ' ITN2.ACTUAL_NAME_ATTRIBUTE as Recattribute, ' +
+    ' TL2.Item_Name as RecDict, ITN2.Taxon_List_Item_Key as RecTLiKey ' +
+    ' FROM TAXON_OCCURRENCE TOCC INNER JOIN TAXON_DETERMINATION TDET ' +
+    ' ON TDET.TAXON_OCCURRENCE_KEY = TOCC.TAXON_OCCURRENCE_KEY ' +
+    ' AND TDET.PREFERRED = 1 INNER JOIN INDEX_TAXON_NAME ITN ON ITN.TAXON_LIST_ITEM_KEY ' +
+    ' = TDET.TAXON_LIST_ITEM_KEY ' +
+    ' INNER JOIN INDEX_TAXON_NAME ITN2 ON ITN2.TAXON_LIST_ITEM_KEY ' +
+    ' = ITN.RECOMMENDED_TAXON_LIST_ITEM_KEY ' +
+    ' INNER JOIN TAXON_LIST_VERSION TLV ON TLV.TAXON_LIST_VERSION_KEY = ' +
+    ' ITN.TAXON_LIST_VERSION_KEY ' +
+    ' INNER JOIN TAXON_LIST TL ON TL.TAXON_LIST_KEY = TLV.TAXON_LIST_KEY ' +
+    ' INNER JOIN TAXON_LIST_VERSION TLV2 ON TLV2.TAXON_LIST_VERSION_KEY = ' +
+    ' ITN2.TAXON_LIST_VERSION_KEY ' +
+    ' INNER JOIN TAXON_LIST TL2 ON TL2.TAXON_LIST_KEY = TLV2.TAXON_LIST_KEY ' +
 
+    ' WHERE TOCC.TAXON_OCCURRENCE_KEY = ''%s''';
+ 
 resourcestring
   ResStr_MetadataDetail     = 'Metadata for %s: %s.';
   ResStr_RecordCreation     = 'The record was created by %s on %s';
@@ -35,6 +58,18 @@ resourcestring
   ResStr_UniqueIdentifier   = 'The unique record identifier is %s';
   ResStr_ImportedRecordType = 'This %s was imported from database %s';
   ResStr_HeldCustody        = 'The custody of this %s is held by Site ID %s';
+  Restr_EnteredName = 'Entered Name is ';
+  Restr_EnteredAuthor = 'Entered Author is ';
+  Restr_EnteredAttribute  = 'Entered Attribute is ';
+  Restr_EnteredDictionary  = 'Entered Dictionary is ';
+  Restr_EnteredKey  = 'Entered Key is ';
+  Restr_HasZeroAbundance = 'Zero Abundance';
+  Restr_NotZeroAbundance = 'Not zero Abundance';
+  Restr_RecName = 'Recommended Name is ';
+  Restr_RecAuthor = 'Recommended Author is ';
+  Restr_RecAttribute  = 'Recommended Attribute is ';
+  Restr_RecDictionary  = 'Recommended Dictionary is ';
+  Restr_RecKey  = 'Recommended Key is ';
 
 type
   TdlgMetaDataPopup = class(TForm)
@@ -51,6 +86,9 @@ type
       const AKey: TKeyString; qrySome: TJNCCQuery);
     procedure DisplayStringList(AStringList: TStringList);
     procedure ShowCustom(const AHeader, ABody: string);
+  private
+    Function getExtraInfo(RecordType: string;
+             const AKey: TKeyString):string;
   end;
 
 function MetaDataPaneItem(const iTitle, iText: string): string;
@@ -120,7 +158,7 @@ var
 begin
   qrySome.Close;
   qrySome.Open;
-
+  //metadata
   header := Format('<P>' + ResStr_MetadataDetail, [RecordType, RecordLabel]);
 
   body := Format(
@@ -144,6 +182,10 @@ begin
   if Copy(AKey, 1, 8) <> qrySome.FieldByName('Custodian').AsString then
     body := body + '<P>'
         + Format(ResStr_HeldCustody, [RecordType, qrySome.FieldByName('Custodian').AsString])
+        + '.</P>';
+
+  body := body + '<P>'
+        + getExtraInfo(RecordType,AKey)
         + '.</P>';
 
   ShowCustom(header, body);
@@ -170,5 +212,35 @@ begin
   hvMetadata.CopyToClipboard;
   if lAllSelected then hvMetadata.SelLength := 0;
 end;
+//==============================================================================
+Function TdlgMetaDataPopup.getExtraInfo(RecordType: string;
+  const AKey: TKeyString):string;
+var
+  rs : _Recordset;
+  lExtraInfo : string;
+begin
+  if RecordType = 'Taxon Occurrence' then begin
+    rs := dmDatabase.ExecuteSQL(FORMAT(SQL_OBSERVATIONS,[AKEY]), true);
+    If not rs.eof then begin
+      lExtraInfo :=  '<P>' + Restr_EnteredName + rs.Fields.Item[0].value  + '.</P>';
+      lExtraInfo :=  lExtraInfo + '<P>' + Restr_EnteredAuthor  +  vartostr(rs.Fields.Item[1].value)  + '.</P>';
+      lExtraInfo :=  lExtraInfo + '<P>' + Restr_EnteredAttribute  +  vartostr(rs.Fields.Item[2].value )  + '.</P>';
+      lExtraInfo :=  lExtraInfo + '<P>' + Restr_EnteredDictionary  +  vartostr(rs.Fields.Item[3].value )  + '.</P>';
+      lExtraInfo :=  lExtraInfo + '<P>' + Restr_EnteredKey  +  vartostr(rs.Fields.Item[4].value) + '.</P>';
+      lExtraInfo :=  lExtraInfo + '<P>' + Restr_RecName + rs.Fields.Item[6].value  + '.</P>';
+      lExtraInfo :=  lExtraInfo + '<P>' + Restr_RecAuthor  +  vartostr(rs.Fields.Item[7].value)  + '.</P>';
+      lExtraInfo :=  lExtraInfo + '<P>' + Restr_RecAttribute  +  vartostr(rs.Fields.Item[8].value )  + '.</P>';
+      lExtraInfo :=  lExtraInfo + '<P>' + Restr_RecDictionary  +  vartostr(rs.Fields.Item[9].value )  + '.</P>';
+      lExtraInfo :=  lExtraInfo + '<P>' + Restr_RecKey  +  vartostr(rs.Fields.Item[10].value) + '.</P>';
+      if rs.Fields.Item[5].value = true then
+        lExtraInfo :=  lExtraInfo + '<P>' + Restr_HasZeroAbundance  + '.</P>'
+      else
+        lExtraInfo :=  lExtraInfo + '<P>' + Restr_NotZeroAbundance  + '.</P>';
 
+
+    end;
+  end;
+  result := lExtraInfo;
+
+end;
 end.

@@ -1188,12 +1188,19 @@ object dlgOptions: TdlgOptions
         ParentFont = False
         WordWrap = True
       end
-      object lblSetting12: TLabel
+      object lblSetting14: TLabel
         Left = 8
         Top = 360
         Width = 138
         Height = 13
         Caption = 'Dictionary Update Block Size'
+      end
+      object Label1: TLabel
+        Left = 240
+        Top = 360
+        Width = 80
+        Height = 13
+        Caption = 'Dictionary Status'
       end
       object edMaster: TEdit
         Left = 168
@@ -1234,7 +1241,6 @@ object dlgOptions: TdlgOptions
         Top = 134
         Width = 353
         Height = 21
-        Color = clCaptionText
         MaxLength = 250
         TabOrder = 4
       end
@@ -1303,6 +1309,13 @@ object dlgOptions: TdlgOptions
         TabOrder = 12
         Text = '50'
         OnKeyPress = edBlockSizeKeyPress
+      end
+      object edStatus: TEdit
+        Left = 336
+        Top = 358
+        Width = 105
+        Height = 21
+        TabOrder = 13
       end
     end
     object tsSundry: TTabSheet
@@ -1430,10 +1443,10 @@ object dlgOptions: TdlgOptions
         object cbPlaceCardDocs: TCheckBox
           Left = 6
           Top = 214
-          Width = 243
+          Width = 251
           Height = 17
           Alignment = taLeftJustify
-          Caption = 'Documents - add to Taxon Occurrence'
+          Caption = 'Documents - add to Taxon/Biotope Occurrences'
           TabOrder = 7
         end
       end
