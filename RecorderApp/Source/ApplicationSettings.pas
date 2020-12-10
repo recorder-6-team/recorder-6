@@ -1681,19 +1681,17 @@ end;  // GetSiteID
 { Accessor method for dictionary version.  }
 function TApplicationSettings.GetDictionaryVersion: String;
 begin
- //if FDictionaryVersion = '' then begin
-    //Avoid using dmGeneral.GetRecordset as potentially it could infinitely loop
-    //by calling back to AppSettings.
-    with dmDatabase.ExecuteSQL(Format(SQL_SELECT_SETTING, ['Dict Seq']), true) do begin
-      try
-        if (RecordCount>0) and (not (Fields['DATA'].Value = null)) then
-          FDictionaryVersion := Fields['DATA'].Value;
-      except on E:EDatabaseError do
-        raise EApplicationSettingsError.Create(ResStr_RecordMissing +
-            'DB Seq - No SETTING table', E);
-      end;
+  //Avoid using dmGeneral.GetRecordset as potentially it could infinitely loop
+  //by calling back to AppSettings.
+  with dmDatabase.ExecuteSQL(Format(SQL_SELECT_SETTING, ['Dict Seq']), true) do begin
+    try
+      if (RecordCount>0) and (not (Fields['DATA'].Value = null)) then
+        FDictionaryVersion := Fields['DATA'].Value;
+    except on E:EDatabaseError do
+      raise EApplicationSettingsError.Create(ResStr_RecordMissing +
+          'DB Seq - No SETTING table', E);
     end;
- // end;
+  end;
   Result := FDictionaryVersion;
 end;  // GetDictionaryVersion
 
