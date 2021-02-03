@@ -76,6 +76,7 @@ type
     FOccurrencesUpdated: integer;
     FOccurrencesRejected: integer;
     FPeopleRecordInfo: TStringList;
+    FEnteredBy: string;
     procedure ActivateEvent(Sender: TObject);
     procedure ClickEvent(Sender: TObject);
     procedure CreateEvent(Sender: TObject);
@@ -947,6 +948,7 @@ begin
           CreateSample(sampleKey, surveyKey, thisrec);
         doneSamples.Add(sampleKey);
         occKey := FRemoteSiteID + IdToKey(rec.Field['occurrence_id'].Value);
+        FEnteredBy := GetIndividual(thisrec.values['created_by_person_id'], thisrec.values['created_by']);
         CreateOccurrence(occKey, sampleKey, thisrec);
         ProgressBar.Position := (FDone+i+1) * 100 div FTotal;
         Application.ProcessMessages;
@@ -1040,7 +1042,7 @@ begin
         '''Imported'',' +
         '''' + EscapeSqlLiteral(locationName, 100) + ''',' +
         '''' + surveyKey + ''',' +
-        '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
+        '''' + FEnteredBy + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
     Inc(FEventsCreated);
@@ -1073,7 +1075,7 @@ begin
         '''' + recorder + ''', ' +
         '''' + sampleKey + ''', ' +
         '''NBNSYS0000000002'', ' +
-        '''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
+        '''' + FEnteredBy + ''', ' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
   end
@@ -1105,7 +1107,7 @@ begin
         '''' + sampleKey + ''', ' +
         '''' + sampleTypeKey + ''', ' +
         '''' + EscapeSqlLiteral(comment) + ''',' +
-        '''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
+        '''' + FEnteredBy + ''', ' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
     Inc(FSamplesCreated);
@@ -1138,7 +1140,7 @@ begin
         'entered_by, entry_date) ' +
         'VALUES(''' + sampleKey + ''', ' +
         '''' + sampleKey + ''', ' +
-        '''' + FRecorder.CurrentSettings.UserIDKey + ''', ' +
+        '''' + FEnteredBy + ''', ' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
   end
@@ -1223,7 +1225,7 @@ begin
         '''' + sampleKey + ''', ' +
         '''NBNSYS0000000001'', ' +
         '''NBNSYS0000000001'', ' +
-        '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
+        '''' + FEnteredBy + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
     Inc(FOccurrencesCreated);
@@ -1263,7 +1265,7 @@ begin
         '''' + determiner + ''', ' +  // determiner
         '''NBNSYS0000000004'', ' + // determination type original
         '''NBNSYS0000000003'', ' + // original recorder
-        '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
+        '''' + FEnteredBy + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
         ')');
   end
@@ -1400,7 +1402,7 @@ begin
               '''Unknown'', ' +
               '''' + mq_key + ''', ' +
               '''' + mu_key + ''', ' +
-              '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
+              '''' + FEnteredBy + ''',' +
               '''' + FormatDateTime('yyyy-mm-dd', Date) + '''' +
               ')');
           end
@@ -1485,7 +1487,7 @@ begin
         'VALUES (''' + sampleTypeKey + ''',' +
         '''' + shortName + ''',' +
         longName + ',' +
-        '''' + FRecorder.CurrentSettings.UserIDKey + ''',' +
+        '''' + FEnteredBy + ''',' +
         '''' + FormatDateTime('yyyy-mm-dd', Date) + ''',' +
         '0)');
     end
